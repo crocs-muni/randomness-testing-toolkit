@@ -13,7 +13,6 @@ extern char **environ;
 int main (void) {
     std::cout << "Randomess Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
 
-    //XML parser test
     try {
         TiXmlNode * root = NULL;
         loadXMLFile(root, "config_sample.xml");

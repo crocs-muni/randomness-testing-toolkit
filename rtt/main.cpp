@@ -1,5 +1,4 @@
-﻿#include <iostream>
-
+#include <iostream>
 #include <stdexcept>
 #include <unistd.h>
 #include <spawn.h>
@@ -7,6 +6,8 @@
 
 #include "XMLproc.h"
 #include "Version.h"
+
+//Here is some testing comment
 
 extern char **environ;
 

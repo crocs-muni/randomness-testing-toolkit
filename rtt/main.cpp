@@ -11,7 +11,7 @@
 extern char **environ;
 
 int main (void) {
-    std::cout << "Randomess Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
+    std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
 
     try {
         loadXMLFile(root, "config_sample.xml");

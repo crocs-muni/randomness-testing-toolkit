@@ -14,7 +14,6 @@ int main (void) {
     std::cout << "Randomess Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
 
     try {
-        TiXmlNode * root = NULL;
         loadXMLFile(root, "config_sample.xml");
         char *argv[] = {"dieharder","-d","0","-p","1","-D","511",
                         "-g","201","-f","rand.bin",NULL};

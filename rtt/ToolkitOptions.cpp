@@ -14,31 +14,25 @@ void ToolkitOptions::init(int argc , char * argv[]) {
             if(battery != 0 || argv[i + 1][0] == '-')
                 throw std::runtime_error("can't set \"-b\" option multiple times or without any value");
 
-            if(strcmp(argv[i + 1] , "dieharder") == 0) {
-                //dieharder is still not supported, but is allowed for testing interface
-                battery = BATERRY_DIEHARDER;
-                //throw std::runtime_error("requested battery is not supported yet");
-            }
-            if(strcmp(argv[i + 1] , "nist_sts") == 0) {
-                battery = BATERRY_NIST_STS;
-                throw std::runtime_error("requested battery is not supported yet");
-            }
-            if(strcmp(argv[i + 1] , "tu01_smallcrush") == 0) {
-                battery = BATERRY_TU01_SMALLCRUSH;
-                throw std::runtime_error("requested battery is not supported yet");
-            }
-            if(strcmp(argv[i + 1] , "tu01_crush") == 0) {
-                battery = BATERRY_TU01_CRUSH;
-                throw std::runtime_error("requested battery is not supported yet");
-            }
-            if(strcmp(argv[i + 1] , "tu01_bigcrush") == 0){
-                battery = BATERRY_TU01_BIGCRUSH;
-                throw std::runtime_error("requested battery is not supported yet");
-            }
-            if(strcmp(argv[i + 1] , "eacirc") == 0) {
-                battery = BATERRY_EACIRC;
-                throw std::runtime_error("requested battery is not supported yet");
-            }
+            if(strcmp(argv[i + 1] , "dieharder") == 0) battery = BATTERY_DIEHARDER;
+            if(strcmp(argv[i + 1] , "nist_sts") == 0) battery = BATTERY_NIST_STS;
+            if(strcmp(argv[i + 1] , "tu01_smallcrush") == 0) battery = BATTERY_TU01_SMALLCRUSH;
+            if(strcmp(argv[i + 1] , "tu01_crush") == 0) battery = BATTERY_TU01_CRUSH;
+            if(strcmp(argv[i + 1] , "tu01_bigcrush") == 0) battery = BATTERY_TU01_BIGCRUSH;
+            if(strcmp(argv[i + 1] , "eacirc") == 0) battery = BATTERY_EACIRC;
+        }
+
+        // Input binary file option
+        if(strcmp(argv[i] , "-f") == 0) {
+            if(!binFilePath.empty() || argv[i + 1][0] == '-')
+                throw std::runtime_error("can't set \"-b\" option multiple times or without any value");
+            binFilePath = argv[i + 1];
+        }
+
+        if(strcmp(argv[i] , "-o") == 0) {
+            if(!binFilePath.empty() || argv[i + 1][0] == '-')
+                throw std::runtime_error("can't set \"-o\" option multiple times or without any value");
+            outFilePath = argv[i + 1];
         }
 
         // Custom input config option
@@ -71,6 +65,8 @@ void ToolkitOptions::init(int argc , char * argv[]) {
     }
     if(battery == 0)
         throw std::runtime_error("option \"-b\" must be correctly set in arguments");
+    if(binFilePath.empty())
+        throw std::runtime_error("option \"-f\" must be set in arguments");
     if(test == -1 && testsBot == -1 && testsTop == -1)
         throw std::runtime_error("test option must be set either by \"-t\" or with \"-tbot\" and \"-ttop\"");
     if((testsBot != -1 && testsTop == -1) || (testsBot == -1 && testsTop != -1))
@@ -85,24 +81,35 @@ void ToolkitOptions::init(int argc , char * argv[]) {
     Utils::sort(testConsts);
 }
 
-int ToolkitOptions::getBattery() {
+int ToolkitOptions::getBattery() const {
     return battery;
 }
 
-std::string ToolkitOptions::getInputCfgPath() {
+std::string ToolkitOptions::getInputCfgPath() const {
     return inputCfgPath;
 }
 
-std::vector<int> ToolkitOptions::getTestConsts() {
+std::vector<int> ToolkitOptions::getTestConsts() const {
     return testConsts;
 }
 
-std::string ToolkitOptions::getUsage() {
+std::string ToolkitOptions::getBinFilePath() const {
+    return binFilePath;
+}
+
+std::string ToolkitOptions::getOutFilePath() const {
+    return outFilePath;
+}
+
+std::string ToolkitOptions::getUsage() const {
     std::stringstream ss;
     ss << "\n[USAGE] Randomness Testing Toolkit accepts following options.\n";
-    ss << "    -b  Followed by battery that will be used. Following batteries\n";
+    ss << "    -b  Followed with battery that will be used. Following batteries\n";
     ss << "        are accepted: \"dieharder\", \"nist_sts\", \"tu01_smallcrush\",\n";
     ss << "        \"tu01_crush\", \"tu01_bigcrush\", \"eacirc\"\n";
+    ss << "    -f  Followed with path to input binary file that will be analysed by battery.\n";
+    ss << "    -o  Followed with path of output file for battery results. If left empty,\n";
+    ss << "        If left empty, default value from config file will be used.\n";
     ss << "    -c  Followed with path to custom config file that will be used instead of\n";
     ss << "        default one. Argument is optional, default path is " << FILE_DEFAULT_CFG_PATH << "\n";
     ss << "    -t  Followed with constant of test in battery that will be used in testing.\n";
@@ -113,7 +120,7 @@ std::string ToolkitOptions::getUsage() {
     return ss.str();
 }
 
-int ToolkitOptions::strtoi(char * str) {
+int ToolkitOptions::strtoi(char * str) const {
     int result = 0;
     try {
         result = std::stoi(str);

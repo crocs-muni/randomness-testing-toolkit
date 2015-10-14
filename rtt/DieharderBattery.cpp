@@ -18,18 +18,21 @@ void DieharderBattery::initBattery(const ToolkitOptions & options) {
     if(dieharderBinPath.empty())
         throw std::runtime_error("XML tag " + (std::string)XPATH_DIEHARDER_BINARY_PATH + "can't be empty");
 
-    free(cfgRoot);
+    delete cfgRoot;
 }
 
 void DieharderBattery::runTests() {
-    char ** arguments = NULL;
+    char ** argv;
+    int argc = 0;
 
     for(unsigned i = 0 ; i < tests.size() ; i++) {
-        arguments = buildArgs(tests[i]);
+        argv = buildArgs(tests[i] , &argc);
 
         pid_t pid;
         int status;
-        status = posix_spawn(&pid , dieharderBinPath.c_str() , NULL , NULL , arguments , environ);
+
+        status = posix_spawn(&pid , dieharderBinPath.c_str() , NULL , NULL , argv , environ);
+
         if(status == 0) {
             std::cout << "Started Dieharder process with pid: " << pid << std::endl;
             if(waitpid(pid , &status , 0) != -1) {
@@ -42,33 +45,34 @@ void DieharderBattery::runTests() {
         else {
             throw std::runtime_error("error occured when starting Dieharder: " + (std::string)strerror(status));
         }
-        //destroyArgs(arguments);
+        destroyArgs(argv , argc);
     }
 }
 
-char ** DieharderBattery::buildArgs(int testNum) {
-    std::stringstream argss;
-    argss << "dieharder -d " << testNum << " -D 511 -g 201 -f " << binFilePath << additionalArguments;
-    std::vector<std::string> arguments(Utils::split(argss.str() , ' '));
-    char ** args = new char * [arguments.size() + 1];
-    for(unsigned i = 0 ; i < arguments.size() ; i++) {
+char ** DieharderBattery::buildArgs(int testNum , int * argc) {
+    std::stringstream argSs;
+    argSs << "dieharder -d " << testNum << " -D 511 -g 201 -f "
+          << binFilePath << " " << additionalArguments;
+    std::vector<std::string> argVector = Utils::split(argSs.str() , ' ');
+    char ** args = new char * [argVector.size() + 1];
+    for(unsigned i = 0 ; i < argVector.size() ; i++) {
         // Manual allocation... *shudders*
-        args[i] = new char [arguments[i].length() + 1];
-        strcpy(args[i] , arguments[i].c_str());
+        args[i] = new char [argVector[i].length() + 1];
+        strcpy(args[i] , argVector[i].c_str());
     }
-    args[arguments.size()] = new char[1];
-    args[arguments.size()] = NULL;
+    args[argVector.size()] = NULL;
+    *argc = argVector.size() + 1;
     return args;
 }
 
-void DieharderBattery::destroyArgs(char ** args) {
-    // this does nothing :(
-
-    /*int n = sizeof(args) / sizeof(args[0]);
-    for(int i = 0 ; i < 10 ; i++) std::cout << args[i] << std::endl;
-    for(int i = 0 ; i < n ; i++) delete [] args[i];
-    delete [] args;*/
+void DieharderBattery::destroyArgs(char ** argv , int argc) {
+    for(int i = 0 ; i < argc ; i++) {
+        if(argv[i]) delete[] argv[i];
+    }
+    delete[] argv;
 }
+
+
 
 
 

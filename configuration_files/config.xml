@@ -1,4 +1,4 @@
-﻿<? xml version="1.0" ?>
+﻿<?xml version="1.0"?>
 <!-- This is sample testing configuration file for
      randomness testing toolkit. -->
 <RANDOMNESS_TESTING_TOOLKIT>
@@ -7,13 +7,13 @@
     <DIEHARDER_SETTINGS>
         <BINARY_PATH>/usr/bin/dieharder</BINARY_PATH>
         <DEFAULT_OUTPUT_FILE>results.dieharder</DEFAULT_OUTPUT_FILE>
-        <ADDITIONAL_ARGUMENTS></ADDITIONAL_ARGUMENTS>
+        <ADDITIONAL_ARGUMENTS>-p 1</ADDITIONAL_ARGUMENTS>
     </DIEHARDER_SETTINGS>
 
     <NIST_STS_SETTINGS>
         <BINARY_PATH></BINARY_PATH>
         <DEFAULT_OUTPUT_FILE>results.nist</DEFAULT_OUTPUT_FILE>
-        <ADDITIONAL_ARGUMENTS><ADDITIONAL_ARGUMENTS>
+        <ADDITIONAL_ARGUMENTS></ADDITIONAL_ARGUMENTS>
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>empty</TESTU01_SETTINGS>

@@ -22,8 +22,8 @@ public:
     void initBattery(const ToolkitOptions & options);
     void runTests();
 private:
-    char ** buildArgs(int testNum);
-    void destroyArgs(char ** args);
+    char ** buildArgs(int testNum , int * argc);
+    void destroyArgs(char ** argv , int argc);
 };
 
 #endif //DIEHARDERBATTERY_H

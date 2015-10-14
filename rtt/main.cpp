@@ -38,6 +38,8 @@ int main (int argc , char * argv[]) {
         StatBatteryInterface * battery = InterfaceCreator::createBattery(options.getBattery());
         battery->initBattery(options);
         battery->runTests();
+        //battery->postprocess();
+        InterfaceCreator::destroyBattery(battery);
     }
     catch(std::runtime_error ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;

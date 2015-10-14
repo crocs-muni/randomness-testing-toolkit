@@ -10,6 +10,8 @@ public:
     virtual void initBattery(const ToolkitOptions & options) = 0;
 
     virtual void runTests() = 0;
+
+    virtual void processStoredResults() = 0;
 };
 
 #endif //STATBATTERYINTERFACE_H

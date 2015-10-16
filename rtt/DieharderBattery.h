@@ -28,7 +28,7 @@ private:
     posix_spawn_file_actions_t createFileActions(int * stdout_pipe , int * stderr_pipe);
     void readPipes(int * stdout_pipe , int * stderr_pipe);
     char ** buildArgs(int testNum , int * argc);
-    void destroyArgs(char ** argv , int argc);
+    void destroyArgs(int argc , char ** argv);
 };
 
 #endif //DIEHARDERBATTERY_H

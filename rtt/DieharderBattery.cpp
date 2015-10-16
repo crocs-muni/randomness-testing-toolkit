@@ -14,15 +14,17 @@ void DieharderBattery::initBattery(const ToolkitOptions & options) {
     additionalArguments = getXMLElementValue(cfgRoot , XPATH_DIEHARDER_ADDITIONAL_ARGS);
 
     if(outFilePath.empty())
-        throw std::runtime_error("XML tag " + (std::string)XPATH_DIEHARDER_OUTPUT_FILE + " can't be empty");
+        throw std::runtime_error("XML tag " + (std::string)
+                                 XPATH_DIEHARDER_OUTPUT_FILE + " can't be empty");
     if(dieharderBinPath.empty())
-        throw std::runtime_error("XML tag " + (std::string)XPATH_DIEHARDER_BINARY_PATH + "can't be empty");
+        throw std::runtime_error("XML tag " + (std::string)
+                                 XPATH_DIEHARDER_BINARY_PATH + " can't be empty");
 
     delete cfgRoot;
 }
 
 void DieharderBattery::runTests() {
-    std::cout << "Starting running Dieharder tests." << std::endl;
+    std::cout << "Starting execution of Dieharder tests." << std::endl;
     for(unsigned i = 0 ; i < tests.size() ; i++) {
         int stdout_pipe[2];
         int stderr_pipe[2];
@@ -38,6 +40,7 @@ void DieharderBattery::runTests() {
             std::cout << "Started Dieharder process with pid: " << pid << std::endl;
             close(stdout_pipe[1]);
             close(stderr_pipe[1]);
+            // Reading and storing Dieharder output
             readPipes(stdout_pipe , stderr_pipe);
             if(waitpid(pid , &status , 0) != -1) {
                 std::cout << "Dieharder exited with status: " << status << std::endl;
@@ -47,10 +50,11 @@ void DieharderBattery::runTests() {
             }
         }
         else {
-            throw std::runtime_error("error occured when starting Dieharder: " + (std::string)strerror(status));
+            throw std::runtime_error("error occured when starting Dieharder: " +
+                                     (std::string)strerror(status));
         }
         posix_spawn_file_actions_destroy(&actions);
-        destroyArgs(argv , argc);
+        destroyArgs(argc , argv);
     }
 }
 
@@ -60,7 +64,8 @@ void DieharderBattery::processStoredResults() {
         std::cout << storedResults[i] << "\n\n\n";
 }
 
-posix_spawn_file_actions_t DieharderBattery::createFileActions(int * stdout_pipe, int * stderr_pipe) {
+posix_spawn_file_actions_t DieharderBattery::createFileActions(
+        int * stdout_pipe, int * stderr_pipe) {
     if(pipe(stdout_pipe) || pipe(stderr_pipe))
         throw std::runtime_error("pipe creation failed");
     posix_spawn_file_actions_t actions;
@@ -114,7 +119,7 @@ char ** DieharderBattery::buildArgs(int testNum , int * argc) {
     return args;
 }
 
-void DieharderBattery::destroyArgs(char ** argv , int argc) {
+void DieharderBattery::destroyArgs(int argc, char ** argv ) {
     for(int i = 0 ; i < argc ; i++) {
         if(argv[i]) delete[] argv[i];
     }

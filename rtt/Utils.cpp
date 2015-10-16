@@ -8,6 +8,21 @@ std::string Utils::itostr(int i , int width) {
     return ss.str();
 }
 
+int Utils::strtoi(std::string str) {
+    try {
+        int result = std::stoi(str);
+        return result;
+    }
+    catch (std::invalid_argument) {
+        throw std::runtime_error("can't convert string \"" + str +"\" into integer: " +
+                                 "string contains non-numeric characters");
+    }
+    catch (std::out_of_range) {
+        throw std::runtime_error("can't convert string \"" + str +"\" into integer: " +
+                                 "value represented by string is too big");
+    }
+}
+
 std::string Utils::getLastItemInPath(const std::string & path) {
     std::string result;
     for(int i = path.length() - 1 ; i >= 0 ; i--) {
@@ -84,6 +99,28 @@ void Utils::sort(std::vector<int> & a , unsigned begin) {
     for(unsigned i = begin ; ; i++) {
         if(i >= a.size() - 1 || a.size() == 0) break;
         if(a[i] == a[i + 1]) {
+            a.erase(a.begin() + i);
+            i--;
+        }
+    }
+}
+
+void Utils::sort2D(std::vector<std::pair<int, int> > & a) {
+    // Insert sort
+    for(unsigned i = 0 ; i < a.size() ; i++) {
+        for(unsigned k = i ; k > 0 ; k--) {
+            if(a[k].first < a[k - 1].first) {
+                std::iter_swap(a.begin() + k, a.begin() + k - 1);
+            } else {
+                break;
+            }
+        }
+    }
+    // Eliminate duplicities (the latter one survives)
+    for(unsigned i = 0 ; ; i++) {
+        if(i >= a.size() - 1 || a.size() == 0) break;
+
+        if(a[i].first == a[i + 1].first) {
             a.erase(a.begin() + i);
             i--;
         }

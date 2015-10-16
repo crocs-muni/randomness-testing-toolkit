@@ -6,7 +6,7 @@ StatBatteryInterface * InterfaceCreator::createBattery(int batteryConst) {
             return new DieharderBattery();
             break;
         case BATTERY_NIST_STS:
-            throw std::runtime_error("NIST STS battery is not yet implemented");
+            return new NistStsBattery();
             break;
         case BATTERY_TU01_SMALLCRUSH:
             throw std::runtime_error("TU01 Small Crush battery is not yet implemented");

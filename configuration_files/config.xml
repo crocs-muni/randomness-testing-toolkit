@@ -11,9 +11,22 @@
     </DIEHARDER_SETTINGS>
 
     <NIST_STS_SETTINGS>
-        <BINARY_PATH></BINARY_PATH>
+        <BINARY_PATH>/home/lubo/Desktop/sts-2.1.2/assess</BINARY_PATH>
         <DEFAULT_OUTPUT_FILE>results.nist</DEFAULT_OUTPUT_FILE>
-        <ADDITIONAL_ARGUMENTS></ADDITIONAL_ARGUMENTS>
+        <STREAM_SIZE>100000</STREAM_SIZE>
+        <STREAM_COUNT>10</STREAM_COUNT>
+	<PARAMETER_ADJUSTMENTS>
+            <PARAMETER test="15">500</PARAMETER>
+            <PARAMETER test="15">15</PARAMETER>
+            <PARAMETER test="8">9</PARAMETER>   
+            <PARAMETER test="9">9</PARAMETER>  
+            <PARAMETER test="2">128</PARAMETER>
+            <PARAMETER test="8">8</PARAMETER>   
+            <PARAMETER test="9">9</PARAMETER>
+            <PARAMETER test="11">11</PARAMETER>
+            <PARAMETER test="14">14</PARAMETER>
+            <PARAMETER test="2">2</PARAMETER>      
+        </PARAMETER_ADJUSTMENTS>
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>empty</TESTU01_SETTINGS>

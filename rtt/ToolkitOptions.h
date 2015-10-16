@@ -26,8 +26,6 @@ public:
     std::string getBinFilePath() const;
     std::string getOutFilePath() const;
     std::string getUsage() const;
-private:
-    int strtoi(char * str) const;
 };
 
 #endif // TOOLKITOPTIONS_H

@@ -29,6 +29,15 @@ public:
       */
     static std::string itostr(int i , int width = 0);
 
+    /** Converts string to numeric value if possible.
+      * Throws std::runtime error if string is not
+      * numerir or his value is too big to store.
+      * @param str              string to convert
+      * @return                 converted integer
+      * @throws runtime_error   string can't be converted
+      */
+    static int strtoi(std::string str);
+
     /** Opens file, reads it into string, closes file, returns string
       * @param path                path to file
       * @return                    content of the file
@@ -101,5 +110,7 @@ public:
       *                            0 sorts whole vector, 1 leaves first element unmoved, etc...
       */
     static void sort(std::vector<int> & a , unsigned begin = 0);
+
+    static void sort2D(std::vector<std::pair<int , int>> & a );
 };
 #endif //UTILS_H

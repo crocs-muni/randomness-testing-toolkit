@@ -16,16 +16,12 @@
         <STREAM_SIZE>100000</STREAM_SIZE>
         <STREAM_COUNT>10</STREAM_COUNT>
 	<PARAMETER_ADJUSTMENTS>
-            <PARAMETER test="15">500</PARAMETER>
-            <PARAMETER test="15">15</PARAMETER>
-            <PARAMETER test="8">9</PARAMETER>   
-            <PARAMETER test="9">9</PARAMETER>  
-            <PARAMETER test="2">128</PARAMETER>
+            <PARAMETER test="2">2</PARAMETER>
             <PARAMETER test="8">8</PARAMETER>   
             <PARAMETER test="9">9</PARAMETER>
             <PARAMETER test="11">11</PARAMETER>
             <PARAMETER test="14">14</PARAMETER>
-            <PARAMETER test="2">2</PARAMETER>      
+            <PARAMETER test="15">15</PARAMETER>    
         </PARAMETER_ADJUSTMENTS>
     </NIST_STS_SETTINGS>
 

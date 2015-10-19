@@ -1,18 +1,22 @@
-/*
-  TODO (it's important to have priorities!)
-  1. Interface for stat batteries (work in progress...)
-    1.1. Settings (done in Dieharder)
-    1.2. Executable runner (done in Dieharder)
-    1.3. Result file processor
-  2. Logger
-  3. Store results into database
-  4. ???
-  .
-  .
-  .
-  5. Profit! (and write documentation maybe)
-*/
-
+//  =============================================================
+//  **************************= TODO! =**************************
+//  =============================================================
+//  (It's important to have priorities!)
+//  1. Interface for stat batteries (work in progress...)
+//      1.1. Settings                               (done in Dieharder , NIST STS)
+//      1.2. Executable runner                      (done in Dieharder , NIST STS)
+//      1.3. Reading results from battery output    (done in Dieharder)
+//      1.4. Result processing and storing
+//  2. Logger, CMake project (?)
+//  3. Store results into database
+//  4. ???
+//  .
+//  .
+//  .
+//  5. Profit! (and write documentation maybe)
+//  =============================================================
+//  *************************************************************
+//  =============================================================
 #include <iostream>
 #include <stdexcept>
 

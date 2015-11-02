@@ -3,9 +3,9 @@
 //  =============================================================
 //  (It's important to have priorities!)
 //  1. Interface for stat batteries (work in progress...)
-//      1.1. Settings                               (done in Dieharder , NIST STS)
-//      1.2. Executable runner                      (done in Dieharder , NIST STS)
-//      1.3. Reading results from battery output    (done in Dieharder)
+//      1.1. Settings                               (done in Dieharder , NIST STS , TestU01)
+//      1.2. Executable runner                      (done in Dieharder , NIST STS , TestU01)
+//      1.3. Reading results from battery output    (done in Dieharder , TestU01)
 //      1.4. Result processing and storing
 //  2. Logger, CMake project (?)
 //  3. Store results into database

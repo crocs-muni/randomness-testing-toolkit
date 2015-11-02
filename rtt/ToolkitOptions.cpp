@@ -14,12 +14,20 @@ void ToolkitOptions::init(int argc , char * argv[]) {
             if(battery != 0 || argv[i + 1][0] == '-')
                 throw std::runtime_error("can't set \"-b\" option multiple times or without any value");
 
-            if(strcmp(argv[i + 1] , "dieharder") == 0) battery = BATTERY_DIEHARDER;
-            if(strcmp(argv[i + 1] , "nist_sts") == 0) battery = BATTERY_NIST_STS;
-            if(strcmp(argv[i + 1] , "tu01_smallcrush") == 0) battery = BATTERY_TU01_SMALLCRUSH;
-            if(strcmp(argv[i + 1] , "tu01_crush") == 0) battery = BATTERY_TU01_CRUSH;
-            if(strcmp(argv[i + 1] , "tu01_bigcrush") == 0) battery = BATTERY_TU01_BIGCRUSH;
-            if(strcmp(argv[i + 1] , "eacirc") == 0) battery = BATTERY_EACIRC;
+            if(strcmp(argv[i + 1] , "dieharder") == 0)
+                battery = BATTERY_DIEHARDER;
+            else if(strcmp(argv[i + 1] , "nist_sts") == 0)
+                battery = BATTERY_NIST_STS;
+            else if(strcmp(argv[i + 1] , "tu01_smallcrush") == 0)
+                battery = BATTERY_TU01_SMALLCRUSH;
+            else if(strcmp(argv[i + 1] , "tu01_crush") == 0)
+                battery = BATTERY_TU01_CRUSH;
+            else if(strcmp(argv[i + 1] , "tu01_bigcrush") == 0)
+                battery = BATTERY_TU01_BIGCRUSH;
+            else if(strcmp(argv[i + 1] , "eacirc") == 0)
+                battery = BATTERY_EACIRC;
+            else
+                throw std::runtime_error("unknown battery set: " + (std::string)argv[i + 1]);
         }
         // Input binary file option
         else if(strcmp(argv[i] , "-f") == 0) {
@@ -27,6 +35,7 @@ void ToolkitOptions::init(int argc , char * argv[]) {
                 throw std::runtime_error("can't set \"-b\" option multiple times or without any value");
             binFilePath = argv[i + 1];
         }
+        // Custom output file option
         else if(strcmp(argv[i] , "-o") == 0) {
             if(!binFilePath.empty() || argv[i + 1][0] == '-')
                 throw std::runtime_error("can't set \"-o\" option multiple times or without any value");

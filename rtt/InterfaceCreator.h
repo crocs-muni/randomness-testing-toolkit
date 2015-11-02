@@ -6,6 +6,7 @@
 #include "StatBatteryInterface.h"
 #include "DieharderBattery.h"
 #include "NistStsBattery.h"
+#include "TestU01Battery.h"
 
 class InterfaceCreator {
 public:

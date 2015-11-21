@@ -1,5 +1,13 @@
 #include "TestU01Battery.h"
 
+/* Constant definition */
+const std::string TestU01Battery::XPATH_BINARY_PATH =
+        "TESTU01_SETTINGS/BINARY_PATH";
+const std::string TestU01Battery::XPATH_OUTPUT_FILE =
+        "TESTU01_SETTINGS/DEFAULT_OUTPUT_FILE";
+const std::string TestU01Battery::XPATH_REPETITIONS =
+        "TESTU01_SETTINGS/REPETITIONS";
+
 void TestU01Battery::initBattery(const ToolkitOptions &options) {
     tests = options.getTestConsts();
     binFilePath = options.getBinFilePath();
@@ -9,19 +17,16 @@ void TestU01Battery::initBattery(const ToolkitOptions &options) {
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
     if(outFilePath.empty())
-        outFilePath = getXMLElementValue(cfgRoot , XPATH_TESTU01_OUTPUT_FILE);
-    tu01Path = getXMLElementValue(cfgRoot , XPATH_TESTU01_BINARY_PATH);
-    repetitions = Utils::strtoi(getXMLElementValue(cfgRoot , XPATH_TESTU01_REPETITIONS));
+        outFilePath = getXMLElementValue(cfgRoot , XPATH_OUTPUT_FILE);
+    tu01Path = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
+    repetitions = Utils::strtoi(getXMLElementValue(cfgRoot , XPATH_REPETITIONS));
 
     if(outFilePath.empty())
-        throw std::runtime_error("XML tag " + (std::string)
-                                 XPATH_TESTU01_OUTPUT_FILE + " can't be empty");
+        throw std::runtime_error("XML tag " + XPATH_OUTPUT_FILE + " can't be empty");
     if(tu01Path.empty())
-        throw std::runtime_error("XML tag " + (std::string)
-                                 XPATH_TESTU01_BINARY_PATH + " can't be empty");
+        throw std::runtime_error("XML tag " + XPATH_BINARY_PATH + " can't be empty");
     if(repetitions == -1)
-        throw std::runtime_error("XML tag " + (std::string)
-                                 XPATH_TESTU01_REPETITIONS + "can't be empty");
+        throw std::runtime_error("XML tag " + XPATH_REPETITIONS + "can't be empty");
     delete cfgRoot;
 }
 
@@ -107,13 +112,13 @@ char ** TestU01Battery::buildArgs(int testNum, int *argc) {
     std::stringstream argSs;
     argSs << "testu01 -m ";
     switch(batteryMode) {
-    case BATTERY_TU01_SMALLCRUSH:
+    case Constants::BATTERY_TU01_SMALLCRUSH:
         argSs << "small_crush";
         break;
-    case BATTERY_TU01_CRUSH:
+    case Constants::BATTERY_TU01_CRUSH:
         argSs << "crush";
         break;
-    case BATTERY_TU01_BIGCRUSH:
+    case Constants::BATTERY_TU01_BIGCRUSH:
         argSs << "big_crush";
         break;
     default:
@@ -134,7 +139,7 @@ char ** TestU01Battery::buildArgs(int testNum, int *argc) {
 }
 
 void TestU01Battery::destroyArgs(int argc , char ** argv) {
-    for(unsigned i = 0 ; i < argc ; i++) {
+    for(int i = 0 ; i < argc ; i++) {
         if(argv[i]) delete[] argv[i];
     }
     delete[] argv;

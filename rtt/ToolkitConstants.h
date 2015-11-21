@@ -1,42 +1,25 @@
 #ifndef TOOLKITCONSTANTS_H
 #define TOOLKITCONSTANTS_H
 
-///////////////////////////////////////////////
-/*************Toolkit constants***************/
-///////////////////////////////////////////////
+#include <string>
 
-// Statistical batteries constants
-#define BATTERY_DIEHARDER           1
-#define BATTERY_NIST_STS            2
-#define BATTERY_TU01_SMALLCRUSH     3
-#define BATTERY_TU01_CRUSH          4
-#define BATTERY_TU01_BIGCRUSH       5
-#define BATTERY_EACIRC              6
+class Constants {
+public:
+    ///////////////////////////////////////////////
+    /*********Toolkit global constants************/
+    ///////////////////////////////////////////////
 
-// Default files locations
-#define FILE_DEFAULT_CFG_PATH       "./config.xml"
+    /* Statistical batteries constants */
+    static const int BATTERY_DIEHARDER =        1;
+    static const int BATTERY_NIST_STS =         2;
+    static const int BATTERY_TU01_SMALLCRUSH =  3;
+    static const int BATTERY_TU01_CRUSH =       4;
+    static const int BATTERY_TU01_BIGCRUSH =    5;
+    static const int BATTERY_EACIRC =           6;
 
-// Default XPaths in configuration file
-// XPaths in Dieharder section
-#define XPATH_DIEHARDER_BINARY_PATH     "DIEHARDER_SETTINGS/BINARY_PATH"
-#define XPATH_DIEHARDER_OUTPUT_FILE     "DIEHARDER_SETTINGS/DEFAULT_OUTPUT_FILE"
-#define XPATH_DIEHARDER_ADDITIONAL_ARGS "DIEHARDER_SETTINGS/ADDITIONAL_ARGUMENTS"
-
-// XPaths in NIST STS section
-#define XPATH_NIST_STS_BINARY_PATH      "NIST_STS_SETTINGS/BINARY_PATH"
-#define XPATH_NIST_STS_OUTPUT_FILE      "NIST_STS_SETTINGS/DEFAULT_OUTPUT_FILE"
-#define XPATH_NIST_STS_STREAM_SIZE      "NIST_STS_SETTINGS/STREAM_SIZE"
-#define XPATH_NIST_STS_STREAM_COUNT     "NIST_STS_SETTINGS/STREAM_COUNT"
-#define XPATH_NIST_STS_PAR_ADJUST       "NIST_STS_SETTINGS/PARAMETER_ADJUSTMENTS"
-#define XPATH_NIST_STS_PAR_ADJUST_ATT   "test"
-
-// XPaths in TestU01 section
-
-#define XPATH_TESTU01_BINARY_PATH       "TESTU01_SETTINGS/BINARY_PATH"
-#define XPATH_TESTU01_OUTPUT_FILE       "TESTU01_SETTINGS/DEFAULT_OUTPUT_FILE"
-#define XPATH_TESTU01_REPETITIONS       "TESTU01_SETTINGS/REPETITIONS"
-
-// XPaths in EACirc section
+    /* Default files locations */
+    static const std::string FILE_DEFAULT_CFG_PATH;
+};
 
 #endif // TOOLKITCONSTANTS_H
 

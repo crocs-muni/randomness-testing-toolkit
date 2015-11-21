@@ -1,5 +1,13 @@
 #include "DieharderBattery.h"
 
+/* Constant definition */
+const std::string DieharderBattery::XPATH_BINARY_PATH =
+        "DIEHARDER_SETTINGS/BINARY_PATH";
+const std::string DieharderBattery::XPATH_OUTPUT_FILE =
+        "DIEHARDER_SETTINGS/DEFAULT_OUTPUT_FILE";
+const std::string DieharderBattery::XPATH_ADDITIONAL_ARGS =
+        "DIEHARDER_SETTINGS/ADDITIONAL_ARGUMENTS";
+
 void DieharderBattery::initBattery(const ToolkitOptions & options) {
     tests = options.getTestConsts();
     binFilePath = options.getBinFilePath();
@@ -9,16 +17,14 @@ void DieharderBattery::initBattery(const ToolkitOptions & options) {
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
     if(outFilePath.empty())
-        outFilePath = getXMLElementValue(cfgRoot , XPATH_DIEHARDER_OUTPUT_FILE);
-    dieharderBinPath = getXMLElementValue(cfgRoot , XPATH_DIEHARDER_BINARY_PATH);
-    additionalArguments = getXMLElementValue(cfgRoot , XPATH_DIEHARDER_ADDITIONAL_ARGS);
+        outFilePath = getXMLElementValue(cfgRoot , XPATH_OUTPUT_FILE);
+    dieharderBinPath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
+    additionalArguments = getXMLElementValue(cfgRoot , XPATH_ADDITIONAL_ARGS);
 
     if(outFilePath.empty())
-        throw std::runtime_error("XML tag " + (std::string)
-                                 XPATH_DIEHARDER_OUTPUT_FILE + " can't be empty");
+        throw std::runtime_error("XML tag " + XPATH_OUTPUT_FILE + " can't be empty");
     if(dieharderBinPath.empty())
-        throw std::runtime_error("XML tag " + (std::string)
-                                 XPATH_DIEHARDER_BINARY_PATH + " can't be empty");
+        throw std::runtime_error("XML tag " + XPATH_BINARY_PATH + " can't be empty");
 
     delete cfgRoot;
 }

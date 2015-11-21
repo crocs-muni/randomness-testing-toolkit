@@ -21,6 +21,11 @@ private:
     int repetitions;
     std::vector<std::string> storedResults;
 public:
+    /* XPATH constants for TestU01 battery */
+    static const std::string XPATH_BINARY_PATH;
+    static const std::string XPATH_OUTPUT_FILE;
+    static const std::string XPATH_REPETITIONS;
+
     TestU01Battery(int batMode) :
         repetitions(-1) , batteryMode(batMode)
     {}

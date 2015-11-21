@@ -1,5 +1,19 @@
 #include "NistStsBattery.h"
 
+/* Constant definition */
+const std::string NistStsBattery::XPATH_BINARY_PATH =
+        "NIST_STS_SETTINGS/BINARY_PATH";
+const std::string NistStsBattery::XPATH_OUTPUT_FILE =
+        "NIST_STS_SETTINGS/DEFAULT_OUTPUT_FILE";
+const std::string NistStsBattery::XPATH_STREAM_SIZE =
+        "NIST_STS_SETTINGS/STREAM_SIZE";
+const std::string NistStsBattery::XPATH_STREAM_COUNT =
+        "NIST_STS_SETTINGS/STREAM_COUNT";
+const std::string NistStsBattery::XPATH_PAR_ADJUST =
+        "NIST_STS_SETTINGS/PARAMETER_ADJUSTMENTS";
+const std::string NistStsBattery::XPATH_PAR_ADJUST_ATT =
+        "test";
+
 void NistStsBattery::initBattery(const ToolkitOptions & options) {
     validateTestConsts(options.getTestConsts());
     testsVector = createTestsVector(options.getTestConsts());
@@ -11,17 +25,15 @@ void NistStsBattery::initBattery(const ToolkitOptions & options) {
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
     if(outFilePath.empty())
-        outFilePath = getXMLElementValue(cfgRoot , XPATH_NIST_STS_OUTPUT_FILE);
-    nistStsBinPath = getXMLElementValue(cfgRoot , XPATH_NIST_STS_BINARY_PATH);
-    streamSize = Utils::strtoi(getXMLElementValue(cfgRoot , XPATH_NIST_STS_STREAM_SIZE));
-    streamCount = Utils::strtoi(getXMLElementValue(cfgRoot , XPATH_NIST_STS_STREAM_COUNT));
+        outFilePath = getXMLElementValue(cfgRoot , XPATH_OUTPUT_FILE);
+    nistStsBinPath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
+    streamSize = Utils::strtoi(getXMLElementValue(cfgRoot , XPATH_STREAM_SIZE));
+    streamCount = Utils::strtoi(getXMLElementValue(cfgRoot , XPATH_STREAM_COUNT));
 
     if(outFilePath.empty())
-        throw std::runtime_error("XML tag " + (std::string)
-                                 XPATH_NIST_STS_OUTPUT_FILE + " can't be empty");
+        throw std::runtime_error("XML tag " + XPATH_OUTPUT_FILE + " can't be empty");
     if(nistStsBinPath.empty())
-        throw std::runtime_error("XML tag " + (std::string)
-                                 XPATH_NIST_STS_BINARY_PATH + "can't be empty");
+        throw std::runtime_error("XML tag " + XPATH_BINARY_PATH + "can't be empty");
     loadAdjustedParameters(cfgRoot);
     delete cfgRoot;
 }
@@ -88,7 +100,7 @@ void NistStsBattery::loadAdjustedParameters(TiXmlNode * root) {
     const char * attributeValue = 0;
     const char * tagValue = 0;
 
-    TiXmlNode * parentNode = getXMLElement(root , XPATH_NIST_STS_PAR_ADJUST);
+    TiXmlNode * parentNode = getXMLElement(root , XPATH_PAR_ADJUST);
     TiXmlElement * childElement;
     if(!parentNode)
         return; // No parent, no fun (???)
@@ -96,11 +108,10 @@ void NistStsBattery::loadAdjustedParameters(TiXmlNode * root) {
     if(parentNode->FirstChild()) {
         childElement = parentNode->FirstChildElement();
         for(; childElement != NULL ; childElement = childElement->NextSiblingElement()) {
-            attributeValue = childElement->Attribute(XPATH_NIST_STS_PAR_ADJUST_ATT);
+            attributeValue = childElement->Attribute(XPATH_PAR_ADJUST_ATT.c_str());
             if(!attributeValue)
-                throw std::runtime_error("child of tag " + (std::string)
-                                         XPATH_NIST_STS_PAR_ADJUST + " doesn't have attribute " +
-                                         (std::string)XPATH_NIST_STS_PAR_ADJUST_ATT);
+                throw std::runtime_error("child of tag " + XPATH_PAR_ADJUST +
+                                         " doesn't have attribute " + XPATH_PAR_ADJUST_ATT);
             tagValue = childElement->GetText();
             if(strlen(attributeValue) > 0 && tagValue != NULL) {
                 adjParValidator(Utils::strtoi(attributeValue)); // valid test number check

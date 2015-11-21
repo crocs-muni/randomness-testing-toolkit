@@ -22,6 +22,14 @@ private:
     int streamSize;
     int streamCount;
 public:
+    /* Default XPATH constants for NIST STS battery */
+    static const std::string XPATH_BINARY_PATH;
+    static const std::string XPATH_OUTPUT_FILE;
+    static const std::string XPATH_STREAM_SIZE;
+    static const std::string XPATH_STREAM_COUNT;
+    static const std::string XPATH_PAR_ADJUST;
+    static const std::string XPATH_PAR_ADJUST_ATT;
+
     NistStsBattery() {}
     void initBattery(const ToolkitOptions & options);
     void runTests();

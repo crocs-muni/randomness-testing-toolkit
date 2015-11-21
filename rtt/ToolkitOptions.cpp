@@ -15,17 +15,17 @@ void ToolkitOptions::init(int argc , char * argv[]) {
                 throw std::runtime_error("can't set \"-b\" option multiple times or without any value");
 
             if(strcmp(argv[i + 1] , "dieharder") == 0)
-                battery = BATTERY_DIEHARDER;
+                battery = Constants::BATTERY_DIEHARDER;
             else if(strcmp(argv[i + 1] , "nist_sts") == 0)
-                battery = BATTERY_NIST_STS;
+                battery = Constants::BATTERY_NIST_STS;
             else if(strcmp(argv[i + 1] , "tu01_smallcrush") == 0)
-                battery = BATTERY_TU01_SMALLCRUSH;
+                battery = Constants::BATTERY_TU01_SMALLCRUSH;
             else if(strcmp(argv[i + 1] , "tu01_crush") == 0)
-                battery = BATTERY_TU01_CRUSH;
+                battery = Constants::BATTERY_TU01_CRUSH;
             else if(strcmp(argv[i + 1] , "tu01_bigcrush") == 0)
-                battery = BATTERY_TU01_BIGCRUSH;
+                battery = Constants::BATTERY_TU01_BIGCRUSH;
             else if(strcmp(argv[i + 1] , "eacirc") == 0)
-                battery = BATTERY_EACIRC;
+                battery = Constants::BATTERY_EACIRC;
             else
                 throw std::runtime_error("unknown battery set: " + (std::string)argv[i + 1]);
         }
@@ -78,7 +78,7 @@ void ToolkitOptions::init(int argc , char * argv[]) {
         throw std::runtime_error("test option must be set either by \"-t\" or with \"-tbot\" and \"-ttop\"");
     if((testsBot != -1 && testsTop == -1) || (testsBot == -1 && testsTop != -1))
         throw std::runtime_error("can't set only one of options \"-tbot\" and \"ttop\"");
-    if(inputCfgPath.empty()) inputCfgPath = FILE_DEFAULT_CFG_PATH;
+    if(inputCfgPath.empty()) inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
 
     if(test != -1) testConsts.push_back(test);
     if(testsBot != -1 && testsTop != -1){
@@ -118,7 +118,7 @@ std::string ToolkitOptions::getUsage() const {
     ss << "    -o  Followed with path of output file for battery results. If left empty,\n";
     ss << "        default value from config file will be used.\n";
     ss << "    -c  Followed with path to custom config file that will be used instead of\n";
-    ss << "        default one. Argument is optional, default path is " << FILE_DEFAULT_CFG_PATH << "\n";
+    ss << "        default one. Argument is optional, default path is " << Constants::FILE_DEFAULT_CFG_PATH << "\n";
     ss << "    -t  Followed with constant of test in battery that will be used in testing.\n";
     ss << " -tbot  Bottom border for tests. All tests between \"-tbot\" and \"-ttop\n";
     ss << "        will be used. Can't be used without setting \"-ttop\"\n";

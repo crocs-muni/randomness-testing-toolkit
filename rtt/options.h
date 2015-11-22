@@ -1,5 +1,5 @@
-#ifndef TOOLKITOPTIONS_H
-#define TOOLKITOPTIONS_H
+#ifndef RTT_OPTIONS_H
+#define RTT_OPTIONS_H
 
 #include <iostream>
 #include <string>
@@ -7,10 +7,12 @@
 #include <vector>
 #include <stdexcept>
 
-#include "ToolkitConstants.h"
-#include "Utils.h"
+#include "rtt/constants.h"
+#include "rtt/utils.h"
 
-class ToolkitOptions {
+namespace rtt {
+
+class CliOptions {
 private:
     int battery;
     std::vector<int> testConsts;
@@ -18,7 +20,7 @@ private:
     std::string binFilePath;
     std::string outFilePath;
 public:
-    ToolkitOptions() : battery(0) {}
+    CliOptions() : battery(0) {}
     void init(int argc , char * argv[]);
     int getBattery() const;
     std::vector<int> getTestConsts() const;
@@ -28,5 +30,7 @@ public:
     std::string getUsage() const;
 };
 
-#endif // TOOLKITOPTIONS_H
+} // namespace rtt
+
+#endif // RTT_OPTIONS_H
 

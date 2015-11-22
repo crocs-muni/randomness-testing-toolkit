@@ -1,4 +1,4 @@
-#include "XMLproc.h"
+#include "xmlproc.h"
 
 /*int*/ void saveXMLFile(TiXmlNode* pRoot , std::string filename) {
     TiXmlDocument doc;

@@ -1,6 +1,8 @@
-#include "ToolkitOptions.h"
+#include "rtt/options.h"
 
-void ToolkitOptions::init(int argc , char * argv[]) {
+namespace rtt {
+
+void CliOptions::init(int argc , char * argv[]) {
     int test = -1;
     int testsBot = -1;
     int testsTop = -1;
@@ -88,27 +90,27 @@ void ToolkitOptions::init(int argc , char * argv[]) {
     Utils::sort(testConsts);
 }
 
-int ToolkitOptions::getBattery() const {
+int CliOptions::getBattery() const {
     return battery;
 }
 
-std::string ToolkitOptions::getInputCfgPath() const {
+std::string CliOptions::getInputCfgPath() const {
     return inputCfgPath;
 }
 
-std::vector<int> ToolkitOptions::getTestConsts() const {
+std::vector<int> CliOptions::getTestConsts() const {
     return testConsts;
 }
 
-std::string ToolkitOptions::getBinFilePath() const {
+std::string CliOptions::getBinFilePath() const {
     return binFilePath;
 }
 
-std::string ToolkitOptions::getOutFilePath() const {
+std::string CliOptions::getOutFilePath() const {
     return outFilePath;
 }
 
-std::string ToolkitOptions::getUsage() const {
+std::string CliOptions::getUsage() const {
     std::stringstream ss;
     ss << "\n[USAGE] Randomness Testing Toolkit accepts following options.\n";
     ss << "    -b  Followed with battery that will be used. Following batteries\n";
@@ -126,5 +128,7 @@ std::string ToolkitOptions::getUsage() const {
     ss << "        will be used. Can't be used without setting \"-tbot\"\n\n";
     return ss.str();
 }
+
+} // namespace rtt
 
 

@@ -1,32 +1,36 @@
-#ifndef DIEHARDERBATTERY_H
-#define DIEHARDERBATTERY_H
+#ifndef RTT_BATTERIES_TESTU01_H
+#define RTT_BATTERIES_TESTU01_H
 
 #include <poll.h>
 #include <unistd.h>
 #include <spawn.h>
 #include <sys/wait.h>
 
+#include "rtt/batteries/interface.h"
+#include "libs/tinyXML/xmlproc.h"
+
 extern char **environ;
 
-#include "StatBatteryInterface.h"
-#include "XMLproc.h"
+namespace rtt {
+namespace batteries {
 
-class DieharderBattery : public StatBatteryInterface {
+class TestU01 : public Interface {
 private:
+    int batteryMode;
     std::vector<int> tests;
     std::string binFilePath;
-    std::string dieharderBinPath;
+    std::string tu01Path;
     std::string outFilePath;
-    std::string additionalArguments;
+    int repetitions = -1;
     std::vector<std::string> storedResults;
 public:
-    /* Default XPATH constants for Dieharder battery */
+    /* XPATH constants for TestU01 battery */
     static const std::string XPATH_BINARY_PATH;
     static const std::string XPATH_OUTPUT_FILE;
-    static const std::string XPATH_ADDITIONAL_ARGS;
+    static const std::string XPATH_REPETITIONS;
 
-    DieharderBattery() {}
-    void initBattery(const ToolkitOptions & options);
+    TestU01(int batMode) : batteryMode(batMode) {}
+    void initBattery(const CliOptions &options);
     void runTests();
     void processStoredResults();
 private:
@@ -36,4 +40,7 @@ private:
     void destroyArgs(int argc , char ** argv);
 };
 
-#endif //DIEHARDERBATTERY_H
+} // namespace batteries
+} // namespace rtt
+
+#endif // RTT_BATTERIES_TESTU01_H

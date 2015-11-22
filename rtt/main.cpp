@@ -20,14 +20,14 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "InterfaceCreator.h"
-#include "ToolkitOptions.h"
-#include "Version.h"
+#include "rtt/interfacecreator.h"
+#include "rtt/options.h"
+#include "rtt/version.h"
 
 int main (int argc , char * argv[]) {
     std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
 
-    ToolkitOptions options;
+    rtt::CliOptions options;
     try{
         options.init(argc , argv);
     }
@@ -39,12 +39,13 @@ int main (int argc , char * argv[]) {
 
     // Actual functionality will be here... in time.
     try{
-        StatBatteryInterface * battery = InterfaceCreator::createBattery(options.getBattery());
+        rtt::batteries::Interface * battery =
+                rtt::InterfaceCreator::createBattery(options.getBattery());
         battery->initBattery(options);
         battery->runTests();
         // Processing not implemented, only prints results
         battery->processStoredResults();
-        InterfaceCreator::destroyBattery(battery);
+        rtt::InterfaceCreator::destroyBattery(battery);
     }
     catch(std::runtime_error ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;

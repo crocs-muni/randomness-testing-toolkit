@@ -1,20 +1,23 @@
-#include "NistStsBattery.h"
+#include "rtt/batteries/niststs.h"
+
+namespace rtt {
+namespace batteries {
 
 /* Constant definition */
-const std::string NistStsBattery::XPATH_BINARY_PATH =
+const std::string NistSts::XPATH_BINARY_PATH =
         "NIST_STS_SETTINGS/BINARY_PATH";
-const std::string NistStsBattery::XPATH_OUTPUT_FILE =
+const std::string NistSts::XPATH_OUTPUT_FILE =
         "NIST_STS_SETTINGS/DEFAULT_OUTPUT_FILE";
-const std::string NistStsBattery::XPATH_STREAM_SIZE =
+const std::string NistSts::XPATH_STREAM_SIZE =
         "NIST_STS_SETTINGS/STREAM_SIZE";
-const std::string NistStsBattery::XPATH_STREAM_COUNT =
+const std::string NistSts::XPATH_STREAM_COUNT =
         "NIST_STS_SETTINGS/STREAM_COUNT";
-const std::string NistStsBattery::XPATH_PAR_ADJUST =
+const std::string NistSts::XPATH_PAR_ADJUST =
         "NIST_STS_SETTINGS/PARAMETER_ADJUSTMENTS";
-const std::string NistStsBattery::XPATH_PAR_ADJUST_ATT =
+const std::string NistSts::XPATH_PAR_ADJUST_ATT =
         "test";
 
-void NistStsBattery::initBattery(const ToolkitOptions & options) {
+void NistSts::initBattery(const CliOptions & options) {
     validateTestConsts(options.getTestConsts());
     testsVector = createTestsVector(options.getTestConsts());
 
@@ -38,7 +41,7 @@ void NistStsBattery::initBattery(const ToolkitOptions & options) {
     delete cfgRoot;
 }
 
-void NistStsBattery::runTests() {
+void NistSts::runTests() {
     std::cout << "Starting execution of NIST STS tests." << std::endl;
     int stdin_pipe[2];
     int stdout_pipe[2];
@@ -76,14 +79,14 @@ void NistStsBattery::runTests() {
     destroyArgs(argc , argv);
 }
 
-std::string NistStsBattery::createTestsVector(const std::vector<int> & tests) {
+std::string NistSts::createTestsVector(const std::vector<int> & tests) {
     std::string tv(15 , '0');
     for(size_t i = 0 ; i < tests.size() ; i++)
         tv[tests[i] - 1] = '1';
     return tv;
 }
 
-void NistStsBattery::processStoredResults() {
+void NistSts::processStoredResults() {
     // Prints nistOutput on cout
     // Only for testing
     std::cout << nistOutput << std::endl;
@@ -95,7 +98,7 @@ void NistStsBattery::processStoredResults() {
 ================================================================
 */
 
-void NistStsBattery::loadAdjustedParameters(TiXmlNode * root) {
+void NistSts::loadAdjustedParameters(TiXmlNode * root) {
     std::pair<int , int> singleTag;
     const char * attributeValue = 0;
     const char * tagValue = 0;
@@ -121,7 +124,7 @@ void NistStsBattery::loadAdjustedParameters(TiXmlNode * root) {
             }
         }
         Utils::sort2D(adjustedParameters);
-        // Delete adjustments that won't be used 
+        // Delete adjustments that won't be used
         for(size_t i = 0 ; i < adjustedParameters.size() ; i++) {
             if(testsVector[adjustedParameters[i].first - 1] == '0') {
                 adjustedParameters.erase(adjustedParameters.begin() + i);
@@ -133,15 +136,15 @@ void NistStsBattery::loadAdjustedParameters(TiXmlNode * root) {
 
 
 
-void NistStsBattery::adjParValidator(int testNum) {
-    if(testNum == 2 || testNum == 8 || testNum == 9 || 
-       testNum == 11 || testNum == 14 || testNum == 15)
+void NistSts::adjParValidator(int testNum) {
+    if(testNum == 2 || testNum == 8 || testNum == 9 ||
+            testNum == 11 || testNum == 14 || testNum == 15)
         return;
     throw std::runtime_error("parameters of test " +
                              Utils::itostr(testNum) + " can't be adjusted");
 }
 
-void NistStsBattery::validateTestConsts(const std::vector<int> & tests) {
+void NistSts::validateTestConsts(const std::vector<int> & tests) {
     for(size_t i = 0 ; i < tests.size() ; i++) {
         if(tests[i] < 1 || tests[i] > 15)
             throw std::runtime_error("test number " + Utils::itostr(tests[i]) +
@@ -149,7 +152,7 @@ void NistStsBattery::validateTestConsts(const std::vector<int> & tests) {
     }
 }
 
-posix_spawn_file_actions_t NistStsBattery::createFileActions(
+posix_spawn_file_actions_t NistSts::createFileActions(
         int *stdin_pipe, int *stdout_pipe, int *stderr_pipe){
     if(pipe(stdin_pipe) || pipe(stdout_pipe) || pipe(stderr_pipe))
         throw std::runtime_error("pipe creation failed");
@@ -172,7 +175,7 @@ posix_spawn_file_actions_t NistStsBattery::createFileActions(
     return actions;
 }
 
-void NistStsBattery::readPipes(int * stdout_pipe , int * stderr_pipe) {
+void NistSts::readPipes(int * stdout_pipe , int * stderr_pipe) {
     std::string buffer(1024 , ' ');
     size_t bytes_read;
     std::vector<pollfd> pollVector = {{stdout_pipe[0] , POLLIN},
@@ -190,7 +193,7 @@ void NistStsBattery::readPipes(int * stdout_pipe , int * stderr_pipe) {
     }
 }
 
-std::string NistStsBattery::createInputSequence() {
+std::string NistSts::createInputSequence() {
     /*
      * Yes, I agree, this is totally disgusting. But don't blame me,
      * blame the guy at NIST, who designed interface of the battery.
@@ -223,7 +226,7 @@ std::string NistStsBattery::createInputSequence() {
     return inputSequence.str();
 }
 
-char ** NistStsBattery::buildArgs(int * argc) {
+char ** NistSts::buildArgs(int * argc) {
     std::stringstream argSs;
     argSs << "assess " << Utils::itostr(streamSize);
     std::vector<std::string> argVector = Utils::split(argSs.str() , ' ');
@@ -238,9 +241,12 @@ char ** NistStsBattery::buildArgs(int * argc) {
     return args;
 }
 
-void NistStsBattery::destroyArgs(int argc , char ** argv) {
+void NistSts::destroyArgs(int argc , char ** argv) {
     for(int i = 0 ; i < argc ; i++) {
         if(argv[i]) delete[] argv[i];
     }
     delete[] argv;
 }
+
+} // namespace batteries
+} // namespace rtt

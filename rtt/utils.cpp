@@ -1,4 +1,6 @@
-#include <Utils.h>
+#include "rtt/utils.h"
+
+namespace rtt {
 
 std::string Utils::itostr(int i , int width) {
     std::stringstream ss;
@@ -148,3 +150,5 @@ void Utils::saveStringToFile(const std::string & path , const std::string & sour
     if(file.is_open()) throw std::runtime_error("can't close output file: " + path);
 }
 */
+
+} // namespace rtt

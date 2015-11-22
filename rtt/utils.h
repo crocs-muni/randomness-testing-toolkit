@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef RTT_UTILS_H
+#define RTT_UTILS_H
 
 #include <istream>
 #include <string>
@@ -18,9 +18,11 @@
 #define min(a,b) (((a)<(b))?(a):(b))
 #define max(a,b) (((a)>(b))?(a):(b))
 
+namespace rtt {
+
 class Utils {
 public:
-    /** Converts integral value to string. 
+    /** Converts integral value to string.
       * Number is prefixed with 0 if digit count is
       * less than width argument.
       * @param x          integer to be converted
@@ -113,4 +115,6 @@ public:
 
     static void sort2D(std::vector<std::pair<int , int>> & a );
 };
-#endif //UTILS_H
+
+} // namespace rtt
+#endif // RTT_UTILS_H

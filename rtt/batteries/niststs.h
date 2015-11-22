@@ -1,17 +1,20 @@
-#ifndef NISTSTSBATTERY_H
-#define NISTSTSBATTERY_H
+#ifndef RTT_BATTERIES_NISTSTS_H
+#define RTT_BATTERIES_NISTSTS_H
 
 #include <poll.h>
 #include <unistd.h>
 #include <spawn.h>
 #include <sys/wait.h>
 
+#include "rtt/batteries/interface.h"
+#include "libs/tinyXML/xmlproc.h"
+
 extern char **environ;
 
-#include "StatBatteryInterface.h"
-#include "XMLproc.h"
+namespace rtt {
+namespace batteries {
 
-class NistStsBattery : public StatBatteryInterface {
+class NistSts : public Interface {
 private:
     std::string testsVector;
     std::string binFilePath;
@@ -30,8 +33,8 @@ public:
     static const std::string XPATH_PAR_ADJUST;
     static const std::string XPATH_PAR_ADJUST_ATT;
 
-    NistStsBattery() {}
-    void initBattery(const ToolkitOptions & options);
+    NistSts() {}
+    void initBattery(const CliOptions & options);
     void runTests();
     void processStoredResults();
 private:
@@ -47,4 +50,7 @@ private:
     std::string createInputSequence();
 };
 
-#endif //NISTSTSBATTERY_H
+} // namespace batteries
+} // namespace rtt
+
+#endif // RTT_BATTERIES_NISTSTS_H

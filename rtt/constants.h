@@ -1,7 +1,9 @@
-#ifndef TOOLKITCONSTANTS_H
-#define TOOLKITCONSTANTS_H
+#ifndef RTT_CONSTANTS_H
+#define RTT_CONSTANTS_H
 
 #include <string>
+
+namespace rtt {
 
 class Constants {
 public:
@@ -21,5 +23,7 @@ public:
     static const std::string FILE_DEFAULT_CFG_PATH;
 };
 
-#endif // TOOLKITCONSTANTS_H
+} // namespace rtt
+
+#endif // RTT_CONSTANTS_H
 

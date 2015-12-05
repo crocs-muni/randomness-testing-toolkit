@@ -40,8 +40,7 @@ int main (int argc , char * argv[]) {
     // Actual functionality will be here... in time.
     try{
         rtt::batteries::Interface * battery =
-                rtt::InterfaceCreator::createBattery(options.getBattery());
-        battery->initBattery(options);
+                rtt::InterfaceCreator::createBattery(options);
         battery->runTests();
         // Processing not implemented, only prints results
         battery->processStoredResults();

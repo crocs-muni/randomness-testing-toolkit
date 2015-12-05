@@ -11,16 +11,33 @@ std::string Utils::itostr(int i , int width) {
 }
 
 int Utils::strtoi(std::string str) {
+    static const std::regex RE_INTEGER { "^[0-9]+?$" };
+    if(!std::regex_match(str.begin() , str.end() , RE_INTEGER)) {
+        throw std::runtime_error("can't convert string \"" + str +"\" into integer: " +
+                                 "string contains invalid characters");
+    }
     try {
         int result = std::stoi(str);
         return result;
-    }
-    catch (std::invalid_argument) {
+    } catch (std::out_of_range) {
+        /* invalid_argument won't be thrown, regex prevents that */
         throw std::runtime_error("can't convert string \"" + str +"\" into integer: " +
-                                 "string contains non-numeric characters");
+                                 "value represented by string is too big");
     }
-    catch (std::out_of_range) {
-        throw std::runtime_error("can't convert string \"" + str +"\" into integer: " +
+}
+
+float Utils::strtof(std::string str) {
+    static const std::regex RE_FLOAT { "^[0-9]+?(:?\.[0-9]+?)?$" };
+    if(!std::regex_match(str.begin() , str.end() , RE_FLOAT)) {
+        throw std::runtime_error("can't convert string \"" + str + "\" into float: " +
+                                 "string contain invalid characters");
+    }
+    try {
+        float result = std::stof(str);
+        return result;
+    } catch (std::out_of_range) {
+        /* invalid_argument won't be thrown, regex prevents that */
+        throw std::runtime_error("can't convert string \"" + str + "\" into float: " +
                                  "value represented by string is too big");
     }
 }
@@ -129,7 +146,7 @@ void Utils::sort2D(std::vector<std::pair<int, int> > & a) {
     }
 }
 
-/*
+
 std::string Utils::readFileToString(const std::string & path) {
     std::ifstream file(path , std::ios::in);
     if(!file.is_open()) throw std::runtime_error("can't open input file: " + path);
@@ -139,9 +156,9 @@ std::string Utils::readFileToString(const std::string & path) {
     if(file.is_open()) throw std::runtime_error("can't close input file: " + path);
     return buffer.str();
 }
-*/
 
-/*
+
+
 void Utils::saveStringToFile(const std::string & path , const std::string & source) {
     std::ofstream file(path , std::ios::out);
     if(!file.is_open()) throw std::runtime_error("can't open output file: " + path);
@@ -149,6 +166,5 @@ void Utils::saveStringToFile(const std::string & path , const std::string & sour
     file.close();
     if(file.is_open()) throw std::runtime_error("can't close output file: " + path);
 }
-*/
 
 } // namespace rtt

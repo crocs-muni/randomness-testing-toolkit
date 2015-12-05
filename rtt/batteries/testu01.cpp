@@ -11,7 +11,8 @@ const std::string TestU01::XPATH_OUTPUT_FILE =
 const std::string TestU01::XPATH_REPETITIONS =
         "TESTU01_SETTINGS/REPETITIONS";
 
-void TestU01::initBattery(const CliOptions &options) {
+TestU01::TestU01(const CliOptions &options) {
+    batteryMode = options.getBattery();
     tests = options.getTestConsts();
     binFilePath = options.getBinFilePath();
     outFilePath = options.getOutFilePath();

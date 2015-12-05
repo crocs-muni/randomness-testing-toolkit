@@ -2,6 +2,7 @@
 #define RTT_INTERFACECREATOR_H
 
 #include "rtt/constants.h"
+#include "rtt/options.h"
 
 #include "rtt/batteries/interface.h"
 #include "rtt/batteries/dieharder.h"
@@ -12,7 +13,7 @@ namespace rtt {
 
 class InterfaceCreator {
 public:
-    static batteries::Interface * createBattery(int batteryConst);
+    static batteries::Interface * createBattery(CliOptions options);
 
     static void destroyBattery(batteries::Interface * battery);
 };

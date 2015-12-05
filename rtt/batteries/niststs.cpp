@@ -16,10 +16,13 @@ const std::string NistSts::XPATH_PAR_ADJUST =
         "NIST_STS_SETTINGS/PARAMETER_ADJUSTMENTS";
 const std::string NistSts::XPATH_PAR_ADJUST_ATT =
         "test";
+const std::string NistSts::PATH_MAIN_RESULT_DIR =
+        "experiments/AlgorithmTesting/";
 
-void NistSts::initBattery(const CliOptions & options) {
+NistSts::NistSts(const CliOptions &options) {
     validateTestConsts(options.getTestConsts());
-    testsVector = createTestsVector(options.getTestConsts());
+    tests = options.getTestConsts();
+    testsVector = createTestsVector(tests);
 
     binFilePath = options.getBinFilePath();
     outFilePath = options.getOutFilePath();
@@ -79,17 +82,120 @@ void NistSts::runTests() {
     destroyArgs(argc , argv);
 }
 
-std::string NistSts::createTestsVector(const std::vector<int> & tests) {
-    std::string tv(15 , '0');
-    for(size_t i = 0 ; i < tests.size() ; i++)
-        tv[tests[i] - 1] = '1';
-    return tv;
-}
-
 void NistSts::processStoredResults() {
-    // Prints nistOutput on cout
-    // Only for testing
-    std::cout << nistOutput << std::endl;
+    //std::cout << nistOutput << std::endl;
+    for(int i : tests) {
+        switch(i) {
+        case static_cast<int>(Test::frequency): {
+            NistStsTest test = NistStsTest("Frequency (Monobits) test" ,
+                                           PATH_MAIN_RESULT_DIR + "Frequency/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::blockFrequency):{
+            NistStsTest test = NistStsTest("Test For Frequency Within A Block" ,
+                                           PATH_MAIN_RESULT_DIR + "BlockFrequency/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::cumulativeSums):{
+            NistStsTest test = NistStsTest("Cumulative Sum (Cusum) Test" ,
+                                           PATH_MAIN_RESULT_DIR + "CumulativeSums/" ,
+                                           2);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::runs):{
+            NistStsTest test = NistStsTest("Runs Test" ,
+                                           PATH_MAIN_RESULT_DIR + "Runs/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::longestRun):{
+            NistStsTest test = NistStsTest("Test for the Longest Run of Ones in a Block" ,
+                                           PATH_MAIN_RESULT_DIR + "LongestRun/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::rank):{
+            NistStsTest test = NistStsTest("Random Binary Matrix Rank Test" ,
+                                           PATH_MAIN_RESULT_DIR + "Rank/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::fft):{
+            NistStsTest test = NistStsTest("Discrete Fourier Transform (Spectral) Test" ,
+                                           PATH_MAIN_RESULT_DIR + "FFT/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::nonOverlappingTemplate):{
+            NistStsTest test = NistStsTest("Non-overlapping (Aperiodic) Template Matching Test" ,
+                                           PATH_MAIN_RESULT_DIR + "NonOverlappingTemplate/" ,
+                                           148);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::overlappingTemplate):{
+            NistStsTest test = NistStsTest("Overlapping (Periodic) Template Matching Test" ,
+                                           PATH_MAIN_RESULT_DIR + "OverlappingTemplate/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::universal):{
+            NistStsTest test = NistStsTest("Maurer's Universal Statistical Test" ,
+                                           PATH_MAIN_RESULT_DIR + "Universal/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::approximateEntropy):{
+            NistStsTest test = NistStsTest("Approximate Entropy Test" ,
+                                           PATH_MAIN_RESULT_DIR + "ApproximateEntropy/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::randomExcursions):{
+            NistStsTest test = NistStsTest("Random Excursions Test " ,
+                                           PATH_MAIN_RESULT_DIR + "RandomExcursions/" ,
+                                           8);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::randomExcursionsVariant):{
+            NistStsTest test = NistStsTest("Random Excursions Variant Test" ,
+                                           PATH_MAIN_RESULT_DIR + "RandomExcursionsVariant/" ,
+                                           18);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::serial):{
+            NistStsTest test = NistStsTest("Serial Test" ,
+                                           PATH_MAIN_RESULT_DIR + "Serial/" ,
+                                           2);
+            results.push_back(test);
+            break;
+        }
+        case static_cast<int>(Test::linearComplexity):{
+            NistStsTest test = NistStsTest("Linear Complexity Test" ,
+                                           PATH_MAIN_RESULT_DIR + "LinearComplexity/" ,
+                                           1);
+            results.push_back(test);
+            break;
+        }
+        default:
+            throw std::runtime_error("unknown test constant in NIST STS battery: " +
+                                     Utils::itostr(i));
+        }
+    }
 }
 
 /*
@@ -97,6 +203,13 @@ void NistSts::processStoredResults() {
 ****************** Private methods below ***********************
 ================================================================
 */
+
+std::string NistSts::createTestsVector(const std::vector<int> & tests) {
+    std::string tv(15 , '0');
+    for(size_t i = 0 ; i < tests.size() ; i++)
+        tv[tests[i] - 1] = '1';
+    return tv;
+}
 
 void NistSts::loadAdjustedParameters(TiXmlNode * root) {
     std::pair<int , int> singleTag;
@@ -137,8 +250,12 @@ void NistSts::loadAdjustedParameters(TiXmlNode * root) {
 
 
 void NistSts::adjParValidator(int testNum) {
-    if(testNum == 2 || testNum == 8 || testNum == 9 ||
-            testNum == 11 || testNum == 14 || testNum == 15)
+    if(testNum == 2 ||
+            testNum == 8 ||
+            testNum == 9 ||
+            testNum == 11 ||
+            testNum == 14 ||
+            testNum == 15)
         return;
     throw std::runtime_error("parameters of test " +
                              Utils::itostr(testNum) + " can't be adjusted");
@@ -210,15 +327,20 @@ std::string NistSts::createInputSequence() {
     inputSequence << "0 ";
     // specifying tests that will be executed
     inputSequence << testsVector << " ";
-    // adjusting parameters of tests
-    for(size_t i = 0 ; i < adjustedParameters.size() ; i++) {
-        // indexing test to adjust
-        inputSequence << i + 1 << " ";
-        // entering new value
-        inputSequence << adjustedParameters[i].second << " ";
+    if(adjustmentsPossible) { // currently this is always false!
+        // adjusting parameters of tests
+        /* WHEN EXECUTING, NIST WILL ONLY ASK FOR ADJUSTED PARAMETERS WHEN PARAMETERS CAN BE ADJUSTED */
+        /* HOWEVER THIS ALWAYS INSERT SOMETHING, BREAKING THE CLI... */
+        for(size_t i = 0 ; i < adjustedParameters.size() ; i++) {
+            // indexing test to adjust
+            inputSequence << i + 1 << " ";
+            // entering new value
+            inputSequence << adjustedParameters[i].second << " ";
+        }
+        // end of parameter adjustment
+        inputSequence << "0 ";
     }
-    // end of parameter adjustment
-    inputSequence << "0 ";
+    inputSequence << "0 "; // JUST TESTING
     // stream count setting
     inputSequence << streamCount << " ";
     // input file type -> binary, newline ends input

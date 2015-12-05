@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <ctime>
 #include <vector>
+#include <regex>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -31,21 +32,30 @@ public:
       */
     static std::string itostr(int i , int width = 0);
 
-    /** Converts string to numeric value if possible.
+    /** Converts string to integral value if possible.
       * Throws std::runtime error if string is not
-      * numerir or his value is too big to store.
+      * numeric or his value is too big to store.
       * @param str              string to convert
       * @return                 converted integer
       * @throws runtime_error   string can't be converted
       */
     static int strtoi(std::string str);
 
+    /** Converts string to float value if possible.
+      * @brief strtof           String to float
+      * @param str              string to convert
+      * @return                 converted float
+      * @throws runtime_error   argument is not valid
+      *                         float or float is too big
+      */
+    static float strtof(std::string str);
+
     /** Opens file, reads it into string, closes file, returns string
       * @param path                path to file
       * @return                    content of the file
       * @throws runtime_error      when file can't be opened
       */
-    //static std::string readFileToString(const std::string & path);
+    static std::string readFileToString(const std::string & path);
 
     /** Opens file, loads string into it, closes it.
       * Source's content is NOT erased.
@@ -53,7 +63,7 @@ public:
       * @param source            string to be saved
       * @throws runtime_error    when file can't be opened
       */
-    //static void saveStringToFile(const std::string & path , const std::string & source);
+    static void saveStringToFile(const std::string & path , const std::string & source);
 
     /** Returns string after last separator in path.
       * If no separator is found, whole path is returned.

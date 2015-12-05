@@ -28,8 +28,7 @@ public:
     static const std::string XPATH_OUTPUT_FILE;
     static const std::string XPATH_ADDITIONAL_ARGS;
 
-    Dieharder() {}
-    void initBattery(const CliOptions & options);
+    Dieharder(const CliOptions & options);
     void runTests();
     void processStoredResults();
 private:

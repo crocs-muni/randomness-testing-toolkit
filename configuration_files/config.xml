@@ -13,8 +13,9 @@
     <NIST_STS_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/sts-2.1.2/assess</BINARY_PATH>
         <DEFAULT_OUTPUT_FILE>results.nist</DEFAULT_OUTPUT_FILE>
-        <STREAM_SIZE>100000</STREAM_SIZE>
-        <STREAM_COUNT>10</STREAM_COUNT>
+        <STREAM_SIZE>1000000</STREAM_SIZE>
+        <STREAM_COUNT>100</STREAM_COUNT>
+        <!--
 	<PARAMETER_ADJUSTMENTS>
             <PARAMETER test="2">2</PARAMETER>
             <PARAMETER test="8">8</PARAMETER>   
@@ -23,6 +24,7 @@
             <PARAMETER test="14">14</PARAMETER>
             <PARAMETER test="15">15</PARAMETER>    
         </PARAMETER_ADJUSTMENTS>
+        -->
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>

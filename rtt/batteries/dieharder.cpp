@@ -11,7 +11,7 @@ const std::string Dieharder::XPATH_OUTPUT_FILE =
 const std::string Dieharder::XPATH_ADDITIONAL_ARGS =
         "DIEHARDER_SETTINGS/ADDITIONAL_ARGUMENTS";
 
-void Dieharder::initBattery(const CliOptions & options) {
+Dieharder::Dieharder(const CliOptions &options) {
     tests = options.getTestConsts();
     binFilePath = options.getBinFilePath();
     outFilePath = options.getOutFilePath();

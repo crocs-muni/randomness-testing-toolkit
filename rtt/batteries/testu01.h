@@ -29,8 +29,7 @@ public:
     static const std::string XPATH_OUTPUT_FILE;
     static const std::string XPATH_REPETITIONS;
 
-    TestU01(int batMode) : batteryMode(batMode) {}
-    void initBattery(const CliOptions &options);
+    TestU01(const CliOptions &options);
     void runTests();
     void processStoredResults();
 private:

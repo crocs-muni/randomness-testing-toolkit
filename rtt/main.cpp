@@ -3,9 +3,9 @@
 //  =============================================================
 //  (It's important to have priorities!)
 //  1. Interface for stat batteries (work in progress...)
-//      1.1. Settings                               (done in Dieharder , NIST STS , TestU01)
-//      1.2. Executable runner                      (done in Dieharder , NIST STS , TestU01)
-//      1.3. Reading results from battery output    (done in Dieharder , TestU01)
+//      1.1. Settings
+//      1.2. Executable runner
+//      1.3. Reading results from battery output
 //      1.4. Result processing and storing
 //  2. Logger, CMake project (?)
 //  3. Store results into database
@@ -38,16 +38,18 @@ int main (int argc , char * argv[]) {
     }
 
     // Actual functionality will be here... in time.
-    try{
+    try {
+        // I migth want to avoid memory allocation here...
         rtt::batteries::Interface * battery =
                 rtt::InterfaceCreator::createBattery(options);
         battery->runTests();
         // Processing not implemented, only prints results
         battery->processStoredResults();
-        rtt::InterfaceCreator::destroyBattery(battery);
-    }
-    catch(std::runtime_error ex) {
+        //rtt::InterfaceCreator::destroyBattery(battery);
+    } catch(std::runtime_error ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
+    } catch(std::bad_alloc ex) {
+        std::cout << "[ERROR] Memory allocation failed: " << ex.what() << std::endl;
     }
 
 	return 0;

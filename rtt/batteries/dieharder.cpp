@@ -69,6 +69,18 @@ void Dieharder::processStoredResults() {
     /* This prints stored results => testing */
     for(size_t i = 0 ; i < storedResults.size() ; i++)
         std::cout << storedResults[i] << "\n\n\n";
+
+    std::regex RE_PSAMPLE_VALUE {"\\+\\+\\+\\+(0\\.[0-9]+?)\\+\\+\\+\\+"};
+
+    for(size_t i = 0 ; i < storedResults.size() ; ++i) {
+        auto begin = std::sregex_iterator(storedResults[i].begin() , storedResults[i].end() ,
+                                          RE_PSAMPLE_VALUE);
+        auto end = std::sregex_iterator();
+        for(std::sregex_iterator k = begin ; k != end ; ++k) {
+            std::smatch match = *k;
+            tmpResults.push_back(Utils::strtof(match[1].str()));
+        }
+    }
 }
 
 posix_spawn_file_actions_t Dieharder::createFileActions(
@@ -112,7 +124,7 @@ void Dieharder::readPipes(int * stdout_pipe , int * stderr_pipe) {
 
 char ** Dieharder::buildArgs(int testNum , int * argc) {
     std::stringstream argSs;
-    argSs << "dieharder -d " << testNum << " -D 511 -g 201 -f "
+    argSs << "dieharder -d " << testNum << " -D 66047 -g 201 -f "
           << binFilePath << " " << additionalArguments;
     std::vector<std::string> argVector = Utils::split(argSs.str() , ' ');
     char ** args = new char * [argVector.size() + 1];

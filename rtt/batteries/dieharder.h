@@ -22,6 +22,7 @@ private:
     std::string outFilePath;
     std::string additionalArguments;
     std::vector<std::string> storedResults;
+    std::vector<float> tmpResults;
 public:
     /* Default XPATH constants for Dieharder battery */
     static const std::string XPATH_BINARY_PATH;

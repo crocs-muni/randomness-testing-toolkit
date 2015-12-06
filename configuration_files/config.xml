@@ -5,26 +5,86 @@
     <TOOLKIT_SETTINGS>empty</TOOLKIT_SETTINGS>
 
     <DIEHARDER_SETTINGS>
-        <BINARY_PATH>/usr/bin/dieharder</BINARY_PATH>
+        <BINARY_PATH>/home/lubo/Desktop/dieharder/bin/dieharder</BINARY_PATH>
         <DEFAULT_OUTPUT_FILE>results.dieharder</DEFAULT_OUTPUT_FILE>
-        <ADDITIONAL_ARGUMENTS>-p 1</ADDITIONAL_ARGUMENTS>
+        <ADDITIONAL_ARGUMENTS>-p 10</ADDITIONAL_ARGUMENTS>
     </DIEHARDER_SETTINGS>
 
     <NIST_STS_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/sts-2.1.2/assess</BINARY_PATH>
-        <DEFAULT_OUTPUT_FILE>results.nist</DEFAULT_OUTPUT_FILE>
-        <STREAM_SIZE>1000000</STREAM_SIZE>
-        <STREAM_COUNT>100</STREAM_COUNT>
-        <!--
-	<PARAMETER_ADJUSTMENTS>
-            <PARAMETER test="2">2</PARAMETER>
-            <PARAMETER test="8">8</PARAMETER>   
-            <PARAMETER test="9">9</PARAMETER>
-            <PARAMETER test="11">11</PARAMETER>
-            <PARAMETER test="14">14</PARAMETER>
-            <PARAMETER test="15">15</PARAMETER>    
-        </PARAMETER_ADJUSTMENTS>
-        -->
+        <DEFAULT_OUTPUT_DIRECTORY>niststs_out</DEFAULT_OUTPUT_DIRECTORY>
+        <STREAM_SIZE_DEFAULT>1000000</STREAM_SIZE_DEFAULT>
+        <STREAM_COUNT_DEFAULT>100</STREAM_COUNT_DEFAULT>
+        
+        <TESTS_SETTINGS>
+            <SETTINGS test="1">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>
+            </SETTINGS>
+            <SETTINGS test="2">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>
+                <BLOCK_LENGTH>128</BLOCK_LENGTH>                 
+            </SETTINGS>
+            <SETTINGS test="3">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>             
+            </SETTINGS>
+            <SETTINGS test="4">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>             
+            </SETTINGS>
+            <SETTINGS test="5">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>             
+            </SETTINGS>
+            <SETTINGS test="6">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>             
+            </SETTINGS>
+            <SETTINGS test="7">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>             
+            </SETTINGS>
+            <SETTINGS test="8">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>  
+                <BLOCK_LENGTH>9</BLOCK_LENGTH>               
+            </SETTINGS>
+            <SETTINGS test="9">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>
+                <BLOCK_LENGTH>9</BLOCK_LENGTH>                
+            </SETTINGS>
+            <SETTINGS test="10">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>           
+            </SETTINGS>
+            <SETTINGS test="11">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>   
+                <BLOCK_LENGTH>10</BLOCK_LENGTH>          
+            </SETTINGS>
+            <SETTINGS test="12">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>             
+            </SETTINGS>
+            <SETTINGS test="13">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>             
+            </SETTINGS>
+            <SETTINGS test="14">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT>    
+                <BLOCK_LENGTH>16</BLOCK_LENGTH>         
+            </SETTINGS>
+            <SETTINGS test="15">
+                <STREAM_SIZE>1000000</STREAM_SIZE>
+                <STREAM_COUNT>100</STREAM_COUNT> 
+                <BLOCK_LENGTH>500</BLOCK_LENGTH>            
+            </SETTINGS>
+        </TESTS_SETTINGS>
+        
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>

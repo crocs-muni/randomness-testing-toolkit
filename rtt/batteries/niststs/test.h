@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+extern char **environ;
+
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/utils.h"
 
@@ -47,10 +49,10 @@ public:
     static const std::string XPATH_NODE_STREAM_SIZE;
     static const std::string XPATH_NODE_STREAM_COUNT;
     static const std::string XPATH_NODE_BLOCK_LENGTH;
-
     /* Parent test result directory */
     static const std::string PATH_MAIN_RESULT_DIR;
 
+    /* Some getters for results will be probably added in time */
     static Test getInstance(TestIndex testIndex ,
                             TiXmlNode * cfgRoot ,
                             const std::string & binaryDataPath);
@@ -94,7 +96,7 @@ private:
     /* I don't want to allow existence of Test objects */
     /* without initialization that is in getInstance */
     Test() {}
-    void buildArgv(int * argc , char ** argv) const;
+    char ** buildArgv(int * argc) const;
     void destroyArgv(int argc , char ** argv) const;
     std::string buildInput() const;
     void readPipes(int * stdout_pipe , int * stderr_pipe);

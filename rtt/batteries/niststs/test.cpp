@@ -210,6 +210,7 @@ void Test::execute() {
         throw std::runtime_error("pipe creation failed");
     /* Pipes will be mapped to I/O after process start */
     /* Unused ends are closed */
+    posix_spawn_file_actions_init(&actions);
     posix_spawn_file_actions_addclose(&actions , stdin_pipe[1]);
     posix_spawn_file_actions_addclose(&actions , stdout_pipe[0]);
     posix_spawn_file_actions_addclose(&actions , stderr_pipe[0]);
@@ -221,13 +222,12 @@ void Test::execute() {
     posix_spawn_file_actions_addclose(&actions , stderr_pipe[1]);
     /* Creating cli arguments for executable */
     int argc;
-    char ** argv;
-    buildArgv(&argc , argv);
+    char ** argv = buildArgv(&argc);
     /* Creating input that will be sent to exec */
     std::string input(buildInput());
     /* Executing binary */
     int status = posix_spawn(&pid , executablePath.c_str() ,
-                             &actions , NULL , argv , NULL);
+                             &actions , NULL , argv , environ);
     if(status == 0) {
         std::cout << "Started NIST STS process with pid: " << pid << std::endl;
         close(stdin_pipe[0]);
@@ -246,6 +246,7 @@ void Test::execute() {
         throw std::runtime_error("error ocurred when starting NIST STS executable: " +
                                  static_cast<std::string>(strerror(status)));
     }
+    destroyArgv(argc , argv);
 
     /* Battery successfuly finished calculation */
     /* Now it's time to parse and store the results */
@@ -271,16 +272,17 @@ void Test::execute() {
  \$$
 */
 
-void Test::buildArgv(int * argc, char ** argv) const {
+char ** Test::buildArgv(int * argc) const {
     /* NIST STS takes only 1 argument from cli */
     std::vector<std::string> vecArg = {"assess" , Utils::itostr(streamSize)};
-    argv = new char * [vecArg.size() + 1];
+    char ** argv = new char * [vecArg.size() + 1];
     for(size_t i = 0 ; i < vecArg.size() ; ++i) {
         argv[i] = new char [vecArg[i].length() + 1];
         strncpy(argv[i] , vecArg[i].c_str() , vecArg[i].length());
     }
     argv[vecArg.size()] = NULL;
     *argc = vecArg.size() + 1;
+    return argv;
 }
 
 void Test::destroyArgv(int argc, char **argv) const {

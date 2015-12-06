@@ -1,5 +1,5 @@
-#ifndef RTT_INTERFACECREATOR_H
-#define RTT_INTERFACECREATOR_H
+#ifndef RTT_BATTERIES_INTERFACEFACTORY_H
+#define RTT_BATTERIES_INTERFACEFACTORY_H
 
 #include "rtt/constants.h"
 #include "rtt/options.h"
@@ -12,11 +12,9 @@
 
 namespace rtt {
 
-class InterfaceCreator {
+class InterfaceFactory {
 public:
-    static batteries::Interface *createBattery(const CliOptions & options);
-
-    static void destroyBattery(batteries::Interface * battery);
+    static std::unique_ptr<batteries::Interface> createBattery(const CliOptions & options);
 };
 
 } // namespace rtt

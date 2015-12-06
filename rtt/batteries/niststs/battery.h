@@ -12,12 +12,27 @@ namespace niststs {
 
 class Battery : public Interface {
 public:
-    Battery() {}
-    static Battery * getInstance(const CliOptions & options);
+    static std::unique_ptr<Battery> getInstance(const CliOptions & options);
     void runTests();
     void processStoredResults();
 private:
+    /*
+    =================
+    *** Variables ***
+    =================
+    */
+    /* Test class keeps track of individual test logs, results and such */
+    /* Also executes tests */
     std::vector<Test> tests;
+    bool executed = false;
+
+    /*
+    ===============
+    *** Methods ***
+    ===============
+    */
+    /* So initialization in getInstance can't be avoided */
+    Battery() {}
 };
 
 } // namespace niststs

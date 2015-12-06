@@ -20,7 +20,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "rtt/interfacecreator.h"
+#include "rtt/batteries/interfacefactory.h"
 #include "rtt/options.h"
 #include "rtt/version.h"
 
@@ -39,13 +39,11 @@ int main (int argc , char * argv[]) {
 
     // Actual functionality will be here... in time.
     try {
-        // I migth want to avoid memory allocation here...
-        rtt::batteries::Interface * battery =
-                rtt::InterfaceCreator::createBattery(options);
+        std::unique_ptr<rtt::batteries::Interface> battery =
+                rtt::InterfaceFactory::createBattery(options);
         battery->runTests();
-        // Processing not implemented, only prints results
+        // Processing not implemented, only throws something
         battery->processStoredResults();
-        //rtt::InterfaceCreator::destroyBattery(battery);
     } catch(std::runtime_error ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
     } catch(std::bad_alloc ex) {

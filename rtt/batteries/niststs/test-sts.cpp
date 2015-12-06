@@ -1,4 +1,4 @@
-#include "test.h"
+#include "test-sts.h"
 
 namespace rtt {
 namespace batteries {

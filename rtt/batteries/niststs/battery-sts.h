@@ -4,7 +4,7 @@
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/options.h"
 #include "rtt/batteries/interface.h"
-#include "rtt/batteries/niststs/test.h"
+#include "rtt/batteries/niststs/test-sts.h"
 
 namespace rtt {
 namespace batteries {

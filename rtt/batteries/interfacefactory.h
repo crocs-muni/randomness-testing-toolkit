@@ -5,10 +5,7 @@
 #include "rtt/options.h"
 
 #include "rtt/batteries/interface.h"
-#include "rtt/batteries/niststs/battery.h"
-//#include "rtt/batteries/dieharder.h"
-//#include "rtt/batteries/niststs.h"
-//#include "rtt/batteries/testu01.h"
+#include "rtt/batteries/niststs/battery-sts.h"
 
 namespace rtt {
 

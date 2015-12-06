@@ -1,4 +1,4 @@
-#include "rtt/batteries/niststs/battery.h"
+#include "rtt/batteries/niststs/battery-sts.h"
 
 namespace rtt {
 namespace batteries {
@@ -6,7 +6,7 @@ namespace niststs {
 
 std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     std::unique_ptr<Battery> battery (new Battery());
-    TiXmlNode * cfgRoot = NULL;
+    TiXmlNode * cfgRoot;
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
     for(int i : options.getTestConsts()) {

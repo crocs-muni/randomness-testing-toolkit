@@ -7,8 +7,8 @@ using namespace batteries;
 std::unique_ptr<Interface> InterfaceFactory::createBattery(const CliOptions &options) {
     switch(options.getBattery()) {
     case Constants::BATTERY_DIEHARDER:
-        throw std::runtime_error("Dieharder battery is not yet implemented");
-        //return new batteries::Dieharder(options);
+        //throw std::runtime_error("Dieharder battery is not yet implemented");
+        return dieharder::Battery::getInstance(options);
         break;
     case Constants::BATTERY_NIST_STS:
         //throw std::runtime_error("NIST STS battery is not yet implemented");

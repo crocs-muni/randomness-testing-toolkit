@@ -6,6 +6,7 @@
 
 #include "rtt/batteries/interface.h"
 #include "rtt/batteries/niststs/battery-sts.h"
+#include "rtt/batteries/dieharder/battery-dh.h"
 
 namespace rtt {
 

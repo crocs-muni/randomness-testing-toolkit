@@ -6,6 +6,7 @@
 #include <spawn.h>
 #include <sys/wait.h>
 #include <string>
+#include <string.h>
 #include <vector>
 
 extern char **environ;
@@ -84,7 +85,7 @@ private:
     bool adjustableBlockLen;
     /* Following fileds will be set after calling */
     /* execute */
-    std::string nistStsOutput;
+    std::string batteryLog;
     std::string testLog;
     std::vector<testPvals> results;
 

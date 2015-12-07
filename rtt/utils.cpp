@@ -27,7 +27,7 @@ int Utils::strtoi(std::string str) {
 }
 
 float Utils::strtof(std::string str) {
-    static const std::regex RE_FLOAT { "^[0-9]+?(:?\.[0-9]+?)?$" };
+    static const std::regex RE_FLOAT { "^[0-9]+?(:?\\.[0-9]+?)?$" };
     if(!std::regex_match(str.begin() , str.end() , RE_FLOAT)) {
         throw std::runtime_error("can't convert string \"" + str + "\" into float: " +
                                  "string contain invalid characters");
@@ -86,7 +86,7 @@ std::string Utils::getDate() {
 std::vector<std::string> Utils::split(const std::string & toSplit , char separator) {
     std::vector<std::string> result;
     std::string temp;
-    for(unsigned i = 0 ; i < toSplit.length() ; i++) {
+    for(size_t i = 0 ; i < toSplit.length() ; i++) {
         if(toSplit[i] != separator) {
             temp.push_back(toSplit[i]);
         } else {

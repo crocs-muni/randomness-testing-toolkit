@@ -6,11 +6,12 @@ namespace niststs {
 
 std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     std::unique_ptr<Battery> battery (new Battery());
-    TiXmlNode * cfgRoot;
+    TiXmlNode * cfgRoot = NULL;
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
     for(int i : options.getTestConsts()) {
-        Test test = Test::getInstance(static_cast<TestIndex>(i) , cfgRoot , options.getBinFilePath());
+        Test test = Test::getInstance(static_cast<TestIndex>(i) ,
+                                      cfgRoot , options.getBinFilePath());
         battery->tests.push_back(std::move(test));
     }
 
@@ -34,8 +35,6 @@ void Battery::processStoredResults() {
 
     std::cout << "Momentarily, this does nothing!" << std::endl;
 }
-
-
 
 } // namespace niststs
 } // namespace batteries

@@ -168,7 +168,8 @@ Test Test::getInstance(TestIndex testIndex,
             if(!testAttribute)
                 throw std::runtime_error("child of tag " + XPATH_TESTS_SETTINGS + "doesn't"
                                          " have attribute " + XPATH_ATTRIBUTE_TEST_INDEX);
-            if(static_cast<int>(testIndex) == Utils::strtoi(testAttribute)) {
+            if(strlen(testAttribute) > 0 &&
+               static_cast<int>(testIndex) == Utils::strtoi(testAttribute)) {
                 /* I've got correct node, load settings from there */
                 streamSize = getXMLElementValue(settingsNode , XPATH_NODE_STREAM_SIZE);
                 streamCount = getXMLElementValue(settingsNode , XPATH_NODE_STREAM_COUNT);
@@ -221,7 +222,7 @@ void Test::execute() {
     posix_spawn_file_actions_adddup2(&actions , stderr_pipe[1] , 2);
     posix_spawn_file_actions_addclose(&actions , stderr_pipe[1]);
     /* Creating cli arguments for executable */
-    int argc;
+    int argc = 0;
     char ** argv = buildArgv(&argc);
     /* Creating input that will be sent to exec */
     std::string input(buildInput());
@@ -246,6 +247,7 @@ void Test::execute() {
         throw std::runtime_error("error ocurred when starting NIST STS executable: " +
                                  static_cast<std::string>(strerror(status)));
     }
+    posix_spawn_file_actions_destroy(&actions);
     destroyArgv(argc , argv);
 
     /* Battery successfuly finished calculation */
@@ -278,7 +280,7 @@ char ** Test::buildArgv(int * argc) const {
     char ** argv = new char * [vecArg.size() + 1];
     for(size_t i = 0 ; i < vecArg.size() ; ++i) {
         argv[i] = new char [vecArg[i].length() + 1];
-        strncpy(argv[i] , vecArg[i].c_str() , vecArg[i].length());
+        strcpy(argv[i] , vecArg[i].c_str());
     }
     argv[vecArg.size()] = NULL;
     *argc = vecArg.size() + 1;
@@ -340,13 +342,13 @@ void Test::readPipes(int *stdout_pipe, int *stderr_pipe) {
     for( ; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
         if (pollVector[0].revents&POLLIN) {
             bytes_read = read(stdout_pipe[0] , &buffer[0] , buffer.length());
-            nistStsOutput.append(buffer , 0 , bytes_read);
+            batteryLog.append(buffer , 0 , bytes_read);
         }
         else if (pollVector[1].revents&POLLIN) {
             bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
-            nistStsOutput.append(buffer , 0 , bytes_read);
+            batteryLog.append(buffer , 0 , bytes_read);
         }
-        else break; // Reading done
+        else break; /* Reading done */
     }
 }
 

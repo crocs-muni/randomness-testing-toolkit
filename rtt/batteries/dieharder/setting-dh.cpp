@@ -95,7 +95,7 @@ Setting Setting::getInstance(const std::string & arg,
         throw std::runtime_error("unknown option dieharder used: " + arg);
     }
     /* Checking if option can be converted into float */
-    /* Into can be also in float format*/
+    /* Int can be also in float format*/
     Utils::strtof(value);
 
     setting.argument = arg;

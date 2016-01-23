@@ -88,3 +88,24 @@ TiXmlNode* getXMLElement(TiXmlNode* pRoot , std::string path) {
     }
     return handle.Node();
 }
+
+
+TiXmlNode * getXMLChildNodeWithAttValue(TiXmlNode * pParent,
+                                       std::string attName, std::string value) {
+    if(!pParent || !pParent->FirstChild())
+        return NULL;
+
+    const char * attValue;
+    TiXmlElement * childEl = NULL;
+
+    for(TiXmlNode * childNode = pParent->FirstChild() ;
+            childNode ; childNode = childNode->NextSibling()) {
+        childEl = childNode->ToElement();
+        attValue = childEl->Attribute(attName.c_str());
+        if(!attValue || strlen(attValue) < 1)
+            throw std::runtime_error("XML: child element doesn't have attribute: " + attName);
+        if(value == attValue)
+            return childNode;
+    }
+    return NULL;
+}

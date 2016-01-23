@@ -307,7 +307,7 @@ void Test::execute() {
     posix_spawn_file_actions_destroy(&actions);
     destroyArgv(argc , argv);
 
-    /* Battery successfuly finished calculation */
+    /* Battery successfuly finished computation */
     /* Resulting pvalues are extracted from stored battery output */
     extractPvalues();
 
@@ -385,7 +385,6 @@ void Test::readPipes(int * stdout_pipe, int * stderr_pipe) {
         }
         else break; /* Reading done */
     }
-
 }
 
 void Test::extractPvalues() {
@@ -405,7 +404,7 @@ void Test::extractPvalues() {
         throw std::runtime_error("can't extract pvalues from log: number of pvalues"
                                  " is not divisible by count of subtests");
     int pSamplesCount = pValCount / subTestsCount;
-    testPvals pSamples;
+    tTestPvals pSamples;
 
     for(int subTestIndex = 0 ; subTestIndex < subTestsCount ; ++subTestIndex) {
         for(int k = 0 ; k < pSamplesCount ; ++k) {

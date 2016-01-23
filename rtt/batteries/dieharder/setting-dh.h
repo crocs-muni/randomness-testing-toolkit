@@ -29,7 +29,7 @@ private:
     std::string argumentValue;
 
     /* Following fields will be initialized in getInstance */
-    /* to default values according to test index */
+    /* to default values according to agrument */
     std::string logicName;
 
     /*

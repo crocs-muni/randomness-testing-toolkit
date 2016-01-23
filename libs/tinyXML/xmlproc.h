@@ -16,7 +16,7 @@
 * @param filename     file to save to (contents overwritten)
 * @return status
 */
-/*int*/ void saveXMLFile(TiXmlNode* pRoot , std::string filename);
+void saveXMLFile(TiXmlNode* pRoot , std::string filename);
 
 /** gets root element from XML file
 * data structure reference by this method is allocated dynamicly
@@ -26,7 +26,7 @@
 * @param filename     file where to load from
 * @return status
 */
-/*int*/ void loadXMLFile(TiXmlNode*& pRoot , std::string filename);
+void loadXMLFile(TiXmlNode*& pRoot , std::string filename);
 
 /** get string value of XML element or attribute according to path similar to xPath
 * path syntax: "node/node/node" or "node/@attribute"
@@ -43,7 +43,7 @@ std::string getXMLElementValue(TiXmlNode*& pRoot , std::string path);
 * @param value        new node/attribute value
 * @return status
 */
-/*int*/ void setXMLElementValue(TiXmlNode*& pRoot , std::string path , const std::string& value);
+void setXMLElementValue(TiXmlNode*& pRoot , std::string path , const std::string& value);
 
 /** localize node in XML tree
 * @param pRoot        root of the XML tree
@@ -52,5 +52,17 @@ std::string getXMLElementValue(TiXmlNode*& pRoot , std::string path);
 *         NULL if given path is invalid
 */
 TiXmlNode* getXMLElement(TiXmlNode* pRoot , std::string path);
+
+/**
+ * @brief getXMLChildNodeWithAttValue       Returns child node of given parent
+ *                                          that has attribute attName and this
+ *                                          attribute contains value
+ * @param pParent                           Parent node
+ * @param attName                           Name of attribute
+ * @param value                             Value of attribute caller is looking for.
+ * @return                                  Node or null if not found
+ */
+TiXmlNode * getXMLChildNodeWithAttValue(TiXmlNode * pParent ,
+                                        std::string attName , std::string value);
 
 #endif // XMLPROCESSOR_H

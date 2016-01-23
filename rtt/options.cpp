@@ -26,6 +26,10 @@ void CliOptions::init(int argc , char * argv[]) {
                 battery = Constants::BATTERY_TU01_CRUSH;
             else if(strcmp(argv[i + 1] , "tu01_bigcrush") == 0)
                 battery = Constants::BATTERY_TU01_BIGCRUSH;
+            else if(strcmp(argv[i + 1] , "tu01_rabbit") == 0)
+                battery = Constants::BATTERY_TU01_RABBIT;
+            else if(strcmp(argv[i + 1] , "tu01_alphabit") == 0)
+                battery = Constants::BATTERY_TU01_ALPHABIT;
             else if(strcmp(argv[i + 1] , "eacirc") == 0)
                 battery = Constants::BATTERY_EACIRC;
             else
@@ -72,19 +76,21 @@ void CliOptions::init(int argc , char * argv[]) {
             throw std::runtime_error("unknown option used: " + (std::string)argv[i]);
         }
     }
-    if(battery == 0)
+    if(battery < 0)
         throw std::runtime_error("option \"-b\" must be correctly set in arguments");
     if(binFilePath.empty())
         throw std::runtime_error("option \"-f\" must be set in arguments");
-    if(test == -1 && testsBot == -1 && testsTop == -1)
+    if(test < 0 && testsBot < 0 && testsTop < 0)
         throw std::runtime_error("test option must be set either by \"-t\" or with \"-tbot\" and \"-ttop\"");
     if((testsBot != -1 && testsTop == -1) || (testsBot == -1 && testsTop != -1))
         throw std::runtime_error("can't set only one of options \"-tbot\" and \"ttop\"");
-    if(inputCfgPath.empty()) inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
+    if(inputCfgPath.empty())
+        inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
 
-    if(test != -1) testConsts.push_back(test);
-    if(testsBot != -1 && testsTop != -1){
-        for(int i = testsBot; i <= testsTop; i++) testConsts.push_back(i);
+    if(test >= 0) testConsts.push_back(test);
+    if(testsBot >= 0 && testsTop >= 0){
+        for(int i = testsBot; i <= testsTop; i++)
+            testConsts.push_back(i);
     }
 
     Utils::sort(testConsts);

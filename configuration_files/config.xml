@@ -26,8 +26,8 @@
     <NIST_STS_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/sts-2.1.2/assess</BINARY_PATH>
         <DEFAULT_OUTPUT_DIRECTORY>niststs_out</DEFAULT_OUTPUT_DIRECTORY>
-        <STREAM_SIZE_DEFAULT>1000000</STREAM_SIZE_DEFAULT>
-        <STREAM_COUNT_DEFAULT>100</STREAM_COUNT_DEFAULT>
+        <DEFAULT_STREAM_SIZE>1000000</DEFAULT_STREAM_SIZE>
+        <DEFAULT_STREAM_COUNT>100</DEFAULT_STREAM_COUNT>
         
         <TESTS_SETTINGS>
             <SETTINGS test="1">
@@ -101,9 +101,69 @@
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>
-        <BINARY_PATH>/home/lubo/Desktop/TestU01/build/TestU01</BINARY_PATH>
-        <DEFAULT_OUTPUT_FILE>results.tu01</DEFAULT_OUTPUT_FILE>
-        <REPETITIONS>1</REPETITIONS>
+        <BINARY_PATH>/home/lubo/Desktop/TestU01/build/release/TestU01</BINARY_PATH>
+        <DEFAULT_OUTPUT_DIRECTORY>testu01_out</DEFAULT_OUTPUT_DIRECTORY>
+        <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
+        <DEFAULT_BIT_NB>4000000000</DEFAULT_BIT_NB>
+        <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
+        <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
+        
+        <SMALL_CRUSH_SETTINGS>
+            <SETTINGS test="1">                     <!-- smarsa_BirthdaySpacings -->
+                <REPETITIONS>3</REPETITIONS>
+                <PARAMS>
+                    <PAR name="N">1</PAR>           <!-- N = 1 -->
+                    <PAR name="n">6000000</PAR>     <!-- n = 5 * 10^6 -->
+                    <PAR name="r">0</PAR>           <!-- r = 0 -->
+                    <PAR name="d">1073741824</PAR>  <!-- d = 2^30 -->
+                    <PAR name="t">2</PAR>           <!-- t = 2 -->
+                    <PAR name="p">1</PAR>           <!-- p = 1 -->
+                </PARAMS>
+            </SETTINGS>
+        </SMALL_CRUSH_SETTINGS>
+        
+        <CRUSH_SETTINGS>
+            <SETTINGS test="1">                     <!-- smarsa_SerialOver -->
+                <REPETITIONS>5</REPETITIONS>
+                <PARAMS>
+                    <PAR name="d">4096</PAR>        <!-- d = 2^12 -->
+                    <PAR name="t">2</PAR>           <!-- t = 2 -->
+                    <PAR name="N">1</PAR>           <!-- N = 1 -->
+                    <PAR name="n">500000000</PAR>   <!-- n = 5 * 10^8 -->
+                    <PAR name="r">0</PAR>           <!-- r = 0 -->
+                </PARAMS>   
+            </SETTINGS>
+        </CRUSH_SETTINGS>
+        
+        <BIG_CRUSH_SETTINGS>
+            <SETTINGS test="1">                     <!-- smarsa_SerialOver -->
+                <REPETITIONS>2</REPETITIONS>
+                <PARAMS>
+                    <PAR name="N">1</PAR>           <!-- N = 1 -->
+                    <PAR name="n">1000000000</PAR>  <!-- n = 10^9 -->
+                    <PAR name="r">0</PAR>           <!-- r = 0 -->
+                    <PAR name="d">256</PAR>         <!-- d = 2^8 -->
+                    <PAR name="t">3</PAR>           <!-- t = 3 -->
+                </PARAMS>
+            </SETTINGS>
+        </BIG_CRUSH_SETTINGS>
+        
+        <RABBIT_SETTINGS>
+            <SETTINGS test="1">
+                <BIT_NB>10000000</BIT_NB>
+                <REPETITIONS>10</REPETITIONS>
+            </SETTINGS>
+        </RABBIT_SETTINGS>
+        
+        <ALPHABIT_SETTINGS>
+            <SETTINGS test="1">
+                <BIT_NB>10000000</BIT_NB>
+                <BIT_R>2</BIT_R>
+                <BIT_S>10</BIT_S>
+                <REPETITIONS>5</REPETITIONS>
+            </SETTINGS>
+        </ALPHABIT_SETTINGS>
+        
     </TESTU01_SETTINGS>
 
     <EACIRC_SETTINGS>empty</EACIRC_SETTINGS>

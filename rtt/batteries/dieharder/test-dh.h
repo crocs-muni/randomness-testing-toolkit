@@ -20,40 +20,40 @@ namespace batteries {
 namespace dieharder {
 
 enum class TestIndex {
-    birthdays = 0 ,
-    operm5 = 1,
-    binaryrank1 = 2,
-    binaryrank2 = 3,
-    bitstream = 4,
-    opso = 5,
-    oqso = 6,
-    dna = 7,
-    count1sbyte = 8,
-    count1sstream = 9,
-    parking = 10,
-    mindistancecircle = 11,
-    mindistancesphere = 12,
-    squeeze = 13,
-    sums = 14,
-    runs = 15,
-    craps = 16,
-    gcd = 17,
-    monobit = 100,
-    stsruns = 101,
-    serial = 102,
-    bitdist = 200,
-    mindistance = 201,
-    permutations = 202,
-    lagged = 203,
-    ks = 204,
-    bytedist = 205,
-    dabdct = 206,
-    dabfilltree = 207,
-    dabfilltree2 = 208,
-    dabmonobit = 209
+    birthdays           = 0,
+    operm5              = 1,
+    binaryrank1         = 2,
+    binaryrank2         = 3,
+    bitstream           = 4,
+    opso                = 5,
+    oqso                = 6,
+    dna                 = 7,
+    count1sbyte         = 8,
+    count1sstream       = 9,
+    parking             = 10,
+    mindistancecircle   = 11,
+    mindistancesphere   = 12,
+    squeeze             = 13,
+    sums                = 14,
+    runs                = 15,
+    craps               = 16,
+    gcd                 = 17,
+    monobit             = 100,
+    stsruns             = 101,
+    serial              = 102,
+    bitdist             = 200,
+    mindistance         = 201,
+    permutations        = 202,
+    lagged              = 203,
+    ks                  = 204,
+    bytedist            = 205,
+    dabdct              = 206,
+    dabfilltree         = 207,
+    dabfilltree2        = 208,
+    dabmonobit          = 209
 };
 
-typedef std::vector<float> testPvals;
+typedef std::vector<float> tTestPvals;
 
 class Test {
 public:
@@ -96,7 +96,7 @@ private:
     /* Following fields will be set after calling */
     /* execute */
     std::string testLog;
-    std::vector<testPvals> results;
+    std::vector<tTestPvals> results;
 
     /*
     ===============
@@ -106,9 +106,13 @@ private:
     /* I don't want to allow existence of Test objects */
     /* without initialization that is in getInstance */
     Test() {}
+
     char ** buildArgv(int * argc) const;
+
     void destroyArgv(int argc , char ** argv) const;
+
     void readPipes(int * stdout_pipe , int * stderr_pipe);
+
     void extractPvalues();
 };
 

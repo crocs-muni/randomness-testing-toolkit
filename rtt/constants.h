@@ -17,7 +17,9 @@ public:
     static const int BATTERY_TU01_SMALLCRUSH =  3;
     static const int BATTERY_TU01_CRUSH =       4;
     static const int BATTERY_TU01_BIGCRUSH =    5;
-    static const int BATTERY_EACIRC =           6;
+    static const int BATTERY_TU01_RABBIT =      6;
+    static const int BATTERY_TU01_ALPHABIT =    7;
+    static const int BATTERY_EACIRC =           8;
 
     /* Default files locations */
     static const std::string FILE_DEFAULT_CFG_PATH;

@@ -31,7 +31,6 @@ void Battery::processStoredResults() {
         throw std::runtime_error("can't process results before execution of battery");
 
     std::cout << "Momentarily, this does nothing!" << std::endl;
-    //std::cout << tests.at(0).testLog << std::endl;
 }
 
 } // namespace testu01

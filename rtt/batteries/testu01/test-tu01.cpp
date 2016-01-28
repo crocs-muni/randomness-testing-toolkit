@@ -450,6 +450,7 @@ char ** Test::buildArgv(int * argc) const {
     /* s */
     if(!bit_s.empty())
         tmpss << "--bit_s " << bit_s;
+    std::cout << tmpss.str() << std::endl;
     std::vector<std::string> vecArg = Utils::split(tmpss.str() , ' ');
 
     char ** argv = new char * [vecArg.size() + 1];
@@ -488,7 +489,7 @@ void Test::readPipes(int * stdout_pipe, int * stderr_pipe) {
 }
 
 void Test::extractPvalues() {
-    // In time...
+    std::regex RE_PVALUE {"p-value of test                       :"};
 }
 
 } // namespace testu01

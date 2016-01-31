@@ -57,6 +57,7 @@ Setting Setting::getInstance(const std::string & arg,
         throw std::runtime_error("option " + arg + " can't be set by user");
         setting.logicName = "Output generator bytes to file";
     } else if (arg == "-p") {
+        throw std::runtime_error("option " + arg + " must be set in config file");
         setting.logicName = "Psamples count";
     } else if (arg == "-P") {
         setting.logicName = "Xoff";

@@ -11,8 +11,7 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
     for(int i : options.getTestConsts()) {
-        Test test = Test::getInstance(static_cast<TestIndex>(i) ,
-                                      cfgRoot , options.getBinFilePath());
+        Test test = Test::getInstance(i , options , cfgRoot);
         battery->tests.push_back(std::move(test));
     }
 

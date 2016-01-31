@@ -504,6 +504,11 @@ void Test::extractPvalues() {
     auto end = std::sregex_iterator();
 
     int pValCount = std::distance(begin , end);
+    if(pValCount == 0) {
+        std::cout << "[WARNING] No pValues were extracted" << std::endl;
+        return;
+    }
+
     if(pValCount % repetitions != 0)
         throw std::runtime_error("can't extract p-values from log: number of"
                                  " p-value is not divisible by repetitions");

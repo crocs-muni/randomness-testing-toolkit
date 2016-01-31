@@ -48,7 +48,7 @@ int main (int argc , char * argv[]) {
     // Actual functionality will be here... in time.
     try {
         std::unique_ptr<rtt::batteries::Interface> battery =
-                rtt::InterfaceFactory::createBattery(options);
+                 rtt::InterfaceFactory::createBattery(options);
         battery->runTests();
         // Processing not implemented, only throws something
         battery->processStoredResults();

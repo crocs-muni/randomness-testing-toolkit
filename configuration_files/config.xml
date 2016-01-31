@@ -7,19 +7,40 @@
     <DIEHARDER_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/dieharder/bin/dieharder</BINARY_PATH>
         <DEFAULT_OUTPUT_DIRECTORY>dieharder_out</DEFAULT_OUTPUT_DIRECTORY>
-        <DEFAULT_OPTIONS>-p 10</DEFAULT_OPTIONS>
+        <DEFAULT_PSAMPLES>10</DEFAULT_PSAMPLES>
+        <DEFAULT_ARGUMENTS>-W 0.01 -X 0.01</DEFAULT_ARGUMENTS>
         
         <TESTS_SETTINGS>
-            <SETTINGS test="0">-p 100</SETTINGS>
-            <SETTINGS test="1">-p 1000</SETTINGS>
-            <SETTINGS test="2">-p 1000</SETTINGS>
-            <SETTINGS test="3">-p 1000</SETTINGS>
-            <SETTINGS test="4">-p 1000</SETTINGS>
-            <SETTINGS test="5">-p 1000</SETTINGS>
-            <SETTINGS test="6">-p 1000</SETTINGS>
-            <SETTINGS test="7">-p 1000</SETTINGS>
-            <SETTINGS test="8">-p 1000</SETTINGS>
-            <SETTINGS test="9">-p 1000</SETTINGS>
+            <SETTINGS test="0">
+                <PSAMPLES>100</PSAMPLES>
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
+            <SETTINGS test="1">
+                <PSAMPLES>100</PSAMPLES>
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
+            <SETTINGS test="2">
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
+            <SETTINGS test="3">
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
+            <SETTINGS test="4">
+                <PSAMPLES>1000</PSAMPLES>
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
+            <SETTINGS test="5">
+                <PSAMPLES>1000</PSAMPLES>
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
+            <SETTINGS test="6">
+                <PSAMPLES>1000</PSAMPLES>
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
+            <SETTINGS test="7">
+                <PSAMPLES>1000</PSAMPLES>
+                <ARGUMENTS></ARGUMENTS>
+            </SETTINGS>
         </TESTS_SETTINGS>
     </DIEHARDER_SETTINGS>
 

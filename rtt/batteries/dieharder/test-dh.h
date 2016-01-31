@@ -13,13 +13,14 @@ extern char **environ;
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/utils.h"
+#include "rtt/options.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
 
 namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-enum class TestIndex {
+/*enum class TestIndex {
     birthdays           = 0,
     operm5              = 1,
     binaryrank1         = 2,
@@ -51,27 +52,63 @@ enum class TestIndex {
     dabfilltree         = 207,
     dabfilltree2        = 208,
     dabmonobit          = 209
-};
+};*/
 
 typedef std::vector<float> tTestPvals;
+typedef std::pair<int , std::string> tTestInfo;
 
 class Test {
 public:
-    /* Default XPATH constants for Dieharder battery */
+    /* Test info constants */
+    static const tTestInfo INFO_BIRTHDAYS;
+    static const tTestInfo INFO_OPERM5;
+    static const tTestInfo INFO_BINARYRANK1;
+    static const tTestInfo INFO_BINARYRANK2;
+    static const tTestInfo INFO_BITSTREAM;
+    static const tTestInfo INFO_OPSO;
+    static const tTestInfo INFO_OQSO;
+    static const tTestInfo INFO_DNA;
+    static const tTestInfo INFO_COUNT1SBYTE;
+    static const tTestInfo INFO_COUNT1SSTREAM;
+    static const tTestInfo INFO_PARKING;
+    static const tTestInfo INFO_MINDISTANCECIRCLE;
+    static const tTestInfo INFO_MINDISTANCESPHERE;
+    static const tTestInfo INFO_SQUEEZE;
+    static const tTestInfo INFO_SUMS;
+    static const tTestInfo INFO_RUNS;
+    static const tTestInfo INFO_CRAPS;
+    static const tTestInfo INFO_GCD;
+    static const tTestInfo INFO_MONOBIT;
+    static const tTestInfo INFO_STSRUNS;
+    static const tTestInfo INFO_SERIAL;
+    static const tTestInfo INFO_BITDIST;
+    static const tTestInfo INFO_MINDISTANCE;
+    static const tTestInfo INFO_PERMUTATIONS;
+    static const tTestInfo INFO_LAGGED;
+    static const tTestInfo INFO_KS;
+    static const tTestInfo INFO_BYTEDIST;
+    static const tTestInfo INFO_DABDCT;
+    static const tTestInfo INFO_DABFILLTREE;
+    static const tTestInfo INFO_DABFILLTREE2;
+    static const tTestInfo INFO_DABMONOBIT;
+
+    /* Default XPath constants for Dieharder battery */
     static const std::string XPATH_BINARY_PATH;
-    static const std::string XPATH_DEFAULT_OPTIONS;
+    static const std::string XPATH_DEFAULT_ARGUMENTS;
+    static const std::string XPATH_DEFAULT_PSAMPLES;
     static const std::string XPATH_TESTS_SETTINGS;
     static const std::string XPATH_ATTRIBUTE_TEST_INDEX;
+    static const std::string XPATH_TEST_ARGUMENTS;
+    static const std::string XPATH_TEST_PSAMPLES;
     /* Parent test result directory */
-    static const std::string PATH_MAIN_RESULT_DIR;
     /* Default options that are always used when starting battery */
     static const int OPTION_HEADER_FLAG;
     static const int OPTION_FILE_GENERATOR;
 
     /* Some getters for results will be probably added in time */
-    static Test getInstance(TestIndex testIndex ,
-                            TiXmlNode * cfgRoot ,
-                            const std::string & binaryDataPath);
+    static Test getInstance(int testIndex ,
+                            const CliOptions & options ,
+                            TiXmlNode * cfgRoot);
 
     bool wasExecuted() const { return executed; }
 
@@ -88,13 +125,14 @@ private:
     std::string executablePath;
     std::string binaryDataPath;
     std::vector<Setting> settings;
+    int pSampleCount;
     /* Following fields will be initialized in getInstance */
     /* to default values according to test index */
-    TestIndex testConst;
+    int testConst;
     std::string logicName;
-    int subTestsCount;
     /* Following fields will be set after calling */
     /* execute */
+    int subTestsCount;
     std::string testLog;
     std::vector<tTestPvals> results;
 

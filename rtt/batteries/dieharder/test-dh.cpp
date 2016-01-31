@@ -388,7 +388,7 @@ void Test::readPipes(int * stdout_pipe, int * stderr_pipe) {
 }
 
 void Test::extractPvalues() {
-    std::regex RE_PSAMPLE_VALUE {"\\+\\+\\+\\+(0\\.[0-9]+?)\\+\\+\\+\\+"};
+    static const std::regex RE_PSAMPLE_VALUE {"\\n\\+\\+\\+\\+(0\\.[0-9]+?)\\+\\+\\+\\+\\n"};
 
     auto begin = std::sregex_iterator(testLog.begin() , testLog.end() ,
                                       RE_PSAMPLE_VALUE);

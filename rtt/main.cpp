@@ -5,8 +5,9 @@
 //  1. Interface for stat batteries (work in progress...)
 //      1.1. Settings                               (NIST STS , Dieharder , TestU01)
 //      1.2. Executable runner                      (NIST STS , Dieharder , TestU01)
-//      1.3. Reading results from battery output    (NIST STS , Dieharder)
-//      1.4. Result processing and storing          (need database for this)
+//      1.3. Reading results from battery output    (NIST STS , Dieharder , TestU01)
+//      1.4. Log storage
+//      1.5. Result processing and storing          (need database for this)
 //  2. Logger, CMake project (?)
 //      2.1. Maybe custom exception?
 //  3. Store results into database
@@ -20,6 +21,7 @@
 //  =============================================================
 #include <iostream>
 #include <stdexcept>
+#include <cmath>
 
 #include "rtt/batteries/interfacefactory.h"
 #include "rtt/options.h"
@@ -29,25 +31,7 @@
 
 int main (int argc , char * argv[]) {
 #ifdef TESTING
-    typedef std::pair<std::string , std::string> tParam;
-
-    std::vector<tParam> params(3);
-
-    tParam par1 {"N" , "1"};
-    tParam par2 {"n" , "2000"};
-    tParam par3 {"L" , "3000"};
-    par1.second = "1000";
-    tParam empty;
-
-    if(params.at(0) == empty) {
-        params[0] = par1;
-    }
-    if(params.at(1) == empty) {
-        params[1] = par2;
-    }
-    if(params.at(1) == empty) {
-        params[1] = par3;
-    }
+    /* Sometimes, here is some code I use for testing. */
 #else
     std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
 

@@ -39,7 +39,7 @@ public:
       * @return                 converted integer
       * @throws runtime_error   string can't be converted
       */
-    static int strtoi(std::string str);
+    static int strtoi(const std::string & str);
 
     /** Converts string to float value if possible.
       * @brief strtof           String to float
@@ -48,7 +48,9 @@ public:
       * @throws runtime_error   argument is not valid
       *                         float or float is too big
       */
-    static float strtof(std::string str);
+    static float strtof(const std::string & str);
+
+    static double strtod(const std::string & str);
 
     /** Opens file, reads it into string, closes file, returns string
       * @param path                path to file

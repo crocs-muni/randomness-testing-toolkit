@@ -134,7 +134,7 @@ enum class AlphabitTI {
 typedef std::pair<std::string , std::string> tParam;
 typedef std::vector<std::string> tParNameList;
 typedef std::pair<std::string , tParNameList> tTestInfo;
-typedef std::vector<float> tTestPvals;
+typedef std::vector<double> tTestPvals;
 
 class Test {
 public:
@@ -216,7 +216,7 @@ private:
     int battery = -1;
     int testIndex = -1;
     std::string logicName;
-    std::string repetitions ;
+    int repetitions ;
     std::string executablePath;
     std::string binaryDataPath;
     /* Only used in crush batteres */
@@ -227,7 +227,12 @@ private:
     std::string bit_s;
     /* Following vars will be set after test execution */
     bool executed = false;
+    /* Number of statistics calculated in each test
+     * resulting pval count = reps*statCount */
+    int statCount;
     std::string testLog;
+    /* Each tTestPval holds results of single test and its statistics */
+    /* This is in vector - multiple test repetitions are possible */
     std::vector<tTestPvals> results;
 
     /*
@@ -264,6 +269,9 @@ private:
     void readPipes(int * stdout_pipe , int * stderr_pipe);
 
     void extractPvalues();
+
+    double convertOutToDouble(const std::string & num,
+                              const std::string & oneMinus);
 };
 
 } // namespace testu01

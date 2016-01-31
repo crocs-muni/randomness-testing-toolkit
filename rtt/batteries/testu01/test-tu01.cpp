@@ -79,11 +79,13 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     test.testIndex = testIndex;
     test.logicName = tinfo.first;
 
-    test.repetitions = getSpecificOrDefaultOpt(cfgRoot , testSettings , XPATH_DEFAULT_REPS ,
-                                               XPATH_TEST_REPS);
-    if(test.repetitions.empty())
+
+    std::string strReps = getSpecificOrDefaultOpt(cfgRoot , testSettings , XPATH_DEFAULT_REPS ,
+                                                  XPATH_TEST_REPS);
+    if(strReps.empty())
         throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                  ": default or test specific repetitions must be set");
+    test.repetitions = Utils::strtoi(strReps);
     test.executablePath = getXMLElementValue(cfgRoot , XPATH_EXECUTABLE_BINARY);
     if(test.executablePath.empty())
         throw std::runtime_error("Test " + Utils::itostr(testIndex) +
@@ -175,7 +177,6 @@ void Test::execute() {
     /* Battery successfuly finished computation */
     /* Resulting pvalues are extracted from stored battery output */
     extractPvalues();
-    std::cout << testLog << std::endl;
     /* Allowing work with results */
     executed = true;
 }
@@ -434,7 +435,8 @@ char ** Test::buildArgv(int * argc) const {
     /* Input file option */
     tmpss << "-i " << binaryDataPath << " ";
     /* Repetitions option */
-    tmpss << "-r " << repetitions << " ";
+    if(repetitions != 1)
+        tmpss << "-r " << repetitions << " ";
     /* Custom parameters option */
     if(params.size() > 0) {
         tmpss << "--params ";
@@ -450,7 +452,7 @@ char ** Test::buildArgv(int * argc) const {
     /* s */
     if(!bit_s.empty())
         tmpss << "--bit_s " << bit_s;
-    std::cout << tmpss.str() << std::endl;
+    std::cout << "Arguments: " << tmpss.str() << std::endl;
     std::vector<std::string> vecArg = Utils::split(tmpss.str() , ' ');
 
     char ** argv = new char * [vecArg.size() + 1];
@@ -464,7 +466,7 @@ char ** Test::buildArgv(int * argc) const {
 }
 
 void Test::destroyArgv(int argc, char ** argv) const {
-    for(int i = 0 ; i < argc ; i++) {
+    for(int i = 0 ; i < argc ; ++i) {
         if(argv[i]) delete[] argv[i];
     }
     delete[] argv;
@@ -489,7 +491,59 @@ void Test::readPipes(int * stdout_pipe, int * stderr_pipe) {
 }
 
 void Test::extractPvalues() {
-    std::regex RE_PVALUE {"p-value of test                       :"};
+    static const std::regex RE_PVALUE {
+        "p-value of test {23}: *?("
+        "eps|"                            /* Just "eps" */
+        "1 - eps1|"                       /* Just "1 - eps1" */
+        "0\\.\\d{2,4}|"                   /* Decimal rounded from 2 to  digits */
+        "(1 -  ?)?\\d\\.\\de-\\d{1,3}"    /* Decimal in scientific notation that can be preceeded by "1 - " */
+        ") *?(\\*\\*\\*\\*\\*)?\\n"       /* Capture ending "*****" - pvalue is suspect */
+    };
+
+    auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
+    auto end = std::sregex_iterator();
+
+    int pValCount = std::distance(begin , end);
+    if(pValCount % repetitions != 0)
+        throw std::runtime_error("can't extract p-values from log: number of"
+                                 " p-value is not divisible by repetitions");
+    statCount = pValCount / repetitions;
+
+    tTestPvals pValues;
+
+    for(; begin != end ;) {
+        for(int i = 0 ; i < statCount ; ++i) {
+            std::smatch match = *begin;
+            pValues.push_back(convertOutToDouble(match[1].str() ,
+                                                 match[2].str()));
+            ++begin;
+        }
+        results.push_back(std::move(pValues));
+        pValues.clear();
+    }
+}
+
+double Test::convertOutToDouble(const std::string & num,
+                                const std::string & oneMinus) {
+    if(num == "eps") {
+        return 1.0E-300;
+    } else if(num == "1 - eps1") {
+        return 1 - 1.0E-15;
+    } else if(num.find('e') == std::string::npos) {
+        return Utils::strtod(num);
+    } else {
+        std::string tmp = num;
+        tmp.erase(0 , oneMinus.length());
+        std::vector<std::string> splitted = Utils::split(tmp , 'e');
+        double base = Utils::strtod(splitted.at(0));
+        double exp = Utils::strtod(splitted.at(1));
+        base *= pow(10.0 , exp);
+        if(oneMinus.empty()) {
+            return base;
+        } else {
+            return 1 - base;
+        }
+    }
 }
 
 } // namespace testu01

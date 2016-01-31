@@ -10,8 +10,8 @@ std::string Utils::itostr(int i , int width) {
     return ss.str();
 }
 
-int Utils::strtoi(std::string str) {
-    static const std::regex RE_INTEGER { "^[0-9]+?$" };
+int Utils::strtoi(const std::string & str) {
+    static const std::regex RE_INTEGER { "^-?[0-9]+?$" };
     if(!std::regex_match(str.begin() , str.end() , RE_INTEGER)) {
         throw std::runtime_error("can't convert string \"" + str +"\" into integer: " +
                                  "string contains invalid characters");
@@ -26,8 +26,8 @@ int Utils::strtoi(std::string str) {
     }
 }
 
-float Utils::strtof(std::string str) {
-    static const std::regex RE_FLOAT { "^[0-9]+?(:?\\.[0-9]+?)?$" };
+float Utils::strtof(const std::string & str) {
+    static const std::regex RE_FLOAT { "^-?[0-9]+?(:?\\.[0-9]+?)?$" };
     if(!std::regex_match(str.begin() , str.end() , RE_FLOAT)) {
         throw std::runtime_error("can't convert string \"" + str + "\" into float: " +
                                  "string contain invalid characters");
@@ -38,6 +38,22 @@ float Utils::strtof(std::string str) {
     } catch (std::out_of_range) {
         /* invalid_argument won't be thrown, regex prevents that */
         throw std::runtime_error("can't convert string \"" + str + "\" into float: " +
+                                 "value represented by string is too big");
+    }
+}
+
+double Utils::strtod(const std::string & str) {
+    static const std::regex RE_FLOAT { "^-?[0-9]+?(:?\\.[0-9]+?)?$" };
+    if(!std::regex_match(str.begin() , str.end() , RE_FLOAT)) {
+        throw std::runtime_error("can't convert string \"" + str + "\" into double: " +
+                                 "string contain invalid characters");
+    }
+    try {
+        float result = std::stod(str);
+        return result;
+    } catch (std::out_of_range) {
+        /* invalid_argument won't be thrown, regex prevents that */
+        throw std::runtime_error("can't convert string \"" + str + "\" into double: " +
                                  "value represented by string is too big");
     }
 }

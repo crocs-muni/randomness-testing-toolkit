@@ -103,7 +103,7 @@
     <TESTU01_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/TestU01/build/release/TestU01</BINARY_PATH>
         <DEFAULT_OUTPUT_DIRECTORY>testu01_out</DEFAULT_OUTPUT_DIRECTORY>
-        <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
+        <DEFAULT_REPETITIONS>4</DEFAULT_REPETITIONS>
         <DEFAULT_BIT_NB>4000000000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
@@ -113,7 +113,7 @@
                 <REPETITIONS>3</REPETITIONS>
                 <PARAMS>
                     <PAR name="N">1</PAR>           <!-- N = 1 -->
-                    <PAR name="n">6000000</PAR>     <!-- n = 5 * 10^6 -->
+                    <PAR name="n">5000000</PAR>     <!-- n = 5 * 10^6 -->
                     <PAR name="r">0</PAR>           <!-- r = 0 -->
                     <PAR name="d">1073741824</PAR>  <!-- d = 2^30 -->
                     <PAR name="t">2</PAR>           <!-- t = 2 -->

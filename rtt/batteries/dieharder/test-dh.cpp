@@ -88,7 +88,7 @@ Test Test::getInstance(int testIndex ,
                                  "in Dieharder battery: " + Utils::itostr(testIndex));
 
     test.logicName = testInfo.second;
-    test.testConst = testIndex;
+    test.testIndex = testIndex;
 
     test.binaryDataPath = options.getBinFilePath();
     if(test.binaryDataPath.empty())
@@ -139,9 +139,16 @@ Test Test::getInstance(int testIndex ,
     return test;
 }
 
+void Test::appendTestLog(std::string & batteryLog) {
+    if(!executed)
+        throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
+                                 "executed, can't provide test log");
+    batteryLog.append(testLog);
+}
+
 void Test::execute() {
     std::cout << "Starting execution of Dieharder test "
-              << static_cast<int>(testConst) << std::endl;
+              << static_cast<int>(testIndex) << std::endl;
 
     /* Creating pipes for redirecting battery output */
     int stdout_pipe[2];
@@ -221,7 +228,7 @@ char ** Test::buildArgv(int * argc) const {
     /* Set psample count */
     tmpss << "-p " << pSampleCount << " ";
     /* Specify test */
-    tmpss << "-d " << testConst << " ";
+    tmpss << "-d " << testIndex << " ";
     /* Specify header flag */
     tmpss << "-D " << OPTION_HEADER_FLAG << " ";
     /* Specify binary file generator */

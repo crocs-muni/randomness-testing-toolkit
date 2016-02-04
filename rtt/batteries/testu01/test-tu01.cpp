@@ -130,6 +130,13 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     return std::move(test);
 }
 
+void Test::appendTestLog(std::string & batteryLog) {
+    if(!executed)
+        throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
+                                 "executed, can't provide test log");
+    batteryLog.append(testLog);
+}
+
 void Test::execute() {
     std::cout << "Starting execution of TestU01 test " << testIndex
               << " in battery " << battery << std::endl;
@@ -177,6 +184,8 @@ void Test::execute() {
     /* Battery successfuly finished computation */
     /* Resulting pvalues are extracted from stored battery output */
     extractPvalues();
+    /* Storing battery output textfile */
+
     /* Allowing work with results */
     executed = true;
 }

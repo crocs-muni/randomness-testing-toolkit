@@ -20,40 +20,6 @@ namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-/*enum class TestIndex {
-    birthdays           = 0,
-    operm5              = 1,
-    binaryrank1         = 2,
-    binaryrank2         = 3,
-    bitstream           = 4,
-    opso                = 5,
-    oqso                = 6,
-    dna                 = 7,
-    count1sbyte         = 8,
-    count1sstream       = 9,
-    parking             = 10,
-    mindistancecircle   = 11,
-    mindistancesphere   = 12,
-    squeeze             = 13,
-    sums                = 14,
-    runs                = 15,
-    craps               = 16,
-    gcd                 = 17,
-    monobit             = 100,
-    stsruns             = 101,
-    serial              = 102,
-    bitdist             = 200,
-    mindistance         = 201,
-    permutations        = 202,
-    lagged              = 203,
-    ks                  = 204,
-    bytedist            = 205,
-    dabdct              = 206,
-    dabfilltree         = 207,
-    dabfilltree2        = 208,
-    dabmonobit          = 209
-};*/
-
 typedef std::vector<float> tTestPvals;
 typedef std::pair<int , std::string> tTestInfo;
 
@@ -105,10 +71,16 @@ public:
     static const int OPTION_HEADER_FLAG;
     static const int OPTION_FILE_GENERATOR;
 
-    /* Some getters for results will be probably added in time */
+    /*
+    ======================
+    *** Public methods ***
+    ======================
+    */
     static Test getInstance(int testIndex ,
                             const CliOptions & options ,
                             TiXmlNode * cfgRoot);
+
+    void appendTestLog(std::string & batteryLog);
 
     bool wasExecuted() const { return executed; }
 
@@ -128,7 +100,7 @@ private:
     int pSampleCount;
     /* Following fields will be initialized in getInstance */
     /* to default values according to test index */
-    int testConst;
+    int testIndex;
     std::string logicName;
     /* Following fields will be set after calling */
     /* execute */

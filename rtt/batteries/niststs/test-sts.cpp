@@ -142,7 +142,7 @@ Test Test::getInstance(TestIndex testIndex,
                                              Utils::itostr(static_cast<int>(testIndex)));
     }
     }
-    test.testConst = testIndex;
+    test.testIndex = testIndex;
     /* Getting default values from XML */
     test.binaryDataPath = binaryDataPath;
     if(test.binaryDataPath.empty())
@@ -198,8 +198,16 @@ Test Test::getInstance(TestIndex testIndex,
     return test;
 }
 
+void Test::appendTestLog(std::string & batteryLog) {
+    if(!executed)
+        throw std::runtime_error("test " + Utils::itostr(static_cast<int>(testIndex)) + ""
+                                 " wasn't yet executed, can't provide test log");
+    batteryLog.append(outputLog);
+    batteryLog.append(testLog);
+}
+
 void Test::execute() {
-    std::cout << "Executing test " << static_cast<int>(testConst) << std::endl;
+    std::cout << "Executing test " << static_cast<int>(testIndex) << std::endl;
     int stdin_pipe[2];
     int stdout_pipe[2];
     int stderr_pipe[2];
@@ -306,7 +314,7 @@ std::string Test::buildInput() const {
     inputSequence << "0 ";
     /* Specifying which test I want to execute */
     std::string tmp(15 , '0');
-    tmp[static_cast<int>(testConst) - 1] = '1';
+    tmp[static_cast<int>(testIndex) - 1] = '1';
     inputSequence << tmp << " ";
     /* Setting blocksize of a test */
     /* If it's not possible, this setting is ommited */
@@ -342,11 +350,11 @@ void Test::readPipes(int *stdout_pipe, int *stderr_pipe) {
     for( ; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
         if (pollVector[0].revents&POLLIN) {
             bytes_read = read(stdout_pipe[0] , &buffer[0] , buffer.length());
-            batteryLog.append(buffer , 0 , bytes_read);
+            outputLog.append(buffer , 0 , bytes_read);
         }
         else if (pollVector[1].revents&POLLIN) {
             bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
-            batteryLog.append(buffer , 0 , bytes_read);
+            outputLog.append(buffer , 0 , bytes_read);
         }
         else break; /* Reading done */
     }
@@ -357,27 +365,30 @@ void Test::parseStoreResults() {
 
     if(subTestCount == 1) {
         /* Only file results.txt will be processed */
-        testPvals pVals = readPvals(resultSubDir + "results.txt");
+        tTestPvals pVals = readPvals(resultSubDir + "results.txt");
         results.push_back(pVals);
     } else {
         /* Multiple dataX.txt files will be processed */
         std::stringstream fName;
+        tTestPvals pVals;
         for(int i = 1 ; i < subTestCount ; ++i) {
             fName << resultSubDir << "data" << i << ".txt";
-            testPvals pVals = readPvals(fName.str());
+            pVals = std::move(readPvals(fName.str()));
             results.push_back(pVals);
+            pVals.clear();
+            fName.str("");fName.clear();
         }
     }
 }
 
-testPvals Test::readPvals(const std::string & fileName) {
+tTestPvals Test::readPvals(const std::string & fileName) {
     std::ifstream pValFile(fileName);
     if(!pValFile.is_open())
             throw std::runtime_error("can't open file: " + fileName);
 
     std::string strPval;
     float pVal;
-    testPvals vecPval;
+    tTestPvals vecPval;
 
     /* File is read line by line */
     /* Each line should be one p-value */

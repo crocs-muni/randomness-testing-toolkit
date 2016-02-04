@@ -99,6 +99,16 @@ std::string Utils::getDate() {
     return std::string(buffer);
 }
 
+std::string Utils::getDateTime() {
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(buffer , 80 , "%Y%m%d%H%M%S" , timeinfo);
+    return buffer;
+}
+
 std::vector<std::string> Utils::split(const std::string & toSplit , char separator) {
     std::vector<std::string> result;
     std::string temp;
@@ -118,6 +128,24 @@ void Utils::fixNewlines(std::string & str) {
     std::string::size_type pos = 0;
     while ((pos = str.find("\r\n", pos)) != std::string::npos) {
         str.replace(pos, 2, "\n"); //2 is length of \r\n
+    }
+}
+
+void Utils::createDirectory(const std::string & path , int access) {
+    std::vector<std::string> dirs = split(path , '/');
+    if(dirs.empty())
+        return;
+
+    std::string current;
+
+    for(const std::string & dir : dirs) {
+        current.append(dir + "/");
+        if(mkdir(current.c_str() , access) != 0) {
+            if(errno != EEXIST)
+                throw std::runtime_error("an error number " + itostr(errno) + " "
+                                         "occurred when creating directory: " + current);
+        }
+
     }
 }
 

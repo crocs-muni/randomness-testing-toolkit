@@ -93,6 +93,12 @@ public:
       */
     static std::string getDate();
 
+    /**
+     * @brief getDateTime Returns datetime in format yymmddhhmmss.
+     * @return              datetime
+     */
+    static std::string getDateTime();
+
     /** Splits string into shorter strings, separated by separator
       * @param                 toSplit string to be splitted
       * @return                vector of strings
@@ -107,15 +113,14 @@ public:
     */
     static void fixNewlines(std::string & str);
 
-    /** Creates directory.
-      * Permissions 0777 under Linux.
-      * @param path            absolute or relative
-      */
-    /*static void createDirectory(const std::string & path) {
-        if(mkdir(path.c_str() , 0777) != 0) {
-            if(errno != EEXIST) { throw std::runtime_error("error when creating directory: " + path); }
-        }
-    }*/
+    /**
+     * @brief createDirectory   Creates recursive directory structure.
+     *                          If some dirs already exist doesn't report.
+     *                          Any other failure is reported. Only for Linux
+     * @param path              Path to final directory, separator is '/'
+     * @param access            Access rights for new dirs, default is 0755
+     */
+    static void createDirectory(const std::string & path, int access = 0775);
 
     /** Simple insert sort algorithm, sorts vector of integer in ascending order,
       * after sorting kills duplicities.

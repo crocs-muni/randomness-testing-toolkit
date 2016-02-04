@@ -8,6 +8,7 @@
 #include <string>
 #include <string.h>
 #include <vector>
+#include <sstream>
 
 extern char **environ;
 
@@ -36,7 +37,7 @@ enum class TestIndex {
     linearComplexity
 };
 
-typedef std::vector<float> testPvals;
+typedef std::vector<float> tTestPvals;
 
 class Test {
 public:
@@ -53,10 +54,17 @@ public:
     /* Parent test result directory */
     static const std::string PATH_MAIN_RESULT_DIR;
 
+    /*
+    ======================
+    *** Public methods ***
+    ======================
+    */
     /* Some getters for results will be probably added in time */
     static Test getInstance(TestIndex testIndex ,
                             TiXmlNode * cfgRoot ,
                             const std::string & binaryDataPath);
+
+    void appendTestLog(std::string & outputLog);
 
     bool wasExecuted() const { return executed; }
 
@@ -78,16 +86,16 @@ private:
     std::vector<int> blockLen;
     /* Following fields will be initialized in getInstance */
     /* to default values according to test index */
-    TestIndex testConst;
+    TestIndex testIndex;
     std::string logicName;
     std::string resultSubDir;
     int subTestCount;
     bool adjustableBlockLen;
     /* Following fileds will be set after calling */
     /* execute */
-    std::string batteryLog;
+    std::string outputLog;
     std::string testLog;
-    std::vector<testPvals> results;
+    std::vector<tTestPvals> results;
 
     /*
     ===============
@@ -102,7 +110,7 @@ private:
     std::string buildInput() const;
     void readPipes(int * stdout_pipe , int * stderr_pipe);
     void parseStoreResults();
-    testPvals readPvals(const std::string &fileName);
+    tTestPvals readPvals(const std::string &fileName);
 };
 
 } // namespace niststs

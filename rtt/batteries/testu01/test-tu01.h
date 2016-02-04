@@ -204,6 +204,8 @@ public:
                             const CliOptions & options ,
                             TiXmlNode * cfgRoot);
 
+    void appendTestLog(std::string & batteryLog);
+
     bool wasExecuted() const { return executed; }
 
     void execute();
@@ -269,6 +271,8 @@ private:
     void readPipes(int * stdout_pipe , int * stderr_pipe);
 
     void extractPvalues();
+
+    void saveTestLogToFile();
 
     double convertOutToDouble(const std::string & num,
                               const std::string & oneMinus);

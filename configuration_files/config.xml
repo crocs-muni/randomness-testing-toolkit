@@ -2,7 +2,14 @@
 <!-- This is sample testing configuration file for
      randomness testing toolkit. -->
 <RANDOMNESS_TESTING_TOOLKIT>
-    <TOOLKIT_SETTINGS>empty</TOOLKIT_SETTINGS>
+    <TOOLKIT_SETTINGS>
+        <LOGGER>
+            <MAIN_DIR>logs/</MAIN_DIR>
+            <DIEHARDER_DIR>logs/dieharder/</DIEHARDER_DIR>
+            <NIST_STS_DIR>logs/niststs/</NIST_STS_DIR>
+            <TESTU01_DIR>logs/testu01</TESTU01_DIR>
+        </LOGGER>
+    </TOOLKIT_SETTINGS>
 
     <DIEHARDER_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/dieharder/bin/dieharder</BINARY_PATH>
@@ -12,11 +19,11 @@
         
         <TESTS_SETTINGS>
             <SETTINGS test="0">
-                <PSAMPLES>100</PSAMPLES>
+                <PSAMPLES>10</PSAMPLES>
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="1">
-                <PSAMPLES>100</PSAMPLES>
+                <PSAMPLES>10</PSAMPLES>
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="2">
@@ -26,19 +33,19 @@
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="4">
-                <PSAMPLES>1000</PSAMPLES>
+                <!-- <PSAMPLES>1000</PSAMPLES> -->
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="5">
-                <PSAMPLES>1000</PSAMPLES>
+                <!-- <PSAMPLES>1000</PSAMPLES> -->
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="6">
-                <PSAMPLES>1000</PSAMPLES>
+                <!-- <PSAMPLES>1000</PSAMPLES> -->
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="7">
-                <PSAMPLES>1000</PSAMPLES>
+                <!-- <PSAMPLES>1000</PSAMPLES> -->
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
         </TESTS_SETTINGS>
@@ -124,7 +131,7 @@
     <TESTU01_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/TestU01/build/release/TestU01</BINARY_PATH>
         <DEFAULT_OUTPUT_DIRECTORY>testu01_out</DEFAULT_OUTPUT_DIRECTORY>
-        <DEFAULT_REPETITIONS>4</DEFAULT_REPETITIONS>
+        <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
         <DEFAULT_BIT_NB>4000000000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 

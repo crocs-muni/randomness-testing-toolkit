@@ -6,7 +6,7 @@
 //      1.1. Settings                               (NIST STS , Dieharder , TestU01)
 //      1.2. Executable runner                      (NIST STS , Dieharder , TestU01)
 //      1.3. Reading results from battery output    (NIST STS , Dieharder , TestU01)
-//      1.4. Log storage
+//      1.4. Log storage - battery and run output
 //      1.5. Result processing and storing          (need database for this)
 //  2. Logger, CMake project (?)
 //      2.1. Maybe custom exception?

@@ -2,20 +2,22 @@
 //  *************************** TODO! ***************************
 //  =============================================================
 //  (It's important to have priorities!)
-//  1. Interface for stat batteries (work in progress...)
-//      1.1. Settings                               (NIST STS , Dieharder , TestU01)
-//      1.2. Executable runner                      (NIST STS , Dieharder , TestU01)
-//      1.3. Reading results from battery output    (NIST STS , Dieharder , TestU01)
-//      1.4. Log storage - battery and run output
-//      1.5. Result processing and storing          (need database for this)
-//  2. Logger, CMake project (?)
-//      2.1. Maybe custom exception?
-//  3. Store results into database
+//  1. Interface for stat batteries                 (NIST STS , Dieharder , TestU01)
+//      1.1. Settings                               (Ok)
+//      1.2. Executable runner                      (Ok)
+//      1.3. Reading results from battery output    (Ok)
+//      1.4. Log storage - battery and run output   (Ok)
+//  2. Storing processed results
+//      2.1. Output Interface                       (Ok)
+//      2.2. Into file structure                    (Work in progress)
+//      2.3. Into database
+//  3. Logger, CMake project (?)
+//      3.1. Maybe custom exception?
 //  4. ???
-//      .
-//      .
-//      .
-//  5. Profit! (and write documentation maybe)
+//  .
+//  .
+//  .
+//  5. Profit! (and maybe write documentation)
 //  =============================================================
 //  *************************************************************
 //  =============================================================
@@ -23,19 +25,20 @@
 #include <stdexcept>
 #include <cmath>
 
-#include "rtt/batteries/interfacefactory.h"
+#include "rtt/batteries/interfacefactory-batt.h"
 #include "rtt/options.h"
 #include "rtt/version.h"
 
 //#define TESTING
 
+using namespace rtt;
+
 int main (int argc , char * argv[]) {
 #ifdef TESTING
-    /* Sometimes, here is some code I use for testing. */
 #else
     std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
 
-    rtt::CliOptions options;
+    CliOptions options;
     try {
         options.init(argc , argv);
     }
@@ -45,12 +48,11 @@ int main (int argc , char * argv[]) {
         return 0;
     }
 
-    // Actual functionality will be here... in time.
+    /* Actual functionality will be here... in time. */
     try {
-        std::unique_ptr<rtt::batteries::Interface> battery =
-                 rtt::InterfaceFactory::createBattery(options);
+        std::unique_ptr<batteries::Interface> battery =
+                 batteries::InterfaceFactory::createBattery(options);
         battery->runTests();
-        // Processing not implemented, only throws something
         battery->processStoredResults();
     } catch(std::runtime_error ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;

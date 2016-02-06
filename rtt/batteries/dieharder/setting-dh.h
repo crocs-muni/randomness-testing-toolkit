@@ -17,6 +17,13 @@ public:
                                const std::string & value);
 
     void getConsoleInput(std::ostream & out) const;
+
+    std::string getLogicName() const;
+
+    std::string getArgument() const;
+
+    std::string getArgumentValue() const;
+
 private:
     /*
     =================

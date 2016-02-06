@@ -3,8 +3,9 @@
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/options.h"
-#include "rtt/batteries/interface.h"
+#include "rtt/batteries/interface-batt.h"
 #include "rtt/batteries/testu01/test-tu01.h"
+#include "rtt/output/interfacefactory-out.h"
 
 namespace rtt {
 namespace batteries {
@@ -28,6 +29,7 @@ private:
     */
     /* After test execution, log of battery run will be stored in logFileName */
     std::string logFileName;
+    std::unique_ptr<output::Interface> storage;
     /* Test class keeps track of individual test logs, results and such */
     /* Also executes tests */
     std::vector<Test> tests;

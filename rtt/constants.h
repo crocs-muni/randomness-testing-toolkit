@@ -2,13 +2,16 @@
 #define RTT_CONSTANTS_H
 
 #include <string>
+#include <stdexcept>
+
+#include "rtt/utils.h"
 
 namespace rtt {
 
 class Constants {
 public:
     ///////////////////////////////////////////////
-    /*********Toolkit global constants************/
+    /******** Toolkit global constants ***********/
     ///////////////////////////////////////////////
 
     /* Statistical batteries constants */
@@ -23,6 +26,12 @@ public:
 
     /* Default files locations */
     static const std::string FILE_DEFAULT_CFG_PATH;
+
+
+    ///////////////////////////////////////////////
+    /********* Toolkit global methods ************/
+    ///////////////////////////////////////////////
+    static std::string batteryToString(int batteryConstant);
 };
 
 } // namespace rtt

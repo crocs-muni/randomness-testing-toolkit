@@ -198,6 +198,26 @@ void Test::execute() {
     executed = true;
 }
 
+std::string Test::getLogicName() const {
+    return logicName;
+}
+
+std::vector<std::string> Test::getSettings() const {
+    std::stringstream parameters;
+    parameters << "p-sample count: " << pSampleCount << std::endl;
+    for(const Setting & setting : settings)
+        parameters << setting.getLogicName() << ": "
+                   << setting.getArgumentValue() << std::endl;
+    return Utils::split(parameters.str() , '\n');
+}
+
+std::vector<tTestPvals> Test::getResults() const {
+    if(!executed)
+        throw std::runtime_error("can't return results before execution of test");
+
+    return results;
+}
+
 /*
                      __                       __
                     |  \                     |  \
@@ -295,7 +315,7 @@ void Test::extractPvalues() {
     for(int subTestIndex = 0 ; subTestIndex < subTestsCount ; ++subTestIndex) {
         for(int i = 0 ; i < pSampleCount ; ++i) {
             std::smatch match = *begin;
-            pSamples.push_back(Utils::strtof(match[1].str()));
+            pSamples.push_back(Utils::strtod(match[1].str()));
             ++begin;
         }
         results.push_back(std::move(pSamples));

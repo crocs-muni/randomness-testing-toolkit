@@ -267,6 +267,27 @@ void Test::execute() {
     executed = true;
 }
 
+std::string Test::getLogicName() const {
+    return logicName;
+}
+
+std::vector<std::string> Test::getSettings() const {
+    std::stringstream parameters;
+    parameters << "Stream size: " << streamSize << std::endl;
+    parameters << "Stream count: " << streamCount << std::endl;
+    if(!blockLen.empty() && adjustableBlockLen)
+        parameters << "Block length: " << blockLen.at(0);
+
+    return Utils::split(parameters.str() , '\n');
+}
+
+std::vector<tTestPvals> Test::getResults() const {
+    if(!executed)
+        throw std::runtime_error("can't return results before execution of test");
+
+    return results;
+}
+
 /*
                      __                       __
                     |  \                     |  \
@@ -371,7 +392,7 @@ void Test::parseStoreResults() {
         /* Multiple dataX.txt files will be processed */
         std::stringstream fName;
         tTestPvals pVals;
-        for(int i = 1 ; i < subTestCount ; ++i) {
+        for(int i = 1 ; i <= subTestCount ; ++i) {
             fName << resultSubDir << "data" << i << ".txt";
             pVals = std::move(readPvals(fName.str()));
             results.push_back(pVals);
@@ -393,11 +414,13 @@ tTestPvals Test::readPvals(const std::string & fileName) {
     /* File is read line by line */
     /* Each line should be one p-value */
     while(std::getline(pValFile , strPval)) {
-        pVal = Utils::strtof(strPval);
+        pVal = Utils::strtod(strPval);
         if(pVal < 0 || pVal > 1)
             throw std::runtime_error("file: " + fileName + " contains p-value"
                                      "that is not in <0,1> interval");
-        vecPval.push_back(pVal);
+        if(pVal > 0) /* This silly condition is here for random excursions test */
+                     /* Because when you can't apply test it is feasible to give 0 as answer *eyeroll* */
+            vecPval.push_back(pVal);
     }
     return vecPval;
 }

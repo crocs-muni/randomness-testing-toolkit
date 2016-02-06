@@ -20,7 +20,7 @@ namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-typedef std::vector<float> tTestPvals;
+typedef std::vector<double> tTestPvals;
 typedef std::pair<int , std::string> tTestInfo;
 
 class Test {
@@ -85,6 +85,13 @@ public:
     bool wasExecuted() const { return executed; }
 
     void execute();
+
+    std::string getLogicName() const;
+
+    std::vector<std::string> getSettings() const;
+
+    std::vector<tTestPvals> getResults() const;
+
 private:
     /*
     =================

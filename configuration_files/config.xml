@@ -3,12 +3,32 @@
      randomness testing toolkit. -->
 <RANDOMNESS_TESTING_TOOLKIT>
     <TOOLKIT_SETTINGS>
+    
         <LOGGER>
             <MAIN_DIR>logs/</MAIN_DIR>
             <DIEHARDER_DIR>logs/dieharder/</DIEHARDER_DIR>
             <NIST_STS_DIR>logs/niststs/</NIST_STS_DIR>
             <TESTU01_DIR>logs/testu01</TESTU01_DIR>
         </LOGGER>
+        
+        <OUTPUT>
+        
+            <FILE>
+                <DIEHARDER_DIR>reports/dieharder/</DIEHARDER_DIR>
+                <NIST_STS_DIR>reports/niststs/</NIST_STS_DIR>
+                
+                <TU01_SMALLCRUSH_DIR>reports/testu01/scrush/</TU01_SMALLCRUSH_DIR>
+                <TU01_CRUSH_DIR>reports/testu01/crush/</TU01_CRUSH_DIR>
+                <TU01_BIGCRUSH_DIR>reports/testu01/bcrush/</TU01_BIGCRUSH_DIR>
+                <TU01_RABBIT_DIR>reports/testu01/rabbit/</TU01_RABBIT_DIR>
+                <TU01_ALPHABIT_DIR>reports/testu01/alphabit/</TU01_ALPHABIT_DIR>
+            </FILE>
+        
+            <DATABASE>
+                <SOMETHING>nothing</SOMETHING>    
+            </DATABASE>
+        
+        </OUTPUT>
     </TOOLKIT_SETTINGS>
 
     <DIEHARDER_SETTINGS>
@@ -49,6 +69,7 @@
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
         </TESTS_SETTINGS>
+        
     </DIEHARDER_SETTINGS>
 
     <NIST_STS_SETTINGS>
@@ -131,14 +152,14 @@
     <TESTU01_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/TestU01/build/release/TestU01</BINARY_PATH>
         <DEFAULT_OUTPUT_DIRECTORY>testu01_out</DEFAULT_OUTPUT_DIRECTORY>
-        <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
+        <DEFAULT_REPETITIONS>3</DEFAULT_REPETITIONS>
         <DEFAULT_BIT_NB>4000000000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
         
         <SMALL_CRUSH_SETTINGS>
             <SETTINGS test="1">                     <!-- smarsa_BirthdaySpacings -->
-                <REPETITIONS>3</REPETITIONS>
+                <REPETITIONS>1</REPETITIONS>
                 <PARAMS>
                     <PAR name="N">1</PAR>           <!-- N = 1 -->
                     <PAR name="n">5000000</PAR>     <!-- n = 5 * 10^6 -->

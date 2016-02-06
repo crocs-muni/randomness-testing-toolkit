@@ -37,7 +37,7 @@ enum class TestIndex {
     linearComplexity
 };
 
-typedef std::vector<float> tTestPvals;
+typedef std::vector<double> tTestPvals;
 
 class Test {
 public:
@@ -69,6 +69,12 @@ public:
     bool wasExecuted() const { return executed; }
 
     void execute();
+
+    std::string getLogicName() const;
+
+    std::vector<std::string> getSettings() const;
+
+    std::vector<tTestPvals> getResults() const;
 
 private:
     /*
@@ -105,11 +111,17 @@ private:
     /* I don't want to allow existence of Test objects */
     /* without initialization that is in getInstance */
     Test() {}
+
     char ** buildArgv(int * argc) const;
+
     void destroyArgv(int argc , char ** argv) const;
+
     std::string buildInput() const;
+
     void readPipes(int * stdout_pipe , int * stderr_pipe);
+
     void parseStoreResults();
+
     tTestPvals readPvals(const std::string &fileName);
 };
 

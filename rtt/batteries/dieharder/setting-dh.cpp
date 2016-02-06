@@ -39,6 +39,7 @@ Setting Setting::getInstance(const std::string & arg,
         throw std::runtime_error("option " + arg + " can't be set by user");
         setting.logicName = "Help";
     } else if (arg == "-k") {
+        throw std::runtime_error("option " + arg + " can't be set by user");
         setting.logicName = "KS flag";
         if(value != "0" && value != "1" && value != "2" && value != "3")
             throw std::runtime_error("invalid value in " + arg + " option: " + value);
@@ -108,6 +109,18 @@ Setting Setting::getInstance(const std::string & arg,
 void Setting::getConsoleInput(std::ostream & out) const {
     out << argument << " " << argumentValue;
 }
+std::string Setting::getLogicName() const {
+    return logicName;
+}
+std::string Setting::getArgument() const {
+    return argument;
+}
+std::string Setting::getArgumentValue() const {
+    return argumentValue;
+}
+
+
+
 
 } // namespace dieharder
 } // namespace batteries

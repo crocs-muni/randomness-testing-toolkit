@@ -209,6 +209,15 @@ public:
     bool wasExecuted() const { return executed; }
 
     void execute();
+
+    std::string getLogicName() const;
+
+    std::vector<std::string> getParameters() const;
+
+    std::vector<std::string> getStatistics() const;
+
+    std::vector<tTestPvals> getResults() const;
+
 private:
     /*
     =================
@@ -218,7 +227,7 @@ private:
     int battery = -1;
     int testIndex = -1;
     std::string logicName;
-    int repetitions ;
+    int repetitions;
     std::string executablePath;
     std::string binaryDataPath;
     /* Only used in crush batteres */

@@ -27,7 +27,8 @@ private:
     *** Variables ***
     =================
     */
-    std::string logFileName;
+    time_t creationTime;
+    std::string logFilePath;
     std::unique_ptr<output::Interface> storage;
     /* Test class keeps track of individual test logs, results and such */
     /* Also executes tests */

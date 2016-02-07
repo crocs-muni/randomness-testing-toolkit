@@ -8,26 +8,21 @@ const std::string Battery::XPATH_LOG_DIRECTORY = "TOOLKIT_SETTINGS/LOGGER/DIEHAR
 
 std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     std::unique_ptr<Battery> battery (new Battery());
+    battery->creationTime = Utils::getRawTime();
 
     TiXmlNode * cfgRoot = NULL;
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
-    std::string logFileName;
-    logFileName = getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY);
-    if(logFileName.empty())
-        throw std::runtime_error("empty tag: " + XPATH_LOG_DIRECTORY);
-
-    std::string binFileName =
-            Utils::getLastItemInPath(options.getBinFilePath());
-    std::string datetime = Utils::getDateTime();
-    if(logFileName.back() != '/')
-        logFileName.append("/");
-    logFileName.append(datetime + "-" + binFileName + ".log");
-    battery->logFileName = std::move(logFileName);
-
+    /* Getting path to log file */
+    battery->logFilePath = std::move(
+                createLogFilePath(
+                    battery->creationTime,
+                    getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
+                    options.getBinFilePath()));
+    /* Creating storage for results */
     battery->storage = output::InterfaceFactory::createOutput(cfgRoot ,
                                                               options ,
-                                                              datetime);
+                                                              battery->creationTime);
 
     for(int i : options.getTestConsts()) {
         Test test = Test::getInstance(i , options , cfgRoot);
@@ -56,8 +51,8 @@ void Battery::processStoredResults() {
     for(auto & i : tests)
         i.appendTestLog(batteryLog);
 
-    Utils::createDirectory(Utils::getPathWithoutLastItem(logFileName));
-    Utils::saveStringToFile(logFileName , batteryLog);
+    Utils::createDirectory(Utils::getPathWithoutLastItem(logFilePath));
+    Utils::saveStringToFile(logFilePath , batteryLog);
 
     /* Result storage */
     for(const Test & test : tests) {

@@ -5,146 +5,67 @@ namespace batteries {
 namespace niststs {
 
 /* Constant definition */
-const std::string Test::XPATH_BINARY_PATH =
-        "NIST_STS_SETTINGS/BINARY_PATH";
-const std::string Test::XPATH_OUTPUT_DIRECTORY =
-        "NIST_STS_SETTINGS/DEFAULT_OUTPUT_DIRECTORY";
-const std::string Test::XPATH_STREAM_SIZE_DEFAULT =
-        "NIST_STS_SETTINGS/DEFAULT_STREAM_SIZE";
-const std::string Test::XPATH_STREAM_COUNT_DEFAULT =
-        "NIST_STS_SETTINGS/DEFAULT_STREAM_COUNT";
-const std::string Test::XPATH_TESTS_SETTINGS =
-        "NIST_STS_SETTINGS/TESTS_SETTINGS";
-const std::string Test::XPATH_ATTRIBUTE_TEST_INDEX =
-        "test";
-const std::string Test::XPATH_NODE_STREAM_SIZE =
-        "STREAM_SIZE";
-const std::string Test::XPATH_NODE_STREAM_COUNT =
-        "STREAM_COUNT";
-const std::string Test::XPATH_NODE_BLOCK_LENGTH =
-        "BLOCK_LENGTH";
-const std::string Test::PATH_MAIN_RESULT_DIR =
-        "experiments/AlgorithmTesting/";
+const std::string Test::XPATH_BINARY_PATH           = "NIST_STS_SETTINGS/BINARY_PATH";
+const std::string Test::XPATH_OUTPUT_DIRECTORY      = "NIST_STS_SETTINGS/DEFAULT_OUTPUT_DIRECTORY";
+const std::string Test::XPATH_DEFAULT_STREAM_SIZE   = "NIST_STS_SETTINGS/DEFAULT_STREAM_SIZE";
+const std::string Test::XPATH_DEFAULT_STREAM_COUNT  = "NIST_STS_SETTINGS/DEFAULT_STREAM_COUNT";
+const std::string Test::XPATH_TEST_STREAM_SIZE      = "STREAM_SIZE";
+const std::string Test::XPATH_TEST_STREAM_COUNT     = "STREAM_COUNT";
+const std::string Test::XPATH_TEST_BLOCK_LENGTH     = "BLOCK_LENGTH";
+const std::string Test::XPATH_TESTS_SETTINGS        = "NIST_STS_SETTINGS/TESTS_SETTINGS";
+const std::string Test::XPATH_ATTRIBUTE_TEST_INDEX  = "test";
 
-Test Test::getInstance(TestIndex testIndex,
+const std::string Test::PATH_MAIN_RESULT_DIR        = "experiments/AlgorithmTesting/";
+
+const tTestInfo Test::INFO_FREQ                 = std::make_tuple( 1, "Frequency (monobits) test" , Test::PATH_MAIN_RESULT_DIR + "Frequency/", 1, false);
+const tTestInfo Test::INFO_BLOCKFREQ            = std::make_tuple( 2, "Test For Frequency Within A Block" , Test::PATH_MAIN_RESULT_DIR + "BlockFrequency/", 1, true);
+const tTestInfo Test::INFO_CUSUMS               = std::make_tuple( 3, "Cumulative Sum (Cusum) Test" , Test::PATH_MAIN_RESULT_DIR + "CumulativeSums/", 2, false);
+const tTestInfo Test::INFO_RUNS                 = std::make_tuple( 4, "Runs Test" , Test::PATH_MAIN_RESULT_DIR + "Runs/", 1, false);
+const tTestInfo Test::INFO_LONGESTRUN           = std::make_tuple( 5, "Test for the Longest Run of Ones in a Block" , Test::PATH_MAIN_RESULT_DIR + "LongestRun/", 1, false);
+const tTestInfo Test::INFO_RANK                 = std::make_tuple( 6, "Random Binary Matrix Rank Test" , Test::PATH_MAIN_RESULT_DIR + "Rank/", 1, false);
+const tTestInfo Test::INFO_FFT                  = std::make_tuple( 7, "Discrete Fourier Transform (Spectral) Test" , Test::PATH_MAIN_RESULT_DIR + "FFT/", 1, false);
+const tTestInfo Test::INFO_NONOVERTEMP          = std::make_tuple( 8, "Non-overlapping (Aperiodic) Template Matching Test" , Test::PATH_MAIN_RESULT_DIR + "NonOverlappingTemplate/", 148, true);
+const tTestInfo Test::INFO_OVERTEMP             = std::make_tuple( 9, "Overlapping (Periodic) Template Matching Test" , Test::PATH_MAIN_RESULT_DIR + "OverlappingTemplate/", 1, true);
+const tTestInfo Test::INFO_UNIVERSAL            = std::make_tuple(10, "Maurer's Universal Statistical Test" , Test::PATH_MAIN_RESULT_DIR + "Universal/", 1, false);
+const tTestInfo Test::INFO_APPROXENT            = std::make_tuple(11, "Approximate Entropy Test" , Test::PATH_MAIN_RESULT_DIR + "ApproximateEntropy/", 1, true);
+const tTestInfo Test::INFO_RNDEXCURSIONS        = std::make_tuple(12, "Random Excursions Test" , Test::PATH_MAIN_RESULT_DIR + "RandomExcursions/", 8, false);
+const tTestInfo Test::INFO_RNDEXCURSIONSVAR     = std::make_tuple(13, "Random Excursions Variant Test" , Test::PATH_MAIN_RESULT_DIR + "RandomExcursionsVariant/", 18, false);
+const tTestInfo Test::INFO_SERIAL               = std::make_tuple(14, "Serial Test" , Test::PATH_MAIN_RESULT_DIR + "Serial/", 2, true);
+const tTestInfo Test::INFO_LINEARCOMPLEXITY     = std::make_tuple(15, "Linear Complexity Test" , Test::PATH_MAIN_RESULT_DIR + "LinearComplexity/", 1, true);
+
+Test Test::getInstance(int testIndex,
                        TiXmlNode * cfgRoot,
-                       const std::string & binaryDataPath) {
+                       const CliOptions &options) {
+    tTestInfo testInfo;
+
+    if(testIndex == std::get<0>(INFO_FREQ))             testInfo = INFO_FREQ; else
+    if(testIndex == std::get<0>(INFO_BLOCKFREQ))        testInfo = INFO_BLOCKFREQ; else
+    if(testIndex == std::get<0>(INFO_CUSUMS))           testInfo = INFO_CUSUMS; else
+    if(testIndex == std::get<0>(INFO_RUNS))             testInfo = INFO_RUNS; else
+    if(testIndex == std::get<0>(INFO_LONGESTRUN))       testInfo = INFO_LONGESTRUN; else
+    if(testIndex == std::get<0>(INFO_RANK))             testInfo = INFO_RANK; else
+    if(testIndex == std::get<0>(INFO_FFT))              testInfo = INFO_FFT; else
+    if(testIndex == std::get<0>(INFO_NONOVERTEMP))      testInfo = INFO_NONOVERTEMP; else
+    if(testIndex == std::get<0>(INFO_OVERTEMP))         testInfo = INFO_OVERTEMP; else
+    if(testIndex == std::get<0>(INFO_UNIVERSAL))        testInfo = INFO_UNIVERSAL; else
+    if(testIndex == std::get<0>(INFO_APPROXENT))        testInfo = INFO_APPROXENT; else
+    if(testIndex == std::get<0>(INFO_RNDEXCURSIONS))    testInfo = INFO_RNDEXCURSIONS; else
+    if(testIndex == std::get<0>(INFO_RNDEXCURSIONSVAR)) testInfo = INFO_RNDEXCURSIONSVAR; else
+    if(testIndex == std::get<0>(INFO_SERIAL))           testInfo = INFO_SERIAL; else
+    if(testIndex == std::get<0>(INFO_LINEARCOMPLEXITY)) testInfo = INFO_LINEARCOMPLEXITY; else
+        throw std::runtime_error("unknown test constant in NIST STS: " + Utils::itostr(testIndex));
+
     Test test;
 
-    switch(testIndex) {
-    case TestIndex::frequency: {
-        test.logicName = "Frequency (monobits) test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "Frequency/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::blockFrequency: {
-        test.logicName = "Test For Frequency Within A Block";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "BlockFrequency/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = true;
-        break;
-    }
-    case TestIndex::cumulativeSums: {
-        test.logicName = "Cumulative Sum (Cusum) Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "CumulativeSums/";
-        test.subTestCount = 2;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::runs: {
-        test.logicName = "Runs Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "Runs/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::longestRun: {
-        test.logicName = "Test for the Longest Run of Ones in a Block";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "LongestRun/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::rank: {
-        test.logicName = "Random Binary Matrix Rank Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "Rank/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::fft: {
-        test.logicName = "Discrete Fourier Transform (Spectral) Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "FFT/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::nonOverlappingTemplate: {
-        test.logicName = "Non-overlapping (Aperiodic) Template Matching Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "NonOverlappingTemplate/";
-        test.subTestCount = 148;
-        test.adjustableBlockLen = true;
-        break;
-    }
-    case TestIndex::overlappingTemplate: {
-        test.logicName = "Overlapping (Periodic) Template Matching Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "OverlappingTemplate/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = true;
-        break;
-    }
-    case TestIndex::universal: {
-        test.logicName = "Maurer's Universal Statistical Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "Universal/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::approximateEntropy: {
-        test.logicName = "Approximate Entropy Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "ApproximateEntropy/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = true;
-        break;
-    }
-    case TestIndex::randomExcursions: {
-        test.logicName = "Random Excursions Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "RandomExcursions/";
-        test.subTestCount = 8;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::randomExcursionsVariant: {
-        test.logicName = "Random Excursions Variant Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "RandomExcursionsVariant/";
-        test.subTestCount = 18;
-        test.adjustableBlockLen = false;
-        break;
-    }
-    case TestIndex::serial: {
-        test.logicName = "Serial Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "Serial/";
-        test.subTestCount = 2;
-        test.adjustableBlockLen = true;
-        break;
-    }
-    case TestIndex::linearComplexity: {
-        test.logicName = "Linear Complexity Test";
-        test.resultSubDir = PATH_MAIN_RESULT_DIR + "LinearComplexity/";
-        test.subTestCount = 1;
-        test.adjustableBlockLen = true;
-        break;
-    }
-    default: {
-        throw std::runtime_error("unknown test testIndex in NIST STS battery: " +
-                                             Utils::itostr(static_cast<int>(testIndex)));
-    }
-    }
-    test.testIndex = testIndex;
+    std::tie(test.testIndex ,
+             test.logicName ,
+             test.resultSubDir ,
+             test.subTestCount ,
+             test.adjustableBlockLen) = testInfo;
+
+    //test.testIndex = testIndex;
     /* Getting default values from XML */
-    test.binaryDataPath = binaryDataPath;
+    test.binaryDataPath = options.getBinFilePath();
     if(test.binaryDataPath.empty())
         throw std::runtime_error("path to input data can't be empty");
     test.executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
@@ -152,48 +73,28 @@ Test Test::getInstance(TestIndex testIndex,
         throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
 
     /* Getting test specific settings from XML */
-    std::string streamSize;
-    std::string streamCount;
-    std::string blockLength;
+    TiXmlNode * testsSettingsNode = getXMLChildNodeWithAttValue(
+                    getXMLElement(cfgRoot , XPATH_TESTS_SETTINGS),
+                    XPATH_ATTRIBUTE_TEST_INDEX,
+                    Utils::itostr(test.testIndex)
+                );
 
-    TiXmlNode * testsSettingsNode = getXMLElement(cfgRoot , XPATH_TESTS_SETTINGS);
-    const char * testAttribute;
+    test.streamSize = getSpecificOrDefaultOpt(cfgRoot , testsSettingsNode ,
+                                              XPATH_DEFAULT_STREAM_SIZE ,
+                                              XPATH_TEST_STREAM_SIZE);
+    test.streamCount = getSpecificOrDefaultOpt(cfgRoot , testsSettingsNode ,
+                                               XPATH_DEFAULT_STREAM_COUNT ,
+                                               XPATH_TEST_STREAM_COUNT);
+    test.blockLength = getXMLElementValue(testsSettingsNode , XPATH_TEST_BLOCK_LENGTH);
 
-    if(testsSettingsNode && testsSettingsNode->FirstChild()) {
-        TiXmlNode * settingsNode = testsSettingsNode->FirstChild();
-        TiXmlElement * settingsElement;
-        for( ; settingsNode ; settingsNode = settingsNode->NextSibling()) {
-            settingsElement = settingsNode->ToElement();
-            testAttribute = settingsElement->Attribute(XPATH_ATTRIBUTE_TEST_INDEX.c_str());
-            if(!testAttribute)
-                throw std::runtime_error("child of tag " + XPATH_TESTS_SETTINGS + "doesn't"
-                                         " have attribute " + XPATH_ATTRIBUTE_TEST_INDEX);
-            if(strlen(testAttribute) > 0 &&
-               static_cast<int>(testIndex) == Utils::strtoi(testAttribute)) {
-                /* I've got correct node, load settings from there */
-                streamSize = getXMLElementValue(settingsNode , XPATH_NODE_STREAM_SIZE);
-                streamCount = getXMLElementValue(settingsNode , XPATH_NODE_STREAM_COUNT);
-                blockLength = getXMLElementValue(settingsNode , XPATH_NODE_BLOCK_LENGTH);
-                break;
-            }
-        }
+    if(test.streamSize.empty()) {
+        throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_SIZE + " can't be empty"
+                                 " without setting stream size in tests settings.");
     }
-    if(streamSize.empty()) {
-        streamSize = getXMLElementValue(cfgRoot , XPATH_STREAM_SIZE_DEFAULT);
-        if(streamSize.empty())
-            throw std::runtime_error("tag " + XPATH_STREAM_SIZE_DEFAULT + " can't be empty"
-                                     " without setting stream size in tests settings.");
-    }
-    if(streamCount.empty()){
-        streamCount = getXMLElementValue(cfgRoot , XPATH_STREAM_COUNT_DEFAULT);
-        if(streamCount.empty())
-            throw std::runtime_error("tag " + XPATH_STREAM_COUNT_DEFAULT + " can't be empty"
+    if(test.streamCount.empty()){
+            throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_COUNT + " can't be empty"
                                      " without setting stream count in tests settings.");
     }
-    test.streamSize = Utils::strtoi(streamSize);
-    test.streamCount = Utils::strtoi(streamCount);
-    if(!blockLength.empty() && test.adjustableBlockLen)
-        test.blockLen.push_back(Utils::strtoi(blockLength));
 
     return test;
 }
@@ -275,8 +176,8 @@ std::vector<std::string> Test::getSettings() const {
     std::stringstream parameters;
     parameters << "Stream size: " << streamSize << std::endl;
     parameters << "Stream count: " << streamCount << std::endl;
-    if(!blockLen.empty() && adjustableBlockLen)
-        parameters << "Block length: " << blockLen.at(0);
+    if(!blockLength.empty() && adjustableBlockLen)
+        parameters << "Block length: " << blockLength;
 
     return Utils::split(parameters.str() , '\n');
 }
@@ -303,9 +204,30 @@ std::vector<tTestPvals> Test::getResults() const {
  \$$
 */
 
+std::string Test::getSpecificOrDefaultOpt(TiXmlNode * cfgRoot , TiXmlNode * testNode ,
+                                          const std::string & defaultPath ,
+                                          const std::string & testPath) {
+    if(!cfgRoot)
+        throw std::runtime_error("null root");
+
+    std::string nodeValue;
+    if(!testNode) {
+        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
+        return nodeValue;
+    }
+
+    nodeValue = getXMLElementValue(testNode , testPath);
+    if(nodeValue.empty()) {
+        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
+        return nodeValue;
+    } else {
+        return nodeValue;
+    }
+}
+
 char ** Test::buildArgv(int * argc) const {
     /* NIST STS takes only 1 argument from cli */
-    std::vector<std::string> vecArg = {"assess" , Utils::itostr(streamSize)};
+    std::vector<std::string> vecArg = {"assess" , streamSize};
     char ** argv = new char * [vecArg.size() + 1];
     for(size_t i = 0 ; i < vecArg.size() ; ++i) {
         argv[i] = new char [vecArg[i].length() + 1];
@@ -335,12 +257,12 @@ std::string Test::buildInput() const {
     inputSequence << "0 ";
     /* Specifying which test I want to execute */
     std::string tmp(15 , '0');
-    tmp[static_cast<int>(testIndex) - 1] = '1';
+    tmp[testIndex - 1] = '1';
     inputSequence << tmp << " ";
     /* Setting blocksize of a test */
     /* If it's not possible, this setting is ommited */
     if(adjustableBlockLen) {
-        if(blockLen.empty()) {
+        if(blockLength.empty()) {
             /* Not adjusting anything, just entering 0 */
             /* to continue */
             inputSequence << "0 ";
@@ -349,7 +271,7 @@ std::string Test::buildInput() const {
             /* Always ruuning just one test, its index is always 1 */
             inputSequence << "1 ";
             /* Entering actual value of new block size */
-            inputSequence << blockLen[0] << " ";
+            inputSequence << blockLength << " ";
             /* Entering 0 to continue */
             inputSequence << "0 ";
         }

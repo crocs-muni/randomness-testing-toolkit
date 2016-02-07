@@ -84,7 +84,7 @@ Test Test::getInstance(int testIndex ,
     if(testIndex == INFO_DABFILLTREE.first)         testInfo = INFO_DABFILLTREE ; else
     if(testIndex == INFO_DABFILLTREE2.first)        testInfo = INFO_DABFILLTREE2 ; else
     if(testIndex == INFO_DABMONOBIT.first)          testInfo = INFO_DABMONOBIT ; else
-        throw std::runtime_error("unknown test testIndex "
+        throw std::runtime_error("unknown test "
                                  "in Dieharder battery: " + Utils::itostr(testIndex));
 
     test.logicName = testInfo.second;

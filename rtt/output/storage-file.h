@@ -30,7 +30,7 @@ public:
 
     static std::unique_ptr<Storage> getInstance(TiXmlNode * root ,
                                                 const CliOptions & options ,
-                                                const std::string & datetime);
+                                                const time_t & creationTime);
 
     void addNewTest(const std::string & testName);
 
@@ -56,6 +56,7 @@ private:
     *** Variables ***
     =================
     */
+    time_t creationTime;
     int batteryConstant;
     std::string inFilePath;
     std::string outFilePath;

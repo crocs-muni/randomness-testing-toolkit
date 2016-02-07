@@ -9,48 +9,50 @@
 #include <string.h>
 #include <vector>
 #include <sstream>
+#include <tuple>
 
 extern char **environ;
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/utils.h"
+#include "rtt/options.h"
 
 namespace rtt {
 namespace batteries {
 namespace niststs {
 
-enum class TestIndex {
-    frequency = 1,
-    blockFrequency,
-    cumulativeSums,
-    runs,
-    longestRun,
-    rank,
-    fft,
-    nonOverlappingTemplate,
-    overlappingTemplate,
-    universal,
-    approximateEntropy,
-    randomExcursions,
-    randomExcursionsVariant,
-    serial,
-    linearComplexity
-};
-
+typedef std::tuple<int , std::string , std::string , int , bool> tTestInfo;
 typedef std::vector<double> tTestPvals;
 
 class Test {
 public:
+    /* Test info constants */
+    static const tTestInfo INFO_FREQ;
+    static const tTestInfo INFO_BLOCKFREQ;
+    static const tTestInfo INFO_CUSUMS;
+    static const tTestInfo INFO_RUNS;
+    static const tTestInfo INFO_LONGESTRUN;
+    static const tTestInfo INFO_RANK;
+    static const tTestInfo INFO_FFT;
+    static const tTestInfo INFO_NONOVERTEMP;
+    static const tTestInfo INFO_OVERTEMP;
+    static const tTestInfo INFO_UNIVERSAL;
+    static const tTestInfo INFO_APPROXENT;
+    static const tTestInfo INFO_RNDEXCURSIONS;
+    static const tTestInfo INFO_RNDEXCURSIONSVAR;
+    static const tTestInfo INFO_SERIAL;
+    static const tTestInfo INFO_LINEARCOMPLEXITY;
+
     /* Default XPATH constants for NIST STS battery */
     static const std::string XPATH_BINARY_PATH;
     static const std::string XPATH_OUTPUT_DIRECTORY;
-    static const std::string XPATH_STREAM_SIZE_DEFAULT;
-    static const std::string XPATH_STREAM_COUNT_DEFAULT;
     static const std::string XPATH_TESTS_SETTINGS;
+    static const std::string XPATH_DEFAULT_STREAM_SIZE;
+    static const std::string XPATH_DEFAULT_STREAM_COUNT;
+    static const std::string XPATH_TEST_STREAM_SIZE;
+    static const std::string XPATH_TEST_STREAM_COUNT;
+    static const std::string XPATH_TEST_BLOCK_LENGTH;
     static const std::string XPATH_ATTRIBUTE_TEST_INDEX;
-    static const std::string XPATH_NODE_STREAM_SIZE;
-    static const std::string XPATH_NODE_STREAM_COUNT;
-    static const std::string XPATH_NODE_BLOCK_LENGTH;
     /* Parent test result directory */
     static const std::string PATH_MAIN_RESULT_DIR;
 
@@ -60,9 +62,9 @@ public:
     ======================
     */
     /* Some getters for results will be probably added in time */
-    static Test getInstance(TestIndex testIndex ,
+    static Test getInstance(int testIndex ,
                             TiXmlNode * cfgRoot ,
-                            const std::string & binaryDataPath);
+                            const CliOptions & options);
 
     void appendTestLog(std::string & outputLog);
 
@@ -87,12 +89,12 @@ private:
     bool executed = false;
     std::string executablePath;
     std::string binaryDataPath;
-    int streamSize;
-    int streamCount;
-    std::vector<int> blockLen;
+    std::string streamSize;
+    std::string streamCount;
+    std::string blockLength;
     /* Following fields will be initialized in getInstance */
     /* to default values according to test index */
-    TestIndex testIndex;
+    int testIndex;
     std::string logicName;
     std::string resultSubDir;
     int subTestCount;
@@ -123,6 +125,10 @@ private:
     void parseStoreResults();
 
     tTestPvals readPvals(const std::string &fileName);
+
+    static std::string getSpecificOrDefaultOpt(TiXmlNode * cfgRoot , TiXmlNode * testNode,
+                                               const std::string &defaultPath,
+                                               const std::string &testPath);
 };
 
 } // namespace niststs

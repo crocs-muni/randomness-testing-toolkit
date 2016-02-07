@@ -99,13 +99,18 @@ std::string Utils::getDate() {
     return std::string(buffer);
 }
 
-std::string Utils::getDateTime() {
+time_t Utils::getRawTime() {
     time_t rawtime;
-    struct tm * timeinfo;
-    char buffer[80];
     time(&rawtime);
+    return rawtime;
+}
+
+std::string Utils::formatRawTime(const time_t & rawtime ,
+                                 const std::string & format) {
+    char buffer[80];
+    struct tm * timeinfo;
     timeinfo = localtime(&rawtime);
-    strftime(buffer , 80 , "%Y%m%d%H%M%S" , timeinfo);
+    strftime(buffer , 80 , format.c_str() , timeinfo);
     return buffer;
 }
 

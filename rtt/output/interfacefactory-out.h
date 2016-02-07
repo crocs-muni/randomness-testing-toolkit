@@ -14,9 +14,9 @@ class InterfaceFactory {
 public:
     static std::unique_ptr<Interface> createOutput(TiXmlNode * root ,
                                                    const CliOptions & options ,
-                                                   const std::string & datetime) {
+                                                   const time_t & creationTime) {
         //throw std::runtime_error("not implemented yet!");
-        return file::Storage::getInstance(root , options , datetime);
+        return file::Storage::getInstance(root , options , creationTime);
     }
 };
 

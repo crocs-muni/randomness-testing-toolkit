@@ -31,8 +31,9 @@ private:
     *** Variables ***
     =================
     */
+    time_t creationTime;
     /* After test execution, log of battery run will be stored in logFileName */
-    std::string logFileName;
+    std::string logFilePath;
     std::unique_ptr<output::Interface> storage;
     /* Test class keeps track of individual test logs, results and such */
     /* Also executes tests */

@@ -8,7 +8,7 @@
             <MAIN_DIR>logs/</MAIN_DIR>
             <DIEHARDER_DIR>logs/dieharder/</DIEHARDER_DIR>
             <NIST_STS_DIR>logs/niststs/</NIST_STS_DIR>
-            <TESTU01_DIR>logs/testu01</TESTU01_DIR>
+            <TESTU01_DIR>logs/testu01/</TESTU01_DIR>
         </LOGGER>
         
         <OUTPUT>
@@ -17,7 +17,7 @@
                 <DIEHARDER_DIR>reports/dieharder/</DIEHARDER_DIR>
                 <NIST_STS_DIR>reports/niststs/</NIST_STS_DIR>
                 
-                <TU01_SMALLCRUSH_DIR>reports/testu01/scrush/</TU01_SMALLCRUSH_DIR>
+                <TU01_SMALLCRUSH_DIR></TU01_SMALLCRUSH_DIR>
                 <TU01_CRUSH_DIR>reports/testu01/crush/</TU01_CRUSH_DIR>
                 <TU01_BIGCRUSH_DIR>reports/testu01/bcrush/</TU01_BIGCRUSH_DIR>
                 <TU01_RABBIT_DIR>reports/testu01/rabbit/</TU01_RABBIT_DIR>
@@ -81,41 +81,41 @@
         <TESTS_SETTINGS>
             <SETTINGS test="1">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>
+                <STREAM_COUNT>10</STREAM_COUNT>
             </SETTINGS>
             <SETTINGS test="2">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>
+                <STREAM_COUNT>10</STREAM_COUNT>
                 <BLOCK_LENGTH>128</BLOCK_LENGTH>                 
             </SETTINGS>
             <SETTINGS test="3">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
+                <STREAM_COUNT>10</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="4">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
+                <STREAM_COUNT>10</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="5">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
+                <STREAM_COUNT>10</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="6">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
+                <STREAM_COUNT>10</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="7">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
+                <STREAM_COUNT>10</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="8">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>  
+                <STREAM_COUNT>10</STREAM_COUNT>  
                 <BLOCK_LENGTH>9</BLOCK_LENGTH>               
             </SETTINGS>
             <SETTINGS test="9">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>
+                <STREAM_COUNT>10</STREAM_COUNT>
                 <BLOCK_LENGTH>9</BLOCK_LENGTH>                
             </SETTINGS>
             <SETTINGS test="10">
@@ -124,25 +124,25 @@
             </SETTINGS>
             <SETTINGS test="11">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>   
+                <STREAM_COUNT>10</STREAM_COUNT>   
                 <BLOCK_LENGTH>10</BLOCK_LENGTH>          
             </SETTINGS>
             <SETTINGS test="12">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
+                <STREAM_COUNT>10</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="13">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
+                <STREAM_COUNT>10</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="14">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>    
+                <STREAM_COUNT>10</STREAM_COUNT>    
                 <BLOCK_LENGTH>16</BLOCK_LENGTH>         
             </SETTINGS>
             <SETTINGS test="15">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT> 
+                <STREAM_COUNT>10</STREAM_COUNT> 
                 <BLOCK_LENGTH>500</BLOCK_LENGTH>            
             </SETTINGS>
         </TESTS_SETTINGS>

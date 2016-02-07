@@ -93,11 +93,10 @@ public:
       */
     static std::string getDate();
 
-    /**
-     * @brief getDateTime Returns datetime in format yymmddhhmmss.
-     * @return              datetime
-     */
-    static std::string getDateTime();
+    static time_t getRawTime();
+
+    static std::string formatRawTime(const time_t & rawtime,
+                                     const std::string & format);
 
     /** Splits string into shorter strings, separated by separator
       * @param                 toSplit string to be splitted

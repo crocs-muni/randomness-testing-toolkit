@@ -16,8 +16,9 @@ const size_t Storage::MISC_TAB_SIZE = 4;
 
 std::unique_ptr<Storage> Storage::getInstance(TiXmlNode * root ,
                                               const CliOptions & options ,
-                                              const std::string &datetime) {
+                                              const time_t & creationTime) {
     std::unique_ptr<Storage> storage (new Storage());
+    storage->creationTime = creationTime;
     storage->batteryConstant = options.getBattery();
     storage->inFilePath = options.getBinFilePath();
 
@@ -35,12 +36,10 @@ std::unique_ptr<Storage> Storage::getInstance(TiXmlNode * root ,
                                  Utils::itostr(options.getBattery()));
     }
 
-    std::string binFileName =
-            Utils::getLastItemInPath(storage->inFilePath);
+    std::string binFileName = Utils::getLastItemInPath(storage->inFilePath);
+    std::string datetime = Utils::formatRawTime(storage->creationTime , "%Y%m%d%H%M%S");
     storage->outFilePath = getXMLElementValue(root , dirXPath);
-    if(storage->outFilePath.empty())
-        throw std::runtime_error("missing tag value: " + dirXPath);
-    if(storage->outFilePath.back() != '/')
+    if(!storage->outFilePath.empty() && storage->outFilePath.back() != '/')
         storage->outFilePath.append("/");
     storage->outFilePath.append(datetime + "-" + binFileName + ".report");
 
@@ -109,7 +108,7 @@ void Storage::finalizeReport() {
 
 void Storage::makeReportHeader() {
     report << "***** Randomness Testing Toolkit file analysis report *****" << std::endl;
-    report << "Date:    " << Utils::getDate() << std::endl;
+    report << "Date:    " << Utils::formatRawTime(creationTime , "%d-%m-%Y") << std::endl;
     report << "File:    " << inFilePath << std::endl;
     report << "Battery: " << Constants::batteryToString(batteryConstant) << std::endl;
     report << std::endl << std::endl;

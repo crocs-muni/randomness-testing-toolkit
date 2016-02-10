@@ -1,17 +1,11 @@
 ﻿#ifndef RTT_BATTERIES_NISTSTS_TEST_H
 #define RTT_BATTERIES_NISTSTS_TEST_H
 
-#include <poll.h>
-#include <unistd.h>
-#include <spawn.h>
-#include <sys/wait.h>
 #include <string>
 #include <string.h>
 #include <vector>
 #include <sstream>
 #include <tuple>
-
-extern char **environ;
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/batteries/testutils-batt.h"

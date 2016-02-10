@@ -17,21 +17,22 @@ const std::string Test::XPATH_ATTRIBUTE_TEST_INDEX  = "test";
 
 const std::string Test::PATH_MAIN_RESULT_DIR        = "experiments/AlgorithmTesting/";
 
-const tTestInfo Test::INFO_FREQ                 = std::make_tuple( 1, "Frequency (monobits) test" , Test::PATH_MAIN_RESULT_DIR + "Frequency/", 1, false);
-const tTestInfo Test::INFO_BLOCKFREQ            = std::make_tuple( 2, "Test For Frequency Within A Block" , Test::PATH_MAIN_RESULT_DIR + "BlockFrequency/", 1, true);
-const tTestInfo Test::INFO_CUSUMS               = std::make_tuple( 3, "Cumulative Sum (Cusum) Test" , Test::PATH_MAIN_RESULT_DIR + "CumulativeSums/", 2, false);
-const tTestInfo Test::INFO_RUNS                 = std::make_tuple( 4, "Runs Test" , Test::PATH_MAIN_RESULT_DIR + "Runs/", 1, false);
-const tTestInfo Test::INFO_LONGESTRUN           = std::make_tuple( 5, "Test for the Longest Run of Ones in a Block" , Test::PATH_MAIN_RESULT_DIR + "LongestRun/", 1, false);
-const tTestInfo Test::INFO_RANK                 = std::make_tuple( 6, "Random Binary Matrix Rank Test" , Test::PATH_MAIN_RESULT_DIR + "Rank/", 1, false);
-const tTestInfo Test::INFO_FFT                  = std::make_tuple( 7, "Discrete Fourier Transform (Spectral) Test" , Test::PATH_MAIN_RESULT_DIR + "FFT/", 1, false);
-const tTestInfo Test::INFO_NONOVERTEMP          = std::make_tuple( 8, "Non-overlapping (Aperiodic) Template Matching Test" , Test::PATH_MAIN_RESULT_DIR + "NonOverlappingTemplate/", 148, true);
-const tTestInfo Test::INFO_OVERTEMP             = std::make_tuple( 9, "Overlapping (Periodic) Template Matching Test" , Test::PATH_MAIN_RESULT_DIR + "OverlappingTemplate/", 1, true);
-const tTestInfo Test::INFO_UNIVERSAL            = std::make_tuple(10, "Maurer's Universal Statistical Test" , Test::PATH_MAIN_RESULT_DIR + "Universal/", 1, false);
-const tTestInfo Test::INFO_APPROXENT            = std::make_tuple(11, "Approximate Entropy Test" , Test::PATH_MAIN_RESULT_DIR + "ApproximateEntropy/", 1, true);
-const tTestInfo Test::INFO_RNDEXCURSIONS        = std::make_tuple(12, "Random Excursions Test" , Test::PATH_MAIN_RESULT_DIR + "RandomExcursions/", 8, false);
-const tTestInfo Test::INFO_RNDEXCURSIONSVAR     = std::make_tuple(13, "Random Excursions Variant Test" , Test::PATH_MAIN_RESULT_DIR + "RandomExcursionsVariant/", 18, false);
-const tTestInfo Test::INFO_SERIAL               = std::make_tuple(14, "Serial Test" , Test::PATH_MAIN_RESULT_DIR + "Serial/", 2, true);
-const tTestInfo Test::INFO_LINEARCOMPLEXITY     = std::make_tuple(15, "Linear Complexity Test" , Test::PATH_MAIN_RESULT_DIR + "LinearComplexity/", 1, true);
+const tTestInfo Test::INFO_FREQ                 { 1, "Frequency (monobits) test" , Test::PATH_MAIN_RESULT_DIR + "Frequency/", 1, false};
+const tTestInfo Test::INFO_BLOCKFREQ            { 2, "Test For Frequency Within A Block" , Test::PATH_MAIN_RESULT_DIR + "BlockFrequency/", 1, true};
+const tTestInfo Test::INFO_CUSUMS               { 3, "Cumulative Sum (Cusum) Test" , Test::PATH_MAIN_RESULT_DIR + "CumulativeSums/", 2, false};
+const tTestInfo Test::INFO_RUNS                 { 4, "Runs Test" , Test::PATH_MAIN_RESULT_DIR + "Runs/", 1, false};
+const tTestInfo Test::INFO_LONGESTRUN           { 5, "Test for the Longest Run of Ones in a Block" , Test::PATH_MAIN_RESULT_DIR + "LongestRun/", 1, false};
+const tTestInfo Test::INFO_RANK                 { 6, "Random Binary Matrix Rank Test" , Test::PATH_MAIN_RESULT_DIR + "Rank/", 1, false};
+const tTestInfo Test::INFO_FFT                  { 7, "Discrete Fourier Transform (Spectral) Test" , Test::PATH_MAIN_RESULT_DIR + "FFT/", 1, false};
+const tTestInfo Test::INFO_NONOVERTEMP          { 8, "Non-overlapping (Aperiodic) Template Matching Test" ,
+                                                  Test::PATH_MAIN_RESULT_DIR + "NonOverlappingTemplate/", 148, true};
+const tTestInfo Test::INFO_OVERTEMP             { 9, "Overlapping (Periodic) Template Matching Test" , Test::PATH_MAIN_RESULT_DIR + "OverlappingTemplate/", 1, true};
+const tTestInfo Test::INFO_UNIVERSAL            {10, "Maurer's Universal Statistical Test" , Test::PATH_MAIN_RESULT_DIR + "Universal/", 1, false};
+const tTestInfo Test::INFO_APPROXENT            {11, "Approximate Entropy Test" , Test::PATH_MAIN_RESULT_DIR + "ApproximateEntropy/", 1, true};
+const tTestInfo Test::INFO_RNDEXCURSIONS        {12, "Random Excursions Test" , Test::PATH_MAIN_RESULT_DIR + "RandomExcursions/", 8, false};
+const tTestInfo Test::INFO_RNDEXCURSIONSVAR     {13, "Random Excursions Variant Test" , Test::PATH_MAIN_RESULT_DIR + "RandomExcursionsVariant/", 18, false};
+const tTestInfo Test::INFO_SERIAL               {14, "Serial Test" , Test::PATH_MAIN_RESULT_DIR + "Serial/", 2, true};
+const tTestInfo Test::INFO_LINEARCOMPLEXITY     {15, "Linear Complexity Test" , Test::PATH_MAIN_RESULT_DIR + "LinearComplexity/", 1, true};
 
 Test Test::getInstance(int testIndex,
                        TiXmlNode * cfgRoot,

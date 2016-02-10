@@ -1,15 +1,8 @@
 #ifndef RTT_BATTERIES_DIEHARDER_TEST_H
 #define RTT_BATTERIES_DIEHARDER_TEST_H
 
-#include <poll.h>
-#include <unistd.h>
-#include <spawn.h>
-#include <sys/wait.h>
-#include <string>
 #include <string.h>
 #include <vector>
-
-extern char **environ;
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/utils.h"

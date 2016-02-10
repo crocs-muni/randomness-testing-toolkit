@@ -1,12 +1,11 @@
 #ifndef RTT_BATTERIES_TESTU01_TEST_H
 #define RTT_BATTERIES_TESTU01_TEST_H
 
-#include <poll.h>
-#include <unistd.h>
-#include <spawn.h>
-#include <sys/wait.h>
-
-extern char ** environ;
+#include <string>
+#include <string.h>
+#include <vector>
+#include <sstream>
+#include <tuple>
 
 #include "rtt/batteries/testutils-batt.h"
 #include "rtt/options.h"
@@ -106,35 +105,35 @@ enum class BigCrushTI {
 };
 
 enum class RabbitTI {
-    smultin_MultinomialBitsOver = 1,
-    snpair_ClosePairsBitMatch = 3,
-    svaria_AppearanceSpacings = 4,
-    scomp_LinearComp = 5,
-    scomp_LempelZiv = 6,
-    sspectral_Fourier1 = 7,
-    sspectral_Fourier3 = 8,
-    sstring_LongestHeadRun = 9,
-    sstring_PeriodsInStrings = 10,
-    sstring_HammingWeight = 11,
-    sstring_HammingCorr = 14,
-    sstring_HammingIndep = 17,
-    sstring_AutoCor = 19,
-    sstring_Run = 20,
-    smarsa_MatrixRank = 23,
-    swalk_RandomWalk1 = 26
+    smultin_MultinomialBitsOver     = 1,
+    snpair_ClosePairsBitMatch       = 3,
+    svaria_AppearanceSpacings       = 4,
+    scomp_LinearComp                = 5,
+    scomp_LempelZiv                 = 6,
+    sspectral_Fourier1              = 7,
+    sspectral_Fourier3              = 8,
+    sstring_LongestHeadRun          = 9,
+    sstring_PeriodsInStrings        = 10,
+    sstring_HammingWeight           = 11,
+    sstring_HammingCorr             = 14,
+    sstring_HammingIndep            = 17,
+    sstring_AutoCor                 = 19,
+    sstring_Run                     = 20,
+    smarsa_MatrixRank               = 23,
+    swalk_RandomWalk1               = 26
 };
 
 enum class AlphabitTI {
-    smultin_MultinomialBitsOver = 4,
-    sstring_HammingIndep = 6,
-    sstring_HammingCorr = 7,
-    swalk_RandomWalk1 = 9
+    smultin_MultinomialBitsOver     = 4,
+    sstring_HammingIndep            = 6,
+    sstring_HammingCorr             = 7,
+    swalk_RandomWalk1               = 9
 };
 
 /* Typedefs for parameter types, test information */
 typedef std::pair<std::string , std::string> tParam;
-typedef std::vector<std::string> tParNameList;
-typedef std::pair<std::string , tParNameList> tTestInfo;
+typedef std::vector<std::string> tStringVector;
+typedef std::tuple<std::string , tStringVector , tStringVector> tTestInfo;
 typedef std::vector<double> tTestPvals;
 
 class Test {
@@ -228,6 +227,8 @@ private:
     int battery = -1;
     int testIndex = -1;
     std::string logicName;
+    tStringVector paramNames;
+    tStringVector statisticNames;
     int repetitions;
     std::string executablePath;
     std::string binaryDataPath;
@@ -254,11 +255,9 @@ private:
     */
     Test() {}
 
-    static std::vector<tParam> checkSetParams(const tTestInfo & testInfo,
-                                              TiXmlNode * paramsNode);
+    static tTestInfo pickTestInfo(int testIndex, int battery, std::string & batteryXPath);
 
-    static void pickTestInfo(int testIndex, int battery,
-                             tTestInfo & tinfo, std::string & batteryXPath);
+    void checkSetParams(TiXmlNode * paramsNode);
 
     std::string createArgs() const;
 

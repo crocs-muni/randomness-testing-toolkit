@@ -4,42 +4,46 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-const tTestInfo Test::INFO_SMARSA_SERIALOVER            {"smarsa_SerialOver" , {"N","n","r","d","t"}}; // Chi-square
-const tTestInfo Test::INFO_SMARSA_COLLISIONOVER         {"smarsa_CollisionOver" , {"N","n","r","d","t"}}; // Collision
-const tTestInfo Test::INFO_SMARSA_BIRTHDAYSPACINGS      {"smarsa_BirthdaySpacings" , {"N","n","r","d","t","p"}}; // Collision
-const tTestInfo Test::INFO_SNPAIR_CLOSEPAIRS            {"snpair_ClosePairs" , {"N","n","r","t","p","m"}}; // AD (NP), AD (m-NP), AD (mNP1), AD (mN), AD(mNP2)
-const tTestInfo Test::INFO_SNPAIR_CLOSEPAIRSBITMATCH    {"snpair_ClosePairsBitMatch" , {"N","n","r","t"}}; // Bit distances
-const tTestInfo Test::INFO_SKNUTH_COLLISION             {"sknuth_Collision" , {"N","n","r","d","t"}}; // Collision
-const tTestInfo Test::INFO_SKNUTH_SIMPPOKER             {"sknuth_SimpPoker" , {"N","n","r","d","k"}}; // Chi-square
-const tTestInfo Test::INFO_SKNUTH_COUPONCOLLECTOR       {"sknuth_CouponCollector" , {"N","n","r","d"}}; // Chi-square
-const tTestInfo Test::INFO_SKNUTH_GAP                   {"sknuth_Gap" , {"N","n","r","Alpha","Beta"}}; // Chi-square
-const tTestInfo Test::INFO_SKNUTH_RUN                   {"sknuth_Run" , {"N","n","r","Up"}};
-const tTestInfo Test::INFO_SKNUTH_PERMUTATION           {"sknuth_Permutation" , {"N","n","r","t"}};
-const tTestInfo Test::INFO_SKNUTH_COLLISIONPERMUT       {"sknuth_CollisionPermut" , {"N","n","r","t"}};
-const tTestInfo Test::INFO_SKNUTH_MAXOFT                {"sknuth_MaxOft" , {"N","n","r","d","t"}}; // Chi-square, Anderson-Darling
-const tTestInfo Test::INFO_SVARIA_SAMPLEPROD            {"svaria_SampleProd" , {"N","n","r","t"}};
-const tTestInfo Test::INFO_SVARIA_SAMPLEMEAN            {"svaria_SampleMean" , {"N","n","r"}};
-const tTestInfo Test::INFO_SVARIA_SAMPLECORR            {"svaria_SampleCorr" , {"N","n","r","k"}};
-const tTestInfo Test::INFO_SVARIA_APPEARANCESPACINGS    {"svaria_AppearanceSpacings" , {"N","Q","K","r","s","L"}};
-const tTestInfo Test::INFO_SVARIA_WEIGHTDISTRIB         {"svaria_WeightDistrib" , {"N","n","r","k","",""}}; //Chi-square
-const tTestInfo Test::INFO_SVARIA_SUMCOLLECTOR          {"svaria_SumCollector" , {"N","n","r","g"}};
-const tTestInfo Test::INFO_SMARSA_MATRIXRANK            {"smarsa_MatrixRank" , {"N","n","r","s","L","k"}}; // Chi-square
-const tTestInfo Test::INFO_SMARSA_SAVIR2                {"smarsa_Savir2" , {"N","n","r","m","t"}};
-const tTestInfo Test::INFO_SMARSA_GDC                   {"smarsa_GCD" , {"N","n","r","s"}};
-const tTestInfo Test::INFO_SWALK_RANDOMWALK1            {"swalk_RandomWalk1" , {"N","n","r","s","L0","L1"}}; // Chi-square(H), Chi-square(M), Chi-square(J), Chi-square(R), Chi-square(C)
-const tTestInfo Test::INFO_SCOMP_LINEARCOMP             {"scomp_LinearComp" , {"N","n","r","s"}};
-const tTestInfo Test::INFO_SCOMP_LEMPELZIV              {"scomp_LempelZiv" , {"N","k","r","s"}};
-const tTestInfo Test::INFO_SSPECRTAL_FOURIER1           {"sspectral_Fourier1" , {}};
-const tTestInfo Test::INFO_SSPECRTAL_FOURIER3           {"sspectral_Fourier3" , {"N","k","r","s"}};
-const tTestInfo Test::INFO_SSTRING_LONGESTHEADRUN       {"sstring_LongestHeadRun" , {"N","n","r","s","L"}};
-const tTestInfo Test::INFO_SSTRING_PERIODSINSTRINGS     {"sstring_PeriodsInStrings" , {"N","n","r","s"}};
-const tTestInfo Test::INFO_SSTRING_HAMMINGWEIGHT        {"sstring_HammingWeight" , {}};
-const tTestInfo Test::INFO_SSTRING_HAMMINGWEIGHT2       {"sstring_HammingWeight2" , {"N","n","r","s","L"}};
-const tTestInfo Test::INFO_SSTRING_HAMMINGCORR          {"sstring_HammingCorr" , {"N","n","r","s","L"}};
-const tTestInfo Test::INFO_SSTRING_HAMMINGINDEP         {"sstring_HammingIndep" , {"N","n","r","s","L","d"}}; // Chi-square
-const tTestInfo Test::INFO_SSTRING_RUN                  {"sstring_Run" , {"N","n","r","s"}};
-const tTestInfo Test::INFO_SSTRING_AUTOCOR              {"sstring_AutoCor" , {"N","n","r","s","d"}};
-const tTestInfo Test::INFO_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsIver" , {}};
+const tTestInfo Test::INFO_SMARSA_SERIALOVER            {"smarsa_SerialOver" , {"N","n","r","d","t"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SMARSA_COLLISIONOVER         {"smarsa_CollisionOver" , {"N","n","r","d","t"} , {"Collision"}};
+const tTestInfo Test::INFO_SMARSA_BIRTHDAYSPACINGS      {"smarsa_BirthdaySpacings" , {"N","n","r","d","t","p"} , {"Collision"}};
+const tTestInfo Test::INFO_SNPAIR_CLOSEPAIRS            {"snpair_ClosePairs" , {"N","n","r","t","p","m"} , {"AD (NP)" , "AD (m-NP)" , "AD (mNP1)" , "AD (mN)" , "AD(mNP2)"}};
+const tTestInfo Test::INFO_SNPAIR_CLOSEPAIRSBITMATCH    {"snpair_ClosePairsBitMatch" , {"N","n","r","t"} , {"Bit distance"}};
+const tTestInfo Test::INFO_SKNUTH_COLLISION             {"sknuth_Collision" , {"N","n","r","d","t"} , {"Collision"}};
+const tTestInfo Test::INFO_SKNUTH_SIMPPOKER             {"sknuth_SimpPoker" , {"N","n","r","d","k"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SKNUTH_COUPONCOLLECTOR       {"sknuth_CouponCollector" , {"N","n","r","d"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SKNUTH_GAP                   {"sknuth_Gap" , {"N","n","r","Alpha","Beta"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SKNUTH_RUN                   {"sknuth_Run" , {"N","n","r","Up"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SKNUTH_PERMUTATION           {"sknuth_Permutation" , {"N","n","r","t"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SKNUTH_COLLISIONPERMUT       {"sknuth_CollisionPermut" , {"N","n","r","t"} , {"Collision"}};
+const tTestInfo Test::INFO_SKNUTH_MAXOFT                {"sknuth_MaxOft" , {"N","n","r","d","t"} , {"Chi-square" , "Anderson-Darling"}};
+const tTestInfo Test::INFO_SVARIA_SAMPLEPROD            {"svaria_SampleProd" , {"N","n","r","t"} , {"Anderson-Darling"}};
+const tTestInfo Test::INFO_SVARIA_SAMPLEMEAN            {"svaria_SampleMean" , {"N","n","r"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
+const tTestInfo Test::INFO_SVARIA_SAMPLECORR            {"svaria_SampleCorr" , {"N","n","r","k"} , {"Normal"}};
+const tTestInfo Test::INFO_SVARIA_APPEARANCESPACINGS    {"svaria_AppearanceSpacings" , {"N","Q","K","r","s","L"} , {"Normal"}};
+const tTestInfo Test::INFO_SVARIA_WEIGHTDISTRIB         {"svaria_WeightDistrib" , {"N","n","r","k","Alpha","Beta"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SVARIA_SUMCOLLECTOR          {"svaria_SumCollector" , {"N","n","r","g"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SMARSA_MATRIXRANK            {"smarsa_MatrixRank" , {"N","n","r","s","L","k"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SMARSA_SAVIR2                {"smarsa_Savir2" , {"N","n","r","m","t"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SMARSA_GDC                   {"smarsa_GCD" , {"N","n","r","s"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SWALK_RANDOMWALK1            {"swalk_RandomWalk1" , {"N","n","r","s","L0","L1"} , {"Chi-square(H)" , "Chi-square(M)" ,
+                                                                                                              "Chi-square(J)" , "Chi-square(R)" , "Chi-square(C)"}};
+const tTestInfo Test::INFO_SCOMP_LINEARCOMP             {"scomp_LinearComp" , {"N","n","r","s"} , {"Chi-square" , "Normal"}};
+const tTestInfo Test::INFO_SCOMP_LEMPELZIV              {"scomp_LempelZiv" , {"N","k","r","s"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" ,
+                                                                                                  "Anderson-Darling" , "Normal" , "Sample variance"}};
+const tTestInfo Test::INFO_SSPECRTAL_FOURIER1           {"sspectral_Fourier1" , {} , {"Normal"}};
+const tTestInfo Test::INFO_SSPECRTAL_FOURIER3           {"sspectral_Fourier3" , {"N","k","r","s"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
+const tTestInfo Test::INFO_SSTRING_LONGESTHEADRUN       {"sstring_LongestHeadRun" , {"N","n","r","s","L"} , {"Chi-square" , "Global longest run of 1"}};
+const tTestInfo Test::INFO_SSTRING_PERIODSINSTRINGS     {"sstring_PeriodsInStrings" , {"N","n","r","s"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SSTRING_HAMMINGWEIGHT        {"sstring_HammingWeight" , {} , {"Chi-square"}};
+const tTestInfo Test::INFO_SSTRING_HAMMINGWEIGHT2       {"sstring_HammingWeight2" , {"N","n","r","s","L"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" ,
+                                                                                                             "Anderson-Darling" , "Chi-square"}};
+const tTestInfo Test::INFO_SSTRING_HAMMINGCORR          {"sstring_HammingCorr" , {"N","n","r","s","L"} , {"Normal"}};
+const tTestInfo Test::INFO_SSTRING_HAMMINGINDEP         {"sstring_HammingIndep" , {"N","n","r","s","L","d"} , {"Chi-square"}};
+const tTestInfo Test::INFO_SSTRING_RUN                  {"sstring_Run" , {"N","n","r","s"} , {"Chi-square" , "Normal"}};
+const tTestInfo Test::INFO_SSTRING_AUTOCOR              {"sstring_AutoCor" , {"N","n","r","s","d"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" ,
+                                                                                                      "Anderson-Darling" , "Normal" , "Sample variance"}};
+const tTestInfo Test::INFO_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsIver" , {} , {"Collision"}};
 
 const std::string Test::XPATH_EXECUTABLE_BINARY     = "TESTU01_SETTINGS/BINARY_PATH";
 const std::string Test::XPATH_DEFAULT_REPS          = "TESTU01_SETTINGS/DEFAULT_REPETITIONS";
@@ -68,17 +72,17 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
 
     Test test;
     std::string batteryXPath;
-    tTestInfo tinfo;
-    pickTestInfo(testIndex , options.getBattery() , tinfo , batteryXPath);
+
+    test.battery = options.getBattery();
+    test.testIndex = testIndex;
+    std::tie(test.logicName , test.paramNames , test.statisticNames)
+            = pickTestInfo(testIndex , options.getBattery() , batteryXPath);
+
     TiXmlNode * testSettings = getXMLChildNodeWithAttValue(
                                 getXMLElement(cfgRoot , batteryXPath),
                                 XPATH_ATTRIBUTE_TEST_INDEX ,
                                 Utils::itostr(testIndex)
                                );
-    test.battery = options.getBattery();
-    test.testIndex = testIndex;
-    test.logicName = tinfo.first;
-
 
     std::string strReps = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
                                                              XPATH_DEFAULT_REPS ,
@@ -100,7 +104,7 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     if(test.battery == Constants::BATTERY_TU01_SMALLCRUSH ||
             test.battery == Constants::BATTERY_TU01_CRUSH ||
             test.battery == Constants::BATTERY_TU01_BIGCRUSH)
-        test.params = checkSetParams(tinfo , getXMLElement(testSettings , XPATH_TEST_PARAMS));
+        test.checkSetParams(getXMLElement(testSettings , XPATH_TEST_PARAMS));
 
     /* Getting nb - Rabbit and Alphabit */
     if(test.battery == Constants::BATTERY_TU01_RABBIT ||
@@ -131,7 +135,7 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
                                      ": default or test specific bit_s option must be set"
                                      " in Alphabit battery");
     }
-    return std::move(test);
+    return test;
 }
 
 void Test::appendTestLog(std::string & batteryLog) {
@@ -177,15 +181,9 @@ std::vector<std::string> Test::getParameters() const {
 }
 
 std::vector<std::string> Test::getStatistics() const {
-    if(statCount == 1) { // This is just for testing...
-        return {"Chi-square"};
-    } else {
-        std::vector<std::string> rval;
-        for(int i = 0 ; i < statCount ; ++i)
-            rval.push_back(Utils::itostr(i));
-        return rval;
-    }
+    return statisticNames;
 }
+
 std::vector<tTestPvals> Test::getResults() const {
     if(!executed)
         throw std::runtime_error("can't return results before execution of test");
@@ -207,8 +205,8 @@ std::vector<tTestPvals> Test::getResults() const {
  \$$
 */
 
-void Test::pickTestInfo(int testIndex , int battery ,
-                        tTestInfo & tinfo , std::string & batteryXPath) {
+tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & batteryXPath) {
+    tTestInfo tinfo;
     switch(battery) {
     case Constants::BATTERY_TU01_SMALLCRUSH: {
         batteryXPath = XPATH_SMALL_CRUSH_SETTINGS;
@@ -346,20 +344,13 @@ void Test::pickTestInfo(int testIndex , int battery ,
     default:
         throw std::runtime_error("unknown TestU01 battery");
     }
+    return tinfo;
 }
 
-std::vector<tParam> Test::checkSetParams(const tTestInfo & testInfo ,
-                                         TiXmlNode * paramsNode) {
-    if(testInfo.first.empty() || testInfo.second.empty())
-        /* This won't happen without bug in code */
-        throw std::runtime_error("invalid testinfo");
-
+void Test::checkSetParams(TiXmlNode * paramsNode) {
     if(!paramsNode || !paramsNode->FirstChild())
         /* Given node has no params, test has no parameters */
-        return {};
-
-    const std::string & logicName = testInfo.first;
-    const tParNameList & paramNames = testInfo.second;
+        return;
 
     std::vector<tParam> parameters(paramNames.size());
     tParam emptyPar;
@@ -398,7 +389,7 @@ std::vector<tParam> Test::checkSetParams(const tTestInfo & testInfo ,
     for(auto i : parameters)
         if(i == emptyPar)
             throw std::runtime_error(logicName + ": not all test parameters were set");
-    return std::move(parameters);
+    params = std::move(parameters);
 }
 
 std::string Test::createArgs() const {
@@ -469,6 +460,9 @@ void Test::extractPvalues() {
         throw std::runtime_error("can't extract p-values from log: number of"
                                  " p-value is not divisible by repetitions");
     statCount = pValCount / repetitions;
+    if(statCount != statisticNames.size())
+        throw std::runtime_error("p-value were invalidly extracted from log: "
+                                 "number of p-values and number of statistics does not match");
 
     tTestPvals pValues;
 

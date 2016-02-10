@@ -80,8 +80,9 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     test.logicName = tinfo.first;
 
 
-    std::string strReps = getSpecificOrDefaultOpt(cfgRoot , testSettings , XPATH_DEFAULT_REPS ,
-                                                  XPATH_TEST_REPS);
+    std::string strReps = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                             XPATH_DEFAULT_REPS ,
+                                                             XPATH_TEST_REPS);
     if(strReps.empty())
         throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                  ": default or test specific repetitions must be set");
@@ -104,8 +105,9 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     /* Getting nb - Rabbit and Alphabit */
     if(test.battery == Constants::BATTERY_TU01_RABBIT ||
             test.battery == Constants::BATTERY_TU01_ALPHABIT) {
-        test.bit_nb = getSpecificOrDefaultOpt(cfgRoot , testSettings , XPATH_DEFAULT_BIT_NB ,
-                                              XPATH_TEST_BIT_NB);
+        test.bit_nb = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                 XPATH_DEFAULT_BIT_NB ,
+                                                 XPATH_TEST_BIT_NB);
         if(test.bit_nb.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_nb option must be set"
@@ -113,15 +115,17 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     }
     /* Getting r s - Alphabit */
     if(test.battery == Constants::BATTERY_TU01_ALPHABIT) {
-        test.bit_r = getSpecificOrDefaultOpt(cfgRoot , testSettings , XPATH_DEFAULT_BIT_R ,
-                                              XPATH_TEST_BIT_R);
+        test.bit_r = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                XPATH_DEFAULT_BIT_R ,
+                                                XPATH_TEST_BIT_R);
         if(test.bit_r.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_r option must be set"
                                      " in Alphabit battery");
 
-        test.bit_s = getSpecificOrDefaultOpt(cfgRoot , testSettings , XPATH_DEFAULT_BIT_S ,
-                                              XPATH_TEST_BIT_S);
+        test.bit_s = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                XPATH_DEFAULT_BIT_S ,
+                                                XPATH_TEST_BIT_S);
         if(test.bit_s.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_s option must be set"
@@ -138,55 +142,11 @@ void Test::appendTestLog(std::string & batteryLog) {
 }
 
 void Test::execute() {
-    std::cout << "Starting execution of TestU01 test " << testIndex
-              << " in battery " << battery << std::endl;
-
-    /* Creating pipes for redirecting battery output */
-    int stdout_pipe[2];
-    int stderr_pipe[2];
-    if(pipe(stdout_pipe) || pipe(stderr_pipe))
-            throw std::runtime_error("pipe creation failed");
-    /* Setting process actions. At the beginning, stdout and stderr */
-    /* are mapped to pipes and unused ends are closed. Then I can */
-    /* inspect battery output in this process. */
-    posix_spawn_file_actions_t actions;
-    posix_spawn_file_actions_init(&actions);
-    posix_spawn_file_actions_addclose(&actions , stdout_pipe[0]);
-    posix_spawn_file_actions_addclose(&actions , stderr_pipe[0]);
-    posix_spawn_file_actions_adddup2(&actions , stdout_pipe[1] , 1);
-    posix_spawn_file_actions_addclose(&actions , stdout_pipe[1]);
-    posix_spawn_file_actions_adddup2(&actions , stderr_pipe[1] , 2);
-    posix_spawn_file_actions_addclose(&actions , stderr_pipe[1]);
-    int argc = 0;
-
-    char ** argv = buildArgv(&argc);
-    pid_t pid = 0;
-    int status = posix_spawn(&pid , executablePath.c_str() ,
-                             &actions , NULL , argv , environ);
-    if(status == 0) {
-        std::cout << "Started TestU01 process with pid: " << pid << std::endl;
-        close(stdout_pipe[1]);
-        close(stderr_pipe[1]);
-        /* Read and store battery output. */
-        /* Later, the pvalues will be extracted */
-        readPipes(stdout_pipe , stderr_pipe);
-        if(waitpid(pid , &status , 0) != -1)
-            std::cout << "TestU01 exited with status: " << status << std::endl;
-        else
-            throw std::runtime_error("error when running TestU01");
-    } else {
-        throw std::runtime_error("error occured when starting TestU01: " +
-                                             (std::string)strerror(status));
-    }
-    posix_spawn_file_actions_destroy(&actions);
-    destroyArgv(argc , argv);
-
-    /* Battery successfuly finished computation */
-    /* Resulting pvalues are extracted from stored battery output */
+    std::cout << "Executing test " << testIndex << " in battery "
+              << Constants::batteryToString(battery) << std::endl;
+    testLog = TestUtils::executeBinary(executablePath ,
+                                       createArgs());
     extractPvalues();
-    /* Storing battery output textfile */
-
-    /* Allowing work with results */
     executed = true;
 }
 std::string Test::getLogicName() const {
@@ -388,27 +348,6 @@ void Test::pickTestInfo(int testIndex , int battery ,
     }
 }
 
-std::string Test::getSpecificOrDefaultOpt(TiXmlNode * cfgRoot , TiXmlNode * testNode ,
-                                    const std::string & defaultPath ,
-                                    const std::string & testPath) {
-    if(!cfgRoot)
-        throw std::runtime_error("null root");
-
-    std::string nodeValue;
-    if(!testNode) {
-        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
-        return nodeValue;
-    }
-
-    nodeValue = getXMLElementValue(testNode , testPath);
-    if(nodeValue.empty()) {
-        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
-        return nodeValue;
-    } else {
-        return nodeValue;
-    }
-}
-
 std::vector<tParam> Test::checkSetParams(const tTestInfo & testInfo ,
                                          TiXmlNode * paramsNode) {
     if(testInfo.first.empty() || testInfo.second.empty())
@@ -462,83 +401,49 @@ std::vector<tParam> Test::checkSetParams(const tTestInfo & testInfo ,
     return std::move(parameters);
 }
 
-char ** Test::buildArgv(int * argc) const {
-    std::stringstream tmpss;
-    tmpss << "testu01 ";
+std::string Test::createArgs() const {
+    std::stringstream arguments;
+    arguments << "testu01 ";
     /* Setting battery mode */
-    tmpss << "-m ";
+    arguments << "-m ";
     switch(battery) {
     case Constants::BATTERY_TU01_SMALLCRUSH:
-        tmpss << "small_crush "; break;
+        arguments << "small_crush "; break;
     case Constants::BATTERY_TU01_CRUSH:
-        tmpss << "crush "; break;
+        arguments << "crush "; break;
     case Constants::BATTERY_TU01_BIGCRUSH:
-        tmpss << "big_crush "; break;
+        arguments << "big_crush "; break;
     case Constants::BATTERY_TU01_RABBIT:
-        tmpss << "rabbit "; break;
+        arguments << "rabbit "; break;
     case Constants::BATTERY_TU01_ALPHABIT:
-        tmpss << "alphabit "; break;
+        arguments << "alphabit "; break;
     default:
         throw std::runtime_error("unknown battery");
     }
     /* Test number option */
-    tmpss << "-t " << testIndex << " ";
+    arguments << "-t " << testIndex << " ";
     /* Input file option */
-    tmpss << "-i " << binaryDataPath << " ";
+    arguments << "-i " << binaryDataPath << " ";
     /* Repetitions option */
     if(repetitions != 1)
-        tmpss << "-r " << repetitions << " ";
+        arguments << "-r " << repetitions << " ";
     /* Custom parameters option */
     if(params.size() > 0) {
-        tmpss << "--params ";
+        arguments << "--params ";
         for(auto i : params)
-            tmpss << i.second << " ";
+            arguments << i.second << " ";
     }
     /* nb */
     if(!bit_nb.empty())
-        tmpss << "--bit_nb " << bit_nb << " ";
+        arguments << "--bit_nb " << bit_nb << " ";
     /* r */
     if(!bit_r.empty())
-        tmpss << "--bit_r " << bit_r << " ";
+        arguments << "--bit_r " << bit_r << " ";
     /* s */
     if(!bit_s.empty())
-        tmpss << "--bit_s " << bit_s;
-    std::cout << "Arguments: " << tmpss.str() << std::endl;
-    std::vector<std::string> vecArg = Utils::split(tmpss.str() , ' ');
+        arguments << "--bit_s " << bit_s;
 
-    char ** argv = new char * [vecArg.size() + 1];
-    for(size_t i = 0 ; i < vecArg.size() ; ++i) {
-        argv[i] = new char [vecArg[i].length() + 1];
-        strcpy(argv[i] , vecArg[i].c_str());
-    }
-    argv[vecArg.size()] = NULL;
-    *argc = vecArg.size() + 1;
-    return argv;
-}
-
-void Test::destroyArgv(int argc, char ** argv) const {
-    for(int i = 0 ; i < argc ; ++i) {
-        if(argv[i]) delete[] argv[i];
-    }
-    delete[] argv;
-}
-
-void Test::readPipes(int * stdout_pipe, int * stderr_pipe) {
-    std::string buffer(1024 , ' ');
-    size_t bytes_read;
-    std::vector<pollfd> pollVector = {{stdout_pipe[0] , POLLIN},
-                                      {stderr_pipe[0] , POLLIN}};
-    for( ; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
-        if (pollVector[0].revents&POLLIN) {
-            bytes_read = read(stdout_pipe[0] , &buffer[0] , buffer.length());
-            testLog.append(buffer , 0 , bytes_read);
-        }
-        else if (pollVector[1].revents&POLLIN) {
-            bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
-            testLog.append(buffer , 0 , bytes_read);
-        }
-        else break; /* Reading done */
-    }
+    return arguments.str();
 }
 
 void Test::extractPvalues() {
@@ -570,7 +475,7 @@ void Test::extractPvalues() {
     for(; begin != end ;) {
         for(int i = 0 ; i < statCount ; ++i) {
             std::smatch match = *begin;
-            pValues.push_back(convertOutToDouble(match[1].str() ,
+            pValues.push_back(convertStringToDouble(match[1].str() ,
                                                  match[2].str()));
             ++begin;
         }
@@ -579,8 +484,8 @@ void Test::extractPvalues() {
     }
 }
 
-double Test::convertOutToDouble(const std::string & num,
-                                const std::string & oneMinus) {
+double Test::convertStringToDouble(const std::string & num,
+                                   const std::string & oneMinus) {
     if(num == "eps") {
         return 1.0E-300;
     } else if(num == "1 - eps1") {

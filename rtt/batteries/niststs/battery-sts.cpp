@@ -65,15 +65,15 @@ void Battery::processStoredResults() {
         std::vector<tTestPvals> results = test.getResults();
 
         if(results.size() == 1) { /* Single test */
-            storage->addStatisticResult("Chi-square" , chi2_stat(results.at(0)));
+            storage->addStatisticResult("Chi-square" , chi2_stat(results.at(0)) , 6);
             storage->addStatisticResult("Proportion" , proportionStat(results.at(0)));
-            storage->addPValues(results.at(0));
+            storage->addPValues(results.at(0) , 6);
         } else { /* Multiple subtests */
             for(const auto & result : results) {
                 storage->addSubTest();
-                storage->addStatisticResult("Chi-square" , chi2_stat(result));
+                storage->addStatisticResult("Chi-square" , chi2_stat(result) , 6);
                 storage->addStatisticResult("Proportion" , proportionStat(result));
-                storage->addPValues(result);
+                storage->addPValues(result , 6);
                 storage->finalizeSubTest();
             }
         }

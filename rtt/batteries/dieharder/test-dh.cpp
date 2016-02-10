@@ -147,54 +147,11 @@ void Test::appendTestLog(std::string & batteryLog) {
 }
 
 void Test::execute() {
-    std::cout << "Starting execution of Dieharder test "
-              << static_cast<int>(testIndex) << std::endl;
-
-    /* Creating pipes for redirecting battery output */
-    int stdout_pipe[2];
-    int stderr_pipe[2];
-    if(pipe(stdout_pipe) || pipe(stderr_pipe))
-            throw std::runtime_error("pipe creation failed");
-    /* Setting process actions. At the beginning, stdout and stderr */
-    /* are mapped to pipes and unused ends are closed. Then I can */
-    /* inspect battery output in this process. */
-    posix_spawn_file_actions_t actions;
-    posix_spawn_file_actions_init(&actions);
-    posix_spawn_file_actions_addclose(&actions , stdout_pipe[0]);
-    posix_spawn_file_actions_addclose(&actions , stderr_pipe[0]);
-    posix_spawn_file_actions_adddup2(&actions , stdout_pipe[1] , 1);
-    posix_spawn_file_actions_addclose(&actions , stdout_pipe[1]);
-    posix_spawn_file_actions_adddup2(&actions , stderr_pipe[1] , 2);
-    posix_spawn_file_actions_addclose(&actions , stderr_pipe[1]);
-
-    int argc = 0;
-    char ** argv = buildArgv(&argc);
-    pid_t pid = 0;
-    int status = posix_spawn(&pid , executablePath.c_str() ,
-                             &actions , NULL , argv , environ);
-    if(status == 0) {
-        std::cout << "Started Dieharder process with pid: " << pid << std::endl;
-        close(stdout_pipe[1]);
-        close(stderr_pipe[1]);
-        /* Read and store battery output. */
-        /* Later, the pvalues will be extracted */
-        readPipes(stdout_pipe , stderr_pipe);
-        if(waitpid(pid , &status , 0) != -1)
-            std::cout << "Dieharder exited with status: " << status << std::endl;
-        else
-            throw std::runtime_error("error when running Dieharder");
-    } else {
-        throw std::runtime_error("error occured when starting Dieharder: " +
-                                             (std::string)strerror(status));
-    }
-    posix_spawn_file_actions_destroy(&actions);
-    destroyArgv(argc , argv);
-
-    /* Battery successfuly finished computation */
-    /* Resulting pvalues are extracted from stored battery output */
+    std::cout << "Executing test " << testIndex << " in battery "
+              << Constants::batteryToString(Constants::BATTERY_DIEHARDER) << std::endl;
+    testLog = TestUtils::executeBinary(executablePath ,
+                                       createArgs());
     extractPvalues();
-
-    /* Allowing work with results */
     executed = true;
 }
 
@@ -233,64 +190,29 @@ std::vector<tTestPvals> Test::getResults() const {
  \$$
 */
 
-char ** Test::buildArgv(int * argc) const {
-    std::stringstream tmpss;
-    tmpss << "dieharder ";
+std::string Test::createArgs() const {
+    std::stringstream arguments;
+    arguments << "dieharder ";
     /* Dieharder can receive single option multiple times and */
     /* will take only the last one. Therefore, first are passed */
     /* default values from config, then there are test specific */
     /* value that override default ones and lastly, options that */
     /* MUST be set for correct battery functionality are entered. */
     for(const auto & it : settings) {
-        it.getConsoleInput(tmpss);
-        tmpss << " ";
+        it.getConsoleInput(arguments);
+        arguments << " ";
     }
     /* Set psample count */
-    tmpss << "-p " << pSampleCount << " ";
+    arguments << "-p " << pSampleCount << " ";
     /* Specify test */
-    tmpss << "-d " << testIndex << " ";
+    arguments << "-d " << testIndex << " ";
     /* Specify header flag */
-    tmpss << "-D " << OPTION_HEADER_FLAG << " ";
+    arguments << "-D " << OPTION_HEADER_FLAG << " ";
     /* Specify binary file generator */
-    tmpss << "-g " << OPTION_FILE_GENERATOR << " ";
+    arguments << "-g " << OPTION_FILE_GENERATOR << " ";
     /* Specify binary input file */
-    tmpss << "-f " << binaryDataPath;
-    std::cout << tmpss.str() << std::endl;
-    std::vector<std::string> vecArg = Utils::split(tmpss.str() , ' ');
-
-    char ** argv = new char * [vecArg.size() + 1];
-    for(size_t i = 0 ; i < vecArg.size() ; ++i) {
-        argv[i] = new char [vecArg[i].length() + 1];
-        strcpy(argv[i] , vecArg[i].c_str());
-    }
-    argv[vecArg.size()] = NULL;
-    *argc = vecArg.size() + 1;
-    return argv;
-}
-
-void Test::destroyArgv(int argc, char ** argv) const {
-    for(int i = 0 ; i < argc ; i++) {
-        if(argv[i]) delete[] argv[i];
-    }
-    delete[] argv;
-}
-
-void Test::readPipes(int * stdout_pipe, int * stderr_pipe) {
-    std::string buffer(1024 , ' ');
-    size_t bytes_read;
-    std::vector<pollfd> pollVector = {{stdout_pipe[0] , POLLIN},
-                                      {stderr_pipe[0] , POLLIN}};
-    for( ; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
-        if (pollVector[0].revents&POLLIN) {
-            bytes_read = read(stdout_pipe[0] , &buffer[0] , buffer.length());
-            testLog.append(buffer , 0 , bytes_read);
-        }
-        else if (pollVector[1].revents&POLLIN) {
-            bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
-            testLog.append(buffer , 0 , bytes_read);
-        }
-        else break; /* Reading done */
-    }
+    arguments << "-f " << binaryDataPath;
+    return arguments.str();
 }
 
 void Test::extractPvalues() {

@@ -17,7 +17,7 @@
                 <DIEHARDER_DIR>reports/dieharder/</DIEHARDER_DIR>
                 <NIST_STS_DIR>reports/niststs/</NIST_STS_DIR>
                 
-                <TU01_SMALLCRUSH_DIR></TU01_SMALLCRUSH_DIR>
+                <TU01_SMALLCRUSH_DIR>reports/testu01/scrush/</TU01_SMALLCRUSH_DIR>
                 <TU01_CRUSH_DIR>reports/testu01/crush/</TU01_CRUSH_DIR>
                 <TU01_BIGCRUSH_DIR>reports/testu01/bcrush/</TU01_BIGCRUSH_DIR>
                 <TU01_RABBIT_DIR>reports/testu01/rabbit/</TU01_RABBIT_DIR>
@@ -34,7 +34,7 @@
     <DIEHARDER_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/dieharder/bin/dieharder</BINARY_PATH>
         <DEFAULT_OUTPUT_DIRECTORY>dieharder_out</DEFAULT_OUTPUT_DIRECTORY>
-        <DEFAULT_PSAMPLES>10</DEFAULT_PSAMPLES>
+        <DEFAULT_PSAMPLES>100</DEFAULT_PSAMPLES>
         <DEFAULT_ARGUMENTS>-W 0.01 -X 0.01</DEFAULT_ARGUMENTS>
         
         <TESTS_SETTINGS>
@@ -53,19 +53,19 @@
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="4">
-                <!-- <PSAMPLES>1000</PSAMPLES> -->
+                <PSAMPLES>128</PSAMPLES>
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="5">
-                <!-- <PSAMPLES>1000</PSAMPLES> -->
+                <PSAMPLES>128</PSAMPLES>
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="6">
-                <!-- <PSAMPLES>1000</PSAMPLES> -->
+                <PSAMPLES>128</PSAMPLES>
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
             <SETTINGS test="7">
-                <!-- <PSAMPLES>1000</PSAMPLES> -->
+                <PSAMPLES>128</PSAMPLES>
                 <ARGUMENTS></ARGUMENTS>
             </SETTINGS>
         </TESTS_SETTINGS>
@@ -80,33 +80,33 @@
         
         <TESTS_SETTINGS>
             <SETTINGS test="1">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>
+                <STREAM_SIZE>10000</STREAM_SIZE>
+                <STREAM_COUNT>15</STREAM_COUNT>
             </SETTINGS>
             <SETTINGS test="2">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>
-                <BLOCK_LENGTH>128</BLOCK_LENGTH>                 
+                <STREAM_SIZE>10000</STREAM_SIZE>
+                <STREAM_COUNT>16</STREAM_COUNT>
+                <BLOCK_LENGTH>127</BLOCK_LENGTH>                 
             </SETTINGS>
             <SETTINGS test="3">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>             
+                <STREAM_SIZE>10000</STREAM_SIZE>
+                <STREAM_COUNT>17</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="4">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>             
+                <STREAM_COUNT>100</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="5">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>             
+                <STREAM_COUNT>100</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="6">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>             
+                <STREAM_COUNT>100</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="7">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>             
+                <STREAM_COUNT>100</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="8">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
@@ -115,7 +115,7 @@
             </SETTINGS>
             <SETTINGS test="9">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>
+                <STREAM_COUNT>100</STREAM_COUNT>
                 <BLOCK_LENGTH>9</BLOCK_LENGTH>                
             </SETTINGS>
             <SETTINGS test="10">
@@ -124,20 +124,20 @@
             </SETTINGS>
             <SETTINGS test="11">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>   
+                <STREAM_COUNT>100</STREAM_COUNT>   
                 <BLOCK_LENGTH>10</BLOCK_LENGTH>          
             </SETTINGS>
             <SETTINGS test="12">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>             
+                <STREAM_COUNT>100</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="13">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>             
+                <STREAM_COUNT>100</STREAM_COUNT>             
             </SETTINGS>
             <SETTINGS test="14">
                 <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>    
+                <STREAM_COUNT>100</STREAM_COUNT>    
                 <BLOCK_LENGTH>16</BLOCK_LENGTH>         
             </SETTINGS>
             <SETTINGS test="15">

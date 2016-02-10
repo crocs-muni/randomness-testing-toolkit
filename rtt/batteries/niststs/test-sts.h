@@ -14,6 +14,7 @@
 extern char **environ;
 
 #include "libs/tinyXML/xmlproc.h"
+#include "rtt/batteries/testutils-batt.h"
 #include "rtt/utils.h"
 #include "rtt/options.h"
 
@@ -114,21 +115,13 @@ private:
     /* without initialization that is in getInstance */
     Test() {}
 
-    char ** buildArgv(int * argc) const;
+    std::string createArgs() const;
 
-    void destroyArgv(int argc , char ** argv) const;
-
-    std::string buildInput() const;
-
-    void readPipes(int * stdout_pipe , int * stderr_pipe);
+    std::string createInput() const;
 
     void parseStoreResults();
 
-    tTestPvals readPvals(const std::string &fileName);
-
-    static std::string getSpecificOrDefaultOpt(TiXmlNode * cfgRoot , TiXmlNode * testNode,
-                                               const std::string &defaultPath,
-                                               const std::string &testPath);
+    tTestPvals readPvals(const std::string & fileName);
 };
 
 } // namespace niststs

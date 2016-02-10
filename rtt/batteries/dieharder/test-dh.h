@@ -15,6 +15,7 @@ extern char **environ;
 #include "rtt/utils.h"
 #include "rtt/options.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
+#include "rtt/batteries/testutils-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -124,11 +125,7 @@ private:
     /* without initialization that is in getInstance */
     Test() {}
 
-    char ** buildArgv(int * argc) const;
-
-    void destroyArgv(int argc , char ** argv) const;
-
-    void readPipes(int * stdout_pipe , int * stderr_pipe);
+    std::string createArgs() const;
 
     void extractPvalues();
 };

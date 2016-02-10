@@ -8,6 +8,7 @@
 
 extern char ** environ;
 
+#include "rtt/batteries/testutils-batt.h"
 #include "rtt/options.h"
 #include "libs/tinyXML/xmlproc.h"
 
@@ -253,38 +254,20 @@ private:
     */
     Test() {}
 
-    static Test createSmallCrushTest(int testIndex , TiXmlNode * cfgRoot);
-
-    static Test createCrushTest(int testIndex , TiXmlNode * cfgRoot);
-
-    static Test createBigCrushTest(int testIndex , TiXmlNode * cfgRoot);
-
-    static Test createRabbitTest(int testIndex , TiXmlNode * cfgRoot);
-
-    static Test createAlphabitTest(int testIndex , TiXmlNode * cfgRoot);
-
     static std::vector<tParam> checkSetParams(const tTestInfo & testInfo,
                                               TiXmlNode * paramsNode);
 
     static void pickTestInfo(int testIndex, int battery,
                              tTestInfo & tinfo, std::string & batteryXPath);
 
-    static std::string getSpecificOrDefaultOpt(TiXmlNode * cfgRoot , TiXmlNode * testNode ,
-                                               const std::string & defaultPath ,
-                                               const std::string & testPath);
-
-    char ** buildArgv(int * argc) const;
-
-    void destroyArgv(int argc , char ** argv) const;
-
-    void readPipes(int * stdout_pipe , int * stderr_pipe);
+    std::string createArgs() const;
 
     void extractPvalues();
 
     void saveTestLogToFile();
 
-    double convertOutToDouble(const std::string & num,
-                              const std::string & oneMinus);
+    double convertStringToDouble(const std::string & num,
+                                 const std::string & oneMinus);
 };
 
 } // namespace testu01

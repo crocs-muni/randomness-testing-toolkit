@@ -71,20 +71,21 @@ void Storage::addSubTest() {
     ++indent;
 }
 
-void Storage::addStatisticResult(const std::string & statName, double value) {
-    report << doIndent() << statName << " statistic: " << value << std::endl;
+void Storage::addStatisticResult(const std::string & statName, double value, int precision) {
+    report << doIndent() << statName << " statistic: "
+           << std::setprecision(precision) << std::fixed << value << std::endl;
 }
 
 void Storage::addStatisticResult(const std::string & statName , const std::string & value) {
     report << doIndent() << statName << " statistic: " << value << std::endl;
 }
 
-void Storage::addPValues(const std::vector<double> & pvals) {
+void Storage::addPValues(const std::vector<double> & pvals , int precision) {
     report << doIndent() << "p-values: " << std::endl;
     ++indent;
     std::string tabs = doIndent();
     for(const double & i : pvals)
-        report << tabs << i << std::endl;
+        report << tabs << std::setprecision(precision) << std::fixed << i << std::endl;
     --indent;
     report << doIndent() << "============" << std::endl;
 }

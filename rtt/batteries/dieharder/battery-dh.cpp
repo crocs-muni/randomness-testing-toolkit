@@ -60,14 +60,14 @@ void Battery::processStoredResults() {
         storage->setTestOptions(test.getSettings());
 
         std::vector<tTestPvals> results = test.getResults();
-        if(results.size() == 1) { /* Single test*/
-            storage->addStatisticResult("KS" , kstest(results.at(0)));
-            storage->addPValues(results.at(0));
+        if(results.size() == 1) { /* Single test */
+            storage->addStatisticResult("KS" , kstest(results.at(0)) , 8);
+            storage->addPValues(results.at(0) , 8);
         } else { /* Multiple subtests */
             for(const auto & result : results) {
                 storage->addSubTest();
-                storage->addStatisticResult("KS" , kstest(result));
-                storage->addPValues(result);
+                storage->addStatisticResult("KS" , kstest(result) , 8);
+                storage->addPValues(result , 8);
                 storage->finalizeSubTest();
             }
         }
@@ -80,7 +80,7 @@ void Battery::processStoredResults() {
 /* Used for calculation of final pvalue of test. */
 double Battery::kstest(const std::vector<double> & pvalue) {
     int i;
-    double y,d,d1,d2,dmax;
+    double y/*,d*/,d1/*,d2*/,dmax;
     double p;
     int count = pvalue.size();
 
@@ -92,9 +92,9 @@ double Battery::kstest(const std::vector<double> & pvalue) {
     for(i=1;i<=count;i++) {
         y = (double) i/(count+1.0);
         d1 = pvalue[i-1] - y;
-        d2 = fabs(1.0/(count+1.0) - d1);
+        //d2 = fabs(1.0/(count+1.0) - d1);
         d1 = fabs(d1);
-        d = fmax(d1,d2);
+        //d = fmax(d1,d2);
 
         if(d1 > dmax) dmax = d1;
     }

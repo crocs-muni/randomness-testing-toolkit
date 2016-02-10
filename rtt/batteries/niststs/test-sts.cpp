@@ -79,10 +79,10 @@ Test Test::getInstance(int testIndex,
                     Utils::itostr(test.testIndex)
                 );
 
-    test.streamSize = getSpecificOrDefaultOpt(cfgRoot , testsSettingsNode ,
+    test.streamSize = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
                                               XPATH_DEFAULT_STREAM_SIZE ,
                                               XPATH_TEST_STREAM_SIZE);
-    test.streamCount = getSpecificOrDefaultOpt(cfgRoot , testsSettingsNode ,
+    test.streamCount = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
                                                XPATH_DEFAULT_STREAM_COUNT ,
                                                XPATH_TEST_STREAM_COUNT);
     test.blockLength = getXMLElementValue(testsSettingsNode , XPATH_TEST_BLOCK_LENGTH);
@@ -108,63 +108,12 @@ void Test::appendTestLog(std::string & batteryLog) {
 }
 
 void Test::execute() {
-    std::cout << "Executing test " << static_cast<int>(testIndex) << std::endl;
-    int stdin_pipe[2];
-    int stdout_pipe[2];
-    int stderr_pipe[2];
-    pid_t pid = 0;
-
-    /* Creating pipes for redirected I/O of new process */
-    posix_spawn_file_actions_t actions;
-    if(pipe(stdin_pipe) || pipe(stdout_pipe) || pipe(stderr_pipe))
-        throw std::runtime_error("pipe creation failed");
-    /* Pipes will be mapped to I/O after process start */
-    /* Unused ends are closed */
-    posix_spawn_file_actions_init(&actions);
-    posix_spawn_file_actions_addclose(&actions , stdin_pipe[1]);
-    posix_spawn_file_actions_addclose(&actions , stdout_pipe[0]);
-    posix_spawn_file_actions_addclose(&actions , stderr_pipe[0]);
-    posix_spawn_file_actions_adddup2(&actions , stdin_pipe[0] , 0);
-    posix_spawn_file_actions_addclose(&actions , stdin_pipe[0]);
-    posix_spawn_file_actions_adddup2(&actions , stdout_pipe[1] , 1);
-    posix_spawn_file_actions_addclose(&actions , stdout_pipe[1]);
-    posix_spawn_file_actions_adddup2(&actions , stderr_pipe[1] , 2);
-    posix_spawn_file_actions_addclose(&actions , stderr_pipe[1]);
-    /* Creating cli arguments for executable */
-    int argc = 0;
-    char ** argv = buildArgv(&argc);
-    /* Creating input that will be sent to exec */
-    std::string input(buildInput());
-    /* Executing binary */
-    int status = posix_spawn(&pid , executablePath.c_str() ,
-                             &actions , NULL , argv , environ);
-    if(status == 0) {
-        std::cout << "Started NIST STS process with pid: " << pid << std::endl;
-        close(stdin_pipe[0]);
-        close(stdout_pipe[1]);
-        close(stderr_pipe[1]);
-        write(stdin_pipe[1] , input.c_str() , input.length());
-        /* Reading and storing output of battery */
-        readPipes(stdout_pipe , stderr_pipe);
-        /* Waiting for STS to end */
-        if(waitpid(pid , &status , 0) != -1) {
-            std::cout << "NIST STS exited with code: " << status << std::endl;
-        } else {
-            throw std::runtime_error("error when running NIST STS");
-        }
-    } else {
-        throw std::runtime_error("error ocurred when starting NIST STS executable: " +
-                                 static_cast<std::string>(strerror(status)));
-    }
-    posix_spawn_file_actions_destroy(&actions);
-    destroyArgv(argc , argv);
-
-    /* Battery successfuly finished calculation */
-    /* Now it's time to parse and store the results */
+    std::cout << "Executing test " << testIndex << " in battery "
+              << Constants::batteryToString(Constants::BATTERY_NIST_STS) << std::endl;
+    outputLog = TestUtils::executeBinary(executablePath ,
+                                         createArgs() ,
+                                         createInput());
     parseStoreResults();
-
-    /* One last thing */
-    /* Allows extraction of results */
     executed = true;
 }
 
@@ -204,48 +153,13 @@ std::vector<tTestPvals> Test::getResults() const {
  \$$
 */
 
-std::string Test::getSpecificOrDefaultOpt(TiXmlNode * cfgRoot , TiXmlNode * testNode ,
-                                          const std::string & defaultPath ,
-                                          const std::string & testPath) {
-    if(!cfgRoot)
-        throw std::runtime_error("null root");
-
-    std::string nodeValue;
-    if(!testNode) {
-        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
-        return nodeValue;
-    }
-
-    nodeValue = getXMLElementValue(testNode , testPath);
-    if(nodeValue.empty()) {
-        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
-        return nodeValue;
-    } else {
-        return nodeValue;
-    }
+std::string Test::createArgs() const {
+    std::stringstream arguments;
+    arguments << "assess " << streamSize;
+    return arguments.str();
 }
 
-char ** Test::buildArgv(int * argc) const {
-    /* NIST STS takes only 1 argument from cli */
-    std::vector<std::string> vecArg = {"assess" , streamSize};
-    char ** argv = new char * [vecArg.size() + 1];
-    for(size_t i = 0 ; i < vecArg.size() ; ++i) {
-        argv[i] = new char [vecArg[i].length() + 1];
-        strcpy(argv[i] , vecArg[i].c_str());
-    }
-    argv[vecArg.size()] = NULL;
-    *argc = vecArg.size() + 1;
-    return argv;
-}
-
-void Test::destroyArgv(int argc, char **argv) const {
-    for(int i = 0 ; i < argc ; i++) {
-        if(argv[i]) delete[] argv[i];
-    }
-    delete[] argv;
-}
-
-std::string Test::buildInput() const {
+std::string Test::createInput() const {
     /* 'Beautiful' creation of input that will be sent to */
     /* sts over pipe, so that it will have proper settings. */
     std::stringstream inputSequence;
@@ -283,24 +197,6 @@ std::string Test::buildInput() const {
     /* Confirm input with newline */
     inputSequence << std::endl;
     return inputSequence.str();
-}
-
-void Test::readPipes(int *stdout_pipe, int *stderr_pipe) {
-    std::string buffer(1024 , ' ');
-    size_t bytes_read;
-    std::vector<pollfd> pollVector = {{stdout_pipe[0] , POLLIN},
-                                      {stderr_pipe[0] , POLLIN}};
-    for( ; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
-        if (pollVector[0].revents&POLLIN) {
-            bytes_read = read(stdout_pipe[0] , &buffer[0] , buffer.length());
-            outputLog.append(buffer , 0 , bytes_read);
-        }
-        else if (pollVector[1].revents&POLLIN) {
-            bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
-            outputLog.append(buffer , 0 , bytes_read);
-        }
-        else break; /* Reading done */
-    }
 }
 
 void Test::parseStoreResults() {

@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iomanip>
 
 #include "libs/tinyXML/xmlproc.h"
 
@@ -38,11 +39,11 @@ public:
 
     void addSubTest();
 
-    void addStatisticResult(const std::string & statName , double value);
+    void addStatisticResult(const std::string & statName , double value , int precision = 2);
 
     void addStatisticResult(const std::string & statName , const std::string & value);
 
-    void addPValues(const std::vector<double> & pvals);
+    void addPValues(const std::vector<double> & pvals, int precision = 2);
 
     void finalizeSubTest();
 

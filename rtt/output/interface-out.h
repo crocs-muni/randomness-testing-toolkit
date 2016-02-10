@@ -20,9 +20,9 @@ public:
 
     virtual void addStatisticResult(const std::string & statName , double value , int precision) = 0;
 
-    virtual void addStatisticResult(const std::string & statName , const std::string & value) = 0;
+    virtual void addStatisticResult(const std::string & statName , const std::string & value , bool failed) = 0;
 
-    virtual void addPValues(const std::vector<double> & pvals , int precision) = 0;
+    virtual void addPValues(const std::vector<double> & pvals , int precision = 6) = 0;
 
     virtual void finalizeSubTest() = 0;
 

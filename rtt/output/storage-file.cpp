@@ -72,11 +72,20 @@ void Storage::addSubTest() {
 }
 
 void Storage::addStatisticResult(const std::string & statName, double value, int precision) {
-    report << doIndent() << statName << " statistic: "
+    ++totalStatisticsCount;
+    if(value >= Constants::MATH_ALPHA && value <= (1.0 - Constants::MATH_ALPHA))
+        ++passedStatisticsCount;
+
+    report << doIndent() << statName << " statistic p-value: "
            << std::setprecision(precision) << std::fixed << value << std::endl;
 }
 
-void Storage::addStatisticResult(const std::string & statName , const std::string & value) {
+void Storage::addStatisticResult(const std::string & statName ,
+                                 const std::string & value, bool failed) {
+    ++totalStatisticsCount;
+    if(!failed)
+        ++passedStatisticsCount;
+
     report << doIndent() << statName << " statistic: " << value << std::endl;
 }
 
@@ -103,6 +112,8 @@ void Storage::finalizeTest() {
 }
 
 void Storage::finalizeReport() {
+    report << "Proportion of passed statistics: " << passedStatisticsCount << "/"
+           << totalStatisticsCount << std::endl;
     Utils::createDirectory(Utils::getPathWithoutLastItem(outFilePath));
     Utils::saveStringToFile(outFilePath , report.str());
 }

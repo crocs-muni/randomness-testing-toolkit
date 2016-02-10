@@ -41,7 +41,7 @@ public:
 
     void addStatisticResult(const std::string & statName , double value , int precision = 2);
 
-    void addStatisticResult(const std::string & statName , const std::string & value);
+    void addStatisticResult(const std::string & statName , const std::string & value , bool failed);
 
     void addPValues(const std::vector<double> & pvals, int precision = 2);
 
@@ -62,6 +62,8 @@ private:
     std::string inFilePath;
     std::string outFilePath;
     std::stringstream report;
+    int passedStatisticsCount = 0;
+    int totalStatisticsCount = 0;
     int indent = 0;
     int currentSubtest = 0;
 

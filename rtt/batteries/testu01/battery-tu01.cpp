@@ -65,12 +65,12 @@ void Battery::processStoredResults() {
             for(size_t i = 0 ; i < statistics.size() ; ++i)
                 /* Number of statistics and number of results of single
                    test is always the same */
-                storage->addStatisticResult(statistics.at(i) , results.at(0).at(i) , 6);
+                storage->addStatisticResult(statistics.at(i) , results.at(0).at(i) , 4);
         } else { /* Test had repetitions, create multiple subtests */
             for(const auto & result : results) {
                 storage->addSubTest();
                 for(size_t i = 0 ; i < statistics.size() ; ++i)
-                    storage->addStatisticResult(statistics.at(i) , result.at(i) , 6);
+                    storage->addStatisticResult(statistics.at(i) , result.at(i) , 4);
                 storage->finalizeSubTest();
             }
         }

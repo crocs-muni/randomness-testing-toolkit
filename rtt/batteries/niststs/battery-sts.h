@@ -50,7 +50,7 @@ private:
 
     static double chi2_stat(tTestPvals pvals);
 
-    static std::string proportionStat(tTestPvals pvals);
+    static std::string proportionStat(tTestPvals pvals, bool * failed);
 };
 
 } // namespace niststs

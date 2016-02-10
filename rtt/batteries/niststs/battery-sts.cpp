@@ -63,16 +63,20 @@ void Battery::processStoredResults() {
         storage->setTestOptions(test.getSettings());
 
         std::vector<tTestPvals> results = test.getResults();
+        bool propStatFailed;
+        std::string propStat;
 
         if(results.size() == 1) { /* Single test */
             storage->addStatisticResult("Chi-square" , chi2_stat(results.at(0)) , 6);
-            storage->addStatisticResult("Proportion" , proportionStat(results.at(0)));
+            propStat = proportionStat(results.at(0) , &propStatFailed);
+            storage->addStatisticResult("Proportion" , propStat , propStatFailed);
             storage->addPValues(results.at(0) , 6);
         } else { /* Multiple subtests */
             for(const auto & result : results) {
                 storage->addSubTest();
                 storage->addStatisticResult("Chi-square" , chi2_stat(result) , 6);
-                storage->addStatisticResult("Proportion" , proportionStat(result));
+                propStat = proportionStat(result , &propStatFailed);
+                storage->addStatisticResult("Proportion" , propStat , propStatFailed);
                 storage->addPValues(result , 6);
                 storage->finalizeSubTest();
             }
@@ -82,13 +86,22 @@ void Battery::processStoredResults() {
     storage->finalizeReport();
 }
 
-std::string Battery::proportionStat(tTestPvals pvals) {
+std::string Battery::proportionStat(tTestPvals pvals , bool * failed) {
     int passCount = 0;
-    double ALPHA = 0.01;
+    double p_hat = 1.0 - Constants::MATH_ALPHA;
+    double proportion_threshold_max =
+            (p_hat + 3.0 * sqrt((p_hat*Constants::MATH_ALPHA)/pvals.size())) * pvals.size();
+    double proportion_threshold_min =
+            (p_hat - 3.0 * sqrt((p_hat*Constants::MATH_ALPHA)/pvals.size())) * pvals.size();
     for(const auto & val : pvals) {
-        if(val >= ALPHA)
+        if(val >= Constants::MATH_ALPHA)
             ++passCount;
     }
+    if(passCount < proportion_threshold_min || passCount > proportion_threshold_max)
+        *failed = false;
+    else
+        *failed = true;
+
     return {Utils::itostr(passCount) + "/" + Utils::itostr(pvals.size())};
 }
 

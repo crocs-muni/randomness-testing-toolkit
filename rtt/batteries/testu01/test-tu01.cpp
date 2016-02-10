@@ -75,8 +75,8 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
 
     test.battery = options.getBattery();
     test.testIndex = testIndex;
-    std::tie(test.logicName , test.paramNames , test.statisticNames)
-            = pickTestInfo(testIndex , options.getBattery() , batteryXPath);
+    std::tie(test.logicName , test.paramNames , test.statisticNames) =
+            pickTestInfo(testIndex , options.getBattery() , batteryXPath);
 
     TiXmlNode * testSettings = getXMLChildNodeWithAttValue(
                                 getXMLElement(cfgRoot , batteryXPath),
@@ -467,10 +467,10 @@ void Test::extractPvalues() {
     tTestPvals pValues;
 
     for(; begin != end ;) {
-        for(int i = 0 ; i < statCount ; ++i) {
+        for(uint i = 0 ; i < statCount ; ++i) {
             std::smatch match = *begin;
             pValues.push_back(convertStringToDouble(match[1].str() ,
-                                                 match[2].str()));
+                                                    match[2].str()));
             ++begin;
         }
         results.push_back(std::move(pValues));

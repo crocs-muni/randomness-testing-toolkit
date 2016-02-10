@@ -242,7 +242,7 @@ private:
     bool executed = false;
     /* Number of statistics calculated in each test
      * resulting pval count = reps*statCount */
-    int statCount;
+    uint statCount;
     std::string testLog;
     /* Each tTestPval holds results of single test and its statistics */
     /* This is in vector - multiple test repetitions are possible */

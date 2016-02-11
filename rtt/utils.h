@@ -9,6 +9,7 @@
 #include <ctime>
 #include <vector>
 #include <regex>
+#include <iostream>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -120,6 +121,8 @@ public:
      * @param access            Access rights for new dirs, default is 0755
      */
     static void createDirectory(const std::string & path, int access = 0775);
+
+    static bool fileExist(const std::string & name);
 
     /** Simple insert sort algorithm, sorts vector of integer in ascending order,
       * after sorting kills duplicities.

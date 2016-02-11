@@ -98,9 +98,9 @@ std::string Battery::proportionStat(tTestPvals pvals , bool * failed) {
             ++passCount;
     }
     if(passCount < proportion_threshold_min || passCount > proportion_threshold_max)
-        *failed = false;
-    else
         *failed = true;
+    else
+        *failed = false;
 
     return {Utils::itostr(passCount) + "/" + Utils::itostr(pvals.size())};
 }

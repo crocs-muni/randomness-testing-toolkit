@@ -4,6 +4,7 @@ namespace rtt {
 namespace output {
 namespace file {
 
+const std::string Storage::XPATH_FILE_MAIN      = "TOOLKIT_SETTINGS/OUTPUT/FILE/MAIN_FILE";
 const std::string Storage::XPATH_DIR_DH         = "TOOLKIT_SETTINGS/OUTPUT/FILE/DIEHARDER_DIR";
 const std::string Storage::XPATH_DIR_NIST       = "TOOLKIT_SETTINGS/OUTPUT/FILE/NIST_STS_DIR";
 const std::string Storage::XPATH_DIR_TU01_SC    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_SMALLCRUSH_DIR";
@@ -12,7 +13,8 @@ const std::string Storage::XPATH_DIR_TU01_BC    = "TOOLKIT_SETTINGS/OUTPUT/FILE/
 const std::string Storage::XPATH_DIR_TU01_RB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_RABBIT_DIR";
 const std::string Storage::XPATH_DIR_TU01_AB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_ALPHABIT_DIR";
 
-const size_t Storage::MISC_TAB_SIZE = 4;
+const size_t Storage::MISC_TAB_SIZE     = 4;
+const size_t Storage::MISC_COL_WIDTH    = 30;
 
 std::unique_ptr<Storage> Storage::getInstance(TiXmlNode * root ,
                                               const CliOptions & options ,
@@ -36,6 +38,10 @@ std::unique_ptr<Storage> Storage::getInstance(TiXmlNode * root ,
                                  Utils::itostr(options.getBattery()));
     }
 
+    /* Getting file name for main output file */
+    storage->mainOutFilePath = getXMLElementValue(root , XPATH_FILE_MAIN);
+
+    /* Creating file name for test report file */
     std::string binFileName = Utils::getLastItemInPath(storage->inFilePath);
     std::string datetime = Utils::formatRawTime(storage->creationTime , "%Y%m%d%H%M%S");
     storage->outFilePath = getXMLElementValue(root , dirXPath);
@@ -112,10 +118,16 @@ void Storage::finalizeTest() {
 }
 
 void Storage::finalizeReport() {
-    report << "Proportion of passed statistics: " << passedStatisticsCount << "/"
-           << totalStatisticsCount << std::endl;
+    /* Add passed tests proportion at the end of report */
+    passedTestProp = {Utils::itostr(passedStatisticsCount) + "/" + Utils::itostr(totalStatisticsCount)};
+    report << "Proportion of passed statistics: " << passedTestProp << std::endl;
+    /* Storing report */
     Utils::createDirectory(Utils::getPathWithoutLastItem(outFilePath));
     Utils::saveStringToFile(outFilePath , report.str());
+    /* Adding result into table file */
+    /* Files with same name as the file processed in
+     * this run will be assigned new results */
+    addResultToTableFile();
 }
 
 void Storage::makeReportHeader() {
@@ -126,11 +138,149 @@ void Storage::makeReportHeader() {
     report << std::endl << std::endl;
 }
 
-std::string Storage::doIndent() {
+std::string Storage::doIndent() const {
     if(indent > 0)
         return std::string(indent * MISC_TAB_SIZE, ' ');
     else
         return "";
+}
+
+void Storage::addResultToTableFile() const {
+    if(Utils::fileExist(mainOutFilePath)) {
+        /* Table file already exist */
+        tStringVector header;
+        tStringVector fileNames;
+        std::vector<tStringVector> tableData;
+        /* Loading file into table variables */
+        loadMainTable(header , fileNames , tableData);
+
+        /* Looking for file name - if table already has row
+         * with same file name as I am processing here,
+         * only new information is added to this row.
+         * Otherwise new row is added. */
+        std::vector<std::string>::iterator fileRow =
+                std::find(fileNames.begin() , fileNames.end() , inFilePath);
+        if(fileRow != fileNames.end()) {
+            /* Row with same filename is present, modifying this row */
+            int rowIndex = std::distance(fileNames.begin() , fileRow);
+            tableData.at(rowIndex).at(0) =
+                    Utils::formatRawTime(creationTime , "%Y-%m-%d %H:%M:%S");
+            tableData.at(rowIndex).at(batteryConstant) = passedTestProp;
+        } else {
+            /* Adding new row */
+            addNewRow(fileNames , tableData);
+        }
+
+        /* Saving table variables into file. */
+        saveMainTable(header , fileNames , tableData);
+    } else {
+        /* File doesn't exist, create brand new table file with single new result */
+        tStringVector header;
+        tStringVector fileNames;
+        std::vector<tStringVector> tableData;
+
+        /* Creating header */
+        header.push_back("Input file path");
+        header.push_back("Time of last update");
+        for(uint i = 1 ; i <= Constants::BATTERY_TOTAL_COUNT ; ++i)
+            header.push_back(Constants::batteryToString(i));
+
+        /* Adding new row */
+        addNewRow(fileNames , tableData);
+
+        /* Table variables are now complete, save into file */
+        saveMainTable(header , fileNames , tableData);
+    }
+}
+
+void Storage::loadMainTable(tStringVector & header,
+                            tStringVector & fileNames,
+                            std::vector<tStringVector> & tableData) const {
+    std::string table = std::move(Utils::readFileToString(mainOutFilePath));
+    tStringVector lines = Utils::split(table , '\n');
+    if(lines.empty())
+        throw std::runtime_error("can't load table: file is empty");
+
+    /* Parsing header */
+    header = std::move(Utils::split(lines.at(0) , '^'));
+
+    /* Parsing rows */
+    tStringVector row;
+    for(size_t i = 1 ; i < lines.size() ; ++i) {
+        row = std::move(Utils::split(lines.at(i) , '^'));
+        if(row.size() != 1)
+            throw std::runtime_error("input table corrupted: "
+                                     "non header row contains more than one \"^\"");
+
+        row = std::move(Utils::split(row.at(0) , '|'));
+        if(row.size() != header.size())
+            throw std::runtime_error("input table corrupted: "
+                                     "row " + Utils::itostr(i) + " has "
+                                     "different number of columns than header");
+        fileNames.push_back(stripSpacesFromString(row.at(0)));
+        tableData.push_back({row.begin() + 1 , row.end()});
+    }
+}
+
+void Storage::saveMainTable(const tStringVector & header,
+                            const tStringVector & fileNames,
+                            const std::vector<tStringVector> & tableData) const {
+    if(fileNames.size() != tableData.size())
+        throw std::runtime_error("can't create output table: number of filenames and"
+                                 " number of table data rows does not match");
+
+    /* First columnt is aligned to left, rest right */
+    bool first = true;
+    std::stringstream table;
+
+    /* Creating header */
+    for(const std::string & val : header) {
+        table << "^";
+        table << std::setw(MISC_COL_WIDTH);
+        if(first){
+            table << std::left;
+            first = false;
+        }
+        else /* This else is maybe useless */
+            table << std::right;
+        table << val;
+    }
+    table << "^" << std::endl;
+
+    /* Inserting rows */
+    for(size_t i = 0 ; i < fileNames.size() ; ++i) {
+        table << "^";
+        table << std::setw(MISC_COL_WIDTH) << std::left;
+        table << fileNames.at(i);
+        table << std::right;
+        for(const std::string & val : tableData.at(i)) {
+            table << "|";
+            table << std::setw(MISC_COL_WIDTH);
+            table << val;
+        }
+        table << "|" << std::endl;
+    }
+
+    /* Saving table to file */
+    Utils::saveStringToFile(mainOutFilePath , table.str());
+}
+
+void Storage::addNewRow(tStringVector & fileNames,
+                        std::vector<tStringVector> & tableData) const {
+    /* Add file path to file names column */
+    fileNames.push_back(inFilePath);
+    /* Add data into corresponding row */
+    /* Column count is total batteries count + first column for last update info */
+    tStringVector row(1 + Constants::BATTERY_TOTAL_COUNT , "");
+    row.at(0) = Utils::formatRawTime(creationTime , "%Y-%m-%d %H:%M:%S");
+    row.at(batteryConstant) = passedTestProp;
+    tableData.push_back(std::move(row));
+}
+
+std::string Storage::stripSpacesFromString(const std::string & str) {
+    size_t start = str.find_first_not_of(" ");
+    size_t end = str.find_last_not_of(" ");
+    return str.substr(start , end + 1);
 }
 
 } // namespace file

@@ -12,11 +12,11 @@
         </LOGGER>
         
         <OUTPUT>
-        
             <FILE>
+                <MAIN_FILE>reports/test_comp.table</MAIN_FILE>
+            
                 <DIEHARDER_DIR>reports/dieharder/</DIEHARDER_DIR>
                 <NIST_STS_DIR>reports/niststs/</NIST_STS_DIR>
-                
                 <TU01_SMALLCRUSH_DIR>reports/testu01/scrush/</TU01_SMALLCRUSH_DIR>
                 <TU01_CRUSH_DIR>reports/testu01/crush/</TU01_CRUSH_DIR>
                 <TU01_BIGCRUSH_DIR>reports/testu01/bcrush/</TU01_BIGCRUSH_DIR>
@@ -27,8 +27,8 @@
             <DATABASE>
                 <SOMETHING>nothing</SOMETHING>    
             </DATABASE>
-        
         </OUTPUT>
+        
     </TOOLKIT_SETTINGS>
 
     <DIEHARDER_SETTINGS>
@@ -38,35 +38,30 @@
         <DEFAULT_ARGUMENTS>-W 0.01 -X 0.01</DEFAULT_ARGUMENTS>
         
         <TESTS_SETTINGS>
-            <SETTINGS test="0">
-                <PSAMPLES>10</PSAMPLES>
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="200">
+                <ARGUMENTS>-n 12</ARGUMENTS>
             </SETTINGS>
-            <SETTINGS test="1">
-                <PSAMPLES>10</PSAMPLES>
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="201">
+                <PSAMPLES>1000</PSAMPLES>
+                <ARGUMENTS>-n 2 -t 8000</ARGUMENTS>
             </SETTINGS>
-            <SETTINGS test="2">
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="204">
+                <PSAMPLES>1000</PSAMPLES>
             </SETTINGS>
-            <SETTINGS test="3">
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="205">
+                <PSAMPLES>1</PSAMPLES>
             </SETTINGS>
-            <SETTINGS test="4">
-                <PSAMPLES>128</PSAMPLES>
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="206">
+                <PSAMPLES>1</PSAMPLES>
             </SETTINGS>
-            <SETTINGS test="5">
-                <PSAMPLES>128</PSAMPLES>
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="207">
+                <PSAMPLES>1</PSAMPLES>
             </SETTINGS>
-            <SETTINGS test="6">
-                <PSAMPLES>128</PSAMPLES>
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="208">
+                <PSAMPLES>1</PSAMPLES>
             </SETTINGS>
-            <SETTINGS test="7">
-                <PSAMPLES>128</PSAMPLES>
-                <ARGUMENTS></ARGUMENTS>
+            <SETTINGS test="209">
+                <PSAMPLES>1</PSAMPLES>
             </SETTINGS>
         </TESTS_SETTINGS>
         
@@ -77,143 +72,17 @@
         <DEFAULT_OUTPUT_DIRECTORY>niststs_out</DEFAULT_OUTPUT_DIRECTORY>
         <DEFAULT_STREAM_SIZE>1000000</DEFAULT_STREAM_SIZE>
         <DEFAULT_STREAM_COUNT>100</DEFAULT_STREAM_COUNT>
-        
-        <TESTS_SETTINGS>
-            <SETTINGS test="1">
-                <STREAM_SIZE>10000</STREAM_SIZE>
-                <STREAM_COUNT>15</STREAM_COUNT>
-            </SETTINGS>
-            <SETTINGS test="2">
-                <STREAM_SIZE>10000</STREAM_SIZE>
-                <STREAM_COUNT>16</STREAM_COUNT>
-                <BLOCK_LENGTH>127</BLOCK_LENGTH>                 
-            </SETTINGS>
-            <SETTINGS test="3">
-                <STREAM_SIZE>10000</STREAM_SIZE>
-                <STREAM_COUNT>17</STREAM_COUNT>             
-            </SETTINGS>
-            <SETTINGS test="4">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
-            </SETTINGS>
-            <SETTINGS test="5">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
-            </SETTINGS>
-            <SETTINGS test="6">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
-            </SETTINGS>
-            <SETTINGS test="7">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
-            </SETTINGS>
-            <SETTINGS test="8">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT>  
-                <BLOCK_LENGTH>9</BLOCK_LENGTH>               
-            </SETTINGS>
-            <SETTINGS test="9">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>
-                <BLOCK_LENGTH>9</BLOCK_LENGTH>                
-            </SETTINGS>
-            <SETTINGS test="10">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>           
-            </SETTINGS>
-            <SETTINGS test="11">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>   
-                <BLOCK_LENGTH>10</BLOCK_LENGTH>          
-            </SETTINGS>
-            <SETTINGS test="12">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
-            </SETTINGS>
-            <SETTINGS test="13">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>             
-            </SETTINGS>
-            <SETTINGS test="14">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>100</STREAM_COUNT>    
-                <BLOCK_LENGTH>16</BLOCK_LENGTH>         
-            </SETTINGS>
-            <SETTINGS test="15">
-                <STREAM_SIZE>1000000</STREAM_SIZE>
-                <STREAM_COUNT>10</STREAM_COUNT> 
-                <BLOCK_LENGTH>500</BLOCK_LENGTH>            
-            </SETTINGS>
-        </TESTS_SETTINGS>
-        
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/TestU01/build/release/TestU01</BINARY_PATH>
         <DEFAULT_OUTPUT_DIRECTORY>testu01_out</DEFAULT_OUTPUT_DIRECTORY>
-        <DEFAULT_REPETITIONS>3</DEFAULT_REPETITIONS>
+        <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
         <DEFAULT_BIT_NB>4000000000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
-        
-        <SMALL_CRUSH_SETTINGS>
-            <SETTINGS test="1">                     <!-- smarsa_BirthdaySpacings -->
-                <REPETITIONS>1</REPETITIONS>
-                <PARAMS>
-                    <PAR name="N">1</PAR>           <!-- N = 1 -->
-                    <PAR name="n">5000000</PAR>     <!-- n = 5 * 10^6 -->
-                    <PAR name="r">0</PAR>           <!-- r = 0 -->
-                    <PAR name="d">1073741824</PAR>  <!-- d = 2^30 -->
-                    <PAR name="t">2</PAR>           <!-- t = 2 -->
-                    <PAR name="p">1</PAR>           <!-- p = 1 -->
-                </PARAMS>
-            </SETTINGS>
-        </SMALL_CRUSH_SETTINGS>
-        
-        <CRUSH_SETTINGS>
-            <SETTINGS test="1">                     <!-- smarsa_SerialOver -->
-                <REPETITIONS>5</REPETITIONS>
-                <PARAMS>
-                    <PAR name="d">4096</PAR>        <!-- d = 2^12 -->
-                    <PAR name="t">2</PAR>           <!-- t = 2 -->
-                    <PAR name="N">1</PAR>           <!-- N = 1 -->
-                    <PAR name="n">500000000</PAR>   <!-- n = 5 * 10^8 -->
-                    <PAR name="r">0</PAR>           <!-- r = 0 -->
-                </PARAMS>   
-            </SETTINGS>
-        </CRUSH_SETTINGS>
-        
-        <BIG_CRUSH_SETTINGS>
-            <SETTINGS test="1">                     <!-- smarsa_SerialOver -->
-                <REPETITIONS>1</REPETITIONS>
-                <PARAMS>
-                    <PAR name="N">1</PAR>           <!-- N = 1 -->
-                    <PAR name="n">1000000000</PAR>  <!-- n = 10^9 -->
-                    <PAR name="r">0</PAR>           <!-- r = 0 -->
-                    <PAR name="d">256</PAR>         <!-- d = 2^8 -->
-                    <PAR name="t">3</PAR>           <!-- t = 3 -->
-                </PARAMS>
-            </SETTINGS>
-        </BIG_CRUSH_SETTINGS>
-        
-        <RABBIT_SETTINGS>
-            <SETTINGS test="1">
-                <BIT_NB>10000000</BIT_NB>
-                <REPETITIONS>10</REPETITIONS>
-            </SETTINGS>
-        </RABBIT_SETTINGS>
-        
-        <ALPHABIT_SETTINGS>
-            <SETTINGS test="1">
-                <BIT_NB>10000000</BIT_NB>
-                <BIT_R>2</BIT_R>
-                <BIT_S>10</BIT_S>
-                <REPETITIONS>5</REPETITIONS>
-            </SETTINGS>
-        </ALPHABIT_SETTINGS>
-        
     </TESTU01_SETTINGS>
 
     <EACIRC_SETTINGS>empty</EACIRC_SETTINGS>
+    
 </RANDOMNESS_TESTING_TOOLKIT>

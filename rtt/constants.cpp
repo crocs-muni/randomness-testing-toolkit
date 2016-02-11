@@ -3,8 +3,9 @@
 namespace rtt {
 
 /* Constant definition */
-const std::string Constants::FILE_DEFAULT_CFG_PATH =
-        "./config.xml";
+const std::string Constants::FILE_DEFAULT_CFG_PATH = "./config.xml";
+
+const double Constants::MATH_ALPHA = 0.1;
 
 std::string Constants::batteryToString(int batteryConstant) {
     switch(batteryConstant) {
@@ -15,6 +16,7 @@ std::string Constants::batteryToString(int batteryConstant) {
     case BATTERY_TU01_BIGCRUSH:     return "TestU01 Big Crush";
     case BATTERY_TU01_RABBIT:       return "TestU01 Rabbit";
     case BATTERY_TU01_ALPHABIT:     return "TestU01 Alphabit";
+    case BATTERY_EACIRC:            return "EACirc Framework";
     default:
         throw std::runtime_error("unknown battery constant: " +
                                  Utils::itostr(batteryConstant));

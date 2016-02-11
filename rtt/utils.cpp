@@ -154,6 +154,11 @@ void Utils::createDirectory(const std::string & path , int access) {
     }
 }
 
+bool Utils::fileExist(const std::string & name) {
+    std::ifstream file(name);
+    return file.good();
+}
+
 void Utils::sort(std::vector<int> & a , unsigned begin) {
     for(unsigned i = begin ; i < a.size() ; i++) {
         for(unsigned k = i ; k > begin ; k--) {

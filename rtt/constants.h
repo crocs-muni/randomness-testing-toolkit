@@ -15,6 +15,7 @@ public:
     ///////////////////////////////////////////////
 
     /* Statistical batteries constants */
+    /* Constants MUST have consecutive integers assigned */
     static const int BATTERY_DIEHARDER          = 1;
     static const int BATTERY_NIST_STS           = 2;
     static const int BATTERY_TU01_SMALLCRUSH    = 3;
@@ -24,11 +25,13 @@ public:
     static const int BATTERY_TU01_ALPHABIT      = 7;
     static const int BATTERY_EACIRC             = 8;
 
+    static const int BATTERY_TOTAL_COUNT        = 8;
+
     /* Default files locations */
     static const std::string FILE_DEFAULT_CFG_PATH;
 
     /* Math values */
-    static const int MATH_ALPHA = 0.1;
+    static const double MATH_ALPHA;
 
     ///////////////////////////////////////////////
     /********* Toolkit global methods ************/

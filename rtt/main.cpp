@@ -9,7 +9,7 @@
 //      1.4. Log storage - battery and run output   (Ok)
 //  2. Storing processed results
 //      2.1. Output Interface                       (Ok)
-//      2.2. Into file structure                    (Work in progress)
+//      2.2. Into file structure                    (Ok)
 //      2.3. Into database
 //  3. Logger, CMake project (?)
 //      3.1. Maybe custom exception?

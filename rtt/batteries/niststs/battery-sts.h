@@ -19,6 +19,8 @@ class Battery : public Interface {
 public:
     /* XPath constants */
     static const std::string XPATH_LOG_DIRECTORY;
+    static const std::string XPATH_DEFAULT_TESTS;
+
 
     static std::unique_ptr<Battery> getInstance(const CliOptions & options);
 

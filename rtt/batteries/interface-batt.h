@@ -22,6 +22,8 @@ public:
     static std::string createLogFilePath(const time_t & battCreationTime ,
                                          const std::string & logDirectory ,
                                          const std::string & binFilePath);
+
+    static std::vector<int> parseIntValues(const std::string & str);
 };
 
 } // namespace batteries

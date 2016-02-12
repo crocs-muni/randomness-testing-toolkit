@@ -4,7 +4,12 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-const std::string Battery::XPATH_LOG_DIRECTORY = "TOOLKIT_SETTINGS/LOGGER/TESTU01_DIR";
+const std::string Battery::XPATH_LOG_DIRECTORY                  = "TOOLKIT_SETTINGS/LOGGER/TESTU01_DIR";
+const std::string Battery::XPATH_DEFAULT_TESTS_SMALL_CRUSH      = "TESTU01_SETTINGS/DEFAULT_TESTS_SCRUSH";
+const std::string Battery::XPATH_DEFAULT_TESTS_CRUSH            = "TESTU01_SETTINGS/DEFAULT_TESTS_CRUSH";
+const std::string Battery::XPATH_DEFAULT_TESTS_BIG_CRUSH        = "TESTU01_SETTINGS/DEFAULT_TESTS_BCRUSH";
+const std::string Battery::XPATH_DEFAULT_TESTS_RABBIT           = "TESTU01_SETTINGS/DEFAULT_TESTS_RABBIT";
+const std::string Battery::XPATH_DEFAULT_TESTS_ALPHABIT         = "TESTU01_SETTINGS/DEFAULT_TESTS_ALPHABIT";
 
 std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     std::unique_ptr<Battery> battery (new Battery());
@@ -23,8 +28,35 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     battery->storage = output::InterfaceFactory::createOutput(cfgRoot ,
                                                               options ,
                                                               battery->creationTime);
+    /* Getting constants of tests to be executed */
+    std::vector<int> testConsts = options.getTestConsts();
+    if(testConsts.empty()) {
+        /* Read them from config if no tests were entered via CLI */
+        std::string testsXPath;
+        switch(options.getBattery()) {
+        case Constants::BATTERY_TU01_SMALLCRUSH:
+            testsXPath = XPATH_DEFAULT_TESTS_SMALL_CRUSH;
+            break;
+        case Constants::BATTERY_TU01_CRUSH:
+            testsXPath = XPATH_DEFAULT_TESTS_CRUSH;
+            break;
+        case Constants::BATTERY_TU01_BIGCRUSH:
+            testsXPath = XPATH_DEFAULT_TESTS_BIG_CRUSH;
+            break;
+        case Constants::BATTERY_TU01_RABBIT:
+            testsXPath = XPATH_DEFAULT_TESTS_RABBIT;
+            break;
+        case Constants::BATTERY_TU01_ALPHABIT:
+            testsXPath = XPATH_DEFAULT_TESTS_ALPHABIT;
+            break;
+        }
+        testConsts = parseIntValues(getXMLElementValue(cfgRoot , testsXPath));
+    }
+    if(testConsts.empty())
+        throw std::runtime_error("no tests for execution were set in options "
+                                 "and in config file");
 
-    for(int i : options.getTestConsts()) {
+    for(int i : testConsts) {
         Test test = Test::getInstance(i , options , cfgRoot);
         battery->tests.push_back(std::move(test));
     }

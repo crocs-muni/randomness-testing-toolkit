@@ -5,6 +5,7 @@ namespace batteries {
 namespace niststs {
 
 const std::string Battery::XPATH_LOG_DIRECTORY = "TOOLKIT_SETTINGS/LOGGER/NIST_STS_DIR";
+const std::string Battery::XPATH_DEFAULT_TESTS = "NIST_STS_SETTINGS/DEFAULT_TESTS";
 
 std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     std::unique_ptr<Battery> battery (new Battery());
@@ -24,7 +25,15 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                                                               options ,
                                                               battery->creationTime);
 
-    for(int i : options.getTestConsts()) {
+    /* Getting constants of tests to be executed */
+    std::vector<int> testConsts = options.getTestConsts();
+    if(testConsts.empty()) /* Read them from config if no tests were entered via CLI */
+        testConsts = parseIntValues(getXMLElementValue(cfgRoot , XPATH_DEFAULT_TESTS));
+    if(testConsts.empty())
+        throw std::runtime_error("no tests for execution were set in options "
+                                 "and in config file");
+
+    for(int i : testConsts) {
         Test test = Test::getInstance(i , cfgRoot , options);
         battery->tests.push_back(std::move(test));
     }

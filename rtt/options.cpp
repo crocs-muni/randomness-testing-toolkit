@@ -76,24 +76,27 @@ void CliOptions::init(int argc , char * argv[]) {
             throw std::runtime_error("unknown option used: " + (std::string)argv[i]);
         }
     }
+    /* Sanity checks */
     if(battery < 0)
         throw std::runtime_error("option \"-b\" must be correctly set in arguments");
     if(binFilePath.empty())
         throw std::runtime_error("option \"-f\" must be set in arguments");
-    if(test < 0 && testsBot < 0 && testsTop < 0)
-        throw std::runtime_error("test option must be set either by \"-t\" or with \"-tbot\" and \"-ttop\"");
+    //if(test < 0 && testsBot < 0 && testsTop < 0)
+    //    throw std::runtime_error("test option must be set either by \"-t\" or with \"-tbot\" and \"-ttop\"");
+    /* If test options were entered set them! */
     if((testsBot != -1 && testsTop == -1) || (testsBot == -1 && testsTop != -1))
         throw std::runtime_error("can't set only one of options \"-tbot\" and \"ttop\"");
-    if(inputCfgPath.empty())
-        inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
-
-    if(test >= 0) testConsts.push_back(test);
+    if(test >= 0)
+        testConsts.push_back(test);
     if(testsBot >= 0 && testsTop >= 0){
         for(int i = testsBot; i <= testsTop; i++)
             testConsts.push_back(i);
     }
-
     Utils::sort(testConsts);
+    /* Setting config path */
+    if(inputCfgPath.empty())
+        inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
+
 }
 
 int CliOptions::getBattery() const {

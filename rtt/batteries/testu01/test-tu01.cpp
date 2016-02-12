@@ -45,23 +45,23 @@ const tTestInfo Test::INFO_SSTRING_AUTOCOR              {"sstring_AutoCor" , {"N
                                                                                                       "Anderson-Darling" , "Normal" , "Sample variance"}};
 const tTestInfo Test::INFO_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsIver" , {} , {"Collision"}};
 
-const std::string Test::XPATH_EXECUTABLE_BINARY     = "TESTU01_SETTINGS/BINARY_PATH";
-const std::string Test::XPATH_DEFAULT_REPS          = "TESTU01_SETTINGS/DEFAULT_REPETITIONS";
-const std::string Test::XPATH_DEFAULT_BIT_NB        = "TESTU01_SETTINGS/DEFAULT_BIT_NB";
-const std::string Test::XPATH_DEFAULT_BIT_R         = "TESTU01_SETTINGS/DEFAULT_BIT_R";
-const std::string Test::XPATH_DEFAULT_BIT_S         = "TESTU01_SETTINGS/DEFAULT_BIT_S";
-const std::string Test::XPATH_SMALL_CRUSH_SETTINGS  = "TESTU01_SETTINGS/SMALL_CRUSH_SETTINGS";
-const std::string Test::XPATH_CRUSH_SETTINGS        = "TESTU01_SETTINGS/CRUSH_SETTINGS";
-const std::string Test::XPATH_BIG_CRUSH_SETTINGS    = "TESTU01_SETTINGS/BIG_CRUSH_SETTINGS";
-const std::string Test::XPATH_RABBIT_SETTINGS       = "TESTU01_SETTINGS/RABBIT_SETTINGS";
-const std::string Test::XPATH_ALPHABIT_SETTINGS     = "TESTU01_SETTINGS/ALPHABIT_SETTINGS";
-const std::string Test::XPATH_TEST_REPS             = "REPETITIONS";
-const std::string Test::XPATH_TEST_PARAMS           = "PARAMS";
-const std::string Test::XPATH_TEST_BIT_NB           = "BIT_NB";
-const std::string Test::XPATH_TEST_BIT_R            = "BIT_R";
-const std::string Test::XPATH_TEST_BIT_S            = "BIT_S";
-const std::string Test::XPATH_ATTRIBUTE_TEST_INDEX  = "test";
-const std::string Test::XPATH_ATTRIBUTE_PAR_NAME    = "name";
+const std::string Test::XPATH_EXECUTABLE_BINARY             = "TESTU01_SETTINGS/BINARY_PATH";
+const std::string Test::XPATH_DEFAULT_REPS                  = "TESTU01_SETTINGS/DEFAULT_REPETITIONS";
+const std::string Test::XPATH_DEFAULT_BIT_NB                = "TESTU01_SETTINGS/DEFAULT_BIT_NB";
+const std::string Test::XPATH_DEFAULT_BIT_R                 = "TESTU01_SETTINGS/DEFAULT_BIT_R";
+const std::string Test::XPATH_DEFAULT_BIT_S                 = "TESTU01_SETTINGS/DEFAULT_BIT_S";
+const std::string Test::XPATH_SMALL_CRUSH_SETTINGS          = "TESTU01_SETTINGS/SMALL_CRUSH_SETTINGS";
+const std::string Test::XPATH_CRUSH_SETTINGS                = "TESTU01_SETTINGS/CRUSH_SETTINGS";
+const std::string Test::XPATH_BIG_CRUSH_SETTINGS            = "TESTU01_SETTINGS/BIG_CRUSH_SETTINGS";
+const std::string Test::XPATH_RABBIT_SETTINGS               = "TESTU01_SETTINGS/RABBIT_SETTINGS";
+const std::string Test::XPATH_ALPHABIT_SETTINGS             = "TESTU01_SETTINGS/ALPHABIT_SETTINGS";
+const std::string Test::XPATH_TEST_REPS                     = "REPETITIONS";
+const std::string Test::XPATH_TEST_PARAMS                   = "PARAMS";
+const std::string Test::XPATH_TEST_BIT_NB                   = "BIT_NB";
+const std::string Test::XPATH_TEST_BIT_R                    = "BIT_R";
+const std::string Test::XPATH_TEST_BIT_S                    = "BIT_S";
+const std::string Test::XPATH_ATTRIBUTE_TEST_INDEX          = "test";
+const std::string Test::XPATH_ATTRIBUTE_PAR_NAME            = "name";
 
 
 Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cfgRoot) {

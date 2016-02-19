@@ -14,6 +14,8 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     TiXmlNode * cfgRoot = NULL;
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
+    std::cout << "[INFO] Processing file: " << options.getBinFilePath() << std::endl;
+
     /* Getting path to log file */
     battery->logFilePath = std::move(
                 createLogFilePath(

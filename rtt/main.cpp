@@ -37,6 +37,7 @@ int main (int argc , char * argv[]) {
 #ifdef TESTING
 #else
     std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
+    std::cout << "Start: " << Utils::getTime() << std::endl;
 
     CliOptions options;
     try {
@@ -59,7 +60,7 @@ int main (int argc , char * argv[]) {
     } catch(std::bad_alloc ex) {
         std::cout << "[ERROR] Memory allocation failed: " << ex.what() << std::endl;
     }
-
+    std::cout << "End: " << Utils::getTime() << std::endl;
 	return 0;
 #endif
 }

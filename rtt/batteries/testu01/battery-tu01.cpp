@@ -18,6 +18,8 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     TiXmlNode * cfgRoot = NULL;
     loadXMLFile(cfgRoot , options.getInputCfgPath());
 
+    std::cout << "[INFO] Processing file: " << options.getBinFilePath() << std::endl;
+
     /* Getting path to log file */
     battery->logFilePath = std::move(
                 createLogFilePath(
@@ -66,8 +68,23 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
 }
 
 void Battery::runTests() {
-    for(auto & i : tests)
-        i.execute();
+    for(size_t i = 0 ; i < tests.size() ; ++i) {
+        if(!tests.at(i).execute()) {
+            /* Execution timed out, don't execute following tests with same name */
+            std::string testName = tests.at(i).getLogicName();
+            tests.erase(tests.begin() + i);
+            for(;;) {
+                if(testName == tests.at(i).getLogicName()) {
+                    std::cout << "[WARNING] Test " << tests.at(i).getTestIndex() << " won't be executed, "
+                                 "previous test of the same type timeouted." << std::endl;
+                    tests.erase(tests.begin() + i);
+                } else {
+                    --i;
+                    break;
+                }
+            }
+        }
+    }
 
     executed = true;
 }

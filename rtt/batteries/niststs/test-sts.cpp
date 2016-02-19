@@ -237,9 +237,11 @@ tTestPvals Test::readPvals(const std::string & fileName) {
         if(pVal < 0 || pVal > 1)
             throw std::runtime_error("file: " + fileName + " contains p-value"
                                      "that is not in <0,1> interval");
-        if(pVal > 0) /* This silly condition is here for random excursions test */
-                     /* Because when you can't apply test it is feasible to give 0 as answer *eyeroll* */
-            vecPval.push_back(pVal);
+        /* This silly condition is here for random excursions test */
+        /* Because when you can't apply test it is feasible to give 0 as answer *eyeroll* */
+        if(pVal == 0 && testIndex == 12)
+            continue;
+        vecPval.push_back(pVal);
     }
     return vecPval;
 }

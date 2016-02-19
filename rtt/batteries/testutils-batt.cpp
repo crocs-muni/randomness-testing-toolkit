@@ -5,7 +5,14 @@ namespace batteries {
 
 std::string TestUtils::executeBinary(const std::string & binaryPath,
                                      const std::string & arguments,
-                                     const std::string & input) {
+                                     const std::string & input,
+                                     int timeout,
+                                     bool * timeouted) {
+    if(timeout <= 0 && timeouted == NULL)
+        throw std::runtime_error("when execution timeout is set,"
+                                 " variable \"timeouted\" can't be null");
+    if(timeouted)
+        *timeouted = false;
     int stdin_pipe[2];
     int stdout_pipe[2];
     int stderr_pipe[2];
@@ -33,9 +40,22 @@ std::string TestUtils::executeBinary(const std::string & binaryPath,
     posix_spawn_file_actions_adddup2(&actions , stderr_pipe[1] , 2);
     posix_spawn_file_actions_addclose(&actions , stderr_pipe[1]);
 
+    /* This will be used only if timeout is set */
+    sigset_t mask;
+    //sigset_t origMask;
+    struct timespec tm;
+    sigemptyset(&mask);
+    sigaddset(&mask , SIGCHLD);
+
+    /* To avoid race condition, SIGCHLD is blocked in this thread */
+    if(sigprocmask(SIG_BLOCK , &mask , NULL) < 0)
+        throw std::runtime_error("sigprocmask error");
+
+    tm.tv_sec = timeout;
+    tm.tv_nsec = 0;
+
     int argc = 0;
     char ** argv = buildArgv(arguments , &argc);
-
     int status = posix_spawn(&pid , binaryPath.c_str() ,
                              &actions , NULL , argv , environ);
 
@@ -47,6 +67,26 @@ std::string TestUtils::executeBinary(const std::string & binaryPath,
         if(!input.empty())
             write(stdin_pipe[1] , input.c_str() , input.length());
 
+        /* Timeout is here. After certain period (e.g. 10 minutes)
+         * we assume that process is stuck and we terminate it.
+         * If SIGCHILD is received we can continue and read from pipes. */
+        if(timeout > 0) {
+            do {
+                if (sigtimedwait(&mask , NULL , &tm) < 0) {
+                    if (errno == EINTR) {
+                        continue;
+                    } else if (errno == EAGAIN) {
+                        *timeouted = true;
+                        std::cout << "Process " << pid << " timeout. Terminating." << std::endl;
+                        kill(pid, SIGKILL);
+                    } else {
+                        throw std::runtime_error("sigtimedwait error");
+                    }
+                }
+                break;
+            } while(1);
+        }
+
         output = readOutput(stdout_pipe , stderr_pipe);
         if(waitpid(pid , &status , 0) != -1) {
             std::cout << "Process " << pid << " exited with code " << status << std::endl;
@@ -57,6 +97,10 @@ std::string TestUtils::executeBinary(const std::string & binaryPath,
         throw std::runtime_error("can't execute " + binaryPath +
                                  static_cast<std::string>(strerror(status)));
     }
+    /* Return to original empty blocking set*/
+    if(sigprocmask(SIG_UNBLOCK , &mask , NULL) < 0)
+        throw std::runtime_error("sigprocmask error");
+
     posix_spawn_file_actions_destroy(&actions);
     destroyArgv(argc , argv);
     return output;

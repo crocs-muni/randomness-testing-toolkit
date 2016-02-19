@@ -9,6 +9,11 @@
 #include <sys/wait.h>
 #include <stdexcept>
 #include <string.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/utils.h"
@@ -23,7 +28,9 @@ class TestUtils {
 public:
     static std::string executeBinary(const std::string & binaryPath,
                                      const std::string & arguments,
-                                     const std::string & input = "");
+                                     const std::string & input = "",
+                                     int timeout = 0,
+                                     bool * timeouted = NULL);
 
     static std::string getTestOrDefOpt(TiXmlNode * cfgRoot,
                                        TiXmlNode * testNode,

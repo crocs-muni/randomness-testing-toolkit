@@ -5,23 +5,23 @@
     <TOOLKIT_SETTINGS>
     
         <LOGGER>
-            <MAIN_DIR>logs/</MAIN_DIR>
-            <DIEHARDER_DIR>logs/dieharder/</DIEHARDER_DIR>
-            <NIST_STS_DIR>logs/niststs/</NIST_STS_DIR>
-            <TESTU01_DIR>logs/testu01/</TESTU01_DIR>
+            <MAIN_DIR>testbed1/logs/</MAIN_DIR>
+            <DIEHARDER_DIR>testbed1/logs/dieharder/</DIEHARDER_DIR>
+            <NIST_STS_DIR>testbed1/logs/niststs/</NIST_STS_DIR>
+            <TESTU01_DIR>testbed1/logs/testu01/</TESTU01_DIR>
         </LOGGER>
         
         <OUTPUT>
             <FILE>
-                <MAIN_FILE>reports/test_comp.table</MAIN_FILE>
+                <MAIN_FILE>testbed1/reports/testbed-table.txt</MAIN_FILE>
             
-                <DIEHARDER_DIR>reports/dieharder/</DIEHARDER_DIR>
-                <NIST_STS_DIR>reports/niststs/</NIST_STS_DIR>
-                <TU01_SMALLCRUSH_DIR>reports/testu01/scrush/</TU01_SMALLCRUSH_DIR>
-                <TU01_CRUSH_DIR>reports/testu01/crush/</TU01_CRUSH_DIR>
-                <TU01_BIGCRUSH_DIR>reports/testu01/bcrush/</TU01_BIGCRUSH_DIR>
-                <TU01_RABBIT_DIR>reports/testu01/rabbit/</TU01_RABBIT_DIR>
-                <TU01_ALPHABIT_DIR>reports/testu01/alphabit/</TU01_ALPHABIT_DIR>
+                <DIEHARDER_DIR>testbed1/reports/dieharder/</DIEHARDER_DIR>
+                <NIST_STS_DIR>testbed1/reports/niststs/</NIST_STS_DIR>
+                <TU01_SMALLCRUSH_DIR>testbed1/reports/testu01/scrush/</TU01_SMALLCRUSH_DIR>
+                <TU01_CRUSH_DIR>testbed1/reports/testu01/crush/</TU01_CRUSH_DIR>
+                <TU01_BIGCRUSH_DIR>testbed1/reports/testu01/bcrush/</TU01_BIGCRUSH_DIR>
+                <TU01_RABBIT_DIR>testbed1/reports/testu01/rabbit/</TU01_RABBIT_DIR>
+                <TU01_ALPHABIT_DIR>testbed1/reports/testu01/alphabit/</TU01_ALPHABIT_DIR>
             </FILE>
         
             <DATABASE>
@@ -77,15 +77,15 @@
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>
-        <BINARY_PATH>/home/lubo/Desktop/TestU01/build/release/TestU01</BINARY_PATH>
+        <BINARY_PATH>/home/lubo/Desktop/TestU01/TestU01</BINARY_PATH>
         
         <DEFAULT_TESTS_SCRUSH>1-10</DEFAULT_TESTS_SCRUSH>
         <DEFAULT_TESTS_CRUSH>1-96</DEFAULT_TESTS_CRUSH>
         <DEFAULT_TESTS_BCRUSH>1-106</DEFAULT_TESTS_BCRUSH>
-        <DEFAULT_TESTS_RABBIT>1-26</DEFAULT_TESTS_RABBIT>
+        <DEFAULT_TESTS_RABBIT>1 4-26</DEFAULT_TESTS_RABBIT>
         <DEFAULT_TESTS_ALPHABIT>1-9</DEFAULT_TESTS_ALPHABIT>
         <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
-        <DEFAULT_BIT_NB>4000000000</DEFAULT_BIT_NB>
+        <DEFAULT_BIT_NB>8000000000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
     </TESTU01_SETTINGS>

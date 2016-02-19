@@ -47,6 +47,7 @@ enum class CrushTI {
     sknuth_Run                      = 36,
     sknuth_Permutation              = 38,
     sknuth_CollisionPermut          = 40,
+    sknuth_MaxOft_bigN              = 42,
     sknuth_MaxOft                   = 44,
     svaria_SampleProd               = 46,
     svaria_SampleMean               = 47,
@@ -59,7 +60,7 @@ enum class CrushTI {
     smarsa_GCD                      = 64,
     swalk_RandomWalk1               = 70,
     scomp_LinearComp                = 72,
-    scomp_LempelZiv                 = 73,
+    scomp_LempelZiv_bigN            = 73,
     sspectral_Fourier3              = 75,
     sstring_LongestHeadRun          = 77,
     sstring_PeriodsInStrings        = 79,
@@ -67,7 +68,7 @@ enum class CrushTI {
     sstring_HammingCorr             = 84,
     sstring_HammingIndep            = 90,
     sstring_Run                     = 92,
-    sstring_AutoCor                 = 96
+    sstring_AutoCor_bigN            = 96
 };
 
 enum class BigCrushTI {
@@ -81,7 +82,7 @@ enum class BigCrushTI {
     sknuth_Run                      = 39,
     sknuth_Permutation              = 43,
     sknuth_CollisionPermut          = 45,
-    sknuth_MaxOft                   = 49,
+    sknuth_MaxOft_bigN                   = 49,
     svaria_SampleProd               = 52,
     svaria_SampleMean               = 54,
     svaria_SampleCorr               = 56,
@@ -93,7 +94,7 @@ enum class BigCrushTI {
     smarsa_GCD                      = 73,
     swalk_RandomWalk1               = 79,
     scomp_LinearComp                = 81,
-    scomp_LempelZiv                 = 83,
+    scomp_LempelZiv_bigN                 = 83,
     sspectral_Fourier3              = 85,
     sstring_LongestHeadRun          = 87,
     sstring_PeriodsInStrings        = 89,
@@ -101,7 +102,7 @@ enum class BigCrushTI {
     sstring_HammingCorr             = 94,
     sstring_HammingIndep            = 100,
     sstring_Run                     = 102,
-    sstring_AutoCor                 = 106
+    sstring_AutoCor_bigN                 = 106
 };
 
 enum class RabbitTI {
@@ -152,6 +153,7 @@ public:
     static const tTestInfo INFO_SKNUTH_PERMUTATION;
     static const tTestInfo INFO_SKNUTH_COLLISIONPERMUT;
     static const tTestInfo INFO_SKNUTH_MAXOFT;
+    static const tTestInfo INFO_SKNUTH_MAXOFT_BIGN;
     static const tTestInfo INFO_SVARIA_SAMPLEPROD;
     static const tTestInfo INFO_SVARIA_SAMPLEMEAN;
     static const tTestInfo INFO_SVARIA_SAMPLECORR;
@@ -164,6 +166,7 @@ public:
     static const tTestInfo INFO_SWALK_RANDOMWALK1;
     static const tTestInfo INFO_SCOMP_LINEARCOMP;
     static const tTestInfo INFO_SCOMP_LEMPELZIV;
+    static const tTestInfo INFO_SCOMP_LEMPELZIV_BIGN;
     static const tTestInfo INFO_SSPECRTAL_FOURIER1;
     static const tTestInfo INFO_SSPECRTAL_FOURIER3;
     static const tTestInfo INFO_SSTRING_LONGESTHEADRUN;
@@ -174,6 +177,7 @@ public:
     static const tTestInfo INFO_SSTRING_HAMMINGINDEP;
     static const tTestInfo INFO_SSTRING_RUN;
     static const tTestInfo INFO_SSTRING_AUTOCOR;
+    static const tTestInfo INFO_SSTRING_AUTOCOR_BIGN;
     static const tTestInfo INFO_SMULTIN_MULTINOMIALBITSOVER;
 
     /* XPath constants */
@@ -195,6 +199,8 @@ public:
     static const std::string XPATH_ATTRIBUTE_TEST_INDEX;
     static const std::string XPATH_ATTRIBUTE_PAR_NAME;
 
+    /* Miscelaneous */
+    static const int MISC_EXECUTION_TIMEOUT = 600;
     /*
     ======================
     *** Public methods ***
@@ -208,7 +214,7 @@ public:
 
     bool wasExecuted() const { return executed; }
 
-    void execute();
+    bool execute();
 
     std::string getLogicName() const;
 
@@ -217,6 +223,8 @@ public:
     std::vector<std::string> getStatistics() const;
 
     std::vector<tTestPvals> getResults() const;
+
+    int getTestIndex() const;
 
 private:
     /*

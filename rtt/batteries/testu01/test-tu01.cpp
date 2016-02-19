@@ -17,6 +17,9 @@ const tTestInfo Test::INFO_SKNUTH_RUN                   {"sknuth_Run" , {"N","n"
 const tTestInfo Test::INFO_SKNUTH_PERMUTATION           {"sknuth_Permutation" , {"N","n","r","t"} , {"Chi-square"}};
 const tTestInfo Test::INFO_SKNUTH_COLLISIONPERMUT       {"sknuth_CollisionPermut" , {"N","n","r","t"} , {"Collision"}};
 const tTestInfo Test::INFO_SKNUTH_MAXOFT                {"sknuth_MaxOft" , {"N","n","r","d","t"} , {"Chi-square" , "Anderson-Darling"}};
+const tTestInfo Test::INFO_SKNUTH_MAXOFT_BIGN           {"sknuth_MaxOft" , {"N","n","r","d","t"} , {"Chi-square - KS (D+)" , "Chi-square - KS (D-)" , "Chi-square - AD (A2)" ,
+                                                                                                    "Observations sums" , "Anderson-Darling - KS (D+)" , "Anderson-Darling - KS (D-)" ,
+                                                                                                    "Anderson-Darling - AD (A2)"}};
 const tTestInfo Test::INFO_SVARIA_SAMPLEPROD            {"svaria_SampleProd" , {"N","n","r","t"} , {"Anderson-Darling"}};
 const tTestInfo Test::INFO_SVARIA_SAMPLEMEAN            {"svaria_SampleMean" , {"N","n","r"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
 const tTestInfo Test::INFO_SVARIA_SAMPLECORR            {"svaria_SampleCorr" , {"N","n","r","k"} , {"Normal"}};
@@ -29,7 +32,8 @@ const tTestInfo Test::INFO_SMARSA_GDC                   {"smarsa_GCD" , {"N","n"
 const tTestInfo Test::INFO_SWALK_RANDOMWALK1            {"swalk_RandomWalk1" , {"N","n","r","s","L0","L1"} , {"Chi-square(H)" , "Chi-square(M)" ,
                                                                                                               "Chi-square(J)" , "Chi-square(R)" , "Chi-square(C)"}};
 const tTestInfo Test::INFO_SCOMP_LINEARCOMP             {"scomp_LinearComp" , {"N","n","r","s"} , {"Chi-square" , "Normal"}};
-const tTestInfo Test::INFO_SCOMP_LEMPELZIV              {"scomp_LempelZiv" , {"N","k","r","s"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" ,
+const tTestInfo Test::INFO_SCOMP_LEMPELZIV              {"scomp_LempelZiv" , {} , {"Normal"}};
+const tTestInfo Test::INFO_SCOMP_LEMPELZIV_BIGN         {"scomp_LempelZiv" , {"N","k","r","s"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" ,
                                                                                                   "Anderson-Darling" , "Normal" , "Sample variance"}};
 const tTestInfo Test::INFO_SSPECRTAL_FOURIER1           {"sspectral_Fourier1" , {} , {"Normal"}};
 const tTestInfo Test::INFO_SSPECRTAL_FOURIER3           {"sspectral_Fourier3" , {"N","k","r","s"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
@@ -41,7 +45,8 @@ const tTestInfo Test::INFO_SSTRING_HAMMINGWEIGHT2       {"sstring_HammingWeight2
 const tTestInfo Test::INFO_SSTRING_HAMMINGCORR          {"sstring_HammingCorr" , {"N","n","r","s","L"} , {"Normal"}};
 const tTestInfo Test::INFO_SSTRING_HAMMINGINDEP         {"sstring_HammingIndep" , {"N","n","r","s","L","d"} , {"Chi-square"}};
 const tTestInfo Test::INFO_SSTRING_RUN                  {"sstring_Run" , {"N","n","r","s"} , {"Chi-square" , "Normal"}};
-const tTestInfo Test::INFO_SSTRING_AUTOCOR              {"sstring_AutoCor" , {"N","n","r","s","d"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" ,
+const tTestInfo Test::INFO_SSTRING_AUTOCOR              {"sstring_AutoCor" , {} , {"Normal"}};
+const tTestInfo Test::INFO_SSTRING_AUTOCOR_BIGN         {"sstring_AutoCor" , {"N","n","r","s","d"} , {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" ,
                                                                                                       "Anderson-Darling" , "Normal" , "Sample variance"}};
 const tTestInfo Test::INFO_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsIver" , {} , {"Collision"}};
 
@@ -145,14 +150,25 @@ void Test::appendTestLog(std::string & batteryLog) {
     batteryLog.append(testLog);
 }
 
-void Test::execute() {
+bool Test::execute() {
     std::cout << "Executing test " << testIndex << " in battery "
               << Constants::batteryToString(battery) << std::endl;
+    bool timeouted = false;
     testLog = TestUtils::executeBinary(executablePath ,
-                                       createArgs());
+                                       createArgs(), "" ,
+                                       MISC_EXECUTION_TIMEOUT ,
+                                       &timeouted);
+    if(timeouted) {
+        std::cout << "[WARNING] Test " << testIndex << " in battery "
+                  << Constants::batteryToString(battery) << " timeouted and was killed. "
+                     "Timeout period is set to " << MISC_EXECUTION_TIMEOUT << " seconds." << std::endl;
+        return false;
+    }
     extractPvalues();
     executed = true;
+    return true;
 }
+
 std::string Test::getLogicName() const {
     return logicName;
 }
@@ -189,6 +205,10 @@ std::vector<tTestPvals> Test::getResults() const {
         throw std::runtime_error("can't return results before execution of test");
     return results;
 }
+int Test::getTestIndex() const {
+    return testIndex;
+}
+
 
 /*
                      __                       __
@@ -240,6 +260,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         if(ti <= CrushTI::sknuth_Run)                   { tinfo = INFO_SKNUTH_RUN; } else
         if(ti <= CrushTI::sknuth_Permutation)           { tinfo = INFO_SKNUTH_PERMUTATION; } else
         if(ti <= CrushTI::sknuth_CollisionPermut)       { tinfo = INFO_SKNUTH_COLLISIONPERMUT; } else
+        if(ti <= CrushTI::sknuth_MaxOft_bigN)           { tinfo = INFO_SKNUTH_MAXOFT_BIGN; } else
         if(ti <= CrushTI::sknuth_MaxOft)                { tinfo = INFO_SKNUTH_MAXOFT; } else
         if(ti <= CrushTI::svaria_SampleProd)            { tinfo = INFO_SVARIA_SAMPLEPROD; } else
         if(ti <= CrushTI::svaria_SampleMean)            { tinfo = INFO_SVARIA_SAMPLEMEAN; } else
@@ -252,7 +273,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         if(ti <= CrushTI::smarsa_GCD)                   { tinfo = INFO_SMARSA_GDC; } else
         if(ti <= CrushTI::swalk_RandomWalk1)            { tinfo = INFO_SWALK_RANDOMWALK1; } else
         if(ti <= CrushTI::scomp_LinearComp)             { tinfo = INFO_SCOMP_LINEARCOMP; } else
-        if(ti <= CrushTI::scomp_LempelZiv)              { tinfo = INFO_SCOMP_LEMPELZIV; } else
+        if(ti <= CrushTI::scomp_LempelZiv_bigN)         { tinfo = INFO_SCOMP_LEMPELZIV_BIGN; } else
         if(ti <= CrushTI::sspectral_Fourier3)           { tinfo = INFO_SSPECRTAL_FOURIER3; } else
         if(ti <= CrushTI::sstring_LongestHeadRun)       { tinfo = INFO_SSTRING_LONGESTHEADRUN; } else
         if(ti <= CrushTI::sstring_PeriodsInStrings)     { tinfo = INFO_SSTRING_PERIODSINSTRINGS; } else
@@ -260,7 +281,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         if(ti <= CrushTI::sstring_HammingCorr)          { tinfo = INFO_SSTRING_HAMMINGCORR; } else
         if(ti <= CrushTI::sstring_HammingIndep)         { tinfo = INFO_SSTRING_HAMMINGINDEP; } else
         if(ti <= CrushTI::sstring_Run)                  { tinfo = INFO_SSTRING_RUN; } else
-        if(ti <= CrushTI::sstring_AutoCor)              { tinfo = INFO_SSTRING_AUTOCOR; } else
+        if(ti <= CrushTI::sstring_AutoCor_bigN)         { tinfo = INFO_SSTRING_AUTOCOR_BIGN; } else
         {
             throw std::runtime_error("invalid BigCrush test constant: " + Utils::itostr(testIndex));
         }
@@ -279,7 +300,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         if(ti <= BigCrushTI::sknuth_Run)                { tinfo = INFO_SKNUTH_RUN; } else
         if(ti <= BigCrushTI::sknuth_Permutation)        { tinfo = INFO_SKNUTH_PERMUTATION; } else
         if(ti <= BigCrushTI::sknuth_CollisionPermut)    { tinfo = INFO_SKNUTH_COLLISIONPERMUT; } else
-        if(ti <= BigCrushTI::sknuth_MaxOft)             { tinfo = INFO_SKNUTH_MAXOFT; } else
+        if(ti <= BigCrushTI::sknuth_MaxOft_bigN)        { tinfo = INFO_SKNUTH_MAXOFT_BIGN; } else
         if(ti <= BigCrushTI::svaria_SampleProd)         { tinfo = INFO_SVARIA_SAMPLEPROD; } else
         if(ti <= BigCrushTI::svaria_SampleMean)         { tinfo = INFO_SVARIA_SAMPLEMEAN; } else
         if(ti <= BigCrushTI::svaria_SampleCorr)         { tinfo = INFO_SVARIA_SAMPLECORR; } else
@@ -291,7 +312,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         if(ti <= BigCrushTI::smarsa_GCD)                { tinfo = INFO_SMARSA_GDC; } else
         if(ti <= BigCrushTI::swalk_RandomWalk1)         { tinfo = INFO_SWALK_RANDOMWALK1; } else
         if(ti <= BigCrushTI::scomp_LinearComp)          { tinfo = INFO_SCOMP_LINEARCOMP; } else
-        if(ti <= BigCrushTI::scomp_LempelZiv)           { tinfo = INFO_SCOMP_LEMPELZIV; } else
+        if(ti <= BigCrushTI::scomp_LempelZiv_bigN)      { tinfo = INFO_SCOMP_LEMPELZIV_BIGN; } else
         if(ti <= BigCrushTI::sspectral_Fourier3)        { tinfo = INFO_SSPECRTAL_FOURIER3; } else
         if(ti <= BigCrushTI::sstring_LongestHeadRun)    { tinfo = INFO_SSTRING_LONGESTHEADRUN; } else
         if(ti <= BigCrushTI::sstring_PeriodsInStrings)  { tinfo = INFO_SSTRING_PERIODSINSTRINGS; } else
@@ -299,7 +320,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         if(ti <= BigCrushTI::sstring_HammingCorr)       { tinfo = INFO_SSTRING_HAMMINGCORR; } else
         if(ti <= BigCrushTI::sstring_HammingIndep)      { tinfo = INFO_SSTRING_HAMMINGINDEP; } else
         if(ti <= BigCrushTI::sstring_Run)               { tinfo = INFO_SSTRING_RUN; } else
-        if(ti <= BigCrushTI::sstring_AutoCor)           { tinfo = INFO_SSTRING_AUTOCOR; } else
+        if(ti <= BigCrushTI::sstring_AutoCor_bigN)      { tinfo = INFO_SSTRING_AUTOCOR_BIGN; } else
         {
             throw std::runtime_error("invalid BigCrush test constant: " + Utils::itostr(testIndex));
         }
@@ -460,9 +481,18 @@ void Test::extractPvalues() {
         throw std::runtime_error("can't extract p-values from log: number of"
                                  " p-value is not divisible by repetitions");
     statCount = pValCount / repetitions;
-    if(statCount != statisticNames.size())
-        throw std::runtime_error("p-value were invalidly extracted from log: "
-                                 "number of p-values and number of statistics does not match");
+    if(statCount != statisticNames.size()) {
+        /* So this normally doesn't happen but(!) some tests have variable
+         * output based on their parameters. For example scomp_LempevZiv has
+         * different output when executed from Crush battery and Rabbit battery.
+         * In that case, say that to user and use unknown statistics names. */
+        std::cout << "[WARNING] Number of statistics extracted from log differs from default number."
+                     " Inspect the log for correct statistics names." << std::endl;
+        std::vector<std::string> newStatNames;
+        for(size_t i = 1 ; i <= statCount ; ++i)
+            newStatNames.push_back("Unknown " + Utils::itostr(i));
+        statisticNames = std::move(newStatNames);
+    }
 
     tTestPvals pValues;
 

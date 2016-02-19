@@ -203,20 +203,57 @@ std::string Test::createInput() const {
 void Test::parseStoreResults() {
     testLog = Utils::readFileToString(resultSubDir + "stats.txt");
 
-    if(subTestCount == 1) {
-        /* Only file results.txt will be processed */
-        tTestPvals pVals = readPvals(resultSubDir + "results.txt");
-        results.push_back(pVals);
+    if(testIndex == std::get<0>(INFO_RNDEXCURSIONS) ||
+       testIndex == std::get<0>(INFO_RNDEXCURSIONSVAR)) {
+        /* Random excursions tests are exceptions (of course they are)
+         * p-values must be read directly from log and their count must
+         * be divisible by subtestcount. Otherwise something happened. */
+        static const std::regex RE_PVALUE {"p[\\-_]value = ([0|1]?\\.[0-9]+?)\\n"};
+        auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
+        auto end = std::sregex_iterator();
+        int pValCount = std::distance(begin , end);
+        if(pValCount == 0) {
+            std::cout << "[WARNING] No pValues were extracted." << std::endl;
+            streamCount = "0";
+            return;
+        }
+
+        if(pValCount % subTestCount != 0)
+            throw std::runtime_error("can't extract p-values from log: number of"
+                                     " p-value is not divisible by repetitions");
+        int strCount = pValCount / subTestCount;
+        streamCount = Utils::itostr(strCount);
+
+        tTestPvals allResults;
+        for( ; begin != end ; ++begin) {
+            std::smatch match = *begin;
+            allResults.push_back(Utils::strtod(match[1].str()));
+        }
+
+        tTestPvals testResults;
+        for(int test = 0 ; test < subTestCount ; ++test) {
+            for(int i = test ; i < pValCount ; i += subTestCount)
+                testResults.push_back(allResults.at(i));
+
+            results.push_back(std::move(testResults));
+            testResults.clear();
+        }
     } else {
-        /* Multiple dataX.txt files will be processed */
-        std::stringstream fName;
-        tTestPvals pVals;
-        for(int i = 1 ; i <= subTestCount ; ++i) {
-            fName << resultSubDir << "data" << i << ".txt";
-            pVals = std::move(readPvals(fName.str()));
+        if(subTestCount == 1) {
+            /* Only file results.txt will be processed */
+            tTestPvals pVals = readPvals(resultSubDir + "results.txt");
             results.push_back(pVals);
-            pVals.clear();
-            fName.str("");fName.clear();
+        } else {
+            /* Multiple dataX.txt files will be processed */
+            std::stringstream fName;
+            tTestPvals pVals;
+            for(int i = 1 ; i <= subTestCount ; ++i) {
+                fName << resultSubDir << "data" << i << ".txt";
+                pVals = std::move(readPvals(fName.str()));
+                results.push_back(pVals);
+                pVals.clear();
+                fName.str("");fName.clear();
+            }
         }
     }
 }
@@ -239,8 +276,9 @@ tTestPvals Test::readPvals(const std::string & fileName) {
                                      "that is not in <0,1> interval");
         /* This silly condition is here for random excursions test */
         /* Because when you can't apply test it is feasible to give 0 as answer *eyeroll* */
-        if(pVal == 0 && testIndex == 12)
+        if(pVal == 0 && (testIndex == 12 || testIndex == 13))
             continue;
+
         vecPval.push_back(pVal);
     }
     return vecPval;

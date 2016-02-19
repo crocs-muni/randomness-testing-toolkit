@@ -8,7 +8,7 @@ std::string TestUtils::executeBinary(const std::string & binaryPath,
                                      const std::string & input,
                                      int timeout,
                                      bool * timeouted) {
-    if(timeout <= 0 && timeouted == NULL)
+    if(timeout > 0 && timeouted == NULL)
         throw std::runtime_error("when execution timeout is set,"
                                  " variable \"timeouted\" can't be null");
     if(timeouted)

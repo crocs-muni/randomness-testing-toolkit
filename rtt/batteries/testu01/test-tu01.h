@@ -82,7 +82,7 @@ enum class BigCrushTI {
     sknuth_Run                      = 39,
     sknuth_Permutation              = 43,
     sknuth_CollisionPermut          = 45,
-    sknuth_MaxOft_bigN                   = 49,
+    sknuth_MaxOft_bigN              = 49,
     svaria_SampleProd               = 52,
     svaria_SampleMean               = 54,
     svaria_SampleCorr               = 56,
@@ -94,7 +94,7 @@ enum class BigCrushTI {
     smarsa_GCD                      = 73,
     swalk_RandomWalk1               = 79,
     scomp_LinearComp                = 81,
-    scomp_LempelZiv_bigN                 = 83,
+    scomp_LempelZiv_bigN            = 83,
     sspectral_Fourier3              = 85,
     sstring_LongestHeadRun          = 87,
     sstring_PeriodsInStrings        = 89,
@@ -102,7 +102,7 @@ enum class BigCrushTI {
     sstring_HammingCorr             = 94,
     sstring_HammingIndep            = 100,
     sstring_Run                     = 102,
-    sstring_AutoCor_bigN                 = 106
+    sstring_AutoCor_bigN            = 106
 };
 
 enum class RabbitTI {
@@ -125,10 +125,10 @@ enum class RabbitTI {
 };
 
 enum class AlphabitTI {
-    smultin_MultinomialBitsOver     = 4,
-    sstring_HammingIndep            = 6,
-    sstring_HammingCorr             = 7,
-    swalk_RandomWalk1               = 9
+    smultin_MultinomialBitsOver_bigN = 4,
+    sstring_HammingIndep             = 6,
+    sstring_HammingCorr              = 7,
+    swalk_RandomWalk1                = 9
 };
 
 /* Typedefs for parameter types, test information */
@@ -179,6 +179,7 @@ public:
     static const tTestInfo INFO_SSTRING_AUTOCOR;
     static const tTestInfo INFO_SSTRING_AUTOCOR_BIGN;
     static const tTestInfo INFO_SMULTIN_MULTINOMIALBITSOVER;
+    static const tTestInfo INFO_SMULTIN_MULTBITSOVER_BIGN;
 
     /* XPath constants */
     static const std::string XPATH_EXECUTABLE_BINARY;

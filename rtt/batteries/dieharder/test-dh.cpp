@@ -216,8 +216,9 @@ std::string Test::createArgs() const {
 }
 
 void Test::extractPvalues() {
-    static const std::regex RE_PSAMPLE_VALUE {"\\+\\+\\+\\+(0\\.[0-9]+?)\\+\\+\\+\\+\\n"};
+    static const std::regex RE_PSAMPLE_VALUE {"\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"};
 
+    //std::cout << testLog << std::endl;
     auto begin = std::sregex_iterator(testLog.begin() , testLog.end() ,
                                       RE_PSAMPLE_VALUE);
     auto end = std::sregex_iterator();

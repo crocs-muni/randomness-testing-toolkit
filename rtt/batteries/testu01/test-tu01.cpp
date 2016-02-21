@@ -125,6 +125,10 @@ const tTestInfo Test::INFO_SSTRING_AUTOCOR_BIGN         {"sstring_AutoCor" , {"N
 const tTestInfo Test::INFO_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsIver" ,
                                                          {} ,
                                                          {"Collision"}};
+const tTestInfo Test::INFO_SMULTIN_MULTBITSOVER_BIGN    {"smultin_MultinomialBitsIver" ,
+                                                         {} ,
+                                                         {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling (A2)" ,
+                                                            "Std empirical mean" , "Std empirical correlation"}};
 
 const std::string Test::XPATH_EXECUTABLE_BINARY             = "TESTU01_SETTINGS/BINARY_PATH";
 const std::string Test::XPATH_DEFAULT_REPS                  = "TESTU01_SETTINGS/DEFAULT_REPETITIONS";
@@ -429,10 +433,10 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
     case Constants::BATTERY_TU01_ALPHABIT: {
         batteryXPath = XPATH_ALPHABIT_SETTINGS;
         AlphabitTI ti = static_cast<AlphabitTI>(testIndex);
-        if(ti <= AlphabitTI::smultin_MultinomialBitsOver)   { tinfo = INFO_SMULTIN_MULTINOMIALBITSOVER; } else
-        if(ti <= AlphabitTI::sstring_HammingIndep)          { tinfo = INFO_SSTRING_HAMMINGINDEP; } else
-        if(ti <= AlphabitTI::sstring_HammingCorr)           { tinfo = INFO_SSTRING_HAMMINGCORR; } else
-        if(ti <= AlphabitTI::swalk_RandomWalk1)             { tinfo = INFO_SWALK_RANDOMWALK1; } else
+        if(ti <= AlphabitTI::smultin_MultinomialBitsOver_bigN)  { tinfo = INFO_SMULTIN_MULTBITSOVER_BIGN; } else
+        if(ti <= AlphabitTI::sstring_HammingIndep)              { tinfo = INFO_SSTRING_HAMMINGINDEP; } else
+        if(ti <= AlphabitTI::sstring_HammingCorr)               { tinfo = INFO_SSTRING_HAMMINGCORR; } else
+        if(ti <= AlphabitTI::swalk_RandomWalk1)                 { tinfo = INFO_SWALK_RANDOMWALK1; } else
         {
             throw std::runtime_error("invalid Alphabit test constant: " + Utils::itostr(testIndex));
         }

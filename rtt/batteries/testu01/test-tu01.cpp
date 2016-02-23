@@ -15,7 +15,11 @@ const tTestInfo Test::INFO_SMARSA_BIRTHDAYSPACINGS      {"smarsa_BirthdaySpacing
                                                          {"Collision"}};
 const tTestInfo Test::INFO_SNPAIR_CLOSEPAIRS            {"snpair_ClosePairs" ,
                                                          {"N","n","r","t","p","m"} ,
-                                                         {"AD (NP)" , "AD (m-NP)" , "AD (mNP1)" , "AD (mN)" , "AD(mNP2)"}};
+                                                         {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)"}};
+const tTestInfo Test::INFO_SNPAIR_CLOSEPAIRS_BIGT       {"snpair_ClosePairs" ,
+                                                         {"N","n","r","t","p","m"} ,
+                                                         {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)" ,
+                                                            "AD (mNP2-S)"}};
 const tTestInfo Test::INFO_SNPAIR_CLOSEPAIRSBITMATCH    {"snpair_ClosePairsBitMatch" ,
                                                          {"N","n","r","t"} ,
                                                          {"Bit distance"}};
@@ -333,6 +337,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         if(ti <= CrushTI::smarsa_CollisionOver)         { tinfo = INFO_SMARSA_COLLISIONOVER; } else
         if(ti <= CrushTI::smarsa_BirthdaySpacings)      { tinfo = INFO_SMARSA_BIRTHDAYSPACINGS; } else
         if(ti <= CrushTI::snpair_ClosePairs)            { tinfo = INFO_SNPAIR_CLOSEPAIRS; } else
+        if(ti <= CrushTI::snpair_ClosePairs_bigT)       { tinfo = INFO_SNPAIR_CLOSEPAIRS_BIGT; } else
         if(ti <= CrushTI::snpair_ClosePairsBitMatch)    { tinfo = INFO_SNPAIR_CLOSEPAIRSBITMATCH; } else
         if(ti <= CrushTI::sknuth_SimpPoker)             { tinfo = INFO_SKNUTH_SIMPPOKER; } else
         if(ti <= CrushTI::sknuth_CouponCollector)       { tinfo = INFO_SKNUTH_COUPONCOLLECTOR; } else

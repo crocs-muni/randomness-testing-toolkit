@@ -39,7 +39,8 @@ enum class CrushTI {
     smarsa_SerialOver               = 2,
     smarsa_CollisionOver            = 10,
     smarsa_BirthdaySpacings         = 17,
-    snpair_ClosePairs               = 20,
+    snpair_ClosePairs               = 18,
+    snpair_ClosePairs_bigT          = 20,
     snpair_ClosePairsBitMatch       = 22,
     sknuth_SimpPoker                = 26,
     sknuth_CouponCollector          = 30,
@@ -144,6 +145,7 @@ public:
     static const tTestInfo INFO_SMARSA_COLLISIONOVER;
     static const tTestInfo INFO_SMARSA_BIRTHDAYSPACINGS;
     static const tTestInfo INFO_SNPAIR_CLOSEPAIRS;
+    static const tTestInfo INFO_SNPAIR_CLOSEPAIRS_BIGT;
     static const tTestInfo INFO_SNPAIR_CLOSEPAIRSBITMATCH;
     static const tTestInfo INFO_SKNUTH_COLLISION;
     static const tTestInfo INFO_SKNUTH_SIMPPOKER;

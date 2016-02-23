@@ -32,6 +32,7 @@ public:
 
     /* Math values */
     static const double MATH_ALPHA;
+    static const double MATH_EPS;
 
     ///////////////////////////////////////////////
     /********* Toolkit global methods ************/

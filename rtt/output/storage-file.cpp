@@ -55,7 +55,7 @@ std::unique_ptr<Storage> Storage::getInstance(TiXmlNode * root ,
 }
 
 void Storage::addNewTest(const std::string & testName) {
-    report << "---------------------------------------------------" << std::endl;
+    report << "-----------------------------------------------------------" << std::endl;
     report << testName << " test results:" << std::endl;
     ++indent;
 }
@@ -77,22 +77,38 @@ void Storage::addSubTest() {
     ++indent;
 }
 
-void Storage::addStatisticResult(const std::string & statName, double value, int precision) {
-    ++totalStatisticsCount;
-    if(value >= Constants::MATH_ALPHA && value <= (1.0 - Constants::MATH_ALPHA))
-        ++passedStatisticsCount;
+void Storage::addStatisticResult(const std::string & statName,
+                                 double value, int precision) {
+    std::stringstream tmp;
+    tmp << doIndent() << statName <<" statistic p-value: "
+        << std::setprecision(precision) << std::fixed << value;
+    report << std::setw(58) << std::left << tmp.str();
 
-    report << doIndent() << statName << " statistic p-value: "
-           << std::setprecision(precision) << std::fixed << value << std::endl;
+    ++totalStatisticsCount;
+    /* Comparing equality because double */
+    if(fabs(value - Constants::MATH_ALPHA) < Constants::MATH_EPS || /* value ~= alpha*/
+       fabs(value - (1.0 - Constants::MATH_ALPHA)) < Constants::MATH_EPS || /* value ~= 1-alpha */
+       (value > Constants::MATH_ALPHA && value < (1.0 - Constants::MATH_ALPHA))) { /* alpha < value < 1-alpha*/
+        ++passedStatisticsCount;
+        report << " Passed" << std::endl;
+    } else {
+        report << " FAILED!!!" << std::endl;
+    }
 }
 
 void Storage::addStatisticResult(const std::string & statName ,
                                  const std::string & value, bool failed) {
-    ++totalStatisticsCount;
-    if(!failed)
-        ++passedStatisticsCount;
+    std::stringstream tmp;
+    tmp << doIndent() << statName << " statistic: " << value;
+    report << std::setw(58) << std::left << tmp.str();
 
-    report << doIndent() << statName << " statistic: " << value << std::endl;
+    ++totalStatisticsCount;
+    if(!failed) {
+        ++passedStatisticsCount;
+        report << " Passed" << std::endl;
+    } else {
+        report << " FAILED!!!" << std::endl;
+    }
 }
 
 void Storage::addPValues(const std::vector<double> & pvals , int precision) {
@@ -112,7 +128,8 @@ void Storage::finalizeSubTest() {
 }
 
 void Storage::finalizeTest() {
-    report << "---------------------------------------------------" << std::endl << std::endl;
+    report << "-----------------------------------------------------------"
+           << std::endl << std::endl;
     --indent;
     currentSubtest = 0;
 }
@@ -135,6 +152,9 @@ void Storage::makeReportHeader() {
     report << "Date:    " << Utils::formatRawTime(creationTime , "%d-%m-%Y") << std::endl;
     report << "File:    " << inFilePath << std::endl;
     report << "Battery: " << Constants::batteryToString(batteryConstant) << std::endl;
+    report << std::endl;
+    report << "Alpha:   " << std::setw(3) << Constants::MATH_ALPHA << std::endl;
+    report << "Epsilon: " << Constants::MATH_EPS << std::endl;
     report << std::endl << std::endl;
 }
 

@@ -5,7 +5,8 @@ namespace rtt {
 /* Constant definition */
 const std::string Constants::FILE_DEFAULT_CFG_PATH = "./config.xml";
 
-const double Constants::MATH_ALPHA = 0.1;
+const double Constants::MATH_ALPHA = 0.01;
+const double Constants::MATH_EPS   = 1e-8;
 
 std::string Constants::batteryToString(int batteryConstant) {
     switch(batteryConstant) {

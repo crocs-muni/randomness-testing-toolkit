@@ -153,18 +153,18 @@ const std::string Test::XPATH_ATTRIBUTE_TEST_INDEX          = "test";
 const std::string Test::XPATH_ATTRIBUTE_PAR_NAME            = "name";
 
 
-Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cfgRoot) {
+std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cfgRoot) {
     if(!cfgRoot)
         throw std::runtime_error("null cfgRoot");
     if(testIndex <= 0)
         throw std::runtime_error("invalid TestU01 test constant: " + Utils::itostr(testIndex));
 
-    Test test;
+    std::unique_ptr<Test> test (new Test());
     std::string batteryXPath;
 
-    test.battery = options.getBattery();
-    test.testIndex = testIndex;
-    std::tie(test.logicName , test.paramNames , test.statisticNames) =
+    test->battery = options.getBattery();
+    test->testIndex = testIndex;
+    std::tie(test->logicName , test->paramNames , test->statisticNames) =
             pickTestInfo(testIndex , options.getBattery() , batteryXPath);
 
     TiXmlNode * testSettings = getXMLChildNodeWithAttValue(
@@ -179,47 +179,47 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     if(strReps.empty())
         throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                  ": default or test specific repetitions must be set");
-    test.repetitions = Utils::strtoi(strReps);
-    test.executablePath = getXMLElementValue(cfgRoot , XPATH_EXECUTABLE_BINARY);
-    if(test.executablePath.empty())
+    test->repetitions = Utils::strtoi(strReps);
+    test->executablePath = getXMLElementValue(cfgRoot , XPATH_EXECUTABLE_BINARY);
+    if(test->executablePath.empty())
         throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                  ": path to executable binary can't be empty");
-    test.binaryDataPath = options.getBinFilePath();
-    if(test.binaryDataPath.empty())
+    test->binaryDataPath = options.getBinFilePath();
+    if(test->binaryDataPath.empty())
         throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                  ": path to binary data can't be empty");
 
     /* Getting params - only for Crush batteries */
-    if(test.battery == Constants::BATTERY_TU01_SMALLCRUSH ||
-            test.battery == Constants::BATTERY_TU01_CRUSH ||
-            test.battery == Constants::BATTERY_TU01_BIGCRUSH)
-        test.checkSetParams(getXMLElement(testSettings , XPATH_TEST_PARAMS));
+    if(test->battery == Constants::BATTERY_TU01_SMALLCRUSH ||
+            test->battery == Constants::BATTERY_TU01_CRUSH ||
+            test->battery == Constants::BATTERY_TU01_BIGCRUSH)
+        test->checkSetParams(getXMLElement(testSettings , XPATH_TEST_PARAMS));
 
     /* Getting nb - Rabbit and Alphabit */
-    if(test.battery == Constants::BATTERY_TU01_RABBIT ||
-            test.battery == Constants::BATTERY_TU01_ALPHABIT) {
-        test.bit_nb = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                 XPATH_DEFAULT_BIT_NB ,
-                                                 XPATH_TEST_BIT_NB);
-        if(test.bit_nb.empty())
+    if(test->battery == Constants::BATTERY_TU01_RABBIT ||
+            test->battery == Constants::BATTERY_TU01_ALPHABIT) {
+        test->bit_nb = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                  XPATH_DEFAULT_BIT_NB ,
+                                                  XPATH_TEST_BIT_NB);
+        if(test->bit_nb.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_nb option must be set"
                                      " in Rabbit and Alphabit battery");
     }
     /* Getting r s - Alphabit */
-    if(test.battery == Constants::BATTERY_TU01_ALPHABIT) {
-        test.bit_r = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                XPATH_DEFAULT_BIT_R ,
-                                                XPATH_TEST_BIT_R);
-        if(test.bit_r.empty())
+    if(test->battery == Constants::BATTERY_TU01_ALPHABIT) {
+        test->bit_r = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                 XPATH_DEFAULT_BIT_R ,
+                                                 XPATH_TEST_BIT_R);
+        if(test->bit_r.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_r option must be set"
                                      " in Alphabit battery");
 
-        test.bit_s = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                XPATH_DEFAULT_BIT_S ,
-                                                XPATH_TEST_BIT_S);
-        if(test.bit_s.empty())
+        test->bit_s = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                 XPATH_DEFAULT_BIT_S ,
+                                                 XPATH_TEST_BIT_S);
+        if(test->bit_s.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_s option must be set"
                                      " in Alphabit battery");
@@ -227,14 +227,17 @@ Test Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cf
     return test;
 }
 
-void Test::appendTestLog(std::string & batteryLog) {
+void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
         throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
                                  "executed, can't provide test log");
     batteryLog.append(testLog);
 }
 
-bool Test::execute() {
+void Test::execute() {
+    if(executed)
+        throw std::runtime_error("test was already executed");
+
     std::cout << "Executing test " << testIndex << " in battery "
               << Constants::batteryToString(battery) << std::endl;
     bool timeouted = false;
@@ -246,11 +249,10 @@ bool Test::execute() {
         std::cout << "[WARNING] Test " << testIndex << " in battery "
                   << Constants::batteryToString(battery) << " timeouted and was killed. "
                      "Timeout period is set to " << MISC_EXECUTION_TIMEOUT << " seconds." << std::endl;
-        return false;
+        return;
     }
     extractPvalues();
     executed = true;
-    return true;
 }
 
 std::string Test::getLogicName() const {
@@ -287,6 +289,7 @@ std::vector<std::string> Test::getStatistics() const {
 std::vector<tTestPvals> Test::getResults() const {
     if(!executed)
         throw std::runtime_error("can't return results before execution of test");
+
     return results;
 }
 int Test::getTestIndex() const {

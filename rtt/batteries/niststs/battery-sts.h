@@ -7,15 +7,15 @@
 #include "libs/cephes/cephes.h"
 
 #include "rtt/options.h"
-#include "rtt/batteries/interface-batt.h"
+#include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/niststs/test-sts.h"
-#include "rtt/output/interfacefactory-out.h"
+#include "rtt/output/outputfactory-out.h"
 
 namespace rtt {
 namespace batteries {
 namespace niststs {
 
-class Battery : public Interface {
+class Battery : public IBattery {
 public:
     /* XPath constants */
     static const std::string XPATH_LOG_DIRECTORY;
@@ -36,10 +36,10 @@ private:
     time_t creationTime;
     /* After test execution, log of battery run will be stored in logFileName */
     std::string logFilePath;
-    std::unique_ptr<output::Interface> storage;
+    std::unique_ptr<output::IOutput> storage;
     /* Test class keeps track of individual test logs, results and such */
     /* Also executes tests */
-    std::vector<Test> tests;
+    std::vector<std::unique_ptr<ITest>> tests;
     bool executed = false;
 
     /*

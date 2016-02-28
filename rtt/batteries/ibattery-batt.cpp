@@ -1,9 +1,9 @@
-#include "interface-batt.h"
+#include "ibattery-batt.h"
 
 namespace rtt {
 namespace batteries {
 
-std::string Interface::createLogFilePath(const time_t & battCreationTime,
+std::string IBattery::createLogFilePath(const time_t & battCreationTime,
                                          const std::string & logDirectory,
                                          const std::string & binFilePath) {
     std::string logFilePath = logDirectory;
@@ -14,7 +14,7 @@ std::string Interface::createLogFilePath(const time_t & battCreationTime,
     return logFilePath;
 }
 
-std::vector<int> Interface::parseIntValues(const std::string & str) {
+std::vector<int> IBattery::parseIntValues(const std::string & str) {
     std::vector<std::string> values = Utils::split(str , ' ');
     std::vector<std::string> range;
     std::vector<int> rval;
@@ -40,5 +40,5 @@ std::vector<int> Interface::parseIntValues(const std::string & str) {
     return rval;
 }
 
-}
+} // namespace batteries
 } // namespace rtt

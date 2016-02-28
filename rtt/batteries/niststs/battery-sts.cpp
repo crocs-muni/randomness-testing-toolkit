@@ -23,7 +23,7 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                     getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
                     options.getBinFilePath()));
     /* Creating storage for results */
-    battery->storage = output::InterfaceFactory::createOutput(cfgRoot ,
+    battery->storage = output::OutputFactory::createOutput(cfgRoot ,
                                                               options ,
                                                               battery->creationTime);
 
@@ -36,7 +36,7 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                                  "and in config file");
 
     for(int i : testConsts) {
-        Test test = Test::getInstance(i , cfgRoot , options);
+        std::unique_ptr<ITest> test = Test::getInstance(i , cfgRoot , options);
         battery->tests.push_back(std::move(test));
     }
 
@@ -48,7 +48,7 @@ void Battery::runTests() {
     /* Executing all tests in sequence here */
     /* In time, it's possible to add some multithreading */
     for(auto & i : tests)
-        i.execute();
+        i->execute();
 
     /* Setting executed to true, allowing postprocessing */
     executed = true;
@@ -63,31 +63,38 @@ void Battery::processStoredResults() {
     /* Log storage */
     std::string batteryLog;
     for(auto & i : tests)
-        i.appendTestLog(batteryLog);
+        i->appendTestLog(batteryLog);
 
     Utils::createDirectory(Utils::getPathWithoutLastItem(logFilePath));
     Utils::saveStringToFile(logFilePath , batteryLog);
 
     /* Result storage */
-    for(const Test & test : tests) {
-        storage->addNewTest(test.getLogicName());
-        storage->setTestOptions(test.getSettings());
+    for(const auto & test : tests) {
+        storage->addNewTest(test->getLogicName());
+        storage->setTestOptions(test->getParameters());
 
-        std::vector<tTestPvals> results = test.getResults();
+        std::vector<tTestPvals> results = test->getResults();
+        /* There are always two statistics in NIST STS, namely
+         * Chi-square and Proportion */
+        std::vector<std::string> statistics = test->getStatistics();
         bool propStatFailed;
         std::string propStat;
 
         if(results.size() == 1) { /* Single test */
-            storage->addStatisticResult("Chi-square" , chi2_stat(results.at(0)) , 6);
+            storage->addStatisticResult(statistics.at(0) ,
+                                        chi2_stat(results.at(0)) , 6);
             propStat = proportionStat(results.at(0) , &propStatFailed);
-            storage->addStatisticResult("Proportion" , propStat , propStatFailed);
+            storage->addStatisticResult(statistics.at(1) , propStat ,
+                                        propStatFailed);
             storage->addPValues(results.at(0) , 6);
         } else { /* Multiple subtests */
             for(const auto & result : results) {
                 storage->addSubTest();
-                storage->addStatisticResult("Chi-square" , chi2_stat(result) , 6);
+                storage->addStatisticResult(statistics.at(0) ,
+                                            chi2_stat(result) , 6);
                 propStat = proportionStat(result , &propStatFailed);
-                storage->addStatisticResult("Proportion" , propStat , propStatFailed);
+                storage->addStatisticResult(statistics.at(1) , propStat ,
+                                            propStatFailed);
                 storage->addPValues(result , 6);
                 storage->finalizeSubTest();
             }

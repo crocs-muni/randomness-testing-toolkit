@@ -1,10 +1,10 @@
-#ifndef RTT_BATTERIES_INTERFACEFACTORY_H
-#define RTT_BATTERIES_INTERFACEFACTORY_H
+#ifndef RTT_BATTERIES_BATTERYFACTORY_H
+#define RTT_BATTERIES_BATTERYFACTORY_H
 
 #include "rtt/constants.h"
 #include "rtt/options.h"
 
-#include "rtt/batteries/interface-batt.h"
+#include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/niststs/battery-sts.h"
 #include "rtt/batteries/dieharder/battery-dh.h"
 #include "rtt/batteries/testu01/battery-tu01.h"
@@ -12,9 +12,9 @@
 namespace rtt {
 namespace batteries {
 
-class InterfaceFactory {
+class BatteryFactory {
 public:
-    static std::unique_ptr<Interface> createBattery(const CliOptions & options) {
+    static std::unique_ptr<IBattery> createBattery(const CliOptions & options) {
         switch(options.getBattery()) {
         case Constants::BATTERY_DIEHARDER:
             return dieharder::Battery::getInstance(options);
@@ -50,4 +50,4 @@ public:
 } // namespace batteries
 } // namespace rtt
 
-#endif //RTT_INTERFACECREATOR_H
+#endif //RTT_BATTERYFACTORY_H

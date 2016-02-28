@@ -27,9 +27,9 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                     getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
                     options.getBinFilePath()));
     /* Creating storage for results */
-    battery->storage = output::InterfaceFactory::createOutput(cfgRoot ,
-                                                              options ,
-                                                              battery->creationTime);
+    battery->storage = output::OutputFactory::createOutput(cfgRoot ,
+                                                           options ,
+                                                           battery->creationTime);
     /* Getting constants of tests to be executed */
     std::vector<int> testConsts = options.getTestConsts();
     if(testConsts.empty()) {
@@ -59,7 +59,7 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                                  "and in config file");
 
     for(int i : testConsts) {
-        Test test = Test::getInstance(i , options , cfgRoot);
+        std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
         battery->tests.push_back(std::move(test));
     }
 
@@ -68,22 +68,26 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
 }
 
 void Battery::runTests() {
+    if(executed)
+        throw std::runtime_error("battery was already executed");
+
     for(size_t i = 0 ; i < tests.size() ; ++i) {
-        if(!tests.at(i).execute()) {
-            /* Execution timed out, don't execute following tests with same name */
-            std::string testName = tests.at(i).getLogicName();
-            tests.erase(tests.begin() + i);
-            for(;;) {
-                if(testName == tests.at(i).getLogicName()) {
-                    std::cout << "[WARNING] Test " << tests.at(i).getTestIndex() << " won't be executed, "
-                                 "previous test of the same type timeouted." << std::endl;
-                    tests.erase(tests.begin() + i);
-                } else {
-                    --i;
-                    break;
-                }
-            }
-        }
+        tests.at(i)->execute();
+//        if(!tests.at(i).execute()) {
+//            /* Execution timed out, don't execute following tests with same name */
+//            std::string testName = tests.at(i).getLogicName();
+//            tests.erase(tests.begin() + i);
+//            for(;;) {
+//                if(testName == tests.at(i).getLogicName()) {
+//                    std::cout << "[WARNING] Test " << tests.at(i).getTestIndex() << " won't be executed, "
+//                                 "previous test of the same type timeouted." << std::endl;
+//                    tests.erase(tests.begin() + i);
+//                } else {
+//                    --i;
+//                    break;
+//                }
+//            }
+//        }
     }
 
     executed = true;
@@ -98,18 +102,18 @@ void Battery::processStoredResults() {
     /* Log storage */
     std::string batteryLog;
     for(auto & i : tests)
-        i.appendTestLog(batteryLog);
+        i->appendTestLog(batteryLog);
 
     Utils::createDirectory(Utils::getPathWithoutLastItem(logFilePath));
     Utils::saveStringToFile(logFilePath , batteryLog);
 
     /* Result storage */
-    for(const Test & test :tests) {
-        storage->addNewTest(test.getLogicName());
-        storage->setTestOptions(test.getParameters());
+    for(const auto & test : tests) {
+        storage->addNewTest(test->getLogicName());
+        storage->setTestOptions(test->getParameters());
 
-        std::vector<std::string> statistics = test.getStatistics();
-        std::vector<tTestPvals> results = test.getResults();
+        std::vector<std::string> statistics = test->getStatistics();
+        std::vector<tTestPvals> results = test->getResults();
         if(results.size() == 1) { /* Test w/out repetitions */
             for(size_t i = 0 ; i < statistics.size() ; ++i)
                 /* Number of statistics and number of results of single

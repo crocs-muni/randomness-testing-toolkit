@@ -47,10 +47,10 @@ const std::string Test::XPATH_TEST_PSAMPLES         = "PSAMPLES";
 const int Test::OPTION_HEADER_FLAG      = 66047;
 const int Test::OPTION_FILE_GENERATOR   = 201;
 
-Test Test::getInstance(int testIndex ,
-                        const CliOptions & options ,
-                        TiXmlNode * cfgRoot) {
-    Test test;
+std::unique_ptr<Test> Test::getInstance(int testIndex ,
+                                        const CliOptions & options ,
+                                        TiXmlNode * cfgRoot) {
+    std::unique_ptr<Test> test (new Test());
     tTestInfo testInfo;
 
     if(testIndex == INFO_BIRTHDAYS.first)           testInfo = INFO_BIRTHDAYS; else
@@ -87,16 +87,16 @@ Test Test::getInstance(int testIndex ,
         throw std::runtime_error("unknown test "
                                  "in Dieharder battery: " + Utils::itostr(testIndex));
 
-    test.logicName = testInfo.second;
-    test.testIndex = testIndex;
+    test->logicName = testInfo.second;
+    test->testIndex = testIndex;
 
-    test.binaryDataPath = options.getBinFilePath();
-    if(test.binaryDataPath.empty())
+    test->binaryDataPath = options.getBinFilePath();
+    if(test->binaryDataPath.empty())
         throw std::runtime_error("path to input data can't be empty");
 
     /* Getting default values from XML */
-    test.executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
-    if(test.executablePath.empty())
+    test->executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
+    if(test->executablePath.empty())
         throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
 
     TiXmlNode * testSettingsNode = getXMLChildNodeWithAttValue(
@@ -114,7 +114,7 @@ Test Test::getInstance(int testIndex ,
                                      ": default or test specific p-sample count "
                                      "must be set");
     }
-    test.pSampleCount = Utils::strtoi(pSamplesStr);
+    test->pSampleCount = Utils::strtoi(pSamplesStr);
 
     /* Getting default Dieharder options from config */
     std::string defaultArguments = getXMLElementValue(cfgRoot , XPATH_DEFAULT_ARGUMENTS);
@@ -132,14 +132,14 @@ Test Test::getInstance(int testIndex ,
     for(size_t i = 0 ; i < vecOptions.size() ; ++i) {
         Setting setting = Setting::getInstance(vecOptions[i] ,
                                                vecOptions[i + 1]);
-        test.settings.push_back(std::move(setting));
+        test->settings.push_back(std::move(setting));
         ++i;
     }
 
     return test;
 }
 
-void Test::appendTestLog(std::string & batteryLog) {
+void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
         throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
                                  "executed, can't provide test log");
@@ -147,6 +147,9 @@ void Test::appendTestLog(std::string & batteryLog) {
 }
 
 void Test::execute() {
+    if(executed)
+        throw std::runtime_error("test was already executed");
+
     std::cout << "Executing test " << testIndex << " in battery "
               << Constants::batteryToString(Constants::BATTERY_DIEHARDER) << std::endl;
     testLog = TestUtils::executeBinary(executablePath ,
@@ -155,17 +158,25 @@ void Test::execute() {
     executed = true;
 }
 
+int Test::getTestIndex() const {
+    return testIndex;
+}
+
 std::string Test::getLogicName() const {
     return logicName;
 }
 
-std::vector<std::string> Test::getSettings() const {
+std::vector<std::string> Test::getParameters() const {
     std::stringstream parameters;
     parameters << "p-sample count: " << pSampleCount << std::endl;
     for(const Setting & setting : settings)
         parameters << setting.getLogicName() << ": "
                    << setting.getArgumentValue() << std::endl;
     return Utils::split(parameters.str() , '\n');
+}
+
+std::vector<std::string> Test::getStatistics() const {
+    return {"Kolmogorov-Smirnov"};
 }
 
 std::vector<tTestPvals> Test::getResults() const {

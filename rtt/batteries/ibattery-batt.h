@@ -1,5 +1,5 @@
-#ifndef RTT_BATTERIES_INTERFACE_H
-#define RTT_BATTERIES_INTERFACE_H
+#ifndef RTT_IBATTERY_H
+#define RTT_IBATTERY_H
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/options.h"
@@ -7,10 +7,10 @@
 namespace rtt {
 namespace batteries {
 
-class Interface {
+class IBattery {
 public:
 
-    virtual ~Interface() {}
+    virtual ~IBattery() {}
 
     virtual void runTests() = 0;
 
@@ -29,4 +29,4 @@ public:
 } // namespace batteries
 } // namespace rtt
 
-#endif // RTT_BATTERIES_INTERFACE_H
+#endif // RTT_IBATTERY_H

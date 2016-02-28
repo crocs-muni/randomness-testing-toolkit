@@ -7,6 +7,7 @@
 //      1.2. Executable runner                      (Ok)
 //      1.3. Reading results from battery output    (Ok)
 //      1.4. Log storage - battery and run output   (Ok)
+//      1.5. Run multiple tests in parallel         (Work in progress...)
 //  2. Storing processed results
 //      2.1. Output Interface                       (Ok)
 //      2.2. Into file structure                    (Ok)
@@ -25,7 +26,7 @@
 #include <stdexcept>
 #include <cmath>
 
-#include "rtt/batteries/interfacefactory-batt.h"
+#include "rtt/batteries/batteryfactory-batt.h"
 #include "rtt/options.h"
 #include "rtt/version.h"
 
@@ -51,8 +52,8 @@ int main (int argc , char * argv[]) {
 
     /* Actual functionality will be here... in time. */
     try {
-        std::unique_ptr<batteries::Interface> battery =
-                 batteries::InterfaceFactory::createBattery(options);
+        std::unique_ptr<batteries::IBattery> battery =
+                 batteries::BatteryFactory::createBattery(options);
         battery->runTests();
         battery->processStoredResults();
     } catch(std::runtime_error ex) {

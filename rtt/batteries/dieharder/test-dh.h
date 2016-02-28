@@ -7,6 +7,7 @@
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/utils.h"
 #include "rtt/options.h"
+#include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
 #include "rtt/batteries/testutils-batt.h"
 
@@ -14,10 +15,9 @@ namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-typedef std::vector<double> tTestPvals;
 typedef std::pair<int , std::string> tTestInfo;
 
-class Test {
+class Test : public ITest {
 public:
     /* Test info constants */
     static const tTestInfo INFO_BIRTHDAYS;
@@ -70,19 +70,23 @@ public:
     *** Public methods ***
     ======================
     */
-    static Test getInstance(int testIndex ,
-                            const CliOptions & options ,
-                            TiXmlNode * cfgRoot);
-
-    void appendTestLog(std::string & batteryLog);
-
-    bool wasExecuted() const { return executed; }
+    static std::unique_ptr<Test> getInstance(int testIndex ,
+                                 const CliOptions & options ,
+                                 TiXmlNode * cfgRoot);
 
     void execute();
 
+    bool wasExecuted() const { return executed; }
+
+    void appendTestLog(std::string & batteryLog) const;
+
+    int getTestIndex() const;
+
     std::string getLogicName() const;
 
-    std::vector<std::string> getSettings() const;
+    std::vector<std::string> getParameters() const;
+
+    std::vector<std::string> getStatistics() const;
 
     std::vector<tTestPvals> getResults() const;
 

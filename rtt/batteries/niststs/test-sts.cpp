@@ -34,9 +34,9 @@ const tTestInfo Test::INFO_RNDEXCURSIONSVAR     {13, "Random Excursions Variant 
 const tTestInfo Test::INFO_SERIAL               {14, "Serial Test" , Test::PATH_MAIN_RESULT_DIR + "Serial/", 2, true};
 const tTestInfo Test::INFO_LINEARCOMPLEXITY     {15, "Linear Complexity Test" , Test::PATH_MAIN_RESULT_DIR + "LinearComplexity/", 1, true};
 
-Test Test::getInstance(int testIndex,
-                       TiXmlNode * cfgRoot,
-                       const CliOptions &options) {
+std::unique_ptr<Test> Test::getInstance(int testIndex,
+                                        TiXmlNode * cfgRoot,
+                                        const CliOptions &options) {
     tTestInfo testInfo;
 
     if(testIndex == std::get<0>(INFO_FREQ))             testInfo = INFO_FREQ; else
@@ -56,43 +56,44 @@ Test Test::getInstance(int testIndex,
     if(testIndex == std::get<0>(INFO_LINEARCOMPLEXITY)) testInfo = INFO_LINEARCOMPLEXITY; else
         throw std::runtime_error("unknown test constant in NIST STS: " + Utils::itostr(testIndex));
 
-    Test test;
+    std::unique_ptr<Test> test(new Test());
 
-    std::tie(test.testIndex ,
-             test.logicName ,
-             test.resultSubDir ,
-             test.subTestCount ,
-             test.adjustableBlockLen) = testInfo;
+    std::tie(test->testIndex ,
+             test->logicName ,
+             test->resultSubDir ,
+             test->subTestCount ,
+             test->adjustableBlockLen) = testInfo;
 
     //test.testIndex = testIndex;
     /* Getting default values from XML */
-    test.binaryDataPath = options.getBinFilePath();
-    if(test.binaryDataPath.empty())
+    test->binaryDataPath = options.getBinFilePath();
+    if(test->binaryDataPath.empty())
         throw std::runtime_error("path to input data can't be empty");
-    test.executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
-    if(test.executablePath.empty())
+    test->executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
+    if(test->executablePath.empty())
         throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
 
     /* Getting test specific settings from XML */
     TiXmlNode * testsSettingsNode = getXMLChildNodeWithAttValue(
                     getXMLElement(cfgRoot , XPATH_TESTS_SETTINGS),
                     XPATH_ATTRIBUTE_TEST_INDEX,
-                    Utils::itostr(test.testIndex)
+                    Utils::itostr(test->testIndex)
                 );
 
-    test.streamSize = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
-                                              XPATH_DEFAULT_STREAM_SIZE ,
-                                              XPATH_TEST_STREAM_SIZE);
-    test.streamCount = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
-                                               XPATH_DEFAULT_STREAM_COUNT ,
-                                               XPATH_TEST_STREAM_COUNT);
-    test.blockLength = getXMLElementValue(testsSettingsNode , XPATH_TEST_BLOCK_LENGTH);
+    test->streamSize = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
+                                                  XPATH_DEFAULT_STREAM_SIZE ,
+                                                  XPATH_TEST_STREAM_SIZE);
+    test->streamCount = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
+                                                  XPATH_DEFAULT_STREAM_COUNT ,
+                                                  XPATH_TEST_STREAM_COUNT);
+    test->blockLength = getXMLElementValue(testsSettingsNode ,
+                                           XPATH_TEST_BLOCK_LENGTH);
 
-    if(test.streamSize.empty()) {
+    if(test->streamSize.empty()) {
         throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_SIZE + " can't be empty"
                                  " without setting stream size in tests settings.");
     }
-    if(test.streamCount.empty()){
+    if(test->streamCount.empty()){
             throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_COUNT + " can't be empty"
                                      " without setting stream count in tests settings.");
     }
@@ -100,7 +101,7 @@ Test Test::getInstance(int testIndex,
     return test;
 }
 
-void Test::appendTestLog(std::string & batteryLog) {
+void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
         throw std::runtime_error("test " + Utils::itostr(static_cast<int>(testIndex)) + ""
                                  " wasn't yet executed, can't provide test log");
@@ -108,7 +109,14 @@ void Test::appendTestLog(std::string & batteryLog) {
     batteryLog.append(testLog);
 }
 
+int Test::getTestIndex() const {
+    return testIndex;
+}
+
 void Test::execute() {
+    if(executed)
+        throw std::runtime_error("test was already executed");
+
     std::cout << "Executing test " << testIndex << " in battery "
               << Constants::batteryToString(Constants::BATTERY_NIST_STS) << std::endl;
     outputLog = TestUtils::executeBinary(executablePath ,
@@ -122,7 +130,7 @@ std::string Test::getLogicName() const {
     return logicName;
 }
 
-std::vector<std::string> Test::getSettings() const {
+std::vector<std::string> Test::getParameters() const {
     std::stringstream parameters;
     parameters << "Stream size: " << streamSize << std::endl;
     parameters << "Stream count: " << streamCount << std::endl;
@@ -130,6 +138,10 @@ std::vector<std::string> Test::getSettings() const {
         parameters << "Block length: " << blockLength;
 
     return Utils::split(parameters.str() , '\n');
+}
+
+std::vector<std::string> Test::getStatistics() const {
+    return {"Chi-square" , "Proportion"};
 }
 
 std::vector<tTestPvals> Test::getResults() const {

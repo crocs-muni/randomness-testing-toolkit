@@ -1,5 +1,5 @@
-#ifndef RTT_OUTPUT_INTERFACE_H
-#define RTT_OUTPUT_INTERFACE_H
+#ifndef RTT_OUTPUT_IOUTPUT_H
+#define RTT_OUTPUT_IOUTPUT_H
 
 #include <string>
 #include <vector>
@@ -7,10 +7,10 @@
 namespace rtt {
 namespace output {
 
-class Interface {
+class IOutput {
 public:
 
-    virtual ~Interface() {}
+    virtual ~IOutput() {}
 
     virtual void addNewTest(const std::string & testName) = 0;
 
@@ -34,4 +34,4 @@ public:
 } // namespace output
 } // namespace rtt
 
-#endif // RTT_OUTPUT_INTERFACE_H
+#endif // RTT_OUTPUT_IOUTPUT_H

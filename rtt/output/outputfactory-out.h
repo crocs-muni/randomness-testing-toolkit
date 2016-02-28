@@ -4,17 +4,17 @@
 #include "rtt/constants.h"
 #include "rtt/options.h"
 
-#include "rtt/output/interface-out.h"
+#include "rtt/output/ioutput-out.h"
 #include "rtt/output/storage-file.h"
 
 namespace rtt {
 namespace output {
 
-class InterfaceFactory {
+class OutputFactory {
 public:
-    static std::unique_ptr<Interface> createOutput(TiXmlNode * root ,
-                                                   const CliOptions & options ,
-                                                   const time_t & creationTime) {
+    static std::unique_ptr<IOutput> createOutput(TiXmlNode * root ,
+                                                 const CliOptions & options ,
+                                                 const time_t & creationTime) {
         //throw std::runtime_error("not implemented yet!");
         return file::Storage::getInstance(root , options , creationTime);
     }

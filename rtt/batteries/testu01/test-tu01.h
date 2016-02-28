@@ -7,6 +7,7 @@
 #include <sstream>
 #include <tuple>
 
+#include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testutils-batt.h"
 #include "rtt/options.h"
 #include "libs/tinyXML/xmlproc.h"
@@ -136,9 +137,8 @@ enum class AlphabitTI {
 typedef std::pair<std::string , std::string> tParam;
 typedef std::vector<std::string> tStringVector;
 typedef std::tuple<std::string , tStringVector , tStringVector> tTestInfo;
-typedef std::vector<double> tTestPvals;
 
-class Test {
+class Test : public ITest {
 public:
     /* Test info constants */
     static const tTestInfo INFO_SMARSA_SERIALOVER;
@@ -209,15 +209,15 @@ public:
     *** Public methods ***
     ======================
     */
-    static Test getInstance(int testIndex ,
-                            const CliOptions & options ,
-                            TiXmlNode * cfgRoot);
+    static std::unique_ptr<Test> getInstance(int testIndex ,
+                                 const CliOptions & options ,
+                                 TiXmlNode * cfgRoot);
 
-    void appendTestLog(std::string & batteryLog);
+    void appendTestLog(std::string & batteryLog) const;
 
     bool wasExecuted() const { return executed; }
 
-    bool execute();
+    void execute();
 
     std::string getLogicName() const;
 

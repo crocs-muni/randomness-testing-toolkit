@@ -24,7 +24,7 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                     getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
                     options.getBinFilePath()));
     /* Creating storage for results */
-    battery->storage = output::InterfaceFactory::createOutput(cfgRoot ,
+    battery->storage = output::OutputFactory::createOutput(cfgRoot ,
                                                               options ,
                                                               battery->creationTime);
 
@@ -37,7 +37,7 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                                  "and in config file");
 
     for(int i : testConsts) {
-        Test test = Test::getInstance(i , options , cfgRoot);
+        std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
         battery->tests.push_back(std::move(test));
     }
 
@@ -47,7 +47,7 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
 
 void Battery::runTests() {
     for(auto & i : tests)
-        i.execute();
+        i->execute();
 
     executed = true;
 }
@@ -61,24 +61,28 @@ void Battery::processStoredResults() {
     /* Log storage */
     std::string batteryLog;
     for(auto & i : tests)
-        i.appendTestLog(batteryLog);
+        i->appendTestLog(batteryLog);
 
     Utils::createDirectory(Utils::getPathWithoutLastItem(logFilePath));
     Utils::saveStringToFile(logFilePath , batteryLog);
 
     /* Result storage */
-    for(const Test & test : tests) {
-        storage->addNewTest(test.getLogicName());
-        storage->setTestOptions(test.getSettings());
+    for(const auto & test : tests) {
+        storage->addNewTest(test->getLogicName());
+        storage->setTestOptions(test->getParameters());
 
-        std::vector<tTestPvals> results = test.getResults();
+        std::vector<tTestPvals> results = test->getResults();
+        /* In Dieharder, there is only one statistic */
+        std::vector<std::string> statistics = test->getStatistics();
         if(results.size() == 1) { /* Single test */
-            storage->addStatisticResult("KS" , kstest(results.at(0)) , 8);
+            storage->addStatisticResult(statistics.at(0) ,
+                                        kstest(results.at(0)) , 8);
             storage->addPValues(results.at(0) , 8);
         } else { /* Multiple subtests */
             for(const auto & result : results) {
                 storage->addSubTest();
-                storage->addStatisticResult("KS" , kstest(result) , 8);
+                storage->addStatisticResult(statistics.at(0) ,
+                                            kstest(result) , 8);
                 storage->addPValues(result , 8);
                 storage->finalizeSubTest();
             }

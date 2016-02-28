@@ -8,6 +8,7 @@
 #include <tuple>
 
 #include "libs/tinyXML/xmlproc.h"
+#include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testutils-batt.h"
 #include "rtt/utils.h"
 #include "rtt/options.h"
@@ -17,9 +18,8 @@ namespace batteries {
 namespace niststs {
 
 typedef std::tuple<int , std::string , std::string , int , bool> tTestInfo;
-typedef std::vector<double> tTestPvals;
 
-class Test {
+class Test : public ITest {
 public:
     /* Test info constants */
     static const tTestInfo INFO_FREQ;
@@ -57,19 +57,23 @@ public:
     ======================
     */
     /* Some getters for results will be probably added in time */
-    static Test getInstance(int testIndex ,
-                            TiXmlNode * cfgRoot ,
-                            const CliOptions & options);
-
-    void appendTestLog(std::string & outputLog);
-
-    bool wasExecuted() const { return executed; }
+    static std::unique_ptr<Test> getInstance(int testIndex ,
+                                             TiXmlNode * cfgRoot ,
+                                             const CliOptions & options);
 
     void execute();
 
+    bool wasExecuted() const { return executed; }
+
+    void appendTestLog(std::string & outputLog) const;
+
+    int getTestIndex() const;
+
     std::string getLogicName() const;
 
-    std::vector<std::string> getSettings() const;
+    std::vector<std::string> getParameters() const;
+
+    std::vector<std::string> getStatistics() const;
 
     std::vector<tTestPvals> getResults() const;
 

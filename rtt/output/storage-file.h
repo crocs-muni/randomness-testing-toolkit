@@ -10,7 +10,7 @@
 #include "libs/tinyXML/xmlproc.h"
 
 #include "rtt/options.h"
-#include "rtt/output/interface-out.h"
+#include "rtt/output/ioutput-out.h"
 
 namespace rtt {
 namespace output {
@@ -18,7 +18,7 @@ namespace file {
 
 typedef std::vector<std::string> tStringVector;
 
-class Storage : public Interface {
+class Storage : public IOutput {
 public:
     /* XPath constants */
     static const std::string XPATH_FILE_MAIN;

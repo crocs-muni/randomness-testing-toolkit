@@ -80,12 +80,12 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
                     Utils::itostr(test->testIndex)
                 );
 
-    test->streamSize = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
-                                                  XPATH_DEFAULT_STREAM_SIZE ,
-                                                  XPATH_TEST_STREAM_SIZE);
-    test->streamCount = TestUtils::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
-                                                  XPATH_DEFAULT_STREAM_COUNT ,
-                                                  XPATH_TEST_STREAM_COUNT);
+    test->streamSize = ITest::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
+                                              XPATH_DEFAULT_STREAM_SIZE ,
+                                              XPATH_TEST_STREAM_SIZE);
+    test->streamCount = ITest::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
+                                               XPATH_DEFAULT_STREAM_COUNT ,
+                                               XPATH_TEST_STREAM_COUNT);
     test->blockLength = getXMLElementValue(testsSettingsNode ,
                                            XPATH_TEST_BLOCK_LENGTH);
 
@@ -114,14 +114,15 @@ int Test::getTestIndex() const {
 }
 
 void Test::execute() {
-    if(executed)
-        throw std::runtime_error("test was already executed");
+    /* This method is turned into thread.
+     * Will deadlock if run without main thread. */
 
-    std::cout << "Executing test " << testIndex << " in battery "
-              << Constants::batteryToString(Constants::BATTERY_NIST_STS) << std::endl;
-    outputLog = TestUtils::executeBinary(executablePath ,
-                                         createArgs() ,
-                                         createInput());
+    //std::cout << "Executing test " << testIndex << " in battery "
+    //          << Constants::batteryToString(Constants::BATTERY_NIST_STS) << std::endl;
+
+    outputLog = TestRunner::executeBinary(executablePath ,
+                                          createArgs() ,
+                                          createInput());
     parseStoreResults();
     executed = true;
 }

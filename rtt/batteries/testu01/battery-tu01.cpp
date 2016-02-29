@@ -71,8 +71,10 @@ void Battery::runTests() {
     if(executed)
         throw std::runtime_error("battery was already executed");
 
-    for(size_t i = 0 ; i < tests.size() ; ++i) {
-        tests.at(i)->execute();
+    TestRunner::executeTests(std::ref(tests));
+
+//    for(size_t i = 0 ; i < tests.size() ; ++i) {
+//        tests.at(i)->execute();
 //        if(!tests.at(i).execute()) {
 //            /* Execution timed out, don't execute following tests with same name */
 //            std::string testName = tests.at(i).getLogicName();
@@ -88,7 +90,7 @@ void Battery::runTests() {
 //                }
 //            }
 //        }
-    }
+//    }
 
     executed = true;
 }

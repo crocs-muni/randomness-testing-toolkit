@@ -173,9 +173,9 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
                                 Utils::itostr(testIndex)
                                );
 
-    std::string strReps = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                             XPATH_DEFAULT_REPS ,
-                                                             XPATH_TEST_REPS);
+    std::string strReps = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+                                                 XPATH_DEFAULT_REPS ,
+                                                 XPATH_TEST_REPS);
     if(strReps.empty())
         throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                  ": default or test specific repetitions must be set");
@@ -198,9 +198,9 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
     /* Getting nb - Rabbit and Alphabit */
     if(test->battery == Constants::BATTERY_TU01_RABBIT ||
             test->battery == Constants::BATTERY_TU01_ALPHABIT) {
-        test->bit_nb = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                  XPATH_DEFAULT_BIT_NB ,
-                                                  XPATH_TEST_BIT_NB);
+        test->bit_nb = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+                                              XPATH_DEFAULT_BIT_NB ,
+                                              XPATH_TEST_BIT_NB);
         if(test->bit_nb.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_nb option must be set"
@@ -208,17 +208,17 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
     }
     /* Getting r s - Alphabit */
     if(test->battery == Constants::BATTERY_TU01_ALPHABIT) {
-        test->bit_r = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                 XPATH_DEFAULT_BIT_R ,
-                                                 XPATH_TEST_BIT_R);
+        test->bit_r = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+                                             XPATH_DEFAULT_BIT_R ,
+                                             XPATH_TEST_BIT_R);
         if(test->bit_r.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_r option must be set"
                                      " in Alphabit battery");
 
-        test->bit_s = TestUtils::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                 XPATH_DEFAULT_BIT_S ,
-                                                 XPATH_TEST_BIT_S);
+        test->bit_s = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+                                             XPATH_DEFAULT_BIT_S ,
+                                             XPATH_TEST_BIT_S);
         if(test->bit_s.empty())
             throw std::runtime_error("Test " + Utils::itostr(testIndex) +
                                      ": default or test specific bit_s option must be set"
@@ -235,22 +235,15 @@ void Test::appendTestLog(std::string & batteryLog) const {
 }
 
 void Test::execute() {
-    if(executed)
-        throw std::runtime_error("test was already executed");
+    /* This method is turned into thread.
+     * Will deadlock if run without main thread. */
 
-    std::cout << "Executing test " << testIndex << " in battery "
-              << Constants::batteryToString(battery) << std::endl;
-    bool timeouted = false;
-    testLog = TestUtils::executeBinary(executablePath ,
-                                       createArgs(), "" ,
-                                       MISC_EXECUTION_TIMEOUT ,
-                                       &timeouted);
-    if(timeouted) {
-        std::cout << "[WARNING] Test " << testIndex << " in battery "
-                  << Constants::batteryToString(battery) << " timeouted and was killed. "
-                     "Timeout period is set to " << MISC_EXECUTION_TIMEOUT << " seconds." << std::endl;
-        return;
-    }
+    //std::cout << "Executing test " << testIndex << " in battery "
+    //          << Constants::batteryToString(battery) << std::endl;
+
+    testLog = TestRunner::executeBinary(executablePath ,
+                                        createArgs());
+
     extractPvalues();
     executed = true;
 }

@@ -46,8 +46,13 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
 }
 
 void Battery::runTests() {
-    for(auto & i : tests)
-        i->execute();
+    if(executed)
+        throw std::runtime_error("battery was already executed");
+
+    TestRunner::executeTests(std::ref(tests));
+
+    //for(auto & i : tests)
+    //    i->execute();
 
     executed = true;
 }

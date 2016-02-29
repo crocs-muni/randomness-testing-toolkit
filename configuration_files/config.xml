@@ -13,7 +13,7 @@
         
         <OUTPUT>
             <FILE>
-                <MAIN_FILE>testbed1/reports/testbed-table.txt</MAIN_FILE>
+                <MAIN_FILE>testbed1/testbed-table.txt</MAIN_FILE>
             
                 <DIEHARDER_DIR>testbed1/reports/dieharder/</DIEHARDER_DIR>
                 <NIST_STS_DIR>testbed1/reports/niststs/</NIST_STS_DIR>
@@ -85,7 +85,7 @@
         <DEFAULT_TESTS_RABBIT>1 4-26</DEFAULT_TESTS_RABBIT>
         <DEFAULT_TESTS_ALPHABIT>1-9</DEFAULT_TESTS_ALPHABIT>
         <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
-        <DEFAULT_BIT_NB>8000000000</DEFAULT_BIT_NB>
+        <DEFAULT_BIT_NB>8388608000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
     </TESTU01_SETTINGS>

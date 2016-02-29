@@ -8,7 +8,7 @@
 #include <tuple>
 
 #include "rtt/batteries/itest-batt.h"
-#include "rtt/batteries/testutils-batt.h"
+#include "rtt/batteries/testrunner-batt.h"
 #include "rtt/options.h"
 #include "libs/tinyXML/xmlproc.h"
 

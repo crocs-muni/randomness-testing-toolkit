@@ -17,8 +17,8 @@
 
 // File with global methods declared
 
-#define min(a,b) (((a)<(b))?(a):(b))
-#define max(a,b) (((a)>(b))?(a):(b))
+#define my_min(a,b) (((a)<(b))?(a):(b))
+#define my_max(a,b) (((a)>(b))?(a):(b))
 
 namespace rtt {
 

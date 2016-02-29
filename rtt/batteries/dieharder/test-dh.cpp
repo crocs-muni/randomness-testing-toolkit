@@ -147,13 +147,14 @@ void Test::appendTestLog(std::string & batteryLog) const {
 }
 
 void Test::execute() {
-    if(executed)
-        throw std::runtime_error("test was already executed");
+    /* This method is turned into thread.
+     * Will deadlock if run without main thread. */
 
-    std::cout << "Executing test " << testIndex << " in battery "
-              << Constants::batteryToString(Constants::BATTERY_DIEHARDER) << std::endl;
-    testLog = TestUtils::executeBinary(executablePath ,
-                                       createArgs());
+    //std::cout << "Executing test " << testIndex << " in battery "
+    //          << Constants::batteryToString(Constants::BATTERY_DIEHARDER) << std::endl;
+
+    testLog = TestRunner::executeBinary(executablePath ,
+                                        createArgs());
     extractPvalues();
     executed = true;
 }

@@ -1,31 +1,31 @@
 CC=gcc
 CXX=g++
-CFLAGS=-std=c++11 -static -I. -I./libs/tinyXML -O2
+CFLAGS=-std=c++11 -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -I. -I./libs/tinyXML -O2
 
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===
 DEPS = \
 	libs/tinyXML/tinystr.h \
-	libs/tinyXML/tinyxml.h \
-	libs/tinyXML/xmlproc.h \
-	libs/cephes/cephes.h \
-	rtt/constants.h \
-	rtt/options.h \
-	rtt/utils.h \
-	rtt/version.h \
-	rtt/batteries/dieharder/battery-dh.h \
-	rtt/batteries/dieharder/test-dh.h \
-	rtt/batteries/niststs/battery-sts.h \
-	rtt/batteries/niststs/test-sts.h \
-	rtt/batteries/dieharder/setting-dh.h \
-	rtt/batteries/testu01/battery-tu01.h \
-	rtt/batteries/testu01/test-tu01.h \
-	rtt/batteries/interface-batt.h \
-	rtt/batteries/interfacefactory-batt.h \
-	rtt/output/interface-out.h \
-	rtt/output/interfacefactory-out.h \
-	rtt/output/storage-file.h \
-	rtt/batteries/testutils-batt.h
+	libs/tinyXML/tinyxml.cpp \
+    libs/tinyXML/tinyxmlerror.cpp \
+    libs/tinyXML/tinyxmlparser.cpp \
+    libs/tinyXML/xmlproc.cpp \
+    rtt/constants.cpp \
+    rtt/main.cpp \
+    rtt/options.cpp \
+    rtt/utils.cpp \
+    rtt/batteries/dieharder/battery-dh.cpp \
+    rtt/batteries/dieharder/test-dh.cpp \
+    rtt/batteries/niststs/battery-sts.cpp \
+    rtt/batteries/niststs/test-sts.cpp \
+    rtt/batteries/dieharder/setting-dh.cpp \
+    rtt/batteries/testu01/battery-tu01.cpp \
+    rtt/batteries/testu01/test-tu01.cpp \
+    rtt/output/storage-file.cpp \
+    libs/cephes/cephes.cpp \
+    rtt/batteries/ibattery-batt.cpp \
+    rtt/batteries/itest-batt.cpp \
+    rtt/batteries/testrunner-batt.cpp
 
 # === Target object files ===
 OBJ = \
@@ -47,8 +47,9 @@ OBJ = \
 	test-tu01.o \
 	storage-file.o \
 	cephes.o \
-	interface-batt.o \
-	testutils-batt.o
+	ibattery-batt.o \
+	itest-batt.o \
+	testrunner-batt.o
 
 # === All paths inside project directory ===
 # === Ugly but works ===

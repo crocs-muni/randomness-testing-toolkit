@@ -7,6 +7,7 @@
 #include "libs/cephes/cephes.h"
 
 #include "rtt/options.h"
+#include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/niststs/test-sts.h"
 #include "rtt/output/outputfactory-out.h"

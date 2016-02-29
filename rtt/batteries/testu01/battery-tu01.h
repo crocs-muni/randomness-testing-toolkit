@@ -3,6 +3,7 @@
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/options.h"
+#include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/testu01/test-tu01.h"
 #include "rtt/output/outputfactory-out.h"

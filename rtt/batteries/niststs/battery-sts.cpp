@@ -46,9 +46,14 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
 
 void Battery::runTests() {
     /* Executing all tests in sequence here */
-    /* In time, it's possible to add some multithreading */
-    for(auto & i : tests)
-        i->execute();
+    /* In time, it's possible to add some multithreading (added now) */
+    if(executed)
+        throw std::runtime_error("battery was already executed");
+
+    TestRunner::executeTests(std::ref(tests));
+
+    //for(auto & i : tests)
+    //    i->execute();
 
     /* Setting executed to true, allowing postprocessing */
     executed = true;

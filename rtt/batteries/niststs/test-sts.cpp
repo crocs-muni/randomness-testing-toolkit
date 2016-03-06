@@ -64,7 +64,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
              test->subTestCount ,
              test->adjustableBlockLen) = testInfo;
 
-    //test.testIndex = testIndex;
     /* Getting default values from XML */
     test->binaryDataPath = options.getBinFilePath();
     if(test->binaryDataPath.empty())
@@ -117,13 +116,18 @@ void Test::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
 
-    //std::cout << "Executing test " << testIndex << " in battery "
-    //          << Constants::batteryToString(Constants::BATTERY_NIST_STS) << std::endl;
-
+    /* Cleaning the test result directory */
+    Utils::rmDirFiles(resultSubDir);
     outputLog = TestRunner::executeBinary(executablePath ,
                                           createArgs() ,
                                           createInput());
-    parseStoreResults();
+    try {
+        parseStoreResults();
+    } catch (std::runtime_error ex) {
+        std::cout << "[ERROR] An exception was thrown "
+                     "during thread execution: " << ex.what() << std::endl;
+    }
+
     executed = true;
 }
 
@@ -169,7 +173,7 @@ std::vector<tTestPvals> Test::getResults() const {
 
 std::string Test::createArgs() const {
     std::stringstream arguments;
-    arguments << "assess " << streamSize;
+    arguments << "assess " << streamSize << " -fast";
     return arguments.str();
 }
 

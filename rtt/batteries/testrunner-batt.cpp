@@ -186,6 +186,11 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
         close(stderr_pipe[1]);
         if(!input.empty())
             write(stdin_pipe[1] , input.c_str() , input.length());
+        /* Start thread for output reading. Thread will be mostly in blocked wait.
+         * Also will be essentially over as soon as the process finishes.
+         * With this, pipes won't be filled and won't block underlying process. */
+        std::thread reader(readOutput , std::ref(output) ,
+                           stdout_pipe , stderr_pipe);
 
         /* Incrementing number of threads waiting.
          * Only if this variable is same as withoutChild
@@ -198,6 +203,7 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
          * will work with his associated process only
          * (because the thread owns the pipes to this process) */
         auto now = std::chrono::system_clock::now();
+        // Don't know why, but if I use TIMEOUT constant directly in argument it won't compile...
         int vArgumenteToJebeChybu = PROCESS_TIMEOUT_SECONDS;
         if(!finishedPid_cv.wait_until(finishedPid_lock ,
                                       now + std::chrono::seconds(vArgumenteToJebeChybu) ,
@@ -243,11 +249,11 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
         }
         threadsReady_lock.unlock();
 
-        /* Notify main thread that it can continue with reaping processes */
+        /* Notify main thread that it can continue in reaping processes */
         childReceived_cv.notify_one();
         /* This thread now completed all communication with other threads.
          *  DO YOUR WORK SLAVE!!! */
-        output = readOutput(stdout_pipe , stderr_pipe);
+        reader.join();
         return output;
     } else {
         /* Some nasty error happened at execution. Report and end thread */
@@ -264,7 +270,7 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
         withoutChild_cv.notify_one();
         return "";
     }
-    /* All locks go out of scope, so all should be unlocked here */
+    /* All locks go out of scope, so everything will be unlocked here */
 }
 
 void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
@@ -273,7 +279,7 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     std::unique_lock<std::mutex> threadState_lock(threadState_mux , std::defer_lock);
     std::vector<std::thread> threads;
     /* Initial threads are activated. Only MAX_THREADS are running at a time. */
-    for(size_t i = 0 ; (i < MAX_THREADS) && i < tests.size() ; ++i) {
+    for(size_t i = 0 ; (i < MAX_TESTS_EXEC) && i < tests.size() ; ++i) {
         threads.push_back(std::thread(&ITest::execute , tests.at(i).get()));
         ++withoutChild;
     }
@@ -287,12 +293,12 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     /* Notify main thread that it can proceed */
     threadState_cv.notify_one();
 
-    for(size_t i = MAX_THREADS ; i < tests.size() ; ++i) {
+    for(size_t i = MAX_TESTS_EXEC ; i < tests.size() ; ++i) {
         /* Each thread, after finishing its ITC, will notify this thread that
          * withoutChild has changed. If there are less active threads than MAX_THREADS
          * and there are some unexecuted tests left, this thread will add them. */
         withoutChild_lock.lock();
-        withoutChild_cv.wait(withoutChild_lock , []{ return withoutChild < MAX_THREADS; });
+        withoutChild_cv.wait(withoutChild_lock , []{ return withoutChild < MAX_TESTS_EXEC; });
         threadState_lock.lock();
         threads.push_back(std::thread(&ITest::execute , tests.at(i).get()));
         ++withoutChild;
@@ -321,10 +327,10 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     /* Joining complete, end. */
 }
 
-std::string TestRunner::readOutput(int *stdout_pipe, int *stderr_pipe) {
+void TestRunner::readOutput(std::string & output ,
+                            int * stdout_pipe, int * stderr_pipe) {
     std::string buffer(1024 , ' ');
     size_t bytes_read;
-    std::string output;
     std::vector<pollfd> pollVector {{stdout_pipe[0] , POLLIN , 0},
                                     {stderr_pipe[0] , POLLIN , 0}};
     for(; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
@@ -338,7 +344,6 @@ std::string TestRunner::readOutput(int *stdout_pipe, int *stderr_pipe) {
         }
         else break; /* Nothing else to read */
     }
-    return output;
 }
 
 char ** TestRunner::buildArgv(const std::string & arguments, int * argc) {

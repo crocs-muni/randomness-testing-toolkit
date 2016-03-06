@@ -10,7 +10,7 @@
 #include <vector>
 #include <regex>
 #include <iostream>
-
+#include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -133,6 +133,8 @@ public:
     static void sort(std::vector<int> & a , unsigned begin = 0);
 
     static void sort2D(std::vector<std::pair<int , int>> & a );
+
+    static void rmDirFiles(const std::string & n);
 };
 
 } // namespace rtt

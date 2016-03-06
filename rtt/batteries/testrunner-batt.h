@@ -24,8 +24,18 @@ namespace batteries {
 class TestRunner {
 public:
 
-    static const int MAX_THREADS                = 16;
-    static const int PROCESS_TIMEOUT_SECONDS    = 1200;
+    /* At all times, two threads are running.
+     * Main thread -    Handles incoming signals about
+     *                  finished processes, announces finished PIDs.
+     * Thread manager - Handles starting and joining of process threads.
+     * Process thread - Starts process and waits for its PID to be announced.
+     *                  If PID isn't announced withit TIMEOUT, kills process.
+     *                  Also starts reader thread and joins it at the end.
+     * Reader thread  - Reads process pipes. Usually is blocked by read.
+     *                  It is important that this thread is running, otherwise
+     *                  pipes could be filled up, blocking associated process.*/
+    static const int MAX_TESTS_EXEC             = 8;
+    static const int PROCESS_TIMEOUT_SECONDS    = 600;
 
     static const int THREAD_STATE_PENDING       = 0;
     static const int THREAD_STATE_READY         = 1;
@@ -46,7 +56,7 @@ private:
      * wait for the threads to end and joins them. */
     static void threadManager(std::vector<std::unique_ptr<ITest>> & tests);
 
-    static std::string readOutput(int * stdout_pipe, int * stderr_pipe);
+    static void readOutput(std::string &output, int * stdout_pipe, int * stderr_pipe);
 
     static char ** buildArgv(const std::string & arguments , int * argc);
 

@@ -200,6 +200,28 @@ void Utils::sort2D(std::vector<std::pair<int, int> > & a) {
     }
 }
 
+void Utils::rmDirFiles(const std::string & n) {
+    std::string name = n;
+    if(name.back() != '/')
+        name.append("/");
+
+    std::string filename;
+    DIR * d = opendir(name.c_str());
+
+    if(d) {
+        struct dirent * p;
+
+        while((p = readdir(d))) {
+            if(strcmp(p->d_name , ".") == 0 || strcmp(p->d_name , "..") == 0)
+                continue;
+
+            filename = name + p->d_name;
+            unlink(filename.c_str());
+        }
+    }
+    closedir(d);
+}
+
 
 std::string Utils::readFileToString(const std::string & path) {
     std::ifstream file(path , std::ios::in);

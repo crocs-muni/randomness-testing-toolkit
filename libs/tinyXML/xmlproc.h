@@ -9,6 +9,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "xmlexception.h"
+
 /** saves given XML structure to file
 * automatically add XML declaration
 * @param pRoot        pointer to root element of the structure to be saved

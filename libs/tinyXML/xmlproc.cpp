@@ -1,33 +1,26 @@
 #include "xmlproc.h"
 
-/*int*/ void saveXMLFile(TiXmlNode* pRoot , std::string filename) {
+void saveXMLFile(TiXmlNode* pRoot , std::string filename) {
     TiXmlDocument doc;
     TiXmlDeclaration* decl = new TiXmlDeclaration("1.0" , "" , "");
     doc.LinkEndChild(decl);
     doc.LinkEndChild(pRoot);
     bool result = doc.SaveFile(filename.c_str());
-    if(!result) {
-        //return STAT_FILE_OPEN_FAIL;
-        throw std::runtime_error("XML: can't save root into file " + filename);
-    }
-    //return STAT_OK;
+    if(!result)
+        throw XMLException("can't save root into file " + filename);
 }
 
-/*int*/ void loadXMLFile(TiXmlNode*& pRoot , std::string filename) {
+void loadXMLFile(TiXmlNode*& pRoot , std::string filename) {
     TiXmlDocument doc(filename.c_str());
-    if(!doc.LoadFile()) {
-        //return STAT_FILE_OPEN_FAIL;
-        throw std::runtime_error("XML: can't load file " + filename);
-    }
+    if(!doc.LoadFile())
+        throw XMLException("can't load file " + filename);
+
     TiXmlHandle hDoc(&doc);
     TiXmlElement* pElem = hDoc.FirstChildElement().Element();
-    if(!pElem) {
-        //return STAT_FILE_OPEN_FAIL;
-        throw std::runtime_error("XML: can't load file " + filename);
-    }
-    pRoot = pElem->Clone();
+    if(!pElem)
+        throw XMLException("can't load file " + filename);
 
-    //return STAT_OK;
+    pRoot = pElem->Clone();
 }
 
 std::string getXMLElementValue(TiXmlNode*& pRoot , std::string path) {
@@ -51,25 +44,22 @@ std::string getXMLElementValue(TiXmlNode*& pRoot , std::string path) {
     return "";
 }
 
-/*int*/ void setXMLElementValue(TiXmlNode*& pRoot , std::string path , const std::string& value) {
+void setXMLElementValue(TiXmlNode*& pRoot , std::string path , const std::string& value) {
     TiXmlNode* pNode = getXMLElement(pRoot , path);
-    if(pNode == NULL) {
-        //return STAT_INVALID_ARGUMETS;
-        throw std::runtime_error("XML: can't set value to node " + path);
-    }
+    if(pNode == NULL)
+        throw XMLException("can't set value to node " + path);
+
     if(path.find('@') == path.npos) {
         // setting text node
         TiXmlText* pText = pNode->FirstChild()->ToText();
-        if(pText == NULL) {
-            //return STAT_INVALID_ARGUMETS;
-            throw std::runtime_error("XML: can't set value to attribute " + path);
-        }
+        if(pText == NULL)
+            throw XMLException("can't set value to attribute " + path);
+
         pText->SetValue(value.c_str());
     } else {
         // setting attribute
         pNode->ToElement()->SetAttribute(path.substr(path.find('@') + 1 , path.length() - path.find('@') - 1).c_str() , value.c_str());
     }
-    //return STAT_OK;
 }
 
 TiXmlNode* getXMLElement(TiXmlNode* pRoot , std::string path) {
@@ -103,7 +93,8 @@ TiXmlNode * getXMLChildNodeWithAttValue(TiXmlNode * pParent,
         childEl = childNode->ToElement();
         attValue = childEl->Attribute(attName.c_str());
         if(!attValue || strlen(attValue) < 1)
-            throw std::runtime_error("XML: child element doesn't have attribute: " + attName);
+            throw XMLException("child element doesn't have attribute: " + attName);
+
         if(value == attValue)
             return childNode;
     }

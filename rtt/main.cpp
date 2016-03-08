@@ -56,6 +56,8 @@ int main (int argc , char * argv[]) {
                  batteries::BatteryFactory::createBattery(options);
         battery->runTests();
         battery->processStoredResults();
+    } catch(XMLException ex) {
+        std::cout << "[ERROR] " << ex.what() << std::endl;
     } catch(std::runtime_error ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
     } catch(std::bad_alloc ex) {

@@ -56,7 +56,8 @@ private:
      * wait for the threads to end and joins them. */
     static void threadManager(std::vector<std::unique_ptr<ITest>> & tests);
 
-    static void readOutput(std::string &output, int * stdout_pipe, int * stderr_pipe);
+    static void readOutput(std::string & output, std::string & stderr,
+                           int * stdout_pipe, int * stderr_pipe);
 
     static char ** buildArgv(const std::string & arguments , int * argc);
 

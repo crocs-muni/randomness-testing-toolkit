@@ -122,6 +122,7 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
     int stderr_pipe[2];
 
     std::string output;
+    std::string stderr;
     pid_t pid = 0;
     posix_spawn_file_actions_t actions;
 
@@ -189,7 +190,7 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
         /* Start thread for output reading. Thread will be mostly in blocked wait.
          * Also will be essentially over as soon as the process finishes.
          * With this, pipes won't be filled and won't block underlying process. */
-        std::thread reader(readOutput , std::ref(output) ,
+        std::thread reader(readOutput , std::ref(output) , std::ref(stderr) ,
                            stdout_pipe , stderr_pipe);
 
         /* Incrementing number of threads waiting.
@@ -254,6 +255,14 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
         /* This thread now completed all communication with other threads.
          *  DO YOUR WORK SLAVE!!! */
         reader.join();
+        if(!stderr.empty()) {
+            std::lock_guard<std::mutex> l(cout_mux);
+            std::cout << "[WARNING] Process " << pid << " had following standard error output: " << std::endl;
+            std::cout << stderr << std::endl;
+            std::cout << "[WARNING] If there are any results of this test, they are probably invalid." << std::endl;
+            std::cout << "========================================" << std::endl;
+        }
+
         return output;
     } else {
         /* Some nasty error happened at execution. Report and end thread */
@@ -327,10 +336,11 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     /* Joining complete, end. */
 }
 
-void TestRunner::readOutput(std::string & output ,
+void TestRunner::readOutput(std::string & output , std::string & stderr ,
                             int * stdout_pipe, int * stderr_pipe) {
     std::string buffer(1024 , ' ');
     size_t bytes_read;
+
     std::vector<pollfd> pollVector {{stdout_pipe[0] , POLLIN , 0},
                                     {stderr_pipe[0] , POLLIN , 0}};
     for(; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
@@ -341,6 +351,7 @@ void TestRunner::readOutput(std::string & output ,
         else if(pollVector[1].revents&POLLIN) {
             bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
             output.append(buffer , 0 , bytes_read);
+            stderr.append(buffer , 0 , bytes_read);
         }
         else break; /* Nothing else to read */
     }

@@ -7,6 +7,7 @@
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/utils.h"
 #include "rtt/options.h"
+#include "rtt/rttexception.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
@@ -102,6 +103,7 @@ private:
     std::string executablePath;
     std::string binaryDataPath;
     std::vector<Setting> settings;
+    std::string objectInfo;
     int pSampleCount;
     /* Following fields will be initialized in getInstance */
     /* to default values according to test index */

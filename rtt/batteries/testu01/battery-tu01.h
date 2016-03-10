@@ -3,6 +3,7 @@
 
 #include "libs/tinyXML/xmlproc.h"
 #include "rtt/options.h"
+#include "rtt/rttexception.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/testu01/test-tu01.h"
@@ -36,6 +37,7 @@ private:
     /* As soon as getInstance is called, this time is set */
     /* Used for naming output files */
     time_t creationTime;
+    std::string objectInfo;
     /* After test execution, log of battery run will be stored in logFilePath */
     std::string logFilePath;
     std::unique_ptr<output::IOutput> storage;

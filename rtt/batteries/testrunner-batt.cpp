@@ -378,4 +378,3 @@ void TestRunner::destroyArgv(int argc, char **argv) {
 
 } // namespace batteries
 } // namespace rtt
-

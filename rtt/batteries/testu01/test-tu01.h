@@ -7,6 +7,7 @@
 #include <sstream>
 #include <tuple>
 
+#include "rtt/rttexception.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/options.h"
@@ -203,7 +204,7 @@ public:
     static const std::string XPATH_ATTRIBUTE_PAR_NAME;
 
     /* Miscelaneous */
-    static const int MISC_EXECUTION_TIMEOUT = 600;
+    //static const int MISC_EXECUTION_TIMEOUT = 600;
     /*
     ======================
     *** Public methods ***
@@ -243,6 +244,7 @@ private:
     int repetitions;
     std::string executablePath;
     std::string binaryDataPath;
+    std::string objectInfo;
     /* Only used in crush batteres */
     std::vector<tParam> params;
     /* Used in rabbit/alphabit battery */

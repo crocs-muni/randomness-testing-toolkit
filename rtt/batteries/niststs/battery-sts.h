@@ -7,6 +7,7 @@
 #include "libs/cephes/cephes.h"
 
 #include "rtt/options.h"
+#include "rtt/rttexception.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/niststs/test-sts.h"
@@ -37,6 +38,7 @@ private:
     time_t creationTime;
     /* After test execution, log of battery run will be stored in logFileName */
     std::string logFilePath;
+    std::string objectInfo;
     std::unique_ptr<output::IOutput> storage;
     /* Test class keeps track of individual test logs, results and such */
     /* Also executes tests */

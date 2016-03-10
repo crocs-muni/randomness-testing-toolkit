@@ -9,6 +9,7 @@ const std::string Battery::XPATH_DEFAULT_TESTS = "DIEHARDER_SETTINGS/DEFAULT_TES
 
 std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     std::unique_ptr<Battery> battery (new Battery());
+    battery->objectInfo = Constants::batteryToString(options.getBattery());
     battery->creationTime = Utils::getRawTime();
 
     TiXmlNode * cfgRoot = NULL;
@@ -24,22 +25,24 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                     getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
                     options.getBinFilePath()));
     /* Creating storage for results */
-    battery->storage = output::OutputFactory::createOutput(cfgRoot ,
-                                                              options ,
-                                                              battery->creationTime);
+    battery->storage = output::OutputFactory::
+            createOutput(cfgRoot , options , battery->creationTime);
 
     /* Getting constants of tests to be executed */
     std::vector<int> testConsts = options.getTestConsts();
     if(testConsts.empty()) /* Read them from config if no tests were entered via CLI */
         testConsts = parseIntValues(getXMLElementValue(cfgRoot , XPATH_DEFAULT_TESTS));
     if(testConsts.empty())
-        throw std::runtime_error("no tests for execution were set in options "
-                                 "and in config file");
+        throw RTTException(battery->objectInfo , "no tests were set for execution");
+        //throw std::runtime_error("no tests for execution were set in options "
+        //                         "and in config file");
 
     for(int i : testConsts) {
         std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
         battery->tests.push_back(std::move(test));
     }
+
+
 
     delete cfgRoot;
     return battery;
@@ -47,7 +50,8 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
 
 void Battery::runTests() {
     if(executed)
-        throw std::runtime_error("battery was already executed");
+        throw RTTException(objectInfo , "battery was already executed");
+        //throw std::runtime_error("battery was already executed");
 
     TestRunner::executeTests(std::ref(tests));
 
@@ -59,7 +63,8 @@ void Battery::runTests() {
 
 void Battery::processStoredResults() {
     if(!executed)
-        throw std::runtime_error("can't process results before execution of battery");
+        throw RTTException(objectInfo , "battery must be executed before result processing");
+        //throw std::runtime_error("can't process results before execution of battery");
 
     std::cout << "Storing log and results." << std::endl;
 
@@ -80,8 +85,13 @@ void Battery::processStoredResults() {
         /* In Dieharder, there is only one statistic */
         std::vector<std::string> statistics = test->getStatistics();
         if(results.size() == 1) { /* Single test */
-            storage->addStatisticResult(statistics.at(0) ,
-                                        kstest(results.at(0)) , 8);
+            try{
+                storage->addStatisticResult(
+                            statistics.at(0) ,kstest(results.at(0)) , 8);
+            } catch (std::runtime_error ex) {
+                throw RTTException(objectInfo , ex.what());
+            }
+
             storage->addPValues(results.at(0) , 8);
         } else { /* Multiple subtests */
             for(const auto & result : results) {
@@ -95,6 +105,10 @@ void Battery::processStoredResults() {
         storage->finalizeTest();
     }
     storage->finalizeReport();
+}
+
+std::string Battery::getObjectInfo() const {
+    return objectInfo;
 }
 
 /* Following code is taken from DIEHARDER battery. */

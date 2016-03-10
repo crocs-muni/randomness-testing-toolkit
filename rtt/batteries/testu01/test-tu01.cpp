@@ -155,17 +155,24 @@ const std::string Test::XPATH_ATTRIBUTE_PAR_NAME            = "name";
 
 std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cfgRoot) {
     if(!cfgRoot)
-        throw std::runtime_error("null cfgRoot");
-    if(testIndex <= 0)
-        throw std::runtime_error("invalid TestU01 test constant: " + Utils::itostr(testIndex));
+        throw std::runtime_error("null cfgRoot"); // This should be logic error
 
     std::unique_ptr<Test> test (new Test());
-    std::string batteryXPath;
+    test->objectInfo = Constants::batteryToString(options.getBattery()) +
+                       " - test " + Utils::itostr(testIndex);
+    if(testIndex <= 0)
+        throw RTTException(test->objectInfo , "unknown test constant");
 
     test->battery = options.getBattery();
     test->testIndex = testIndex;
-    std::tie(test->logicName , test->paramNames , test->statisticNames) =
-            pickTestInfo(testIndex , options.getBattery() , batteryXPath);
+    std::string batteryXPath;
+
+    try {
+        std::tie(test->logicName , test->paramNames , test->statisticNames) =
+                pickTestInfo(testIndex , options.getBattery() , batteryXPath);
+    } catch (std::runtime_error ex) {
+        throw RTTException(test->objectInfo , ex.what());
+    }
 
     TiXmlNode * testSettings = getXMLChildNodeWithAttValue(
                                 getXMLElement(cfgRoot , batteryXPath),
@@ -177,17 +184,20 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
                                                  XPATH_DEFAULT_REPS ,
                                                  XPATH_TEST_REPS);
     if(strReps.empty())
-        throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-                                 ": default or test specific repetitions must be set");
+        throw RTTException(test->objectInfo , "repetitions not set");
+        //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+        //                         ": default or test specific repetitions must be set");
     test->repetitions = Utils::strtoi(strReps);
     test->executablePath = getXMLElementValue(cfgRoot , XPATH_EXECUTABLE_BINARY);
     if(test->executablePath.empty())
-        throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-                                 ": path to executable binary can't be empty");
+        throw RTTException(test->objectInfo , "tag " + XPATH_EXECUTABLE_BINARY + " can't be empty");
+        //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+        //                         ": path to executable binary can't be empty");
     test->binaryDataPath = options.getBinFilePath();
     if(test->binaryDataPath.empty())
-        throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-                                 ": path to binary data can't be empty");
+        throw RTTException(test->objectInfo , "path to input data can't be empty");
+        //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+        //                         ": path to binary data can't be empty");
 
     /* Getting params - only for Crush batteries */
     if(test->battery == Constants::BATTERY_TU01_SMALLCRUSH ||
@@ -202,9 +212,10 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
                                               XPATH_DEFAULT_BIT_NB ,
                                               XPATH_TEST_BIT_NB);
         if(test->bit_nb.empty())
-            throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-                                     ": default or test specific bit_nb option must be set"
-                                     " in Rabbit and Alphabit battery");
+            throw RTTException(test->objectInfo , "bit_nb option not set");
+            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+            //                         ": default or test specific bit_nb option must be set"
+            //                         " in Rabbit and Alphabit battery");
     }
     /* Getting r s - Alphabit */
     if(test->battery == Constants::BATTERY_TU01_ALPHABIT) {
@@ -212,25 +223,28 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
                                              XPATH_DEFAULT_BIT_R ,
                                              XPATH_TEST_BIT_R);
         if(test->bit_r.empty())
-            throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-                                     ": default or test specific bit_r option must be set"
-                                     " in Alphabit battery");
+            throw RTTException(test->objectInfo , "bit_r option not set");
+            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+            //                         ": default or test specific bit_r option must be set"
+            //                         " in Alphabit battery");
 
         test->bit_s = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
                                              XPATH_DEFAULT_BIT_S ,
                                              XPATH_TEST_BIT_S);
         if(test->bit_s.empty())
-            throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-                                     ": default or test specific bit_s option must be set"
-                                     " in Alphabit battery");
+            throw RTTException(test->objectInfo , "bit_s option not set");
+            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+            //                         ": default or test specific bit_s option must be set"
+            //                         " in Alphabit battery");
     }
     return test;
 }
 
 void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
-        throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
-                                 "executed, can't provide test log");
+        throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
+        //throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
+        //                         "executed, can't provide test log");
     batteryLog.append(testLog);
 }
 
@@ -281,7 +295,8 @@ std::vector<std::string> Test::getStatistics() const {
 
 std::vector<tTestPvals> Test::getResults() const {
     if(!executed)
-        throw std::runtime_error("can't return results before execution of test");
+        throw RTTException(objectInfo , "test wasn't executed, can't provide results");
+        //throw std::runtime_error("can't return results before execution of test");
 
     return results;
 }
@@ -466,18 +481,23 @@ void Test::checkSetParams(TiXmlNode * paramsNode) {
         parName = parElement->Attribute(XPATH_ATTRIBUTE_PAR_NAME.c_str());
         parValue = parElement->GetText();
         if(!parName || strlen(parName) < 1)
-            throw std::runtime_error(logicName + ": "
-                                     "PAR node must have non-empty attribute: " +
-                                     XPATH_ATTRIBUTE_PAR_NAME);
+            throw RTTException(objectInfo , "PAR node must have non-empty attribute: " +
+                               XPATH_ATTRIBUTE_PAR_NAME);
+            //throw std::runtime_error(logicName + ": "
+            //                         "PAR node must have non-empty attribute: " +
+            //                         XPATH_ATTRIBUTE_PAR_NAME);
         if(!parValue || strlen(parValue) < 1)
-            throw std::runtime_error(logicName + ": PAR node can't be empty");
+            throw RTTException(objectInfo , "PAR node can't be empty");
+            //throw std::runtime_error(logicName + ": PAR node can't be empty");
 
         parIsSet = false;
         for(size_t i = 0 ; i < paramNames.size() ; ++i) {
             if(paramNames.at(i) == parName) {
                 if(parameters.at(i) != emptyPar)
-                    throw std::runtime_error(logicName + ": can't set parameter \"" +
-                                             paramNames.at(i) + "\" multiple times");
+                    throw RTTException(objectInfo , "can't set parameter \"" +
+                                       paramNames.at(i) + "\" multiple times");
+                    //throw std::runtime_error(logicName + ": can't set parameter \"" +
+                    //                         paramNames.at(i) + "\" multiple times");
                 parameters.at(i).first = parName;
                 parameters.at(i).second = parValue;
                 parIsSet = true;
@@ -485,12 +505,14 @@ void Test::checkSetParams(TiXmlNode * paramsNode) {
             }
         }
         if(!parIsSet)
-            throw std::runtime_error(logicName + ": unknown parameter name: " +
-                                     (std::string)parName);
+            throw RTTException(objectInfo , "unknown parameter name: " + (std::string)parName);
+            //throw std::runtime_error(logicName + ": unknown parameter name: " +
+            //                         (std::string)parName);
     }
     for(auto i : parameters)
         if(i == emptyPar)
-            throw std::runtime_error(logicName + ": not all test parameters were set");
+            throw RTTException(objectInfo , "not all test parameters were set");
+            //throw std::runtime_error(logicName + ": not all test parameters were set");
     params = std::move(parameters);
 }
 
@@ -558,9 +580,14 @@ void Test::extractPvalues() {
         return;
     }
 
-    if(pValCount % repetitions != 0)
-        throw std::runtime_error("can't extract p-values from log: number of"
-                                 " p-value is not divisible by repetitions");
+    if(pValCount % repetitions != 0) {
+        std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
+                     "Number of p-values present is not divisible by "
+                                                   "number of repetitions per test." << std::endl;
+        return;
+    }
+        //throw std::runtime_error("can't extract p-values from log: number of"
+        //                         " p-value is not divisible by repetitions");
     statCount = pValCount / repetitions;
     if(statCount != statisticNames.size()) {
         /* So this normally doesn't happen but(!) some tests have variable
@@ -580,8 +607,16 @@ void Test::extractPvalues() {
     for(; begin != end ;) {
         for(uint i = 0 ; i < statCount ; ++i) {
             std::smatch match = *begin;
-            pValues.push_back(convertStringToDouble(match[1].str() ,
-                                                    match[2].str()));
+            try {
+                pValues.push_back(
+                            convertStringToDouble(match[1].str() , match[2].str()));
+            } catch (std::runtime_error ex) {
+                std::cout << "[WARNING] " << objectInfo << ": error happened: " << ex.what() <<
+                             " test won't be further processed." << std::endl;
+                results.clear();
+                return;
+            }
+
             ++begin;
         }
         results.push_back(std::move(pValues));

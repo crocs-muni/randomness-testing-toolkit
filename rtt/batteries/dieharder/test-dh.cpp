@@ -51,6 +51,8 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
                                         const CliOptions & options ,
                                         TiXmlNode * cfgRoot) {
     std::unique_ptr<Test> test (new Test());
+    test->objectInfo = Constants::batteryToString(options.getBattery()) +
+                       " - test " + Utils::itostr(testIndex);
     tTestInfo testInfo;
 
     if(testIndex == INFO_BIRTHDAYS.first)           testInfo = INFO_BIRTHDAYS; else
@@ -84,20 +86,21 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     if(testIndex == INFO_DABFILLTREE.first)         testInfo = INFO_DABFILLTREE ; else
     if(testIndex == INFO_DABFILLTREE2.first)        testInfo = INFO_DABFILLTREE2 ; else
     if(testIndex == INFO_DABMONOBIT.first)          testInfo = INFO_DABMONOBIT ; else
-        throw std::runtime_error("unknown test "
-                                 "in Dieharder battery: " + Utils::itostr(testIndex));
+        throw RTTException(test->objectInfo , "unknown test constant");
 
     test->logicName = testInfo.second;
     test->testIndex = testIndex;
 
     test->binaryDataPath = options.getBinFilePath();
     if(test->binaryDataPath.empty())
-        throw std::runtime_error("path to input data can't be empty");
+        throw RTTException(test->objectInfo , "path to input data can't be empty");
+        //throw std::runtime_error("path to input data can't be empty");
 
     /* Getting default values from XML */
     test->executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
     if(test->executablePath.empty())
-        throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
+        throw RTTException(test->objectInfo , "tag " + XPATH_BINARY_PATH + " can't be empty");
+        //throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
 
     TiXmlNode * testSettingsNode = getXMLChildNodeWithAttValue(
                     getXMLElement(cfgRoot , XPATH_TESTS_SETTINGS) ,
@@ -110,9 +113,10 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     if(pSamplesStr.empty()) {
         pSamplesStr = getXMLElementValue(cfgRoot , XPATH_DEFAULT_PSAMPLES);
         if(pSamplesStr.empty())
-            throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-                                     ": default or test specific p-sample count "
-                                     "must be set");
+            throw RTTException(test->objectInfo , "p-sample count not set");
+            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+            //                         ": default or test specific p-sample count "
+            //                         "must be set");
     }
     test->pSampleCount = Utils::strtoi(pSamplesStr);
 
@@ -130,10 +134,14 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         throw std::runtime_error("invalid Dieharder settings format: each option must value");
 
     for(size_t i = 0 ; i < vecOptions.size() ; ++i) {
-        Setting setting = Setting::getInstance(vecOptions[i] ,
-                                               vecOptions[i + 1]);
-        test->settings.push_back(std::move(setting));
-        ++i;
+        try {
+            Setting setting =
+                    Setting::getInstance(vecOptions[i] , vecOptions[i + 1]);
+            test->settings.push_back(std::move(setting));
+            ++i;
+        } catch(std::runtime_error ex) {
+            throw RTTException(test->objectInfo , ex.what());
+        }
     }
 
     return test;
@@ -141,8 +149,9 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
 
 void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
-        throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
-                                 "executed, can't provide test log");
+        throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
+        //throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
+        //                         "executed, can't provide test log");
     batteryLog.append(testLog);
 }
 
@@ -182,7 +191,8 @@ std::vector<std::string> Test::getStatistics() const {
 
 std::vector<tTestPvals> Test::getResults() const {
     if(!executed)
-        throw std::runtime_error("can't return results before execution of test");
+        throw RTTException(objectInfo , "test wasn't executed, can't provide results");
+        //throw std::runtime_error("can't return results before execution of test");
 
     return results;
 }
@@ -205,11 +215,11 @@ std::vector<tTestPvals> Test::getResults() const {
 std::string Test::createArgs() const {
     std::stringstream arguments;
     arguments << "dieharder ";
-    /* Dieharder can receive single option multiple times and */
-    /* will take only the last one. Therefore, first are passed */
-    /* default values from config, then there are test specific */
-    /* value that override default ones and lastly, options that */
-    /* MUST be set for correct battery functionality are entered. */
+    /* Dieharder can receive single option multiple times and
+     * will take only the last one. Therefore, first are passed
+     * default values from config, then there are test specific
+     * value that override default ones and lastly, options that
+     * MUST be set for correct battery functionality are entered. */
     for(const auto & it : settings) {
         it.getConsoleInput(arguments);
         arguments << " ";
@@ -240,9 +250,15 @@ void Test::extractPvalues() {
         return;
     }
 
-    if(pValCount % pSampleCount != 0)
-        throw std::runtime_error("can't extract pvalues from log: count of pvalues"
-                                 " is not divisible by count of p-samples");
+    if(pValCount % pSampleCount != 0) {
+        std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
+                     "Number of p-values present is not divisible by "
+                     "number of p-samples per test." << std::endl;
+        return;
+        //throw std::runtime_error("can't extract pvalues from log: count of pvalues"
+        //                         " is not divisible by count of p-samples");
+    }
+
     subTestsCount = pValCount / pSampleCount;
     tTestPvals pSamples;
 

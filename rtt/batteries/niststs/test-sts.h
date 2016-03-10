@@ -8,6 +8,7 @@
 #include <tuple>
 
 #include "libs/tinyXML/xmlproc.h"
+#include "rtt/rttexception.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/utils.h"
@@ -86,6 +87,7 @@ private:
     /* These fields will be set after initialization in */
     /* getInstance */
     bool executed = false;
+    std::string objectInfo;
     std::string executablePath;
     std::string binaryDataPath;
     std::string streamSize;

@@ -16,9 +16,6 @@ public:
         tmp << "XML processor: " << std::runtime_error::what();
         return tmp.str().c_str();
     }
-
-private:
-    std::string msg;
 };
 
 #endif // XMLEXCEPTION_H

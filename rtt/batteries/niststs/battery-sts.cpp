@@ -10,6 +10,7 @@ const std::string Battery::XPATH_DEFAULT_TESTS = "NIST_STS_SETTINGS/DEFAULT_TEST
 std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
     std::unique_ptr<Battery> battery (new Battery());
     battery->creationTime = Utils::getRawTime();
+    battery->objectInfo = Constants::batteryToString(options.getBattery());
 
     TiXmlNode * cfgRoot = NULL;
     loadXMLFile(cfgRoot , options.getInputCfgPath());
@@ -23,17 +24,17 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
                     getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
                     options.getBinFilePath()));
     /* Creating storage for results */
-    battery->storage = output::OutputFactory::createOutput(cfgRoot ,
-                                                              options ,
-                                                              battery->creationTime);
+    battery->storage =
+            output::OutputFactory::createOutput(cfgRoot , options , battery->creationTime);
 
     /* Getting constants of tests to be executed */
     std::vector<int> testConsts = options.getTestConsts();
     if(testConsts.empty()) /* Read them from config if no tests were entered via CLI */
         testConsts = parseIntValues(getXMLElementValue(cfgRoot , XPATH_DEFAULT_TESTS));
     if(testConsts.empty())
-        throw std::runtime_error("no tests for execution were set in options "
-                                 "and in config file");
+        throw RTTException(battery->objectInfo , "no tests were set for execution");
+        //throw std::runtime_error("no tests for execution were set in options "
+        //                         "and in config file");
 
     for(int i : testConsts) {
         std::unique_ptr<ITest> test = Test::getInstance(i , cfgRoot , options);
@@ -48,7 +49,8 @@ void Battery::runTests() {
     /* Executing all tests in sequence here */
     /* In time, it's possible to add some multithreading (added now) */
     if(executed)
-        throw std::runtime_error("battery was already executed");
+        throw RTTException(objectInfo , "battery was already executed");
+        //throw std::runtime_error("battery was already executed");
 
     TestRunner::executeTests(std::ref(tests));
 
@@ -61,7 +63,8 @@ void Battery::runTests() {
 
 void Battery::processStoredResults() {
     if(!executed)
-        throw std::runtime_error("can't process results before execution of battery");
+        throw RTTException(objectInfo , "battery must be executed before result processing");
+        //throw std::runtime_error("can't process results before execution of battery");
 
     std::cout << "Storing log and results." << std::endl;
 

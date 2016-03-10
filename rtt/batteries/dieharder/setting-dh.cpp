@@ -94,7 +94,7 @@ Setting Setting::getInstance(const std::string & arg,
     } else if (arg == "-z") {
         setting.logicName = "Test specific option Z";
     } else {
-        throw std::runtime_error("unknown option dieharder used: " + arg);
+        throw std::runtime_error("unknown option used: " + arg);
     }
     /* Checking if option can be converted into float */
     /* Int can be also in float format*/

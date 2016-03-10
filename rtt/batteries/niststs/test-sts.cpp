@@ -37,6 +37,9 @@ const tTestInfo Test::INFO_LINEARCOMPLEXITY     {15, "Linear Complexity Test" , 
 std::unique_ptr<Test> Test::getInstance(int testIndex,
                                         TiXmlNode * cfgRoot,
                                         const CliOptions &options) {
+    std::unique_ptr<Test> test(new Test());
+    test->objectInfo = Constants::batteryToString(options.getBattery()) +
+                       " - test " + Utils::itostr(testIndex);
     tTestInfo testInfo;
 
     if(testIndex == std::get<0>(INFO_FREQ))             testInfo = INFO_FREQ; else
@@ -54,9 +57,9 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     if(testIndex == std::get<0>(INFO_RNDEXCURSIONSVAR)) testInfo = INFO_RNDEXCURSIONSVAR; else
     if(testIndex == std::get<0>(INFO_SERIAL))           testInfo = INFO_SERIAL; else
     if(testIndex == std::get<0>(INFO_LINEARCOMPLEXITY)) testInfo = INFO_LINEARCOMPLEXITY; else
-        throw std::runtime_error("unknown test constant in NIST STS: " + Utils::itostr(testIndex));
+        //throw std::runtime_error("unknown test constant in NIST STS: " + Utils::itostr(testIndex));
+        throw RTTException(test->objectInfo , "unknown test constants");
 
-    std::unique_ptr<Test> test(new Test());
 
     std::tie(test->testIndex ,
              test->logicName ,
@@ -67,10 +70,12 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     /* Getting default values from XML */
     test->binaryDataPath = options.getBinFilePath();
     if(test->binaryDataPath.empty())
-        throw std::runtime_error("path to input data can't be empty");
+        throw RTTException(test->objectInfo , "path to input data can't be empty");
+        //throw std::runtime_error("path to input data can't be empty");
     test->executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
     if(test->executablePath.empty())
-        throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
+        throw RTTException(test->objectInfo , "tag " + XPATH_BINARY_PATH + " can't be empty");
+        //throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
 
     /* Getting test specific settings from XML */
     TiXmlNode * testsSettingsNode = getXMLChildNodeWithAttValue(
@@ -89,12 +94,14 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
                                            XPATH_TEST_BLOCK_LENGTH);
 
     if(test->streamSize.empty()) {
-        throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_SIZE + " can't be empty"
-                                 " without setting stream size in tests settings.");
+        throw RTTException(test->objectInfo , "stream size not set");
+        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_SIZE + " can't be empty"
+        //                         " without setting stream size in tests settings.");
     }
-    if(test->streamCount.empty()){
-            throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_COUNT + " can't be empty"
-                                     " without setting stream count in tests settings.");
+    if(test->streamCount.empty()) {
+        throw RTTException(test->objectInfo , "stream count not set");
+        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_COUNT + " can't be empty"
+        //                         " without setting stream count in tests settings.");
     }
 
     return test;
@@ -102,8 +109,9 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
 
 void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
-        throw std::runtime_error("test " + Utils::itostr(static_cast<int>(testIndex)) + ""
-                                 " wasn't yet executed, can't provide test log");
+        throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
+        //throw std::runtime_error("test " + Utils::itostr(static_cast<int>(testIndex)) + ""
+        //                         " wasn't yet executed, can't provide test log");
     batteryLog.append(outputLog);
     batteryLog.append(testLog);
 }
@@ -121,12 +129,12 @@ void Test::execute() {
     outputLog = TestRunner::executeBinary(executablePath ,
                                           createArgs() ,
                                           createInput());
-    try {
+    //try {
         parseStoreResults();
-    } catch (std::runtime_error ex) {
-        std::cout << "[ERROR] An exception was thrown "
-                     "during thread execution: " << ex.what() << std::endl;
-    }
+    //} catch (std::runtime_error ex) {
+    //    std::cout << "[ERROR] An exception was thrown "
+    //                 "during thread execution: " << ex.what() << std::endl;
+    //}
 
     executed = true;
 }
@@ -151,7 +159,8 @@ std::vector<std::string> Test::getStatistics() const {
 
 std::vector<tTestPvals> Test::getResults() const {
     if(!executed)
-        throw std::runtime_error("can't return results before execution of test");
+        throw RTTException(objectInfo , "test wasn't executed, can't provide results");
+        //throw std::runtime_error("can't return results before execution of test");
 
     return results;
 }
@@ -218,60 +227,68 @@ std::string Test::createInput() const {
 }
 
 void Test::parseStoreResults() {
-    testLog = Utils::readFileToString(resultSubDir + "stats.txt");
+    try {
+        testLog = Utils::readFileToString(resultSubDir + "stats.txt");
 
-    if(testIndex == std::get<0>(INFO_RNDEXCURSIONS) ||
-       testIndex == std::get<0>(INFO_RNDEXCURSIONSVAR)) {
-        /* Random excursions tests are exceptions (of course they are)
-         * p-values must be read directly from log and their count must
-         * be divisible by subtestcount. Otherwise something happened. */
-        static const std::regex RE_PVALUE {"p[\\-_]value = ([0|1]?\\.[0-9]+?)\\n"};
-        auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
-        auto end = std::sregex_iterator();
-        int pValCount = std::distance(begin , end);
-        if(pValCount == 0) {
-            std::cout << "[WARNING] No pValues were extracted." << std::endl;
-            streamCount = "0";
-            return;
-        }
+        if(testIndex == std::get<0>(INFO_RNDEXCURSIONS) ||
+           testIndex == std::get<0>(INFO_RNDEXCURSIONSVAR)) {
+            /* Random excursions tests are exceptions (of course they are)
+             * p-values must be read directly from log and their count must
+             * be divisible by subtestcount. Otherwise something happened. */
+            static const std::regex RE_PVALUE {"p[\\-_]value = ([0|1]?\\.[0-9]+?)\\n"};
+            auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
+            auto end = std::sregex_iterator();
+            int pValCount = std::distance(begin , end);
+            if(pValCount == 0) {
+                std::cout << "[WARNING] No pValues were extracted." << std::endl;
+                streamCount = "0";
+                return;
+            }
 
-        if(pValCount % subTestCount != 0)
-            throw std::runtime_error("can't extract p-values from log: number of"
-                                     " p-value is not divisible by repetitions");
-        int strCount = pValCount / subTestCount;
-        streamCount = Utils::itostr(strCount);
+            if(pValCount % subTestCount != 0) {
+                std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log: "
+                             "Number of p-values is not divisible by number of repetitions." << std::endl;
+                return;
+                //throw std::runtime_error("can't extract p-values from log: number of"
+                //                         " p-value is not divisible by repetitions");
+            }
+            int strCount = pValCount / subTestCount;
+            streamCount = Utils::itostr(strCount);
 
-        tTestPvals allResults;
-        for( ; begin != end ; ++begin) {
-            std::smatch match = *begin;
-            allResults.push_back(Utils::strtod(match[1].str()));
-        }
+            tTestPvals allResults;
+            for( ; begin != end ; ++begin) {
+                std::smatch match = *begin;
+                allResults.push_back(Utils::strtod(match[1].str()));
+            }
 
-        tTestPvals testResults;
-        for(int test = 0 ; test < subTestCount ; ++test) {
-            for(int i = test ; i < pValCount ; i += subTestCount)
-                testResults.push_back(allResults.at(i));
+            tTestPvals testResults;
+            for(int test = 0 ; test < subTestCount ; ++test) {
+                for(int i = test ; i < pValCount ; i += subTestCount)
+                    testResults.push_back(allResults.at(i));
 
-            results.push_back(std::move(testResults));
-            testResults.clear();
-        }
-    } else {
-        if(subTestCount == 1) {
-            /* Only file results.txt will be processed */
-            tTestPvals pVals = readPvals(resultSubDir + "results.txt");
-            results.push_back(pVals);
+                results.push_back(std::move(testResults));
+                testResults.clear();
+            }
         } else {
-            /* Multiple dataX.txt files will be processed */
-            std::stringstream fName;
-            tTestPvals pVals;
-            for(int i = 1 ; i <= subTestCount ; ++i) {
-                fName << resultSubDir << "data" << i << ".txt";
-                pVals = std::move(readPvals(fName.str()));
+            if(subTestCount == 1) {
+                /* Only file results.txt will be processed */
+                tTestPvals pVals = readPvals(resultSubDir + "results.txt");
                 results.push_back(pVals);
-                pVals.clear();
-                fName.str("");fName.clear();
+            } else {
+                /* Multiple dataX.txt files will be processed */
+                std::stringstream fName;
+                tTestPvals pVals;
+                for(int i = 1 ; i <= subTestCount ; ++i) {
+                    fName << resultSubDir << "data" << i << ".txt";
+                    pVals = std::move(readPvals(fName.str()));
+                    results.push_back(pVals);
+                    pVals.clear();
+                    fName.str("");fName.clear();
+                }
             }
         }
+    } catch (std::runtime_error ex) {
+        throw RTTException(objectInfo , ex.what());
     }
 }
 

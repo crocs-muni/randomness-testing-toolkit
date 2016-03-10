@@ -23,6 +23,8 @@ public:
     void runTests();
 
     void processStoredResults();
+
+    std::string getObjectInfo() const;
 private:
     /*
     =================
@@ -31,6 +33,7 @@ private:
     */
     time_t creationTime;
     std::string logFilePath;
+    std::string objectInfo;
     std::unique_ptr<output::IOutput> storage;
     /* Test class keeps track of individual test logs, results and such */
     /* Also executes tests */

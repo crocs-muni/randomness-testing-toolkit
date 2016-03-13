@@ -2,7 +2,7 @@
 #define RTT_OUTPUT_INTERFACEFACTORY_H
 
 #include "rtt/constants.h"
-#include "rtt/options.h"
+#include "rtt/clioptions.h"
 
 #include "rtt/output/ioutput-out.h"
 #include "rtt/output/storage-file.h"

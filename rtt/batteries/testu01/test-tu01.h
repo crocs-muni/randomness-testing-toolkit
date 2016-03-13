@@ -10,7 +10,7 @@
 #include "rtt/rttexception.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
-#include "rtt/options.h"
+#include "rtt/clioptions.h"
 #include "libs/tinyXML/xmlproc.h"
 
 namespace rtt {

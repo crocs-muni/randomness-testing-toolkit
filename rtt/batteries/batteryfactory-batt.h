@@ -2,7 +2,7 @@
 #define RTT_BATTERIES_BATTERYFACTORY_H
 
 #include "rtt/constants.h"
-#include "rtt/options.h"
+#include "rtt/clioptions.h"
 
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/niststs/battery-sts.h"

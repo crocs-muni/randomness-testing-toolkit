@@ -1,8 +1,9 @@
-#include "rtt/options.h"
+#include "rtt/clioptions.h"
 
 namespace rtt {
 
-void CliOptions::init(int argc , char * argv[]) {
+CliOptions CliOptions::getInstance(int argc , char * argv[]) {
+    CliOptions options;
     int test = -1;
     int testsBot = -1;
     int testsTop = -1;
@@ -13,45 +14,45 @@ void CliOptions::init(int argc , char * argv[]) {
 
         // Battery option
         if(strcmp(argv[i] , "-b") == 0) {
-            if(battery != 0 || argv[i + 1][0] == '-')
+            if(options.battery != 0 || argv[i + 1][0] == '-')
                 throw std::runtime_error("can't set \"-b\" option multiple times or without any value");
 
             if(strcmp(argv[i + 1] , "dieharder") == 0)
-                battery = Constants::BATTERY_DIEHARDER;
+                options.battery = Constants::BATTERY_DIEHARDER;
             else if(strcmp(argv[i + 1] , "nist_sts") == 0)
-                battery = Constants::BATTERY_NIST_STS;
+                options.battery = Constants::BATTERY_NIST_STS;
             else if(strcmp(argv[i + 1] , "tu01_smallcrush") == 0)
-                battery = Constants::BATTERY_TU01_SMALLCRUSH;
+                options.battery = Constants::BATTERY_TU01_SMALLCRUSH;
             else if(strcmp(argv[i + 1] , "tu01_crush") == 0)
-                battery = Constants::BATTERY_TU01_CRUSH;
+                options.battery = Constants::BATTERY_TU01_CRUSH;
             else if(strcmp(argv[i + 1] , "tu01_bigcrush") == 0)
-                battery = Constants::BATTERY_TU01_BIGCRUSH;
+                options.battery = Constants::BATTERY_TU01_BIGCRUSH;
             else if(strcmp(argv[i + 1] , "tu01_rabbit") == 0)
-                battery = Constants::BATTERY_TU01_RABBIT;
+                options.battery = Constants::BATTERY_TU01_RABBIT;
             else if(strcmp(argv[i + 1] , "tu01_alphabit") == 0)
-                battery = Constants::BATTERY_TU01_ALPHABIT;
+                options.battery = Constants::BATTERY_TU01_ALPHABIT;
             else if(strcmp(argv[i + 1] , "eacirc") == 0)
-                battery = Constants::BATTERY_EACIRC;
+                options.battery = Constants::BATTERY_EACIRC;
             else
                 throw std::runtime_error("unknown battery set: " + (std::string)argv[i + 1]);
         }
         // Input binary file option
         else if(strcmp(argv[i] , "-f") == 0) {
-            if(!binFilePath.empty() || argv[i + 1][0] == '-')
+            if(!options.binFilePath.empty() || argv[i + 1][0] == '-')
                 throw std::runtime_error("can't set \"-b\" option multiple times or without any value");
-            binFilePath = argv[i + 1];
+            options.binFilePath = argv[i + 1];
         }
         // Custom output file option
         else if(strcmp(argv[i] , "-o") == 0) {
-            if(!binFilePath.empty() || argv[i + 1][0] == '-')
+            if(!options.binFilePath.empty() || argv[i + 1][0] == '-')
                 throw std::runtime_error("can't set \"-o\" option multiple times or without any value");
-            outFilePath = argv[i + 1];
+            options.outFilePath = argv[i + 1];
         }
         // Custom input config option
         else if(strcmp(argv[i] , "-c") == 0) {
-            if(!inputCfgPath.empty() || argv[i + 1][0] == '-')
+            if(!options.inputCfgPath.empty() || argv[i + 1][0] == '-')
                 throw std::runtime_error("can't set \"-c\" option multiple times or without any value");
-            inputCfgPath = argv[i + 1];
+            options.inputCfgPath = argv[i + 1];
         }
         // Test option
         else if(strcmp(argv[i] , "-t") == 0) {
@@ -77,9 +78,9 @@ void CliOptions::init(int argc , char * argv[]) {
         }
     }
     /* Sanity checks */
-    if(battery < 0)
+    if(options.battery < 0)
         throw std::runtime_error("option \"-b\" must be correctly set in arguments");
-    if(binFilePath.empty())
+    if(options.binFilePath.empty())
         throw std::runtime_error("option \"-f\" must be set in arguments");
     //if(test < 0 && testsBot < 0 && testsTop < 0)
     //    throw std::runtime_error("test option must be set either by \"-t\" or with \"-tbot\" and \"-ttop\"");
@@ -87,16 +88,17 @@ void CliOptions::init(int argc , char * argv[]) {
     if((testsBot != -1 && testsTop == -1) || (testsBot == -1 && testsTop != -1))
         throw std::runtime_error("can't set only one of options \"-tbot\" and \"ttop\"");
     if(test >= 0)
-        testConsts.push_back(test);
+        options.testConsts.push_back(test);
     if(testsBot >= 0 && testsTop >= 0){
         for(int i = testsBot; i <= testsTop; i++)
-            testConsts.push_back(i);
+            options.testConsts.push_back(i);
     }
-    Utils::sort(testConsts);
+    Utils::sort(options.testConsts);
     /* Setting config path */
-    if(inputCfgPath.empty())
-        inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
+    if(options.inputCfgPath.empty())
+        options.inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
 
+    return options;
 }
 
 int CliOptions::getBattery() const {
@@ -119,7 +121,7 @@ std::string CliOptions::getOutFilePath() const {
     return outFilePath;
 }
 
-std::string CliOptions::getUsage() const {
+std::string CliOptions::getUsage() {
     std::stringstream ss;
     ss << "\n[USAGE] Randomness Testing Toolkit accepts following options.\n";
     ss << "    -b  Followed with battery that will be used. Following batteries\n";
@@ -135,6 +137,7 @@ std::string CliOptions::getUsage() const {
     ss << "        will be used. Can't be used without setting \"-ttop\"\n";
     ss << " -ttop  Top border for tests. All tests between \"-tbot\" and \"-ttop\"\n";
     ss << "        will be used. Can't be used without setting \"-tbot\"\n\n";
+    ss << "    -h  Or no arguments will bring up this message.\n\n";
     return ss.str();
 }
 

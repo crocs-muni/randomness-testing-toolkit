@@ -304,7 +304,6 @@ int Test::getTestIndex() const {
     return testIndex;
 }
 
-
 /*
                      __                       __
                     |  \                     |  \

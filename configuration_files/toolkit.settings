@@ -1,0 +1,71 @@
+<TOOLKIT_SETTINGS>
+
+    <LOGGER>
+        <DIR_PREFIX>testbed1/logs</DIR_PREFIX>
+    
+        <RUN_LOG_DIR>
+            run-log
+        </RUN_LOG_DIR>
+        <DIEHARDER_DIR>
+            dieharder
+        </DIEHARDER_DIR>
+        <NIST_STS_DIR>
+            niststs
+        </NIST_STS_DIR>
+        <TU01_SMALLCRUSH_DIR>
+            testu01/smallcrush
+        </TU01_SMALLCRUSH_DIR>
+        <TU01_CRUSH_DIR>
+            testu01/crush
+        </TU01_CRUSH_DIR>
+        <TU01_BIGCRUSH_DIR>
+            testu01/bigcrush
+        </TU01_BIGCRUSH_DIR>
+        <TU01_RABBIT_DIR>
+            testu01/rabbit
+        </TU01_RABBIT_DIR>
+        <TU01_ALPHABIT_DIR>
+            testu01/alphabit
+        </TU01_ALPHABIT_DIR>
+    </LOGGER>
+
+    <RESULT_STORAGE>
+        <FILE>
+            <OUTPUT_FILE>testbed1/testbed-table.txt</OUTPUT_FILE>
+            
+            <DIR_PREFIX>testbed1/reports</DIR_PREFIX>
+            
+            <DIEHARDER_DIR>
+                dieharder
+            </DIEHARDER_DIR>
+            <NIST_STS_DIR>
+                niststs
+            </NIST_STS_DIR>
+            <TU01_SMALLCRUSH_DIR>
+                testu01/smallcrush
+            </TU01_SMALLCRUSH_DIR>
+            <TU01_CRUSH_DIR>
+                testu01/crush
+            </TU01_CRUSH_DIR>
+            <TU01_BIGCRUSH_DIR>
+                testu01/bigcrush
+            </TU01_BIGCRUSH_DIR>
+            <TU01_RABBIT_DIR>
+                testu01/rabbit
+            </TU01_RABBIT_DIR>
+            <TU01_ALPHABIT_DIR>
+                testu01/alphabit
+            </TU01_ALPHABIT_DIR>
+        </FILE>
+    
+        <DATABASE></DATABASE>
+    
+    </RESULT_STORAGE>
+    
+    <BINARIES>
+        <NIST_STS>/home/lubo/Desktop/sysoNIST/assess</NIST_STS>
+        <DIEHARDER>/home/lubo/Desktop/dieharder/bin/dieharder</DIEHARDER>
+        <TESTU01>/home/lubo/Desktop/TestU01/TestU01</TESTU01>
+    </BINARIES>
+
+</TOOLKIT_SETTINGS>

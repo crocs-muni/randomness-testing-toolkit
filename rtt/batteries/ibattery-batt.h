@@ -2,7 +2,7 @@
 #define RTT_IBATTERY_H
 
 #include "libs/tinyXML/xmlproc.h"
-#include "rtt/options.h"
+#include "rtt/clioptions.h"
 
 namespace rtt {
 namespace batteries {

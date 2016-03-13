@@ -13,18 +13,9 @@ class RTTException : public std::runtime_error {
 public:
     RTTException(const std::string & objIdentifier ,
                  const std::string & message) :
-        std::runtime_error(message) , id(objIdentifier) {
-        assert(!id.empty());
+    std::runtime_error(objIdentifier + ": " + message) {
+        assert(!objIdentifier.empty());
     }
-
-    virtual const char * what() const throw() {
-        std::stringstream tmp;
-        tmp << id << ": " << std::runtime_error::what();
-        return tmp.str().c_str();
-    }
-
-private:
-    std::string id;
 };
 
 } // namespace rtt

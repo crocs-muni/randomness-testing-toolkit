@@ -9,7 +9,7 @@
 
 #include "libs/tinyXML/xmlproc.h"
 
-#include "rtt/options.h"
+#include "rtt/clioptions.h"
 #include "rtt/output/ioutput-out.h"
 
 namespace rtt {

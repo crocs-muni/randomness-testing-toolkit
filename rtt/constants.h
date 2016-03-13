@@ -29,6 +29,7 @@ public:
 
     /* Default files locations */
     static const std::string FILE_DEFAULT_CFG_PATH;
+    static const std::string FILE_TOOLKIT_SETTINGS;
 
     /* Math values */
     static const double MATH_ALPHA;

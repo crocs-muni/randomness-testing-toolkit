@@ -6,7 +6,7 @@
 #include "libs/tinyXML/xmlproc.h"
 #include "libs/cephes/cephes.h"
 
-#include "rtt/options.h"
+#include "rtt/clioptions.h"
 #include "rtt/rttexception.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/ibattery-batt.h"

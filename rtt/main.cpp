@@ -35,6 +35,7 @@
 #include "rtt/toolkitsettings.h"
 #include "rtt/clioptions.h"
 #include "rtt/version.h"
+#include "rtt/bugexception.h"
 #include "rtt/rttexception.h"
 
 //#define TESTING
@@ -44,11 +45,14 @@ using namespace rtt;
 int main (int argc , char * argv[]) {
 #ifdef TESTING
     try {
-        auto toolkitSettings = ToolkitSettings::getInstance();
+        raiseBugException("some bullshit");
+        //auto toolkitSettings = ToolkitSettings::getInstance();
     } catch (RTTException ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
     } catch (XMLException ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
+    } catch (BugException ex) {
+        std::cout << "[BUG]   " << ex.what() << std::endl;
     } catch (std::runtime_error ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
     }

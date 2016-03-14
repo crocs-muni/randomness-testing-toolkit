@@ -16,6 +16,16 @@ public:
 
     /* Statistical batteries constants */
     /* Constants MUST have consecutive integers assigned */
+    /*enum class Battery {
+        DIEHARDER,
+        NIST_STS,
+        TU01_SMALLCRUSH,
+        TU01_CRUSH,
+        TU01_BIGCRUSH,
+        TU01_RABBIT,
+        TU01_ALPHABIT
+    };*/
+
     static const int BATTERY_DIEHARDER          = 1;
     static const int BATTERY_NIST_STS           = 2;
     static const int BATTERY_TU01_SMALLCRUSH    = 3;

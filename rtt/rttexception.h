@@ -1,7 +1,6 @@
 #ifndef RTT_RTTEXCEPTION_H
 #define RTT_RTTEXCEPTION_H
 
-#include <iostream>
 #include <exception>
 #include <stdexcept>
 #include <sstream>
@@ -13,7 +12,7 @@ class RTTException : public std::runtime_error {
 public:
     RTTException(const std::string & objIdentifier ,
                  const std::string & message) :
-    std::runtime_error(objIdentifier + ": " + message) {
+        std::runtime_error(objIdentifier + ": " + message) {
         assert(!objIdentifier.empty());
     }
 };

@@ -63,7 +63,7 @@ private:
     =================
     */
     time_t creationTime;
-    int batteryConstant;
+    Constants::Battery batteryConstant;
     std::string inFilePath;
     std::string outFilePath;
     std::string mainOutFilePath;

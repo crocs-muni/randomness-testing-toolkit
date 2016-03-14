@@ -200,14 +200,14 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
         //                         ": path to binary data can't be empty");
 
     /* Getting params - only for Crush batteries */
-    if(test->battery == Constants::BATTERY_TU01_SMALLCRUSH ||
-            test->battery == Constants::BATTERY_TU01_CRUSH ||
-            test->battery == Constants::BATTERY_TU01_BIGCRUSH)
+    if(test->battery == Constants::Battery::TU01_SMALLCRUSH ||
+            test->battery == Constants::Battery::TU01_CRUSH ||
+            test->battery == Constants::Battery::TU01_BIGCRUSH)
         test->checkSetParams(getXMLElement(testSettings , XPATH_TEST_PARAMS));
 
     /* Getting nb - Rabbit and Alphabit */
-    if(test->battery == Constants::BATTERY_TU01_RABBIT ||
-            test->battery == Constants::BATTERY_TU01_ALPHABIT) {
+    if(test->battery == Constants::Battery::TU01_RABBIT ||
+            test->battery == Constants::Battery::TU01_ALPHABIT) {
         test->bit_nb = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
                                               XPATH_DEFAULT_BIT_NB ,
                                               XPATH_TEST_BIT_NB);
@@ -218,7 +218,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & option
             //                         " in Rabbit and Alphabit battery");
     }
     /* Getting r s - Alphabit */
-    if(test->battery == Constants::BATTERY_TU01_ALPHABIT) {
+    if(test->battery == Constants::Battery::TU01_ALPHABIT) {
         test->bit_r = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
                                              XPATH_DEFAULT_BIT_R ,
                                              XPATH_TEST_BIT_R);
@@ -269,19 +269,19 @@ std::string Test::getLogicName() const {
 std::vector<std::string> Test::getParameters() const {
     std::stringstream rval;
     rval << "Repetitions: " << repetitions << std::endl;
-    if(battery == Constants::BATTERY_TU01_RABBIT ||
-            battery == Constants::BATTERY_TU01_ALPHABIT)
+    if(battery == Constants::Battery::TU01_RABBIT ||
+            battery == Constants::Battery::TU01_ALPHABIT)
         rval << "Bit NB: " << bit_nb << std::endl;
 
-    if(battery == Constants::BATTERY_TU01_ALPHABIT) {
+    if(battery == Constants::Battery::TU01_ALPHABIT) {
         rval << "Bit R: " << bit_r << std::endl;
         rval << "Bit S: " << bit_s << std::endl;
     }
 
     if(!params.empty() &&
-            (battery == Constants::BATTERY_TU01_SMALLCRUSH ||
-            battery == Constants::BATTERY_TU01_CRUSH ||
-            battery == Constants::BATTERY_TU01_BIGCRUSH)) {
+            (battery == Constants::Battery::TU01_SMALLCRUSH ||
+            battery == Constants::Battery::TU01_CRUSH ||
+            battery == Constants::Battery::TU01_BIGCRUSH)) {
         for(const tParam & par : params)
             rval << par.first << " = " << par.second << std::endl;
     }
@@ -319,10 +319,11 @@ int Test::getTestIndex() const {
  \$$
 */
 
-tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & batteryXPath) {
+tTestInfo Test::pickTestInfo(int testIndex , Constants::Battery battery ,
+                             std::string & batteryXPath) {
     tTestInfo tinfo;
     switch(battery) {
-    case Constants::BATTERY_TU01_SMALLCRUSH: {
+    case Constants::Battery::TU01_SMALLCRUSH: {
         batteryXPath = XPATH_SMALL_CRUSH_SETTINGS;
         SmallCrushTI ti = static_cast<SmallCrushTI>(testIndex);
         if(ti <= SmallCrushTI::smarsa_BirthdaySpacing)   { tinfo = INFO_SMARSA_BIRTHDAYSPACINGS; } else
@@ -340,7 +341,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         }
         break;
     }
-    case Constants::BATTERY_TU01_CRUSH: {
+    case Constants::Battery::TU01_CRUSH: {
         batteryXPath = XPATH_CRUSH_SETTINGS;
         CrushTI ti = static_cast<CrushTI>(testIndex);
         if(ti <= CrushTI::smarsa_SerialOver)            { tinfo = INFO_SMARSA_SERIALOVER; } else
@@ -382,7 +383,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         }
         break;
     }
-    case Constants::BATTERY_TU01_BIGCRUSH: {
+    case Constants::Battery::TU01_BIGCRUSH: {
         batteryXPath = XPATH_BIG_CRUSH_SETTINGS;
         BigCrushTI ti = static_cast<BigCrushTI>(testIndex);
         if(ti <= BigCrushTI::smarsa_SerialOver)         { tinfo = INFO_SMARSA_SERIALOVER; } else
@@ -421,7 +422,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         }
         break;
     }
-    case Constants::BATTERY_TU01_RABBIT: {
+    case Constants::Battery::TU01_RABBIT: {
         batteryXPath = XPATH_RABBIT_SETTINGS;
         RabbitTI ti = static_cast<RabbitTI>(testIndex);
         if(ti <= RabbitTI::smultin_MultinomialBitsOver) { tinfo = INFO_SMULTIN_MULTINOMIALBITSOVER; } else
@@ -445,7 +446,7 @@ tTestInfo Test::pickTestInfo(int testIndex , int battery , std::string & battery
         }
         break;
     }
-    case Constants::BATTERY_TU01_ALPHABIT: {
+    case Constants::Battery::TU01_ALPHABIT: {
         batteryXPath = XPATH_ALPHABIT_SETTINGS;
         AlphabitTI ti = static_cast<AlphabitTI>(testIndex);
         if(ti <= AlphabitTI::smultin_MultinomialBitsOver_bigN)  { tinfo = INFO_SMULTIN_MULTBITSOVER_BIGN; } else
@@ -521,15 +522,15 @@ std::string Test::createArgs() const {
     /* Setting battery mode */
     arguments << "-m ";
     switch(battery) {
-    case Constants::BATTERY_TU01_SMALLCRUSH:
+    case Constants::Battery::TU01_SMALLCRUSH:
         arguments << "small_crush "; break;
-    case Constants::BATTERY_TU01_CRUSH:
+    case Constants::Battery::TU01_CRUSH:
         arguments << "crush "; break;
-    case Constants::BATTERY_TU01_BIGCRUSH:
+    case Constants::Battery::TU01_BIGCRUSH:
         arguments << "big_crush "; break;
-    case Constants::BATTERY_TU01_RABBIT:
+    case Constants::Battery::TU01_RABBIT:
         arguments << "rabbit "; break;
-    case Constants::BATTERY_TU01_ALPHABIT:
+    case Constants::Battery::TU01_ALPHABIT:
         arguments << "alphabit "; break;
     default:
         throw std::runtime_error("unknown battery");

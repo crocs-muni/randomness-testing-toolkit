@@ -3,29 +3,29 @@
 namespace rtt {
 
 /* Constant definition */
-const std::string ToolkitSettings::XPATH_LOGGER_DIR_PREFIX      = "LOGGER/DIR_PREFIX";
-const std::string ToolkitSettings::XPATH_LOGGER_RUN_LOG_DIR     = "LOGGER/RUN_LOG_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_DIEHARDER_DIR   = "LOGGER/DIEHARDER_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_NISTSTS_DIR     = "LOGGER/NIST_STS_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_DIR_PREFIX          = "LOGGER/DIR_PREFIX";
+const std::string ToolkitSettings::XPATH_LOGGER_RUN_LOG_DIR         = "LOGGER/RUN_LOG_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_DIEHARDER_DIR       = "LOGGER/DIEHARDER_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_NISTSTS_DIR         = "LOGGER/NIST_STS_DIR";
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_SCRUSH_DIR     = "LOGGER/TU01_SMALLCRUSH_DIR";
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_CRUSH_DIR      = "LOGGER/TU01_CRUSH_DIR";
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_BCRUSH_DIR     = "LOGGER/TU01_BIGCRUSH_DIR";
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_RABBIT_DIR     = "LOGGER/TU01_RABBIT_DIR";
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_ALPHABIT_DIR   = "LOGGER/TU01_ALPHABIT_DIR";
 
-const std::string ToolkitSettings::XPATH_RS_FILE_OUTPUT_FILE    = "RESULT_STORAGE/FILE/OUTPUT_FILE";
-const std::string ToolkitSettings::XPATH_RS_FILE_DIR_PREFIX     = "RESULT_STORAGE/FILE/DIR_PREFIX";
-const std::string ToolkitSettings::XPATH_RS_FILE_DIEHARDER_DIR  = "RESULT_STORAGE/FILE/DIEHARDER_DIR";
-const std::string ToolkitSettings::XPATH_RS_FILE_NISTSTS_DIR    = "RESULT_STORAGE/FILE/NIST_STS_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_OUTPUT_FILE        = "RESULT_STORAGE/FILE/OUTPUT_FILE";
+const std::string ToolkitSettings::XPATH_RS_FILE_DIR_PREFIX         = "RESULT_STORAGE/FILE/DIR_PREFIX";
+const std::string ToolkitSettings::XPATH_RS_FILE_DIEHARDER_DIR      = "RESULT_STORAGE/FILE/DIEHARDER_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_NISTSTS_DIR        = "RESULT_STORAGE/FILE/NIST_STS_DIR";
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_SCRUSH_DIR    = "RESULT_STORAGE/FILE/TU01_SMALLCRUSH_DIR";
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_CRUSH_DIR     = "RESULT_STORAGE/FILE/TU01_CRUSH_DIR";
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_BCRUSH_DIR    = "RESULT_STORAGE/FILE/TU01_BIGCRUSH_DIR";
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_RABBIT_DIR    = "RESULT_STORAGE/FILE/TU01_RABBIT_DIR";
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_ALPHABIT_DIR  = "RESULT_STORAGE/FILE/TU01_ALPHABIT_DIR";
 
-const std::string ToolkitSettings::XPATH_BINARIES_DIEHARDER     = "BINARIES/DIEHARDER";
-const std::string ToolkitSettings::XPATH_BINARIES_NISTSTS       = "BINARIES/NIST_STS";
-const std::string ToolkitSettings::XPATH_BINARIES_TESTU01       = "BINARIES/TESTU01";
+const std::string ToolkitSettings::XPATH_BINARIES_DIEHARDER         = "BINARIES/DIEHARDER";
+const std::string ToolkitSettings::XPATH_BINARIES_NISTSTS           = "BINARIES/NIST_STS";
+const std::string ToolkitSettings::XPATH_BINARIES_TESTU01           = "BINARIES/TESTU01";
 
 ToolkitSettings ToolkitSettings::getInstance(const std::string & configFileName) {
     TiXmlNode * xmlCfg;
@@ -76,15 +76,15 @@ std::string ToolkitSettings::getRsFileOutFile() const {
     return rsFileOutFile;
 }
 
-std::string ToolkitSettings::getLoggerBatteryDir(int battery) const {
+std::string ToolkitSettings::getLoggerBatteryDir(Constants::Battery battery) const {
     return getBatteryVariable(VariableType::loggerDir , battery);
 }
 
-std::string ToolkitSettings::getRsFileBatteryDir(int battery) const {
+std::string ToolkitSettings::getRsFileBatteryDir(Constants::Battery battery) const {
     return getBatteryVariable(VariableType::rsFileDir , battery);
 }
 
-std::string ToolkitSettings::getBinaryBattery(int battery) const {
+std::string ToolkitSettings::getBinaryBattery(Constants::Battery battery) const {
     return getBatteryVariable(VariableType::binary , battery);
 }
 
@@ -103,69 +103,70 @@ std::string ToolkitSettings::getBinaryBattery(int battery) const {
  \$$
 */
 
-std::string ToolkitSettings::getBatteryVariable(VariableType variableType, int battery) const {
+std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
+                                                Constants::Battery battery) const {
     /* This is main getter so that all of it is in one place (for future modifications).
      * If new battery is added - create new case for that constant, add it below.
      * If new VariableType is added - add its case into each battery. Also add method
      * for accessing it (see methods getLoggerBatteryDir, getBinaryBattery, etc...)*/
     switch(battery) {
-    case Constants::BATTERY_NIST_STS: {
+    case Constants::Battery::NIST_STS: {
         switch(variableType) {
         case VariableType::binary:    return binaryNiststs;
         case VariableType::loggerDir: return loggerNiststsDir;
         case VariableType::rsFileDir: return rsFileNiststsDir;
-        default:assert(0);
+        default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::BATTERY_DIEHARDER: {
+    case Constants::Battery::DIEHARDER: {
         switch(variableType) {
         case VariableType::binary:    return binaryDieharder;
         case VariableType::loggerDir: return loggerDieharderDir;
         case VariableType::rsFileDir: return rsFileDieharderDir;
-        default:assert(0);
+        default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::BATTERY_TU01_SMALLCRUSH: {
+    case Constants::Battery::TU01_SMALLCRUSH: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerSCrushDir;
         case VariableType::rsFileDir: return rsFileSCrushDir;
-        default:assert(0);
+        default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::BATTERY_TU01_CRUSH: {
+    case Constants::Battery::TU01_CRUSH: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerCrushDir;
         case VariableType::rsFileDir: return rsFileCrushDir;
-        default:assert(0);
+        default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::BATTERY_TU01_BIGCRUSH: {
+    case Constants::Battery::TU01_BIGCRUSH: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerBCrushDir;
         case VariableType::rsFileDir: return rsFileBCrushDir;
-        default:assert(0);
+        default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::BATTERY_TU01_RABBIT: {
+    case Constants::Battery::TU01_RABBIT: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerBCrushDir;
         case VariableType::rsFileDir: return rsFileRabbitDir;
-        default:assert(0);
+        default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::BATTERY_TU01_ALPHABIT: {
+    case Constants::Battery::TU01_ALPHABIT: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerAlphabitDir;
         case VariableType::rsFileDir: return rsFileAlphabitDir;
-        default:assert(0);
+        default:raiseBugException("invalid variable type");
         }
     }
-    default:assert(0);
+    default:raiseBugException("invalid battery");
     }
 }
 

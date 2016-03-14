@@ -4,6 +4,8 @@
 #include <exception>
 #include <stdexcept>
 
+#include "rtt/utils.h"
+
 /* I don't like macros either... */
 #define raiseBugException(message) \
     throw BugException(std::string(__FILE__) , rtt::Utils::itostr(__LINE__) , message)

@@ -2,6 +2,7 @@
 #define RTT_TOOLKITSETTINGS_H
 
 #include "rtt/constants.h"
+#include "bugexception.h"
 #include "rtt/rttexception.h"
 #include "libs/tinyXML/xmlproc.h"
 
@@ -18,11 +19,11 @@ public:
 
     std::string getRsFileOutFile() const;
 
-    std::string getLoggerBatteryDir(int battery) const;
+    std::string getLoggerBatteryDir(Constants::Battery battery) const;
 
-    std::string getRsFileBatteryDir(int battery) const;
+    std::string getRsFileBatteryDir(Constants::Battery battery) const;
 
-    std::string getBinaryBattery(int battery) const;
+    std::string getBinaryBattery(Constants::Battery battery) const;
 
 private:
     /* Variable types for getters. Should new variable be added, add it here too. */
@@ -87,7 +88,8 @@ private:
 
     ToolkitSettings() {}
 
-    std::string getBatteryVariable(VariableType variableType , int battery) const;
+    std::string getBatteryVariable(VariableType variableType ,
+                                   Constants::Battery battery) const;
 
     std::string getDirValue(TiXmlNode * xmlConfig ,
                             const std::string & xpath ,

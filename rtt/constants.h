@@ -2,8 +2,8 @@
 #define RTT_CONSTANTS_H
 
 #include <string>
-#include <stdexcept>
 
+#include "rtt/bugexception.h"
 #include "rtt/utils.h"
 
 namespace rtt {
@@ -14,18 +14,21 @@ public:
     /******** Toolkit global constants ***********/
     ///////////////////////////////////////////////
 
-    /* Statistical batteries constants */
-    /* Constants MUST have consecutive integers assigned */
-    /*enum class Battery {
+    /* Statistical batteries constants enum */
+    /* Values in enum MUST NOT have assigned other than default values.
+     * Item LAST_ITEM HAVE to be last. Always! Additional battery item
+     * should be added before it. */
+    enum class Battery {
         DIEHARDER,
         NIST_STS,
         TU01_SMALLCRUSH,
         TU01_CRUSH,
         TU01_BIGCRUSH,
         TU01_RABBIT,
-        TU01_ALPHABIT
-    };*/
-
+        TU01_ALPHABIT,
+        LAST_ITEM
+    };
+    /*
     static const int BATTERY_DIEHARDER          = 1;
     static const int BATTERY_NIST_STS           = 2;
     static const int BATTERY_TU01_SMALLCRUSH    = 3;
@@ -36,6 +39,7 @@ public:
     static const int BATTERY_EACIRC             = 8;
 
     static const int BATTERY_TOTAL_COUNT        = 8;
+    */
 
     /* Default files locations */
     static const std::string FILE_DEFAULT_CFG_PATH;
@@ -48,7 +52,7 @@ public:
     ///////////////////////////////////////////////
     /********* Toolkit global methods ************/
     ///////////////////////////////////////////////
-    static std::string batteryToString(int batteryConstant);
+    static std::string batteryToString(Battery batteryConstant);
 };
 
 } // namespace rtt

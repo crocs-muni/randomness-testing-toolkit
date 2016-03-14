@@ -16,33 +16,28 @@ class BatteryFactory {
 public:
     static std::unique_ptr<IBattery> createBattery(const CliOptions & options) {
         switch(options.getBattery()) {
-        case Constants::BATTERY_DIEHARDER:
+        case Constants::Battery::DIEHARDER:
             return dieharder::Battery::getInstance(options);
             break;
-        case Constants::BATTERY_NIST_STS:
+        case Constants::Battery::NIST_STS:
             return niststs::Battery::getInstance(options);
             break;
-        case Constants::BATTERY_TU01_SMALLCRUSH:
+        case Constants::Battery::TU01_SMALLCRUSH:
             return testu01::Battery::getInstance(options);
             break;
-        case Constants::BATTERY_TU01_CRUSH:
+        case Constants::Battery::TU01_CRUSH:
             return testu01::Battery::getInstance(options);
             break;
-        case Constants::BATTERY_TU01_BIGCRUSH:
+        case Constants::Battery::TU01_BIGCRUSH:
             return testu01::Battery::getInstance(options);
             break;
-        case Constants::BATTERY_TU01_RABBIT:
+        case Constants::Battery::TU01_RABBIT:
             return testu01::Battery::getInstance(options);
             break;
-        case Constants::BATTERY_TU01_ALPHABIT:
+        case Constants::Battery::TU01_ALPHABIT:
             return testu01::Battery::getInstance(options);
             break;
-        case Constants::BATTERY_EACIRC:
-            throw std::runtime_error("EACirc battery is not yet implemented");
-            break;
-        default:
-            throw std::runtime_error("unknown battery of tests set in options");
-            break;
+        default:raiseBugException("invalid battery");
         }
     }
 };

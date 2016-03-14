@@ -36,21 +36,22 @@ std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
         /* Read them from config if no tests were entered via CLI */
         std::string testsXPath;
         switch(options.getBattery()) {
-        case Constants::BATTERY_TU01_SMALLCRUSH:
+        case Constants::Battery::TU01_SMALLCRUSH:
             testsXPath = XPATH_DEFAULT_TESTS_SMALL_CRUSH;
             break;
-        case Constants::BATTERY_TU01_CRUSH:
+        case Constants::Battery::TU01_CRUSH:
             testsXPath = XPATH_DEFAULT_TESTS_CRUSH;
             break;
-        case Constants::BATTERY_TU01_BIGCRUSH:
+        case Constants::Battery::TU01_BIGCRUSH:
             testsXPath = XPATH_DEFAULT_TESTS_BIG_CRUSH;
             break;
-        case Constants::BATTERY_TU01_RABBIT:
+        case Constants::Battery::TU01_RABBIT:
             testsXPath = XPATH_DEFAULT_TESTS_RABBIT;
             break;
-        case Constants::BATTERY_TU01_ALPHABIT:
+        case Constants::Battery::TU01_ALPHABIT:
             testsXPath = XPATH_DEFAULT_TESTS_ALPHABIT;
             break;
+        default:raiseBugException("invalid battery");
         }
         testConsts = parseIntValues(getXMLElementValue(cfgRoot , testsXPath));
     }

@@ -26,16 +26,14 @@ std::unique_ptr<Storage> Storage::getInstance(TiXmlNode * root ,
 
     std::string dirXPath;
     switch(storage->batteryConstant) {
-    case Constants::BATTERY_DIEHARDER       : dirXPath = XPATH_DIR_DH; break;
-    case Constants::BATTERY_NIST_STS        : dirXPath = XPATH_DIR_NIST; break;
-    case Constants::BATTERY_TU01_SMALLCRUSH : dirXPath = XPATH_DIR_TU01_SC; break;
-    case Constants::BATTERY_TU01_CRUSH      : dirXPath = XPATH_DIR_TU01_C; break;
-    case Constants::BATTERY_TU01_BIGCRUSH   : dirXPath = XPATH_DIR_TU01_BC; break;
-    case Constants::BATTERY_TU01_RABBIT     : dirXPath = XPATH_DIR_TU01_RB; break;
-    case Constants::BATTERY_TU01_ALPHABIT   : dirXPath = XPATH_DIR_TU01_AB; break;
-    default:
-        throw std::runtime_error("unknown battery constant: " +
-                                 Utils::itostr(options.getBattery()));
+    case Constants::Battery::DIEHARDER       : dirXPath = XPATH_DIR_DH; break;
+    case Constants::Battery::NIST_STS        : dirXPath = XPATH_DIR_NIST; break;
+    case Constants::Battery::TU01_SMALLCRUSH : dirXPath = XPATH_DIR_TU01_SC; break;
+    case Constants::Battery::TU01_CRUSH      : dirXPath = XPATH_DIR_TU01_C; break;
+    case Constants::Battery::TU01_BIGCRUSH   : dirXPath = XPATH_DIR_TU01_BC; break;
+    case Constants::Battery::TU01_RABBIT     : dirXPath = XPATH_DIR_TU01_RB; break;
+    case Constants::Battery::TU01_ALPHABIT   : dirXPath = XPATH_DIR_TU01_AB; break;
+    default:raiseBugException("invalid battery");
     }
 
     /* Getting file name for main output file */
@@ -185,7 +183,7 @@ void Storage::addResultToTableFile() const {
             int rowIndex = std::distance(fileNames.begin() , fileRow);
             tableData.at(rowIndex).at(0) =
                     Utils::formatRawTime(creationTime , "%Y-%m-%d %H:%M:%S");
-            tableData.at(rowIndex).at(batteryConstant) = passedTestProp;
+            tableData.at(rowIndex).at(static_cast<int>(batteryConstant)) = passedTestProp;
         } else {
             /* Adding new row */
             addNewRow(fileNames , tableData);
@@ -202,8 +200,9 @@ void Storage::addResultToTableFile() const {
         /* Creating header */
         header.push_back("Input file path");
         header.push_back("Time of last update");
-        for(uint i = 1 ; i <= Constants::BATTERY_TOTAL_COUNT ; ++i)
-            header.push_back(Constants::batteryToString(i));
+        for(int i = 0 ; i <= static_cast<int>(Constants::Battery::LAST_ITEM) ; ++i)
+            header.push_back(
+                        Constants::batteryToString(static_cast<Constants::Battery>(i)));
 
         /* Adding new row */
         addNewRow(fileNames , tableData);
@@ -291,9 +290,9 @@ void Storage::addNewRow(tStringVector & fileNames,
     fileNames.push_back(inFilePath);
     /* Add data into corresponding row */
     /* Column count is total batteries count + first column for last update info */
-    tStringVector row(1 + Constants::BATTERY_TOTAL_COUNT , "");
+    tStringVector row(1 + static_cast<int>(Constants::Battery::LAST_ITEM) , "");
     row.at(0) = Utils::formatRawTime(creationTime , "%Y-%m-%d %H:%M:%S");
-    row.at(batteryConstant) = passedTestProp;
+    row.at(static_cast<int>(batteryConstant)) = passedTestProp;
     tableData.push_back(std::move(row));
 }
 
@@ -306,4 +305,3 @@ std::string Storage::stripSpacesFromString(const std::string & str) {
 } // namespace file
 } // namespace output
 } // namespace rtt
-

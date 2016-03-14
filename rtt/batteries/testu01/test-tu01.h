@@ -236,7 +236,7 @@ private:
     *** Variables ***
     =================
     */
-    int battery = -1;
+    Constants::Battery battery;
     int testIndex = -1;
     std::string logicName;
     tStringVector paramNames;
@@ -268,7 +268,8 @@ private:
     */
     Test() {}
 
-    static tTestInfo pickTestInfo(int testIndex, int battery, std::string & batteryXPath);
+    static tTestInfo pickTestInfo(int testIndex, Constants::Battery battery,
+                                  std::string & batteryXPath);
 
     void checkSetParams(TiXmlNode * paramsNode);
 

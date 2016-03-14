@@ -4,7 +4,8 @@
 #include <exception>
 #include <stdexcept>
 #include <sstream>
-#include <assert.h>
+
+#include "rtt/bugexception.h"
 
 namespace rtt {
 
@@ -13,7 +14,8 @@ public:
     RTTException(const std::string & objIdentifier ,
                  const std::string & message) :
         std::runtime_error(objIdentifier + ": " + message) {
-        assert(!objIdentifier.empty());
+        if(objIdentifier.empty())
+            raiseBugException("empty objIdentifier");
     }
 };
 

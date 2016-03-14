@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 #include "rtt/constants.h"
+#include "rtt/rttexception.h"
 #include "rtt/utils.h"
 
 namespace rtt {
@@ -17,15 +18,16 @@ public:
     static CliOptions getInstance(int argc , char * argv[]);
     static std::string getUsage();
 
-    int getBattery() const;
+    Constants::Battery getBattery() const;
     std::vector<int> getTestConsts() const;
     std::string getInputCfgPath() const;
     std::string getBinFilePath() const;
     std::string getOutFilePath() const;
 
 private:
-    int battery = 0;
+    Constants::Battery battery;
     std::vector<int> testConsts;
+    std::string objectInfo = "CLI options";
     std::string inputCfgPath;
     std::string binFilePath;
     std::string outFilePath;

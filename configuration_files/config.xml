@@ -71,7 +71,7 @@
     <NIST_STS_SETTINGS>
         <BINARY_PATH>/home/lubo/Desktop/sysoNIST/assess</BINARY_PATH>
         
-        <DEFAULT_TESTS></DEFAULT_TESTS>
+        <DEFAULT_TESTS>1-15</DEFAULT_TESTS>
         <DEFAULT_STREAM_SIZE>1000000</DEFAULT_STREAM_SIZE>
         <DEFAULT_STREAM_COUNT>100</DEFAULT_STREAM_COUNT>
     </NIST_STS_SETTINGS>
@@ -88,6 +88,21 @@
         <DEFAULT_BIT_NB>8388608000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
+        
+        <SMALL_CRUSH_SETTINGS>
+            <SETTINGS test="1">
+                <REPETITIONS>3</REPETITIONS>
+                <PARAMS>
+                    <PAR name="N">1</PAR>
+                    <PAR name="n">1000000</PAR>
+                    <PAR name="r">0</PAR>
+                    <PAR name="d">1073741824</PAR>
+                    <PAR name="t">2</PAR>
+                    <PAR name="p">5</PAR>
+                </PARAMS>
+            </SETTINGS>
+        </SMALL_CRUSH_SETTINGS>
+        
     </TESTU01_SETTINGS>
 
     <EACIRC_SETTINGS>empty</EACIRC_SETTINGS>

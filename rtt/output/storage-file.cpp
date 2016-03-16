@@ -200,7 +200,7 @@ void Storage::addResultToTableFile() const {
         /* Creating header */
         header.push_back("Input file path");
         header.push_back("Time of last update");
-        for(int i = 0 ; i <= static_cast<int>(Constants::Battery::LAST_ITEM) ; ++i)
+        for(int i = 1 ; i < static_cast<int>(Constants::Battery::LAST_ITEM) ; ++i)
             header.push_back(
                         Constants::batteryToString(static_cast<Constants::Battery>(i)));
 
@@ -290,7 +290,7 @@ void Storage::addNewRow(tStringVector & fileNames,
     fileNames.push_back(inFilePath);
     /* Add data into corresponding row */
     /* Column count is total batteries count + first column for last update info */
-    tStringVector row(1 + static_cast<int>(Constants::Battery::LAST_ITEM) , "");
+    tStringVector row(static_cast<int>(Constants::Battery::LAST_ITEM) , "");
     row.at(0) = Utils::formatRawTime(creationTime , "%Y-%m-%d %H:%M:%S");
     row.at(static_cast<int>(batteryConstant)) = passedTestProp;
     tableData.push_back(std::move(row));

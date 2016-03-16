@@ -67,5 +67,11 @@
         <DIEHARDER>/home/lubo/Desktop/dieharder/bin/dieharder</DIEHARDER>
         <TESTU01>/home/lubo/Desktop/TestU01/TestU01</TESTU01>
     </BINARIES>
+    
+    <MISCELANEOUS>
+        <NIST_STS>
+            <MAIN_RESULT_DIR>experiments/AlgorithmTesting/</MAIN_RESULT_DIR>
+        </NIST_STS>
+    </MISCELANEOUS>
 
 </TOOLKIT_SETTINGS>

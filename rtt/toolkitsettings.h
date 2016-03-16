@@ -2,7 +2,7 @@
 #define RTT_TOOLKITSETTINGS_H
 
 #include "rtt/constants.h"
-#include "bugexception.h"
+#include "rtt/bugexception.h"
 #include "rtt/rttexception.h"
 #include "libs/tinyXML/xmlproc.h"
 
@@ -25,8 +25,11 @@ public:
 
     std::string getBinaryBattery(Constants::Battery battery) const;
 
+    std::string getMiscNiststsMainResDir() const;
+
 private:
-    /* Variable types for getters. Should new variable be added, add it here too. */
+    /* Variable types for getters. Should a new variable be added,
+     * add it here too. */
     enum class VariableType {
         loggerDir,
         rsFileDir,
@@ -61,7 +64,11 @@ private:
     static const std::string XPATH_BINARIES_DIEHARDER;
     static const std::string XPATH_BINARIES_NISTSTS;
     static const std::string XPATH_BINARIES_TESTU01;
+    /* Miscelaneous values. Each battery has its own section
+     * and variables loaded have own getters */
+    static const std::string XPATH_MISC_NISTSTS_MAIN_RESULT_DIR;
 
+    /* Member variables */
     std::string objectInfo = "Toolkit Settings";
 
     std::string loggerRunLogDir;
@@ -86,6 +93,9 @@ private:
     std::string binaryNiststs;
     std::string binaryTestU01;
 
+    std::string miscNiststsMainResDir;
+
+    /* Private methods */
     ToolkitSettings() {}
 
     std::string getBatteryVariable(VariableType variableType ,

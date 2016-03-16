@@ -113,6 +113,8 @@ public:
     */
     static void fixNewlines(std::string & str);
 
+    static std::vector<int> parseStringWithIntRanges(const std::string & str);
+
     /**
      * @brief createDirectory   Creates recursive directory structure.
      *                          If some dirs already exist doesn't report.

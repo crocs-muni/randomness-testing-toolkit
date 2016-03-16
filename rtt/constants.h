@@ -15,11 +15,11 @@ public:
     ///////////////////////////////////////////////
 
     /* Statistical batteries constants enum */
-    /* Values in enum MUST NOT have assigned other than default values.
-     * Item LAST_ITEM HAVE to be last. Always! Additional battery item
-     * should be added before it. */
+    /* Values in enum MUST NOT have assigned other than default values
+     * (first is one). Item LAST_ITEM HAVE to be last. Always!
+     * Additional battery item should be added before it. */
     enum class Battery {
-        DIEHARDER,
+        DIEHARDER = 1,
         NIST_STS,
         TU01_SMALLCRUSH,
         TU01_CRUSH,

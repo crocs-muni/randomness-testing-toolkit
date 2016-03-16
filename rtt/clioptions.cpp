@@ -37,6 +37,8 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
             else
                 throw RTTException(options.objectInfo ,
                                    "unknown battery set: " + (std::string)argv[i + 1]);
+            batterySet = true;
+
         }
         // Input binary file option
         else if(strcmp(argv[i] , "-f") == 0) {

@@ -3,32 +3,34 @@
 namespace rtt {
 
 /* Constant definition */
-const std::string ToolkitSettings::XPATH_LOGGER_DIR_PREFIX          = "LOGGER/DIR_PREFIX";
-const std::string ToolkitSettings::XPATH_LOGGER_RUN_LOG_DIR         = "LOGGER/RUN_LOG_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_DIEHARDER_DIR       = "LOGGER/DIEHARDER_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_NISTSTS_DIR         = "LOGGER/NIST_STS_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_TU01_SCRUSH_DIR     = "LOGGER/TU01_SMALLCRUSH_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_TU01_CRUSH_DIR      = "LOGGER/TU01_CRUSH_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_TU01_BCRUSH_DIR     = "LOGGER/TU01_BIGCRUSH_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_TU01_RABBIT_DIR     = "LOGGER/TU01_RABBIT_DIR";
-const std::string ToolkitSettings::XPATH_LOGGER_TU01_ALPHABIT_DIR   = "LOGGER/TU01_ALPHABIT_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_DIR_PREFIX              = "LOGGER/DIR_PREFIX";
+const std::string ToolkitSettings::XPATH_LOGGER_RUN_LOG_DIR             = "LOGGER/RUN_LOG_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_DIEHARDER_DIR           = "LOGGER/DIEHARDER_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_NISTSTS_DIR             = "LOGGER/NIST_STS_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_TU01_SCRUSH_DIR         = "LOGGER/TU01_SMALLCRUSH_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_TU01_CRUSH_DIR          = "LOGGER/TU01_CRUSH_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_TU01_BCRUSH_DIR         = "LOGGER/TU01_BIGCRUSH_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_TU01_RABBIT_DIR         = "LOGGER/TU01_RABBIT_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_TU01_ALPHABIT_DIR       = "LOGGER/TU01_ALPHABIT_DIR";
 
-const std::string ToolkitSettings::XPATH_RS_FILE_OUTPUT_FILE        = "RESULT_STORAGE/FILE/OUTPUT_FILE";
-const std::string ToolkitSettings::XPATH_RS_FILE_DIR_PREFIX         = "RESULT_STORAGE/FILE/DIR_PREFIX";
-const std::string ToolkitSettings::XPATH_RS_FILE_DIEHARDER_DIR      = "RESULT_STORAGE/FILE/DIEHARDER_DIR";
-const std::string ToolkitSettings::XPATH_RS_FILE_NISTSTS_DIR        = "RESULT_STORAGE/FILE/NIST_STS_DIR";
-const std::string ToolkitSettings::XPATH_RS_FILE_TU01_SCRUSH_DIR    = "RESULT_STORAGE/FILE/TU01_SMALLCRUSH_DIR";
-const std::string ToolkitSettings::XPATH_RS_FILE_TU01_CRUSH_DIR     = "RESULT_STORAGE/FILE/TU01_CRUSH_DIR";
-const std::string ToolkitSettings::XPATH_RS_FILE_TU01_BCRUSH_DIR    = "RESULT_STORAGE/FILE/TU01_BIGCRUSH_DIR";
-const std::string ToolkitSettings::XPATH_RS_FILE_TU01_RABBIT_DIR    = "RESULT_STORAGE/FILE/TU01_RABBIT_DIR";
-const std::string ToolkitSettings::XPATH_RS_FILE_TU01_ALPHABIT_DIR  = "RESULT_STORAGE/FILE/TU01_ALPHABIT_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_OUTPUT_FILE            = "RESULT_STORAGE/FILE/OUTPUT_FILE";
+const std::string ToolkitSettings::XPATH_RS_FILE_DIR_PREFIX             = "RESULT_STORAGE/FILE/DIR_PREFIX";
+const std::string ToolkitSettings::XPATH_RS_FILE_DIEHARDER_DIR          = "RESULT_STORAGE/FILE/DIEHARDER_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_NISTSTS_DIR            = "RESULT_STORAGE/FILE/NIST_STS_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_TU01_SCRUSH_DIR        = "RESULT_STORAGE/FILE/TU01_SMALLCRUSH_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_TU01_CRUSH_DIR         = "RESULT_STORAGE/FILE/TU01_CRUSH_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_TU01_BCRUSH_DIR        = "RESULT_STORAGE/FILE/TU01_BIGCRUSH_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_TU01_RABBIT_DIR        = "RESULT_STORAGE/FILE/TU01_RABBIT_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_TU01_ALPHABIT_DIR      = "RESULT_STORAGE/FILE/TU01_ALPHABIT_DIR";
 
-const std::string ToolkitSettings::XPATH_BINARIES_DIEHARDER         = "BINARIES/DIEHARDER";
-const std::string ToolkitSettings::XPATH_BINARIES_NISTSTS           = "BINARIES/NIST_STS";
-const std::string ToolkitSettings::XPATH_BINARIES_TESTU01           = "BINARIES/TESTU01";
+const std::string ToolkitSettings::XPATH_BINARIES_DIEHARDER             = "BINARIES/DIEHARDER";
+const std::string ToolkitSettings::XPATH_BINARIES_NISTSTS               = "BINARIES/NIST_STS";
+const std::string ToolkitSettings::XPATH_BINARIES_TESTU01               = "BINARIES/TESTU01";
+
+const std::string ToolkitSettings::XPATH_MISC_NISTSTS_MAIN_RESULT_DIR   = "MISCELANEOUS/NIST_STS/MAIN_RESULT_DIR";
 
 ToolkitSettings ToolkitSettings::getInstance(const std::string & configFileName) {
-    TiXmlNode * xmlCfg;
+    TiXmlNode * xmlCfg = NULL;
     loadXMLFile(xmlCfg , configFileName);
 
     ToolkitSettings ts;
@@ -65,6 +67,10 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & configFileName)
     ts.binaryNiststs    = ts.getStringValue(xmlCfg , XPATH_BINARIES_NISTSTS);
     ts.binaryTestU01    = ts.getStringValue(xmlCfg , XPATH_BINARIES_TESTU01);
 
+    /* Miscelaneous variables */
+    ts.miscNiststsMainResDir = ts.getDirValue(xmlCfg , XPATH_MISC_NISTSTS_MAIN_RESULT_DIR);
+
+    free(xmlCfg);
     return ts;
 }
 
@@ -86,6 +92,9 @@ std::string ToolkitSettings::getRsFileBatteryDir(Constants::Battery battery) con
 
 std::string ToolkitSettings::getBinaryBattery(Constants::Battery battery) const {
     return getBatteryVariable(VariableType::binary , battery);
+}
+std::string ToolkitSettings::getMiscNiststsMainResDir() const {
+    return miscNiststsMainResDir;
 }
 
 /*
@@ -173,6 +182,9 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
 std::string ToolkitSettings::getDirValue(TiXmlNode * xmlConfig,
                                          const std::string & xpath,
                                          bool mandatory) {
+    if(!xmlConfig)
+        raiseBugException("null xml node");
+
     std::string rval = getXMLElementValue(xmlConfig , xpath);
 
     /* Check for existence, if empty and mandatory then fail,
@@ -194,6 +206,9 @@ std::string ToolkitSettings::getDirValue(TiXmlNode * xmlConfig,
 std::string ToolkitSettings::getStringValue(TiXmlNode * xmlConfig,
                                             const std::string & xpath,
                                             bool mandatory) {
+    if(!xmlConfig)
+        raiseBugException("null xml node");
+
     std::string rval = getXMLElementValue(xmlConfig , xpath);
 
     if(mandatory && rval.empty())
@@ -206,6 +221,9 @@ std::string ToolkitSettings::getStringValue(TiXmlNode * xmlConfig,
 int ToolkitSettings::getIntegerValue(TiXmlNode * xmlConfig,
                                      const std::string & xpath,
                                      bool mandatory) {
+    if(!xmlConfig)
+        raiseBugException("null xml node");
+
     std::string tmp = getXMLElementValue(xmlConfig , xpath);
 
     if(tmp.empty()) {

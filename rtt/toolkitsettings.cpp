@@ -29,9 +29,9 @@ const std::string ToolkitSettings::XPATH_BINARIES_TESTU01               = "BINAR
 
 const std::string ToolkitSettings::XPATH_MISC_NISTSTS_MAIN_RESULT_DIR   = "MISCELANEOUS/NIST_STS/MAIN_RESULT_DIR";
 
-ToolkitSettings ToolkitSettings::getInstance(const std::string & configFileName) {
+ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     TiXmlNode * xmlCfg = NULL;
-    loadXMLFile(xmlCfg , configFileName);
+    loadXMLFile(xmlCfg , cfgFileName);
 
     ToolkitSettings ts;
 
@@ -162,7 +162,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
     case Constants::Battery::TU01_RABBIT: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
-        case VariableType::loggerDir: return loggerBCrushDir;
+        case VariableType::loggerDir: return loggerRabbitDir;
         case VariableType::rsFileDir: return rsFileRabbitDir;
         default:raiseBugException("invalid variable type");
         }

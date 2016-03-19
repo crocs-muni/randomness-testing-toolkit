@@ -13,12 +13,12 @@
 //      2.2. Into file structure                    (Ok)
 //      2.3. Into database                          (Not until Misc is completed)
 //  3. Miscelaneous
-//      3.1. Better exception handling
-//      3.2. Batteries runtime error handling
+//      3.1. Better exception handling              (WIP)
+//      3.2. Batteries runtime error handling       (Partially)
 //      3.3. File logger
-//      3.4. Better config file organization
-//      3.5. Create CMake project
-//      3.6. Write documentation, refactor
+//      3.4. Better config file organization        (WIP)
+//      3.5. Create CMake project                   (Final step)
+//      3.6. Write documentation, refactor          (More final step)
 //  4. ???
 //      .
 //      .
@@ -32,16 +32,12 @@
 #include <cmath>
 
 #include "rtt/batteries/batteryfactory-batt.h"
-#include "rtt/batteries/configuration-batt.h"
-#include "rtt/toolkitsettings.h"
-#include "rtt/clioptions.h"
+#include "rtt/globals.h"
 #include "rtt/version.h"
-#include "rtt/bugexception.h"
-#include "rtt/rttexception.h"
 
 //#include <map>
 
-#define TESTING
+//#define TESTING
 
 using namespace rtt;
 
@@ -49,7 +45,11 @@ int main (int argc , char * argv[]) {
 #ifdef TESTING
     /* Only temporary code here*/
     try {
-        auto conf = batteries::Configuration::getInstance("config.xml");
+        //auto conf = batteries::Configuration::getInstance("config.xml");
+        Globals globals;
+        //globals.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+        auto ts = globals.getToolkitSettings();
+        std::cout << ts->getRsFileOutFile() << std::endl;
     } catch(RTTException ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
     } catch(XMLException ex) {
@@ -101,10 +101,17 @@ int main (int argc , char * argv[]) {
 
     /* Actual functionality will be here... in time. */
     try {
-        auto options = CliOptions::getInstance(argc , argv);
-        auto battery = batteries::BatteryFactory::createBattery(options);
+        /* Initialization ofrun settings from config files */
+        Globals globals;
+        globals.initCliOptions(argc , argv);
+        globals.initBatteriesConfiguration(globals.getCliOptions()->getInputCfgPath());
+        globals.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+
+        /* Creation and execution of battery */
+        auto battery = batteries::BatteryFactory::createBattery(globals);
         battery->runTests();
         battery->processStoredResults();
+
     } catch(RTTException ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl;
     } catch(XMLException ex) {

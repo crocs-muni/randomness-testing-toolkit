@@ -5,9 +5,7 @@
 #include <vector>
 
 #include "libs/tinyXML/xmlproc.h"
-#include "rtt/utils.h"
-#include "rtt/clioptions.h"
-#include "rtt/rttexception.h"
+#include "rtt/globals.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
@@ -72,8 +70,7 @@ public:
     ======================
     */
     static std::unique_ptr<Test> getInstance(int testIndex ,
-                                 const CliOptions & options ,
-                                 TiXmlNode * cfgRoot);
+                                             const Globals & globals);
 
     void execute();
 
@@ -97,8 +94,14 @@ private:
     *** Variables ***
     =================
     */
+    /* Pointers to global configurations */
+    std::shared_ptr<CliOptions> cliOptions;
+    std::shared_ptr<ToolkitSettings> toolkitSettings;
+    std::shared_ptr<batteries::Configuration> batteryConfiguration;
+
     /* These fields will be set after initialization in */
-    /* getInstance */
+    /* getInstance() */
+    Constants::Battery battery;
     bool executed = false;
     std::string executablePath;
     std::string binaryDataPath;

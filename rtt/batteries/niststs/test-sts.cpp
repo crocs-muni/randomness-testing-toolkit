@@ -35,10 +35,14 @@ const tTestInfo Test::INFO_SERIAL               {14, "Serial Test" , Test::PATH_
 const tTestInfo Test::INFO_LINEARCOMPLEXITY     {15, "Linear Complexity Test" , Test::PATH_MAIN_RESULT_DIR + "LinearComplexity/", 1, true};
 
 std::unique_ptr<Test> Test::getInstance(int testIndex,
-                                        TiXmlNode * cfgRoot,
-                                        const CliOptions &options) {
-    std::unique_ptr<Test> test(new Test());
-    test->objectInfo = Constants::batteryToString(options.getBattery()) +
+                                        const Globals & globals) {
+    std::unique_ptr<Test> t (new Test());
+    t->cliOptions = globals.getCliOptions();
+    t->toolkitSettings = globals.getToolkitSettings();
+    t->batteryConfiguration = globals.getBatteryConfiguration();
+
+    t->battery = t->cliOptions->getBattery();
+    t->objectInfo = Constants::batteryToString(t->battery) +
                        " - test " + Utils::itostr(testIndex);
     tTestInfo testInfo;
 
@@ -58,53 +62,68 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     if(testIndex == std::get<0>(INFO_SERIAL))           testInfo = INFO_SERIAL; else
     if(testIndex == std::get<0>(INFO_LINEARCOMPLEXITY)) testInfo = INFO_LINEARCOMPLEXITY; else
         //throw std::runtime_error("unknown test constant in NIST STS: " + Utils::itostr(testIndex));
-        throw RTTException(test->objectInfo , "unknown test constants");
+        throw RTTException(t->objectInfo , "unknown test constants");
 
 
-    std::tie(test->testIndex ,
-             test->logicName ,
-             test->resultSubDir ,
-             test->subTestCount ,
-             test->adjustableBlockLen) = testInfo;
+    std::tie(t->testIndex ,
+             t->logicName ,
+             t->resultSubDir ,
+             t->subTestCount ,
+             t->adjustableBlockLen) = testInfo;
 
     /* Getting default values from XML */
-    test->binaryDataPath = options.getBinFilePath();
-    if(test->binaryDataPath.empty())
-        throw RTTException(test->objectInfo , "path to input data can't be empty");
+    t->binaryDataPath = t->cliOptions->getBinFilePath();
+    if(t->binaryDataPath.empty())
+        raiseBugException("empty input binary data");
+        //throw RTTException(t->objectInfo , "path to input data can't be empty");
         //throw std::runtime_error("path to input data can't be empty");
-    test->executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
-    if(test->executablePath.empty())
-        throw RTTException(test->objectInfo , "tag " + XPATH_BINARY_PATH + " can't be empty");
+    t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
+    if(t->executablePath.empty())
+        raiseBugException("empty executable binary");
+                //throw RTTException(t->objectInfo , "tag " + XPATH_BINARY_PATH + " can't be empty");
         //throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
 
     /* Getting test specific settings from XML */
-    TiXmlNode * testsSettingsNode = getXMLChildNodeWithAttValue(
-                    getXMLElement(cfgRoot , XPATH_TESTS_SETTINGS),
-                    XPATH_ATTRIBUTE_TEST_INDEX,
-                    Utils::itostr(test->testIndex)
-                );
+//    TiXmlNode * testsSettingsNode = getXMLChildNodeWithAttValue(
+//                    getXMLElement(globals , XPATH_TESTS_SETTINGS),
+//                    XPATH_ATTRIBUTE_TEST_INDEX,
+//                    Utils::itostr(t->testIndex)
+//                );
 
-    test->streamSize = ITest::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
-                                              XPATH_DEFAULT_STREAM_SIZE ,
-                                              XPATH_TEST_STREAM_SIZE);
-    test->streamCount = ITest::getTestOrDefOpt(cfgRoot , testsSettingsNode ,
-                                               XPATH_DEFAULT_STREAM_COUNT ,
-                                               XPATH_TEST_STREAM_COUNT);
-    test->blockLength = getXMLElementValue(testsSettingsNode ,
-                                           XPATH_TEST_BLOCK_LENGTH);
+//    t->streamSize = ITest::getTestOrDefOpt(globals , testsSettingsNode ,
+//                                           XPATH_DEFAULT_STREAM_SIZE ,
+//                                           XPATH_TEST_STREAM_SIZE);
+//    t->streamCount = ITest::getTestOrDefOpt(globals , testsSettingsNode ,
+//                                               XPATH_DEFAULT_STREAM_COUNT ,
+//                                               XPATH_TEST_STREAM_COUNT);
+//    t->blockLength = getXMLElementValue(testsSettingsNode ,
+//                                           XPATH_TEST_BLOCK_LENGTH);
 
-    if(test->streamSize.empty()) {
-        throw RTTException(test->objectInfo , "stream size not set");
-        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_SIZE + " can't be empty"
-        //                         " without setting stream size in tests settings.");
-    }
-    if(test->streamCount.empty()) {
-        throw RTTException(test->objectInfo , "stream count not set");
-        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_COUNT + " can't be empty"
-        //                         " without setting stream count in tests settings.");
-    }
+//    if(t->streamSize.empty()) {
+//        throw RTTException(t->objectInfo , "stream size not set");
+//        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_SIZE + " can't be empty"
+//        //                         " without setting stream size in tests settings.");
+//    }
+//    if(t->streamCount.empty()) {
+//        throw RTTException(t->objectInfo , "stream count not set");
+//        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_COUNT + " can't be empty"
+//        //                         " without setting stream count in tests settings.");
+//    }
+    t->streamSize = t->batteryConfiguration->getNiststsTestStreamSize(testIndex);
+    if(t->streamSize.empty())
+        t->streamSize = t->batteryConfiguration->getNiststsDefaultStreamSize();
+    if(t->streamSize.empty())
+        throw RTTException(t->objectInfo , "stream size not set");
 
-    return test;
+    t->streamCount = t->batteryConfiguration->getNiststsTestStreamCount(testIndex);
+    if(t->streamCount.empty())
+        t->streamCount = t->batteryConfiguration->getNiststsDefaultStreamCount();
+    if(t->streamCount.empty())
+        throw RTTException(t->objectInfo , "stream count not set");
+
+    t->blockLength = t->batteryConfiguration->getNiststsTestBlockLength(testIndex);
+
+    return t;
 }
 
 void Test::appendTestLog(std::string & batteryLog) const {

@@ -13,6 +13,9 @@ namespace batteries {
 
 class Configuration {
 public:
+    /* Constant set to integer values that weren't set */
+    static const int VALUE_INT_NOT_SET = -1;
+
     static Configuration getInstance(const std::string & configFileName);
 
     /* Getters for variables */
@@ -65,9 +68,6 @@ public:
                                           int testIndex);
 
 private:
-    /* Constant set to integer values that weren't set */
-    static const int VALUE_INT_NOT_SET = -1;
-
     /* XPaths inside config file */
     /* Dieharder constants */
     static const std::string XPATH_DIEHARDER_DEFAULT_TESTS;

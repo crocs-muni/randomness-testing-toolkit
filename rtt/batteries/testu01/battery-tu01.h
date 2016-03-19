@@ -1,9 +1,7 @@
 #ifndef RTT_BATTERIES_TESTU01_BATTERY_H
 #define RTT_BATTERIES_TESTU01_BATTERY_H
 
-#include "libs/tinyXML/xmlproc.h"
-#include "rtt/clioptions.h"
-#include "rtt/rttexception.h"
+#include "rtt/globals.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/testu01/test-tu01.h"
@@ -23,7 +21,7 @@ public:
     static const std::string XPATH_DEFAULT_TESTS_RABBIT;
     static const std::string XPATH_DEFAULT_TESTS_ALPHABIT;
 
-    static std::unique_ptr<Battery> getInstance(const CliOptions & options);
+    static std::unique_ptr<Battery> getInstance(const Globals & globals);
 
     void runTests();
 
@@ -34,8 +32,15 @@ private:
     *** Variables ***
     =================
     */
+    /* Objects pointing to global setting storage -
+     * many other classes are using these globals */
+    std::shared_ptr<CliOptions> cliOptions;
+    std::shared_ptr<batteries::Configuration> batteryConfiguration;
+    std::shared_ptr<ToolkitSettings> toolkitSettings;
+
     /* As soon as getInstance is called, this time is set */
     /* Used for naming output files */
+    Constants::Battery battery;
     time_t creationTime;
     std::string objectInfo;
     /* After test execution, log of battery run will be stored in logFilePath */

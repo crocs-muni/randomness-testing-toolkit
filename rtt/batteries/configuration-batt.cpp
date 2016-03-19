@@ -137,11 +137,21 @@ int Configuration::getTestU01BatteryTestRepetitions(Constants::Battery battery,
                                                     int testIndex) const {
     const std::map<int , int> * variable;
     switch(battery) {
-    case Constants::Battery::TU01_SMALLCRUSH:   variable = &tu01SmallCrushTestRepetitions;
-    case Constants::Battery::TU01_CRUSH:        variable = &tu01CrushTestRepetitions;
-    case Constants::Battery::TU01_BIGCRUSH:     variable = &tu01BigCrushTestRepetitions;
-    case Constants::Battery::TU01_RABBIT:       variable = &tu01RabbitTestRepetitions;
-    case Constants::Battery::TU01_ALPHABIT:     variable = &tu01AlphabitTestRepetitions;
+    case Constants::Battery::TU01_SMALLCRUSH:
+        variable = &tu01SmallCrushTestRepetitions;
+        break;
+    case Constants::Battery::TU01_CRUSH:
+        variable = &tu01CrushTestRepetitions;
+        break;
+    case Constants::Battery::TU01_BIGCRUSH:
+        variable = &tu01BigCrushTestRepetitions;
+        break;
+    case Constants::Battery::TU01_RABBIT:
+        variable = &tu01RabbitTestRepetitions;
+        break;
+    case Constants::Battery::TU01_ALPHABIT:
+        variable = &tu01AlphabitTestRepetitions;
+        break;
     default:raiseBugException("invalid battery");
     }
     if(variable->find(testIndex) == variable->end())
@@ -155,9 +165,15 @@ std::string Configuration::getTestU01BatteryTestParams(Constants::Battery batter
                                                        const std::string & parName) {
     const std::map<int , std::map<std::string , std::string>> * variable;
     switch(battery) {
-    case Constants::Battery::TU01_SMALLCRUSH:   variable = &tu01SmallCrushTestParams;
-    case Constants::Battery::TU01_CRUSH:        variable = &tu01CrushTestParams;
-    case Constants::Battery::TU01_BIGCRUSH:     variable = &tu01BigCrushTestParams;
+    case Constants::Battery::TU01_SMALLCRUSH:
+        variable = &tu01SmallCrushTestParams;
+        break;
+    case Constants::Battery::TU01_CRUSH:
+        variable = &tu01CrushTestParams;
+        break;
+    case Constants::Battery::TU01_BIGCRUSH:
+        variable = &tu01BigCrushTestParams;
+        break;
     default:raiseBugException("invalid battery");
     }
     if(variable->find(testIndex) == variable->end())
@@ -172,8 +188,12 @@ std::string Configuration::getTestU01BatteryTestBitNB(Constants::Battery battery
                                                       int testIndex) {
     const std::map<int , std::string> * variable;
     switch(battery) {
-    case Constants::Battery::TU01_RABBIT:   variable = &tu01RabbitTestBitNB;
-    case Constants::Battery::TU01_ALPHABIT: variable = &tu01AlphabitTestBitNB;
+    case Constants::Battery::TU01_RABBIT:
+        variable = &tu01RabbitTestBitNB;
+        break;
+    case Constants::Battery::TU01_ALPHABIT:
+        variable = &tu01AlphabitTestBitNB;
+        break;
     default:raiseBugException("invalid battery");
     }
     if(variable->find(testIndex) == variable->end())
@@ -186,7 +206,9 @@ std::string Configuration::getTestU01BatteryTestBitR(Constants::Battery battery,
                                                      int testIndex) {
     const std::map<int , std::string> * variable;
     switch(battery) {
-    case Constants::Battery::TU01_ALPHABIT: variable = &tu01AlphabitTestBitR;
+    case Constants::Battery::TU01_ALPHABIT:
+        variable = &tu01AlphabitTestBitR;
+        break;
     default:raiseBugException("invalid battery");
     }
     if(variable->find(testIndex) == variable->end())
@@ -199,7 +221,9 @@ std::string Configuration::getTestU01BatteryTestBitS(Constants::Battery battery,
                                                      int testIndex) {
     const std::map<int , std::string> * variable;
     switch(battery) {
-    case Constants::Battery::TU01_ALPHABIT: variable = &tu01AlphabitTestBitS;
+    case Constants::Battery::TU01_ALPHABIT:
+        variable = &tu01AlphabitTestBitS;
+        break;
     default:raiseBugException("invalid battery");
     }
     if(variable->find(testIndex) == variable->end())
@@ -267,8 +291,8 @@ void Configuration::loadTestU01Variables(TiXmlNode * xmlCfg) {
 
     testu01DefaultRepetitions = getIntValue(xmlCfg , XPATH_TU01_DEFAULT_REPS);
     testu01DefaultBitNB = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_NB);
-    testu01DefaultBitR = getXMLElementValue(xmlCfg , XPATH_TU01_TEST_BIT_R);
-    testu01DefaultBitS = getXMLElementValue(xmlCfg , XPATH_TU01_TEST_BIT_S);
+    testu01DefaultBitR = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_R);
+    testu01DefaultBitS = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_S);
 
     tu01SmallCrushDefaultTests = getDefaultTests(xmlCfg , XPATH_TU01_SMALL_CRUSH_DEFAULT_TESTS);
     tu01CrushDefaultTests = getDefaultTests(xmlCfg , XPATH_TU01_CRUSH_DEFAULT_TESTS);

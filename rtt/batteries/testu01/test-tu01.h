@@ -7,11 +7,9 @@
 #include <sstream>
 #include <tuple>
 
-#include "rtt/rttexception.h"
+#include "rtt/globals.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
-#include "rtt/clioptions.h"
-#include "libs/tinyXML/xmlproc.h"
 
 namespace rtt {
 namespace batteries {
@@ -211,8 +209,7 @@ public:
     ======================
     */
     static std::unique_ptr<Test> getInstance(int testIndex ,
-                                 const CliOptions & options ,
-                                 TiXmlNode * cfgRoot);
+                                             const Globals & globals);
 
     void appendTestLog(std::string & batteryLog) const;
 
@@ -236,6 +233,13 @@ private:
     *** Variables ***
     =================
     */
+    /* Pointers to global configurations */
+    std::shared_ptr<CliOptions> cliOptions;
+    std::shared_ptr<ToolkitSettings> toolkitSettings;
+    std::shared_ptr<batteries::Configuration> batteryConfiguration;
+
+    /* These fields will be set after initialization in */
+    /* getInstance() */
     Constants::Battery battery;
     int testIndex = -1;
     std::string logicName;

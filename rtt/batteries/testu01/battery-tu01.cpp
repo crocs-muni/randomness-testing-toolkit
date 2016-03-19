@@ -11,62 +11,77 @@ const std::string Battery::XPATH_DEFAULT_TESTS_BIG_CRUSH        = "TESTU01_SETTI
 const std::string Battery::XPATH_DEFAULT_TESTS_RABBIT           = "TESTU01_SETTINGS/DEFAULT_TESTS_RABBIT";
 const std::string Battery::XPATH_DEFAULT_TESTS_ALPHABIT         = "TESTU01_SETTINGS/DEFAULT_TESTS_ALPHABIT";
 
-std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
-    std::unique_ptr<Battery> battery (new Battery());
-    battery->objectInfo = Constants::batteryToString(options.getBattery());
-    battery->creationTime = Utils::getRawTime();
+std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
+    std::unique_ptr<Battery> b (new Battery());
+    b->cliOptions = globals.getCliOptions();
+    b->batteryConfiguration = globals.getBatteryConfiguration();
+    b->toolkitSettings = globals.getToolkitSettings();
+    b->battery = b->cliOptions->getBattery();
+    b->objectInfo = Constants::batteryToString(b->battery);
+    b->creationTime = Utils::getRawTime();
 
-    TiXmlNode * cfgRoot = NULL;
-    loadXMLFile(cfgRoot , options.getInputCfgPath());
+    //TiXmlNode * cfgRoot = NULL;
+    //loadXMLFile(cfgRoot , options.getInputCfgPath());
 
-    std::cout << "[INFO] Processing file: " << options.getBinFilePath() << std::endl;
+    std::cout << "[INFO] Processing file: " << b->cliOptions->getBinFilePath()
+              << std::endl;
 
     /* Getting path to log file */
-    battery->logFilePath = std::move(
-                createLogFilePath(
-                    battery->creationTime,
-                    getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
-                    options.getBinFilePath()));
+    b->logFilePath = b->toolkitSettings->getLoggerBatteryDir(b->battery);
+    b->logFilePath.append(Utils::formatRawTime(b->creationTime , "%Y%m%d%H%M%S"));
+    b->logFilePath.append(
+                "-" + Utils::getLastItemInPath(b->cliOptions->getBinFilePath() + ".log"));
+
+    //b->logFilePath = std::move(
+    //            createLogFilePath(
+    //                b->creationTime,
+    //                getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
+    //                options.getBinFilePath()));
     /* Creating storage for results */
-    battery->storage =
-            output::OutputFactory::createOutput(cfgRoot , options , battery->creationTime);
+    b->storage = output::OutputFactory::createOutput(globals , b->creationTime);
     /* Getting constants of tests to be executed */
-    std::vector<int> testConsts = options.getTestConsts();
-    if(testConsts.empty()) {
-        /* Read them from config if no tests were entered via CLI */
-        std::string testsXPath;
-        switch(options.getBattery()) {
-        case Constants::Battery::TU01_SMALLCRUSH:
-            testsXPath = XPATH_DEFAULT_TESTS_SMALL_CRUSH;
-            break;
-        case Constants::Battery::TU01_CRUSH:
-            testsXPath = XPATH_DEFAULT_TESTS_CRUSH;
-            break;
-        case Constants::Battery::TU01_BIGCRUSH:
-            testsXPath = XPATH_DEFAULT_TESTS_BIG_CRUSH;
-            break;
-        case Constants::Battery::TU01_RABBIT:
-            testsXPath = XPATH_DEFAULT_TESTS_RABBIT;
-            break;
-        case Constants::Battery::TU01_ALPHABIT:
-            testsXPath = XPATH_DEFAULT_TESTS_ALPHABIT;
-            break;
-        default:raiseBugException("invalid battery");
-        }
-        testConsts = parseIntValues(getXMLElementValue(cfgRoot , testsXPath));
-    }
+    std::vector<int> testConsts = b->cliOptions->getTestConsts();
     if(testConsts.empty())
-        throw RTTException(battery->objectInfo , "no tests were set for execution");
-        //throw std::runtime_error("no tests for execution were set in options "
-        //                         "and in config file");
+        testConsts = b->batteryConfiguration->getBatteryDefaultTests(b->battery);
+    if(testConsts.empty())
+        throw RTTException(b->objectInfo , "no tests were set for execution");
+//    std::vector<int> testConsts = options.getTestConsts();
+//    if(testConsts.empty()) {
+//        /* Read them from config if no tests were entered via CLI */
+//        std::string testsXPath;
+//        switch(options.getBattery()) {
+//        case Constants::Battery::TU01_SMALLCRUSH:
+//            testsXPath = XPATH_DEFAULT_TESTS_SMALL_CRUSH;
+//            break;
+//        case Constants::Battery::TU01_CRUSH:
+//            testsXPath = XPATH_DEFAULT_TESTS_CRUSH;
+//            break;
+//        case Constants::Battery::TU01_BIGCRUSH:
+//            testsXPath = XPATH_DEFAULT_TESTS_BIG_CRUSH;
+//            break;
+//        case Constants::Battery::TU01_RABBIT:
+//            testsXPath = XPATH_DEFAULT_TESTS_RABBIT;
+//            break;
+//        case Constants::Battery::TU01_ALPHABIT:
+//            testsXPath = XPATH_DEFAULT_TESTS_ALPHABIT;
+//            break;
+//        default:raiseBugException("invalid battery");
+//        }
+//        testConsts = parseIntValues(getXMLElementValue(cfgRoot , testsXPath));
+//    }
+//    if(testConsts.empty())
+//        throw RTTException(b->objectInfo , "no tests were set for execution");
+//        //throw std::runtime_error("no tests for execution were set in options "
+//        //                         "and in config file");
 
     for(int i : testConsts) {
-        std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
-        battery->tests.push_back(std::move(test));
+        //std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
+        std::unique_ptr<ITest> test = Test::getInstance(i , globals);
+        b->tests.push_back(std::move(test));
     }
 
-    delete cfgRoot;
-    return battery;
+    //delete cfgRoot;
+    return b;
 }
 
 void Battery::runTests() {

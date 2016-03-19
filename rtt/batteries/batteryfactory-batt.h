@@ -14,29 +14,22 @@ namespace batteries {
 
 class BatteryFactory {
 public:
-    static std::unique_ptr<IBattery> createBattery(const CliOptions & options) {
-        switch(options.getBattery()) {
+    static std::unique_ptr<IBattery> createBattery(const Globals & globals) {
+        switch(globals.getCliOptions()->getBattery()) {
         case Constants::Battery::DIEHARDER:
-            return dieharder::Battery::getInstance(options);
-            break;
+            return dieharder::Battery::getInstance(globals);
         case Constants::Battery::NIST_STS:
-            return niststs::Battery::getInstance(options);
-            break;
+            return niststs::Battery::getInstance(globals);
         case Constants::Battery::TU01_SMALLCRUSH:
-            return testu01::Battery::getInstance(options);
-            break;
+            return testu01::Battery::getInstance(globals);
         case Constants::Battery::TU01_CRUSH:
-            return testu01::Battery::getInstance(options);
-            break;
+            return testu01::Battery::getInstance(globals);
         case Constants::Battery::TU01_BIGCRUSH:
-            return testu01::Battery::getInstance(options);
-            break;
+            return testu01::Battery::getInstance(globals);
         case Constants::Battery::TU01_RABBIT:
-            return testu01::Battery::getInstance(options);
-            break;
+            return testu01::Battery::getInstance(globals);
         case Constants::Battery::TU01_ALPHABIT:
-            return testu01::Battery::getInstance(options);
-            break;
+            return testu01::Battery::getInstance(globals);
         default:raiseBugException("invalid battery");
         }
     }

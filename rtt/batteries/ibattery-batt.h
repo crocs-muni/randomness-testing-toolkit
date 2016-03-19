@@ -1,15 +1,13 @@
 #ifndef RTT_IBATTERY_H
 #define RTT_IBATTERY_H
 
-#include "libs/tinyXML/xmlproc.h"
-#include "rtt/clioptions.h"
+#include "rtt/globals.h"
 
 namespace rtt {
 namespace batteries {
 
 class IBattery {
 public:
-
     virtual ~IBattery() {}
 
     virtual void runTests() = 0;

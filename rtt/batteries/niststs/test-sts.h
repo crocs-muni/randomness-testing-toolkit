@@ -7,8 +7,7 @@
 #include <sstream>
 #include <tuple>
 
-#include "libs/tinyXML/xmlproc.h"
-#include "rtt/rttexception.h"
+#include "rtt/globals.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/utils.h"
@@ -59,8 +58,7 @@ public:
     */
     /* Some getters for results will be probably added in time */
     static std::unique_ptr<Test> getInstance(int testIndex ,
-                                             TiXmlNode * cfgRoot ,
-                                             const CliOptions & options);
+                                             const Globals & globals);
 
     void execute();
 
@@ -84,8 +82,14 @@ private:
     *** Variables ***
     =================
     */
+    /* Pointers to global configurations */
+    std::shared_ptr<CliOptions> cliOptions;
+    std::shared_ptr<ToolkitSettings> toolkitSettings;
+    std::shared_ptr<batteries::Configuration> batteryConfiguration;
+
     /* These fields will be set after initialization in */
     /* getInstance */
+    Constants::Battery battery;
     bool executed = false;
     std::string objectInfo;
     std::string executablePath;

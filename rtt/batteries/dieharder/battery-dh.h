@@ -1,8 +1,7 @@
 #ifndef RTT_BATTERIES_DIEHARDER_BATTERY_H
 #define RTT_BATTERIES_DIEHARDER_BATTERY_H
 
-#include "libs/tinyXML/xmlproc.h"
-#include "rtt/clioptions.h"
+#include "rtt/globals.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/batteries/dieharder/test-dh.h"
@@ -18,19 +17,26 @@ public:
     static const std::string XPATH_LOG_DIRECTORY;
     static const std::string XPATH_DEFAULT_TESTS;
 
-    static std::unique_ptr<Battery> getInstance(const CliOptions & options);
+    static std::unique_ptr<Battery> getInstance(const Globals & globals);
 
     void runTests();
 
     void processStoredResults();
 
-    std::string getObjectInfo() const;
 private:
     /*
     =================
     *** Variables ***
     =================
     */
+    /* Objects pointing to global setting storage -
+     * many other classes are using these globals */
+    std::shared_ptr<CliOptions> cliOptions;
+    std::shared_ptr<batteries::Configuration> batteryConfiguration;
+    std::shared_ptr<ToolkitSettings> toolkitSettings;
+
+    /* Variables initialized in getInstance() */
+    Constants::Battery battery;
     time_t creationTime;
     std::string logFilePath;
     std::string objectInfo;

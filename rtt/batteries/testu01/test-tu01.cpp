@@ -153,91 +153,140 @@ const std::string Test::XPATH_ATTRIBUTE_TEST_INDEX          = "test";
 const std::string Test::XPATH_ATTRIBUTE_PAR_NAME            = "name";
 
 
-std::unique_ptr<Test> Test::getInstance(int testIndex, const CliOptions & options, TiXmlNode * cfgRoot) {
-    if(!cfgRoot)
-        throw std::runtime_error("null cfgRoot"); // This should be logic error
+std::unique_ptr<Test> Test::getInstance(int testIndex ,
+                                        const Globals & globals) {
 
-    std::unique_ptr<Test> test (new Test());
-    test->objectInfo = Constants::batteryToString(options.getBattery()) +
+    std::unique_ptr<Test> t (new Test());
+    t->cliOptions = globals.getCliOptions();
+    t->toolkitSettings = globals.getToolkitSettings();
+    t->batteryConfiguration = globals.getBatteryConfiguration();
+    t->battery = t->cliOptions->getBattery();
+    t->objectInfo = Constants::batteryToString(t->battery) +
                        " - test " + Utils::itostr(testIndex);
     if(testIndex <= 0)
-        throw RTTException(test->objectInfo , "unknown test constant");
+        throw RTTException(t->objectInfo , "unknown test constant");
 
-    test->battery = options.getBattery();
-    test->testIndex = testIndex;
+    t->battery = t->cliOptions->getBattery();
+    t->testIndex = testIndex;
     std::string batteryXPath;
 
     try {
-        std::tie(test->logicName , test->paramNames , test->statisticNames) =
-                pickTestInfo(testIndex , options.getBattery() , batteryXPath);
+        std::tie(t->logicName , t->paramNames , t->statisticNames) =
+                pickTestInfo(testIndex , t->battery , batteryXPath);
     } catch (std::runtime_error ex) {
-        throw RTTException(test->objectInfo , ex.what());
+        throw RTTException(t->objectInfo , ex.what());
     }
 
-    TiXmlNode * testSettings = getXMLChildNodeWithAttValue(
-                                getXMLElement(cfgRoot , batteryXPath),
-                                XPATH_ATTRIBUTE_TEST_INDEX ,
-                                Utils::itostr(testIndex)
-                               );
+    //TiXmlNode * testSettings = getXMLChildNodeWithAttValue(
+    //                            getXMLElement(cfgRoot , batteryXPath),
+    //                            XPATH_ATTRIBUTE_TEST_INDEX ,
+    //                            Utils::itostr(testIndex)
+    //                           );
 
-    std::string strReps = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-                                                 XPATH_DEFAULT_REPS ,
-                                                 XPATH_TEST_REPS);
-    if(strReps.empty())
-        throw RTTException(test->objectInfo , "repetitions not set");
+    //std::string strReps = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+    //                                             XPATH_DEFAULT_REPS ,
+    //                                             XPATH_TEST_REPS);
+    //if(strReps.empty())
+    //    throw RTTException(t->objectInfo , "repetitions not set");
         //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
         //                         ": default or test specific repetitions must be set");
-    test->repetitions = Utils::strtoi(strReps);
-    test->executablePath = getXMLElementValue(cfgRoot , XPATH_EXECUTABLE_BINARY);
-    if(test->executablePath.empty())
-        throw RTTException(test->objectInfo , "tag " + XPATH_EXECUTABLE_BINARY + " can't be empty");
+    //t->repetitions = Utils::strtoi(strReps);
+    t->repetitions = t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
+                                                                               t->testIndex);
+    if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
+        t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions();
+    if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
+        throw RTTException(t->objectInfo , "repetitions not set");
+
+    //t->executablePath = getXMLElementValue(cfgRoot , XPATH_EXECUTABLE_BINARY);
+    //if(t->executablePath.empty())
+    //    throw RTTException(t->objectInfo , "tag " + XPATH_EXECUTABLE_BINARY + " can't be empty");
         //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
         //                         ": path to executable binary can't be empty");
-    test->binaryDataPath = options.getBinFilePath();
-    if(test->binaryDataPath.empty())
-        throw RTTException(test->objectInfo , "path to input data can't be empty");
+    t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
+    if(t->executablePath.empty())
+        raiseBugException("empty executable path");
+
+    //t->binaryDataPath = options.getBinFilePath();
+    //if(t->binaryDataPath.empty())
+    //    throw RTTException(t->objectInfo , "path to input data can't be empty");
         //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
         //                         ": path to binary data can't be empty");
+    t->binaryDataPath = t->cliOptions->getBinFilePath();
+    if(t->binaryDataPath.empty())
+        raiseBugException("empty input binary data");
 
-    /* Getting params - only for Crush batteries */
-    if(test->battery == Constants::Battery::TU01_SMALLCRUSH ||
-            test->battery == Constants::Battery::TU01_CRUSH ||
-            test->battery == Constants::Battery::TU01_BIGCRUSH)
-        test->checkSetParams(getXMLElement(testSettings , XPATH_TEST_PARAMS));
+    /* Getting params - only for Crush batteries */ // revisit l8r
+    if(t->battery == Constants::Battery::TU01_SMALLCRUSH ||
+            t->battery == Constants::Battery::TU01_CRUSH ||
+            t->battery == Constants::Battery::TU01_BIGCRUSH) {
+        tParam tmp;
+        for(const auto & par : t->paramNames) {
+            tmp.first = par;
+            tmp.second = t->batteryConfiguration->getTestU01BatteryTestParams(t->battery ,
+                                                                              t->testIndex ,
+                                                                              par);
+            if(!tmp.second.empty())
+                t->params.push_back(tmp);
+        }
+        if(!t->params.empty() && t->params.size() != t->paramNames.size())
+            throw RTTException(t->objectInfo , "incomplete parameter settings");
+
+        //t->checkSetParams(getXMLElement(testSettings , XPATH_TEST_PARAMS));
+    }
 
     /* Getting nb - Rabbit and Alphabit */
-    if(test->battery == Constants::Battery::TU01_RABBIT ||
-            test->battery == Constants::Battery::TU01_ALPHABIT) {
-        test->bit_nb = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-                                              XPATH_DEFAULT_BIT_NB ,
-                                              XPATH_TEST_BIT_NB);
-        if(test->bit_nb.empty())
-            throw RTTException(test->objectInfo , "bit_nb option not set");
-            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-            //                         ": default or test specific bit_nb option must be set"
-            //                         " in Rabbit and Alphabit battery");
+    if(t->battery == Constants::Battery::TU01_RABBIT ||
+            t->battery == Constants::Battery::TU01_ALPHABIT) {
+        t->bit_nb = t->batteryConfiguration->getTestU01BatteryTestBitNB(t->battery ,
+                                                                        t->testIndex);
+        if(t->bit_nb.empty())
+            t->bit_nb = t->batteryConfiguration->getTestu01DefaultBitNB();
+        if(t->bit_nb.empty())
+            throw RTTException(t->objectInfo , "bit_nb option not set");
+//        t->bit_nb = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+//                                              XPATH_DEFAULT_BIT_NB ,
+//                                              XPATH_TEST_BIT_NB);
+//        if(t->bit_nb.empty())
+//            throw RTTException(t->objectInfo , "bit_nb option not set");
+//            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+//            //                         ": default or test specific bit_nb option must be set"
+//            //                         " in Rabbit and Alphabit battery");
     }
     /* Getting r s - Alphabit */
-    if(test->battery == Constants::Battery::TU01_ALPHABIT) {
-        test->bit_r = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-                                             XPATH_DEFAULT_BIT_R ,
-                                             XPATH_TEST_BIT_R);
-        if(test->bit_r.empty())
-            throw RTTException(test->objectInfo , "bit_r option not set");
-            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-            //                         ": default or test specific bit_r option must be set"
-            //                         " in Alphabit battery");
+    if(t->battery == Constants::Battery::TU01_ALPHABIT) {
+        t->bit_r = t->batteryConfiguration->getTestU01BatteryTestBitR(t->battery ,
+                                                                      t->testIndex);
+        if(t->bit_r.empty())
+            t->bit_r = t->batteryConfiguration->getTestu01DefaultBitR();
+        if(t->bit_r.empty())
+            throw RTTException(t->objectInfo , "bit_r option not set");
 
-        test->bit_s = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-                                             XPATH_DEFAULT_BIT_S ,
-                                             XPATH_TEST_BIT_S);
-        if(test->bit_s.empty())
-            throw RTTException(test->objectInfo , "bit_s option not set");
-            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-            //                         ": default or test specific bit_s option must be set"
-            //                         " in Alphabit battery");
+        t->bit_s = t->batteryConfiguration->getTestU01BatteryTestBitS(t->battery ,
+                                                                      t->testIndex);
+        if(t->bit_s.empty())
+            t->bit_s = t->batteryConfiguration->getTestu01DefaultBitS();
+        if(t->bit_s.empty())
+            throw RTTException(t->objectInfo , "bit_s option not set");
+//        t->bit_r = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+//                                             XPATH_DEFAULT_BIT_R ,
+//                                             XPATH_TEST_BIT_R);
+//        if(t->bit_r.empty())
+//            throw RTTException(t->objectInfo , "bit_r option not set");
+//            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+//            //                         ": default or test specific bit_r option must be set"
+//            //                         " in Alphabit battery");
+
+//        t->bit_s = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
+//                                             XPATH_DEFAULT_BIT_S ,
+//                                             XPATH_TEST_BIT_S);
+//        if(t->bit_s.empty())
+//            throw RTTException(t->objectInfo , "bit_s option not set");
+//            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
+//            //                         ": default or test specific bit_s option must be set"
+//            //                         " in Alphabit battery");
     }
-    return test;
+    return t;
 }
 
 void Test::appendTestLog(std::string & batteryLog) const {

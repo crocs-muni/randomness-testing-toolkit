@@ -48,10 +48,13 @@ const int Test::OPTION_HEADER_FLAG      = 66047;
 const int Test::OPTION_FILE_GENERATOR   = 201;
 
 std::unique_ptr<Test> Test::getInstance(int testIndex ,
-                                        const CliOptions & options ,
-                                        TiXmlNode * cfgRoot) {
-    std::unique_ptr<Test> test (new Test());
-    test->objectInfo = Constants::batteryToString(options.getBattery()) +
+                                        const Globals & globals) {
+    std::unique_ptr<Test> t (new Test());
+    t->cliOptions = globals.getCliOptions();
+    t->toolkitSettings = globals.getToolkitSettings();
+    t->batteryConfiguration = globals.getBatteryConfiguration();
+    t->battery = t->cliOptions->getBattery();
+    t->objectInfo = Constants::batteryToString(t->battery) +
                        " - test " + Utils::itostr(testIndex);
     tTestInfo testInfo;
 
@@ -86,65 +89,79 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     if(testIndex == INFO_DABFILLTREE.first)         testInfo = INFO_DABFILLTREE ; else
     if(testIndex == INFO_DABFILLTREE2.first)        testInfo = INFO_DABFILLTREE2 ; else
     if(testIndex == INFO_DABMONOBIT.first)          testInfo = INFO_DABMONOBIT ; else
-        throw RTTException(test->objectInfo , "unknown test constant");
+        throw RTTException(t->objectInfo , "unknown test constant");
 
-    test->logicName = testInfo.second;
-    test->testIndex = testIndex;
+    t->logicName = testInfo.second;
+    t->testIndex = testIndex;
 
-    test->binaryDataPath = options.getBinFilePath();
-    if(test->binaryDataPath.empty())
-        throw RTTException(test->objectInfo , "path to input data can't be empty");
+    t->binaryDataPath = t->cliOptions->getBinFilePath();
+    if(t->binaryDataPath.empty())
+        raiseBugException("empty input binary data");
+        //throw RTTException(t->objectInfo , "path to input data can't be empty");
         //throw std::runtime_error("path to input data can't be empty");
 
     /* Getting default values from XML */
-    test->executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
-    if(test->executablePath.empty())
-        throw RTTException(test->objectInfo , "tag " + XPATH_BINARY_PATH + " can't be empty");
+    //t->executablePath = getXMLElementValue(cfgRoot , XPATH_BINARY_PATH);
+    t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
+    if(t->executablePath.empty())
+        raiseBugException("empty executable binary");
+        //throw RTTException(t->objectInfo , "tag " + XPATH_BINARY_PATH + " can't be empty");
         //throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
 
-    TiXmlNode * testSettingsNode = getXMLChildNodeWithAttValue(
-                    getXMLElement(cfgRoot , XPATH_TESTS_SETTINGS) ,
-                    XPATH_ATTRIBUTE_TEST_INDEX ,
-                    Utils::itostr(testIndex)
-                );
+    //TiXmlNode * testSettingsNode = getXMLChildNodeWithAttValue(
+    //                getXMLElement(cfgRoot , XPATH_TESTS_SETTINGS) ,
+    //                XPATH_ATTRIBUTE_TEST_INDEX ,
+    //                Utils::itostr(testIndex)
+    //            );
 
     /* Getting psamples option from config */
-    std::string pSamplesStr = getXMLElementValue(testSettingsNode , XPATH_TEST_PSAMPLES);
-    if(pSamplesStr.empty()) {
-        pSamplesStr = getXMLElementValue(cfgRoot , XPATH_DEFAULT_PSAMPLES);
-        if(pSamplesStr.empty())
-            throw RTTException(test->objectInfo , "p-sample count not set");
+    //std::string pSamplesStr = getXMLElementValue(testSettingsNode , XPATH_TEST_PSAMPLES);
+    //if(pSamplesStr.empty()) {
+    //    pSamplesStr = getXMLElementValue(cfgRoot , XPATH_DEFAULT_PSAMPLES);
+    //    if(pSamplesStr.empty())
+    //        throw RTTException(t->objectInfo , "p-sample count not set");
             //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
             //                         ": default or test specific p-sample count "
             //                         "must be set");
-    }
-    test->pSampleCount = Utils::strtoi(pSamplesStr);
+    //}
+    //t->pSampleCount = Utils::strtoi(pSamplesStr);
+    /* Setting psample count */
+    t->pSampleCount = t->batteryConfiguration->getDieharderTestPSamples(t->testIndex);
+    if(t->pSampleCount == Configuration::VALUE_INT_NOT_SET)
+        t->pSampleCount = t->batteryConfiguration->getDieharderDefaultPSamples();
+    if(t->pSampleCount == Configuration::VALUE_INT_NOT_SET)
+        throw RTTException(t->objectInfo , "psample count not set");
 
     /* Getting default Dieharder options from config */
-    std::string defaultArguments = getXMLElementValue(cfgRoot , XPATH_DEFAULT_ARGUMENTS);
+    //std::string defaultArguments = getXMLElementValue(cfgRoot , XPATH_DEFAULT_ARGUMENTS);
+    std::string defaultArguments = t->batteryConfiguration->getDieharderDefaultArguments();
     /* Options are separated by space */
     defaultArguments.append(" ");
 
+    //defaultArguments.append(
+    //            getXMLElementValue(testSettingsNode , XPATH_TEST_ARGUMENTS));
     defaultArguments.append(
-                getXMLElementValue(testSettingsNode , XPATH_TEST_ARGUMENTS));
+                t->batteryConfiguration->getDieharderTestArguments(t->testIndex));
 
+    /* Parsing loaded arguments */
     std::vector<std::string> vecOptions =
                 std::move(Utils::split(defaultArguments , ' '));
     if(vecOptions.size() % 2 != 0)
-        throw std::runtime_error("invalid Dieharder settings format: each option must value");
-
+        //throw std::runtime_error("invalid Dieharder settings format: each option must value");
+        throw RTTException(t->objectInfo ,
+                           "invalid test arguments format: each option must have value");
     for(size_t i = 0 ; i < vecOptions.size() ; ++i) {
         try {
             Setting setting =
                     Setting::getInstance(vecOptions[i] , vecOptions[i + 1]);
-            test->settings.push_back(std::move(setting));
+            t->settings.push_back(std::move(setting));
             ++i;
         } catch(std::runtime_error ex) {
-            throw RTTException(test->objectInfo , ex.what());
+            throw RTTException(t->objectInfo , ex.what());
         }
     }
 
-    return test;
+    return t;
 }
 
 void Test::appendTestLog(std::string & batteryLog) const {

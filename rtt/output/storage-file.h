@@ -8,6 +8,7 @@
 #include <iomanip>
 
 #include "libs/tinyXML/xmlproc.h"
+#include "rtt/globals.h"
 
 #include "rtt/clioptions.h"
 #include "rtt/output/ioutput-out.h"
@@ -34,8 +35,7 @@ public:
     static const size_t MISC_TAB_SIZE;
     static const size_t MISC_COL_WIDTH;
 
-    static std::unique_ptr<Storage> getInstance(TiXmlNode * root ,
-                                                const CliOptions & options ,
+    static std::unique_ptr<Storage> getInstance(const Globals & globals ,
                                                 const time_t & creationTime);
 
     void addNewTest(const std::string & testName);
@@ -62,6 +62,10 @@ private:
     *** Variables ***
     =================
     */
+    /* Pointers to global objects */
+    std::shared_ptr<CliOptions> cliOptions;
+    std::shared_ptr<ToolkitSettings> toolkitSettings;
+
     time_t creationTime;
     Constants::Battery batteryConstant;
     std::string inFilePath;

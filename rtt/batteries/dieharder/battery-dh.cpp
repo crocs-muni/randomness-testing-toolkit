@@ -7,45 +7,56 @@ namespace dieharder {
 const std::string Battery::XPATH_LOG_DIRECTORY = "TOOLKIT_SETTINGS/LOGGER/DIEHARDER_DIR";
 const std::string Battery::XPATH_DEFAULT_TESTS = "DIEHARDER_SETTINGS/DEFAULT_TESTS";
 
-std::unique_ptr<Battery> Battery::getInstance(const CliOptions & options) {
-    std::unique_ptr<Battery> battery (new Battery());
-    battery->objectInfo = Constants::batteryToString(options.getBattery());
-    battery->creationTime = Utils::getRawTime();
+std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
+    std::unique_ptr<Battery> b (new Battery());
+    b->cliOptions = globals.getCliOptions();
+    b->batteryConfiguration = globals.getBatteryConfiguration();
+    b->toolkitSettings = globals.getToolkitSettings();
+    b->battery = b->cliOptions->getBattery();
+    b->objectInfo = Constants::batteryToString(b->battery);
+    b->creationTime = Utils::getRawTime();
 
-    TiXmlNode * cfgRoot = NULL;
-    loadXMLFile(cfgRoot , options.getInputCfgPath());
+    //TiXmlNode * cfgRoot = NULL;
+    //loadXMLFile(cfgRoot , options.getInputCfgPath());
 
     /* Output file name */
-    std::cout << "[INFO] Processing file: " << options.getBinFilePath() << std::endl;
+    std::cout << "[INFO] Processing file: " << b->cliOptions->getBinFilePath()
+              << std::endl; // this should go away, it's ugly
 
-    /* Getting path to log file */
-    battery->logFilePath = std::move(
-                createLogFilePath(
-                    battery->creationTime,
-                    getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
-                    options.getBinFilePath()));
+    /* Constructing path to log file */
+    b->logFilePath = b->toolkitSettings->getLoggerBatteryDir(b->battery);
+    b->logFilePath.append(Utils::formatRawTime(b->creationTime , "%Y%m%d%H%M%S"));
+    b->logFilePath.append(
+                "-" + Utils::getLastItemInPath(b->cliOptions->getBinFilePath() + ".log"));
+
+    //battery->logFilePath = std::move( // Useless code now
+    //            createLogFilePath(
+    //                battery->creationTime,
+    //                getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
+    //                options.getBinFilePath()));
+
     /* Creating storage for results */
-    battery->storage = output::OutputFactory::
-            createOutput(cfgRoot , options , battery->creationTime);
+    b->storage = output::OutputFactory::createOutput(globals , b->creationTime);
 
     /* Getting constants of tests to be executed */
-    std::vector<int> testConsts = options.getTestConsts();
+    std::vector<int> testConsts = b->cliOptions->getTestConsts();
     if(testConsts.empty()) /* Read them from config if no tests were entered via CLI */
-        testConsts = parseIntValues(getXMLElementValue(cfgRoot , XPATH_DEFAULT_TESTS));
+        //testConsts = parseIntValues(getXMLElementValue(cfgRoot , XPATH_DEFAULT_TESTS));
+        testConsts = b->batteryConfiguration->getBatteryDefaultTests(b->battery);
     if(testConsts.empty())
-        throw RTTException(battery->objectInfo , "no tests were set for execution");
+        throw RTTException(b->objectInfo , "no tests were set for execution");
         //throw std::runtime_error("no tests for execution were set in options "
         //                         "and in config file");
 
     for(int i : testConsts) {
-        std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
-        battery->tests.push_back(std::move(test));
+        //std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
+        std::unique_ptr<ITest> test = Test::getInstance(i , globals);
+        b->tests.push_back(std::move(test));
     }
 
-
-
-    delete cfgRoot;
-    return battery;
+    //delete cfgRoot;
+    //return battery;
+    return b;
 }
 
 void Battery::runTests() {
@@ -105,10 +116,6 @@ void Battery::processStoredResults() {
         storage->finalizeTest();
     }
     storage->finalizeReport();
-}
-
-std::string Battery::getObjectInfo() const {
-    return objectInfo;
 }
 
 /* Following code is taken from DIEHARDER battery. */

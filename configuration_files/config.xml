@@ -2,38 +2,8 @@
 <!-- This is sample testing configuration file for
      randomness testing toolkit. -->
 <RANDOMNESS_TESTING_TOOLKIT>
-    <TOOLKIT_SETTINGS>
-    
-        <LOGGER>
-            <MAIN_DIR>testbed1/logs/</MAIN_DIR>
-            <DIEHARDER_DIR>testbed1/logs/dieharder/</DIEHARDER_DIR>
-            <NIST_STS_DIR>testbed1/logs/niststs/</NIST_STS_DIR>
-            <TESTU01_DIR>testbed1/logs/testu01/</TESTU01_DIR>
-        </LOGGER>
-        
-        <OUTPUT>
-            <FILE>
-                <MAIN_FILE>testbed1/testbed-table.txt</MAIN_FILE>
-            
-                <DIEHARDER_DIR>testbed1/reports/dieharder/</DIEHARDER_DIR>
-                <NIST_STS_DIR>testbed1/reports/niststs/</NIST_STS_DIR>
-                <TU01_SMALLCRUSH_DIR>testbed1/reports/testu01/scrush/</TU01_SMALLCRUSH_DIR>
-                <TU01_CRUSH_DIR>testbed1/reports/testu01/crush/</TU01_CRUSH_DIR>
-                <TU01_BIGCRUSH_DIR>testbed1/reports/testu01/bcrush/</TU01_BIGCRUSH_DIR>
-                <TU01_RABBIT_DIR>testbed1/reports/testu01/rabbit/</TU01_RABBIT_DIR>
-                <TU01_ALPHABIT_DIR>testbed1/reports/testu01/alphabit/</TU01_ALPHABIT_DIR>
-            </FILE>
-        
-            <DATABASE>
-                <SOMETHING>nothing</SOMETHING>    
-            </DATABASE>
-        </OUTPUT>
-        
-    </TOOLKIT_SETTINGS>
 
-    <DIEHARDER_SETTINGS>
-        <BINARY_PATH>/home/lubo/Desktop/dieharder/bin/dieharder</BINARY_PATH>
-        
+    <DIEHARDER_SETTINGS>     
         <DEFAULT_TESTS>0-4 8-13 15-17 100-102 200-209</DEFAULT_TESTS>
         <DEFAULT_PSAMPLES>100</DEFAULT_PSAMPLES>
         <DEFAULT_ARGUMENTS>-W 0.01 -X 0.01</DEFAULT_ARGUMENTS>
@@ -69,16 +39,21 @@
     </DIEHARDER_SETTINGS>
 
     <NIST_STS_SETTINGS>
-        <BINARY_PATH>/home/lubo/Desktop/sysoNIST/assess</BINARY_PATH>
-        
         <DEFAULT_TESTS>1-15</DEFAULT_TESTS>
         <DEFAULT_STREAM_SIZE>1000000</DEFAULT_STREAM_SIZE>
         <DEFAULT_STREAM_COUNT>100</DEFAULT_STREAM_COUNT>
+        
+        <TESTS_SETTINGS>
+            <SETTINGS test="2">
+                <STREAM_SIZE>100000</STREAM_SIZE>
+                <STREAM_COUNT>1000</STREAM_COUNT>
+                <BLOCK_LENGTH>256</BLOCK_LENGTH>
+            </SETTINGS>
+        </TESTS_SETTINGS>
+        
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>
-        <BINARY_PATH>/home/lubo/Desktop/TestU01/TestU01</BINARY_PATH>
-        
         <DEFAULT_TESTS_SCRUSH>1-10</DEFAULT_TESTS_SCRUSH>
         <DEFAULT_TESTS_CRUSH>1-96</DEFAULT_TESTS_CRUSH>
         <DEFAULT_TESTS_BCRUSH>1-106</DEFAULT_TESTS_BCRUSH>
@@ -87,22 +62,35 @@
         <DEFAULT_REPETITIONS>1</DEFAULT_REPETITIONS>
         <DEFAULT_BIT_NB>8388608000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
-        <DEFAULT_BIT_S>32</DEFAULT_BIT_S> 
+        <DEFAULT_BIT_S>32</DEFAULT_BIT_S>
         
         <SMALL_CRUSH_SETTINGS>
-            <SETTINGS test="1">
-                <REPETITIONS>3</REPETITIONS>
+            <SETTINGS test="1"> <!-- smarsa_BirthdaySpacing -->
+                <REPETITIONS>5</REPETITIONS>
                 <PARAMS>
-                    <PAR name="N">1</PAR>
-                    <PAR name="n">1000000</PAR>
-                    <PAR name="r">0</PAR>
-                    <PAR name="d">1073741824</PAR>
-                    <PAR name="t">2</PAR>
-                    <PAR name="p">5</PAR>
+                    <PAR name="N">10</PAR>
+                    <PAR name="n">10</PAR>
+                    <PAR name="r">10</PAR>
+                    <PAR name="d">10</PAR>
+                    <PAR name="t">10</PAR>
+                    <PAR name="p">10</PAR>
                 </PARAMS>
             </SETTINGS>
         </SMALL_CRUSH_SETTINGS>
         
+        <CRUSH_SETTINGS>
+            <SETTINGS test="2"> <!-- smarsa_SerialOver -->
+                <REPETITIONS>5</REPETITIONS>
+                <PARAMS>
+                    <PAR name="N">125</PAR>
+                    <PAR name="r">8957</PAR>
+                    <PAR name="d">122345</PAR>
+                    <PAR name="t">0</PAR>
+                    <PAR name="n">485</PAR>
+                </PARAMS>
+            </SETTINGS>
+
+        </CRUSH_SETTINGS>
     </TESTU01_SETTINGS>
 
     <EACIRC_SETTINGS>empty</EACIRC_SETTINGS>

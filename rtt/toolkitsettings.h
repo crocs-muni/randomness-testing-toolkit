@@ -10,11 +10,10 @@ namespace rtt {
 
 class ToolkitSettings {
 public:
-    static ToolkitSettings getInstance(
-            const std::string & configFileName = Constants::FILE_TOOLKIT_SETTINGS);
+    /* Get object */
+    static ToolkitSettings getInstance(const std::string & cfgFileName);
 
     /* Getters for variables */
-
     std::string getLoggerRunLogDir() const;
 
     std::string getRsFileOutFile() const;

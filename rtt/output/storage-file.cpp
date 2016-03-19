@@ -16,40 +16,44 @@ const std::string Storage::XPATH_DIR_TU01_AB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/
 const size_t Storage::MISC_TAB_SIZE     = 4;
 const size_t Storage::MISC_COL_WIDTH    = 30;
 
-std::unique_ptr<Storage> Storage::getInstance(TiXmlNode * root ,
-                                              const CliOptions & options ,
+std::unique_ptr<Storage> Storage::getInstance(const Globals & globals ,
                                               const time_t & creationTime) {
-    std::unique_ptr<Storage> storage (new Storage());
-    storage->creationTime = creationTime;
-    storage->batteryConstant = options.getBattery();
-    storage->inFilePath = options.getBinFilePath();
+    std::unique_ptr<Storage> s (new Storage());
+    s->cliOptions = globals.getCliOptions();
+    s->toolkitSettings= globals.getToolkitSettings();
+    s->creationTime = creationTime;
+    s->batteryConstant = s->cliOptions->getBattery();
+    s->inFilePath = s->cliOptions->getBinFilePath();
 
-    std::string dirXPath;
-    switch(storage->batteryConstant) {
-    case Constants::Battery::DIEHARDER       : dirXPath = XPATH_DIR_DH; break;
-    case Constants::Battery::NIST_STS        : dirXPath = XPATH_DIR_NIST; break;
-    case Constants::Battery::TU01_SMALLCRUSH : dirXPath = XPATH_DIR_TU01_SC; break;
-    case Constants::Battery::TU01_CRUSH      : dirXPath = XPATH_DIR_TU01_C; break;
-    case Constants::Battery::TU01_BIGCRUSH   : dirXPath = XPATH_DIR_TU01_BC; break;
-    case Constants::Battery::TU01_RABBIT     : dirXPath = XPATH_DIR_TU01_RB; break;
-    case Constants::Battery::TU01_ALPHABIT   : dirXPath = XPATH_DIR_TU01_AB; break;
-    default:raiseBugException("invalid battery");
-    }
+    //std::string dirXPath;
+    //switch(s->batteryConstant) {
+    //case Constants::Battery::DIEHARDER       : dirXPath = XPATH_DIR_DH; break;
+    //case Constants::Battery::NIST_STS        : dirXPath = XPATH_DIR_NIST; break;
+    //case Constants::Battery::TU01_SMALLCRUSH : dirXPath = XPATH_DIR_TU01_SC; break;
+    //case Constants::Battery::TU01_CRUSH      : dirXPath = XPATH_DIR_TU01_C; break;
+    //case Constants::Battery::TU01_BIGCRUSH   : dirXPath = XPATH_DIR_TU01_BC; break;
+    //case Constants::Battery::TU01_RABBIT     : dirXPath = XPATH_DIR_TU01_RB; break;
+    //case Constants::Battery::TU01_ALPHABIT   : dirXPath = XPATH_DIR_TU01_AB; break;
+    //default:raiseBugException("invalid battery");
+    //}
 
     /* Getting file name for main output file */
-    storage->mainOutFilePath = getXMLElementValue(root , XPATH_FILE_MAIN);
+    //s->mainOutFilePath = getXMLElementValue(globals , XPATH_FILE_MAIN);
+    s->mainOutFilePath = s->toolkitSettings->getRsFileOutFile();
 
     /* Creating file name for test report file */
-    std::string binFileName = Utils::getLastItemInPath(storage->inFilePath);
-    std::string datetime = Utils::formatRawTime(storage->creationTime , "%Y%m%d%H%M%S");
-    storage->outFilePath = getXMLElementValue(root , dirXPath);
-    if(!storage->outFilePath.empty() && storage->outFilePath.back() != '/')
-        storage->outFilePath.append("/");
-    storage->outFilePath.append(datetime + "-" + binFileName + ".report");
+    std::string binFileName = Utils::getLastItemInPath(s->inFilePath);
+    std::string datetime = Utils::formatRawTime(s->creationTime , "%Y%m%d%H%M%S");
+    s->outFilePath = s->toolkitSettings->getRsFileBatteryDir(s->cliOptions->getBattery());
+    s->outFilePath.append(datetime + "-" + binFileName + ".report");
+    //s->outFilePath = getXMLElementValue(globals , dirXPath);
+    //if(!s->outFilePath.empty() && s->outFilePath.back() != '/')
+    //    s->outFilePath.append("/");
+    //s->outFilePath.append(datetime + "-" + binFileName + ".report");
 
-    storage->makeReportHeader();
+    s->makeReportHeader();
 
-    return storage;
+    return s;
 }
 
 void Storage::addNewTest(const std::string & testName) {

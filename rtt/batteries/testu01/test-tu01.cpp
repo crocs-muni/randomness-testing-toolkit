@@ -176,47 +176,22 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     } catch (std::runtime_error ex) {
         throw RTTException(t->objectInfo , ex.what());
     }
-
-    //TiXmlNode * testSettings = getXMLChildNodeWithAttValue(
-    //                            getXMLElement(cfgRoot , batteryXPath),
-    //                            XPATH_ATTRIBUTE_TEST_INDEX ,
-    //                            Utils::itostr(testIndex)
-    //                           );
-
-    //std::string strReps = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-    //                                             XPATH_DEFAULT_REPS ,
-    //                                             XPATH_TEST_REPS);
-    //if(strReps.empty())
-    //    throw RTTException(t->objectInfo , "repetitions not set");
-        //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-        //                         ": default or test specific repetitions must be set");
-    //t->repetitions = Utils::strtoi(strReps);
+    /* Repetitions */
     t->repetitions = t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
                                                                                t->testIndex);
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
         t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions();
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(t->objectInfo , "repetitions not set");
-
-    //t->executablePath = getXMLElementValue(cfgRoot , XPATH_EXECUTABLE_BINARY);
-    //if(t->executablePath.empty())
-    //    throw RTTException(t->objectInfo , "tag " + XPATH_EXECUTABLE_BINARY + " can't be empty");
-        //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-        //                         ": path to executable binary can't be empty");
+    /* TestU01 executable path */
     t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
     if(t->executablePath.empty())
         raiseBugException("empty executable path");
-
-    //t->binaryDataPath = options.getBinFilePath();
-    //if(t->binaryDataPath.empty())
-    //    throw RTTException(t->objectInfo , "path to input data can't be empty");
-        //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-        //                         ": path to binary data can't be empty");
+    /* Input binary data path */
     t->binaryDataPath = t->cliOptions->getBinFilePath();
     if(t->binaryDataPath.empty())
         raiseBugException("empty input binary data");
-
-    /* Getting params - only for Crush batteries */ // revisit l8r
+    /* Getting params - only for Crush batteries */
     if(t->battery == Constants::Battery::TU01_SMALLCRUSH ||
             t->battery == Constants::Battery::TU01_CRUSH ||
             t->battery == Constants::Battery::TU01_BIGCRUSH) {
@@ -231,8 +206,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         }
         if(!t->params.empty() && t->params.size() != t->paramNames.size())
             throw RTTException(t->objectInfo , "incomplete parameter settings");
-
-        //t->checkSetParams(getXMLElement(testSettings , XPATH_TEST_PARAMS));
     }
 
     /* Getting nb - Rabbit and Alphabit */
@@ -244,14 +217,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
             t->bit_nb = t->batteryConfiguration->getTestu01DefaultBitNB();
         if(t->bit_nb.empty())
             throw RTTException(t->objectInfo , "bit_nb option not set");
-//        t->bit_nb = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-//                                              XPATH_DEFAULT_BIT_NB ,
-//                                              XPATH_TEST_BIT_NB);
-//        if(t->bit_nb.empty())
-//            throw RTTException(t->objectInfo , "bit_nb option not set");
-//            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-//            //                         ": default or test specific bit_nb option must be set"
-//            //                         " in Rabbit and Alphabit battery");
     }
     /* Getting r s - Alphabit */
     if(t->battery == Constants::Battery::TU01_ALPHABIT) {
@@ -268,23 +233,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
             t->bit_s = t->batteryConfiguration->getTestu01DefaultBitS();
         if(t->bit_s.empty())
             throw RTTException(t->objectInfo , "bit_s option not set");
-//        t->bit_r = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-//                                             XPATH_DEFAULT_BIT_R ,
-//                                             XPATH_TEST_BIT_R);
-//        if(t->bit_r.empty())
-//            throw RTTException(t->objectInfo , "bit_r option not set");
-//            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-//            //                         ": default or test specific bit_r option must be set"
-//            //                         " in Alphabit battery");
-
-//        t->bit_s = ITest::getTestOrDefOpt(cfgRoot , testSettings ,
-//                                             XPATH_DEFAULT_BIT_S ,
-//                                             XPATH_TEST_BIT_S);
-//        if(t->bit_s.empty())
-//            throw RTTException(t->objectInfo , "bit_s option not set");
-//            //throw std::runtime_error("Test " + Utils::itostr(testIndex) +
-//            //                         ": default or test specific bit_s option must be set"
-//            //                         " in Alphabit battery");
     }
     return t;
 }
@@ -292,17 +240,13 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
 void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
         throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
-        //throw std::runtime_error("test " + Utils::itostr(testIndex) + " wasn't yet "
-        //                         "executed, can't provide test log");
+
     batteryLog.append(testLog);
 }
 
 void Test::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
-
-    //std::cout << "Executing test " << testIndex << " in battery "
-    //          << Constants::batteryToString(battery) << std::endl;
 
     testLog = TestRunner::executeBinary(executablePath ,
                                         createArgs());
@@ -345,7 +289,6 @@ std::vector<std::string> Test::getStatistics() const {
 std::vector<tTestPvals> Test::getResults() const {
     if(!executed)
         throw RTTException(objectInfo , "test wasn't executed, can't provide results");
-        //throw std::runtime_error("can't return results before execution of test");
 
     return results;
 }
@@ -513,58 +456,6 @@ tTestInfo Test::pickTestInfo(int testIndex , Constants::Battery battery ,
     return tinfo;
 }
 
-void Test::checkSetParams(TiXmlNode * paramsNode) {
-    if(!paramsNode || !paramsNode->FirstChild())
-        /* Given node has no params, test has no parameters */
-        return;
-
-    std::vector<tParam> parameters(paramNames.size());
-    tParam emptyPar;
-    bool parIsSet;
-    const char * parName;
-    const char * parValue;
-
-    for(TiXmlElement * parElement = paramsNode->FirstChildElement();
-            parElement ;
-            parElement = parElement->NextSiblingElement()) {
-        parName = parElement->Attribute(XPATH_ATTRIBUTE_PAR_NAME.c_str());
-        parValue = parElement->GetText();
-        if(!parName || strlen(parName) < 1)
-            throw RTTException(objectInfo , "PAR node must have non-empty attribute: " +
-                               XPATH_ATTRIBUTE_PAR_NAME);
-            //throw std::runtime_error(logicName + ": "
-            //                         "PAR node must have non-empty attribute: " +
-            //                         XPATH_ATTRIBUTE_PAR_NAME);
-        if(!parValue || strlen(parValue) < 1)
-            throw RTTException(objectInfo , "PAR node can't be empty");
-            //throw std::runtime_error(logicName + ": PAR node can't be empty");
-
-        parIsSet = false;
-        for(size_t i = 0 ; i < paramNames.size() ; ++i) {
-            if(paramNames.at(i) == parName) {
-                if(parameters.at(i) != emptyPar)
-                    throw RTTException(objectInfo , "can't set parameter \"" +
-                                       paramNames.at(i) + "\" multiple times");
-                    //throw std::runtime_error(logicName + ": can't set parameter \"" +
-                    //                         paramNames.at(i) + "\" multiple times");
-                parameters.at(i).first = parName;
-                parameters.at(i).second = parValue;
-                parIsSet = true;
-                break;
-            }
-        }
-        if(!parIsSet)
-            throw RTTException(objectInfo , "unknown parameter name: " + (std::string)parName);
-            //throw std::runtime_error(logicName + ": unknown parameter name: " +
-            //                         (std::string)parName);
-    }
-    for(auto i : parameters)
-        if(i == emptyPar)
-            throw RTTException(objectInfo , "not all test parameters were set");
-            //throw std::runtime_error(logicName + ": not all test parameters were set");
-    params = std::move(parameters);
-}
-
 std::string Test::createArgs() const {
     std::stringstream arguments;
     arguments << "testu01 ";
@@ -635,8 +526,6 @@ void Test::extractPvalues() {
                                                    "number of repetitions per test." << std::endl;
         return;
     }
-        //throw std::runtime_error("can't extract p-values from log: number of"
-        //                         " p-value is not divisible by repetitions");
     statCount = pValCount / repetitions;
     if(statCount != statisticNames.size()) {
         /* So this normally doesn't happen but(!) some tests have variable

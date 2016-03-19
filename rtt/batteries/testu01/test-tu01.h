@@ -275,8 +275,6 @@ private:
     static tTestInfo pickTestInfo(int testIndex, Constants::Battery battery,
                                   std::string & batteryXPath);
 
-    void checkSetParams(TiXmlNode * paramsNode);
-
     std::string createArgs() const;
 
     void extractPvalues();

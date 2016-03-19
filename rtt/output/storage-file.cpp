@@ -25,20 +25,7 @@ std::unique_ptr<Storage> Storage::getInstance(const Globals & globals ,
     s->batteryConstant = s->cliOptions->getBattery();
     s->inFilePath = s->cliOptions->getBinFilePath();
 
-    //std::string dirXPath;
-    //switch(s->batteryConstant) {
-    //case Constants::Battery::DIEHARDER       : dirXPath = XPATH_DIR_DH; break;
-    //case Constants::Battery::NIST_STS        : dirXPath = XPATH_DIR_NIST; break;
-    //case Constants::Battery::TU01_SMALLCRUSH : dirXPath = XPATH_DIR_TU01_SC; break;
-    //case Constants::Battery::TU01_CRUSH      : dirXPath = XPATH_DIR_TU01_C; break;
-    //case Constants::Battery::TU01_BIGCRUSH   : dirXPath = XPATH_DIR_TU01_BC; break;
-    //case Constants::Battery::TU01_RABBIT     : dirXPath = XPATH_DIR_TU01_RB; break;
-    //case Constants::Battery::TU01_ALPHABIT   : dirXPath = XPATH_DIR_TU01_AB; break;
-    //default:raiseBugException("invalid battery");
-    //}
-
     /* Getting file name for main output file */
-    //s->mainOutFilePath = getXMLElementValue(globals , XPATH_FILE_MAIN);
     s->mainOutFilePath = s->toolkitSettings->getRsFileOutFile();
 
     /* Creating file name for test report file */
@@ -46,10 +33,6 @@ std::unique_ptr<Storage> Storage::getInstance(const Globals & globals ,
     std::string datetime = Utils::formatRawTime(s->creationTime , "%Y%m%d%H%M%S");
     s->outFilePath = s->toolkitSettings->getRsFileBatteryDir(s->cliOptions->getBattery());
     s->outFilePath.append(datetime + "-" + binFileName + ".report");
-    //s->outFilePath = getXMLElementValue(globals , dirXPath);
-    //if(!s->outFilePath.empty() && s->outFilePath.back() != '/')
-    //    s->outFilePath.append("/");
-    //s->outFilePath.append(datetime + "-" + binFileName + ".report");
 
     s->makeReportHeader();
 

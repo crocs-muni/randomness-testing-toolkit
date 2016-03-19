@@ -16,7 +16,7 @@
 //      3.1. Better exception handling              (WIP)
 //      3.2. Batteries runtime error handling       (Partially)
 //      3.3. File logger
-//      3.4. Better config file organization        (WIP)
+//      3.4. Better config file organization        (Ok)
 //      3.5. Create CMake project                   (Final step)
 //      3.6. Write documentation, refactor          (More final step)
 //  4. ???

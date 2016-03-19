@@ -61,7 +61,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     if(testIndex == std::get<0>(INFO_RNDEXCURSIONSVAR)) testInfo = INFO_RNDEXCURSIONSVAR; else
     if(testIndex == std::get<0>(INFO_SERIAL))           testInfo = INFO_SERIAL; else
     if(testIndex == std::get<0>(INFO_LINEARCOMPLEXITY)) testInfo = INFO_LINEARCOMPLEXITY; else
-        //throw std::runtime_error("unknown test constant in NIST STS: " + Utils::itostr(testIndex));
         throw RTTException(t->objectInfo , "unknown test constants");
 
 
@@ -71,56 +70,27 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
              t->subTestCount ,
              t->adjustableBlockLen) = testInfo;
 
-    /* Getting default values from XML */
+    /* Binary data path */
     t->binaryDataPath = t->cliOptions->getBinFilePath();
     if(t->binaryDataPath.empty())
         raiseBugException("empty input binary data");
-        //throw RTTException(t->objectInfo , "path to input data can't be empty");
-        //throw std::runtime_error("path to input data can't be empty");
+    /* NIST STS executable path */
     t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
     if(t->executablePath.empty())
         raiseBugException("empty executable binary");
-                //throw RTTException(t->objectInfo , "tag " + XPATH_BINARY_PATH + " can't be empty");
-        //throw std::runtime_error("tag " + XPATH_BINARY_PATH + " can't be empty");
-
-    /* Getting test specific settings from XML */
-//    TiXmlNode * testsSettingsNode = getXMLChildNodeWithAttValue(
-//                    getXMLElement(globals , XPATH_TESTS_SETTINGS),
-//                    XPATH_ATTRIBUTE_TEST_INDEX,
-//                    Utils::itostr(t->testIndex)
-//                );
-
-//    t->streamSize = ITest::getTestOrDefOpt(globals , testsSettingsNode ,
-//                                           XPATH_DEFAULT_STREAM_SIZE ,
-//                                           XPATH_TEST_STREAM_SIZE);
-//    t->streamCount = ITest::getTestOrDefOpt(globals , testsSettingsNode ,
-//                                               XPATH_DEFAULT_STREAM_COUNT ,
-//                                               XPATH_TEST_STREAM_COUNT);
-//    t->blockLength = getXMLElementValue(testsSettingsNode ,
-//                                           XPATH_TEST_BLOCK_LENGTH);
-
-//    if(t->streamSize.empty()) {
-//        throw RTTException(t->objectInfo , "stream size not set");
-//        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_SIZE + " can't be empty"
-//        //                         " without setting stream size in tests settings.");
-//    }
-//    if(t->streamCount.empty()) {
-//        throw RTTException(t->objectInfo , "stream count not set");
-//        //throw std::runtime_error("tag " + XPATH_DEFAULT_STREAM_COUNT + " can't be empty"
-//        //                         " without setting stream count in tests settings.");
-//    }
+    /* Stream size */
     t->streamSize = t->batteryConfiguration->getNiststsTestStreamSize(testIndex);
     if(t->streamSize.empty())
         t->streamSize = t->batteryConfiguration->getNiststsDefaultStreamSize();
     if(t->streamSize.empty())
         throw RTTException(t->objectInfo , "stream size not set");
-
+    /* Count of streams */
     t->streamCount = t->batteryConfiguration->getNiststsTestStreamCount(testIndex);
     if(t->streamCount.empty())
         t->streamCount = t->batteryConfiguration->getNiststsDefaultStreamCount();
     if(t->streamCount.empty())
         throw RTTException(t->objectInfo , "stream count not set");
-
+    /* Block length */
     t->blockLength = t->batteryConfiguration->getNiststsTestBlockLength(testIndex);
 
     return t;
@@ -129,8 +99,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
 void Test::appendTestLog(std::string & batteryLog) const {
     if(!executed)
         throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
-        //throw std::runtime_error("test " + Utils::itostr(static_cast<int>(testIndex)) + ""
-        //                         " wasn't yet executed, can't provide test log");
+
     batteryLog.append(outputLog);
     batteryLog.append(testLog);
 }

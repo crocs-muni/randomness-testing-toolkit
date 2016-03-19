@@ -16,17 +16,8 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
     b->objectInfo = Constants::batteryToString(b->battery);
     b->creationTime = Utils::getRawTime();
 
-    //TiXmlNode * cfgRoot = NULL;
-    //loadXMLFile(cfgRoot , globals.getInputCfgPath());
-
     std::cout << "[INFO] Processing file: " << b->cliOptions->getBinFilePath() << std::endl;
 
-    /* Constructing path to log file */
-    //b->logFilePath = std::move(
-    //            createLogFilePath(
-    //                b->creationTime,
-    //                getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
-    //                globals.getBinFilePath()));
     b->logFilePath = b->toolkitSettings->getLoggerBatteryDir(b->battery);
     b->logFilePath.append(Utils::formatRawTime(b->creationTime , "%Y%m%d%H%M%S"));
     b->logFilePath.append(
@@ -36,13 +27,6 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
     b->storage = output::OutputFactory::createOutput(globals , b->creationTime);
 
     /* Getting constants of tests to be executed */
-    //std::vector<int> testConsts = globals.getTestConsts();
-    //if(testConsts.empty()) /* Read them from config if no tests were entered via CLI */
-    //    testConsts = parseIntValues(getXMLElementValue(cfgRoot , XPATH_DEFAULT_TESTS));
-    //if(testConsts.empty())
-    //    throw RTTException(b->objectInfo , "no tests were set for execution");
-        //throw std::runtime_error("no tests for execution were set in options "
-        //                         "and in config file");
     std::vector<int> testConsts = b->cliOptions->getTestConsts();
     if(testConsts.empty())
         testConsts = b->batteryConfiguration->getBatteryDefaultTests(b->battery);
@@ -50,7 +34,6 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
         throw RTTException(b->objectInfo , "no tests were set for execution");
 
     for(int i : testConsts) {
-        //std::unique_ptr<ITest> test = Test::getInstance(i , cfgRoot , globals);
         std::unique_ptr<ITest> test = Test::getInstance(i , globals);
         b->tests.push_back(std::move(test));
     }
@@ -64,12 +47,8 @@ void Battery::runTests() {
     /* In time, it's possible to add some multithreading (added now) */
     if(executed)
         throw RTTException(objectInfo , "battery was already executed");
-        //throw std::runtime_error("battery was already executed");
 
     TestRunner::executeTests(std::ref(tests));
-
-    //for(auto & i : tests)
-    //    i->execute();
 
     /* Setting executed to true, allowing postprocessing */
     executed = true;
@@ -78,7 +57,6 @@ void Battery::runTests() {
 void Battery::processStoredResults() {
     if(!executed)
         throw RTTException(objectInfo , "battery must be executed before result processing");
-        //throw std::runtime_error("can't process results before execution of battery");
 
     std::cout << "Storing log and results." << std::endl;
 

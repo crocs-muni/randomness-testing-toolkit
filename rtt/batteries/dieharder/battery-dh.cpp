@@ -16,12 +16,9 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
     b->objectInfo = Constants::batteryToString(b->battery);
     b->creationTime = Utils::getRawTime();
 
-    //TiXmlNode * cfgRoot = NULL;
-    //loadXMLFile(cfgRoot , options.getInputCfgPath());
-
     /* Output file name */
     std::cout << "[INFO] Processing file: " << b->cliOptions->getBinFilePath()
-              << std::endl; // this should go away, it's ugly
+              << std::endl;
 
     /* Constructing path to log file */
     b->logFilePath = b->toolkitSettings->getLoggerBatteryDir(b->battery);
@@ -29,45 +26,29 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
     b->logFilePath.append(
                 "-" + Utils::getLastItemInPath(b->cliOptions->getBinFilePath() + ".log"));
 
-    //battery->logFilePath = std::move( // Useless code now
-    //            createLogFilePath(
-    //                battery->creationTime,
-    //                getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
-    //                options.getBinFilePath()));
-
     /* Creating storage for results */
     b->storage = output::OutputFactory::createOutput(globals , b->creationTime);
 
     /* Getting constants of tests to be executed */
     std::vector<int> testConsts = b->cliOptions->getTestConsts();
-    if(testConsts.empty()) /* Read them from config if no tests were entered via CLI */
-        //testConsts = parseIntValues(getXMLElementValue(cfgRoot , XPATH_DEFAULT_TESTS));
+    if(testConsts.empty())
         testConsts = b->batteryConfiguration->getBatteryDefaultTests(b->battery);
     if(testConsts.empty())
         throw RTTException(b->objectInfo , "no tests were set for execution");
-        //throw std::runtime_error("no tests for execution were set in options "
-        //                         "and in config file");
 
     for(int i : testConsts) {
-        //std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
         std::unique_ptr<ITest> test = Test::getInstance(i , globals);
         b->tests.push_back(std::move(test));
     }
 
-    //delete cfgRoot;
-    //return battery;
     return b;
 }
 
 void Battery::runTests() {
     if(executed)
         throw RTTException(objectInfo , "battery was already executed");
-        //throw std::runtime_error("battery was already executed");
 
     TestRunner::executeTests(std::ref(tests));
-
-    //for(auto & i : tests)
-    //    i->execute();
 
     executed = true;
 }
@@ -75,7 +56,6 @@ void Battery::runTests() {
 void Battery::processStoredResults() {
     if(!executed)
         throw RTTException(objectInfo , "battery must be executed before result processing");
-        //throw std::runtime_error("can't process results before execution of battery");
 
     std::cout << "Storing log and results." << std::endl;
 

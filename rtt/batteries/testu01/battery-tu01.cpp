@@ -20,9 +20,6 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
     b->objectInfo = Constants::batteryToString(b->battery);
     b->creationTime = Utils::getRawTime();
 
-    //TiXmlNode * cfgRoot = NULL;
-    //loadXMLFile(cfgRoot , options.getInputCfgPath());
-
     std::cout << "[INFO] Processing file: " << b->cliOptions->getBinFilePath()
               << std::endl;
 
@@ -32,11 +29,6 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
     b->logFilePath.append(
                 "-" + Utils::getLastItemInPath(b->cliOptions->getBinFilePath() + ".log"));
 
-    //b->logFilePath = std::move(
-    //            createLogFilePath(
-    //                b->creationTime,
-    //                getXMLElementValue(cfgRoot , XPATH_LOG_DIRECTORY),
-    //                options.getBinFilePath()));
     /* Creating storage for results */
     b->storage = output::OutputFactory::createOutput(globals , b->creationTime);
     /* Getting constants of tests to be executed */
@@ -45,37 +37,8 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
         testConsts = b->batteryConfiguration->getBatteryDefaultTests(b->battery);
     if(testConsts.empty())
         throw RTTException(b->objectInfo , "no tests were set for execution");
-//    std::vector<int> testConsts = options.getTestConsts();
-//    if(testConsts.empty()) {
-//        /* Read them from config if no tests were entered via CLI */
-//        std::string testsXPath;
-//        switch(options.getBattery()) {
-//        case Constants::Battery::TU01_SMALLCRUSH:
-//            testsXPath = XPATH_DEFAULT_TESTS_SMALL_CRUSH;
-//            break;
-//        case Constants::Battery::TU01_CRUSH:
-//            testsXPath = XPATH_DEFAULT_TESTS_CRUSH;
-//            break;
-//        case Constants::Battery::TU01_BIGCRUSH:
-//            testsXPath = XPATH_DEFAULT_TESTS_BIG_CRUSH;
-//            break;
-//        case Constants::Battery::TU01_RABBIT:
-//            testsXPath = XPATH_DEFAULT_TESTS_RABBIT;
-//            break;
-//        case Constants::Battery::TU01_ALPHABIT:
-//            testsXPath = XPATH_DEFAULT_TESTS_ALPHABIT;
-//            break;
-//        default:raiseBugException("invalid battery");
-//        }
-//        testConsts = parseIntValues(getXMLElementValue(cfgRoot , testsXPath));
-//    }
-//    if(testConsts.empty())
-//        throw RTTException(b->objectInfo , "no tests were set for execution");
-//        //throw std::runtime_error("no tests for execution were set in options "
-//        //                         "and in config file");
 
     for(int i : testConsts) {
-        //std::unique_ptr<ITest> test = Test::getInstance(i , options , cfgRoot);
         std::unique_ptr<ITest> test = Test::getInstance(i , globals);
         b->tests.push_back(std::move(test));
     }
@@ -87,28 +50,8 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
 void Battery::runTests() {
     if(executed)
         throw RTTException(objectInfo , "battery was already executed");
-        //throw std::runtime_error("battery was already executed");
 
     TestRunner::executeTests(std::ref(tests));
-
-//    for(size_t i = 0 ; i < tests.size() ; ++i) {
-//        tests.at(i)->execute();
-//        if(!tests.at(i).execute()) {
-//            /* Execution timed out, don't execute following tests with same name */
-//            std::string testName = tests.at(i).getLogicName();
-//            tests.erase(tests.begin() + i);
-//            for(;;) {
-//                if(testName == tests.at(i).getLogicName()) {
-//                    std::cout << "[WARNING] Test " << tests.at(i).getTestIndex() << " won't be executed, "
-//                                 "previous test of the same type timeouted." << std::endl;
-//                    tests.erase(tests.begin() + i);
-//                } else {
-//                    --i;
-//                    break;
-//                }
-//            }
-//        }
-//    }
 
     executed = true;
 }
@@ -116,7 +59,6 @@ void Battery::runTests() {
 void Battery::processStoredResults() {
     if(!executed)
         throw RTTException(objectInfo , "battery must be executed before result processing");
-        //throw std::runtime_error("can't process results before execution of battery");
 
     std::cout << "Storing battery logs and results." << std::endl;
 

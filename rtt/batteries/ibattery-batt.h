@@ -8,6 +8,8 @@ namespace batteries {
 
 class IBattery {
 public:
+    static std::unique_ptr<IBattery> getInstance(const Globals & globals);
+
     virtual ~IBattery() {}
 
     virtual void runTests() = 0;

@@ -1,8 +1,7 @@
 #ifndef RTT_BATTERIES_ITEST_H
 #define RTT_BATTERIES_ITEST_H
 
-#include "libs/tinyXML/xmlproc.h"
-#include "rtt/utils.h"
+#include "rtt/globals.h"
 
 namespace rtt {
 namespace batteries {
@@ -11,6 +10,8 @@ typedef std::vector<double> tTestPvals;
 
 class ITest {
 public:
+    static std::unique_ptr<ITest> getInstance(int testIndex ,
+                                              const Globals & globals);
 
     virtual ~ITest() {}
 

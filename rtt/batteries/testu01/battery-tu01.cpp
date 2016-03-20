@@ -30,7 +30,7 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
                 "-" + Utils::getLastItemInPath(b->cliOptions->getBinFilePath() + ".log"));
 
     /* Creating storage for results */
-    b->storage = output::OutputFactory::createOutput(globals , b->creationTime);
+    b->storage = output::IOutput::getInstance(globals , b->creationTime);
     /* Getting constants of tests to be executed */
     std::vector<int> testConsts = b->cliOptions->getTestConsts();
     if(testConsts.empty())
@@ -39,7 +39,7 @@ std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
         throw RTTException(b->objectInfo , "no tests were set for execution");
 
     for(int i : testConsts) {
-        std::unique_ptr<ITest> test = Test::getInstance(i , globals);
+        std::unique_ptr<ITest> test = ITest::getInstance(i , globals);
         b->tests.push_back(std::move(test));
     }
 

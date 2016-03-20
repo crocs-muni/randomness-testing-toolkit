@@ -7,6 +7,26 @@
 namespace rtt {
 namespace batteries {
 
+std::unique_ptr<IBattery> IBattery::getInstance(const Globals & globals) {
+    switch(globals.getCliOptions()->getBattery()) {
+    case Constants::Battery::DIEHARDER:
+        return dieharder::Battery::getInstance(globals);
+    case Constants::Battery::NIST_STS:
+        return niststs::Battery::getInstance(globals);
+    case Constants::Battery::TU01_SMALLCRUSH:
+        //return testu01::Battery::getInstance(globals);
+    case Constants::Battery::TU01_CRUSH:
+        //return testu01::Battery::getInstance(globals);
+    case Constants::Battery::TU01_BIGCRUSH:
+        //return testu01::Battery::getInstance(globals);
+    case Constants::Battery::TU01_RABBIT:
+        //return testu01::Battery::getInstance(globals);
+    case Constants::Battery::TU01_ALPHABIT:
+        return testu01::Battery::getInstance(globals);
+    default:raiseBugException("invalid battery");
+    }
+}
+
 std::string IBattery::createLogFilePath(const time_t & battCreationTime,
                                          const std::string & logDirectory,
                                          const std::string & binFilePath) {

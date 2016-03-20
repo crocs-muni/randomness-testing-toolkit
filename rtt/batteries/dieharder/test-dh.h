@@ -4,10 +4,8 @@
 #include <string.h>
 #include <vector>
 
-#include "libs/tinyXML/xmlproc.h"
-#include "rtt/globals.h"
-#include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/itest-batt.h"
+#include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
 
 namespace rtt {

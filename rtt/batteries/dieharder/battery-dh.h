@@ -2,10 +2,11 @@
 #define RTT_BATTERIES_DIEHARDER_BATTERY_H
 
 #include "rtt/globals.h"
-#include "rtt/batteries/testrunner-batt.h"
+#include "rtt/output/ioutput-out.h"
+#include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
-#include "rtt/batteries/dieharder/test-dh.h"
-#include "rtt/output/outputfactory-out.h"
+#include "rtt/batteries/testrunner-batt.h"
+
 
 namespace rtt {
 namespace batteries {

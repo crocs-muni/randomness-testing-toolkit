@@ -268,6 +268,7 @@ void Storage::saveMainTable(const tStringVector & header,
     }
 
     /* Saving table to file */
+    Utils::createDirectory(Utils::getPathWithoutLastItem(mainOutFilePath));
     Utils::saveStringToFile(mainOutFilePath , table.str());
 }
 

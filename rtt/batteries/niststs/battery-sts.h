@@ -6,10 +6,10 @@
 #include "libs/cephes/cephes.h"
 
 #include "rtt/globals.h"
-#include "rtt/batteries/testrunner-batt.h"
+#include "rtt/output/ioutput-out.h"
+#include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/ibattery-batt.h"
-#include "rtt/batteries/niststs/test-sts.h"
-#include "rtt/output/outputfactory-out.h"
+#include "rtt/batteries/testrunner-batt.h"
 
 namespace rtt {
 namespace batteries {

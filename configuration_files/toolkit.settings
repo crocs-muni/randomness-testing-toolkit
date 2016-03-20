@@ -1,7 +1,7 @@
 <TOOLKIT_SETTINGS>
 
     <LOGGER>
-        <DIR_PREFIX>testbed1/logs</DIR_PREFIX>
+        <DIR_PREFIX>devel-results/logs</DIR_PREFIX>
     
         <RUN_LOG_DIR>
             run-log
@@ -31,9 +31,9 @@
 
     <RESULT_STORAGE>
         <FILE>
-            <OUTPUT_FILE>testbed1/testbed-table.txt</OUTPUT_FILE>
+            <OUTPUT_FILE>devel-results/testbed-table.txt</OUTPUT_FILE>
             
-            <DIR_PREFIX>testbed1/reports</DIR_PREFIX>
+            <DIR_PREFIX>devel-results/reports</DIR_PREFIX>
             
             <DIEHARDER_DIR>
                 dieharder

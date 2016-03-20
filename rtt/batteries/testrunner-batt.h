@@ -44,7 +44,7 @@ public:
     /* Called from battery's runTests code. This is main thread,
      * creates one threadManager and receives and hands out IDs of
      * finished child processes of RTT. */
-    static void executeTests(std::vector<std::unique_ptr<ITest> > &tests);
+    static void executeTests(std::vector<std::unique_ptr<ITest>> & tests);
 
     /* Called from test code in method execute. Thread is not created
      * directly from this method, but from test's execute. */

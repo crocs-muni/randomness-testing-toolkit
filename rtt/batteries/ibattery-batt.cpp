@@ -8,60 +8,77 @@ namespace rtt {
 namespace batteries {
 
 std::unique_ptr<IBattery> IBattery::getInstance(const Globals & globals) {
+    std::unique_ptr<IBattery> b;
+
+    /* Pick correct derived class */
     switch(globals.getCliOptions()->getBattery()) {
     case Constants::Battery::DIEHARDER:
-        return dieharder::Battery::getInstance(globals);
+        b = dieharder::Battery::getInstance(globals);
+        break;
     case Constants::Battery::NIST_STS:
-        return niststs::Battery::getInstance(globals);
+        b = niststs::Battery::getInstance(globals);
+        break;
     case Constants::Battery::TU01_SMALLCRUSH:
-        //return testu01::Battery::getInstance(globals);
     case Constants::Battery::TU01_CRUSH:
-        //return testu01::Battery::getInstance(globals);
     case Constants::Battery::TU01_BIGCRUSH:
-        //return testu01::Battery::getInstance(globals);
     case Constants::Battery::TU01_RABBIT:
-        //return testu01::Battery::getInstance(globals);
     case Constants::Battery::TU01_ALPHABIT:
-        return testu01::Battery::getInstance(globals);
+        b = testu01::Battery::getInstance(globals);
+        break;
     default:raiseBugException("invalid battery");
     }
+    if(!b->initialized)
+        raiseBugException("base class variables are not initialized");
+
+    return b;
 }
 
-std::string IBattery::createLogFilePath(const time_t & battCreationTime,
-                                         const std::string & logDirectory,
-                                         const std::string & binFilePath) {
-    std::string logFilePath = logDirectory;
-    if(!logFilePath.empty() && logFilePath.back() != '/')
-        logFilePath.append("/");
-    logFilePath.append(Utils::formatRawTime(battCreationTime , "%Y%m%d%H%M%S"));
-    logFilePath.append("-" + Utils::getLastItemInPath(binFilePath) + ".log");
-    return logFilePath;
+void IBattery::runTests() {
+    if(!initialized)
+        raiseBugException("base class variables are not initialized");
+
+    if(executed)
+        throw RTTException(objectInfo , "battery was already executed");
+
+    TestRunner::executeTests(std::ref(tests));
+    executed = true;
 }
 
-std::vector<int> IBattery::parseIntValues(const std::string & str) {
-    std::vector<std::string> values = Utils::split(str , ' ');
-    std::vector<std::string> range;
-    std::vector<int> rval;
-    int botRange = 0;
-    int topRange = 0;
+void IBattery::initializeVariables(const Globals & globals) {
+    /* Set variables in base class */
+    creationTime = Utils::getRawTime();
 
-    for(const std::string & value : values) {
-        if(value.find('-') == std::string::npos) {
-            /* Only integer is in value */
-            rval.push_back(Utils::strtoi(value));
-        } else {
-            /* Range of integers */
-            range = Utils::split(value , '-');
-            if(range.size() != 2) /* more than one dash in string, why would you do that??? */
-                throw std::runtime_error("invalid range denoted in string " + value);
-            botRange = Utils::strtoi(range.front());
-            topRange = Utils::strtoi(range.back());
-            for( ; botRange <= topRange ; ++botRange)
-                rval.push_back(botRange);
-        }
+    cliOptions = globals.getCliOptions();
+    batteryConfiguration = globals.getBatteryConfiguration();
+    toolkitSettings = globals.getToolkitSettings();
+
+    std::cout << "[INFO] Processing file: " << cliOptions->getBinFilePath()
+              << std::endl;
+
+    battery = cliOptions->getBattery();
+    objectInfo = Constants::batteryToString( battery);
+    logFilePath = toolkitSettings->getLoggerBatteryDir(battery);
+    logFilePath.append(Utils::formatRawTime(creationTime , "%Y%m%d%H%M%S"));
+    logFilePath.append("-" +
+                          Utils::getLastItemInPath(cliOptions->getBinFilePath()) +
+                          ".log");
+    /* Result storage */
+    storage = output::IOutput::getInstance(globals , creationTime);
+
+    /* Creating test objects - test getInstance will handle picking
+     * correct derived class */
+    std::vector<int> testIndices = cliOptions->getTestConsts();
+    if(testIndices.empty())
+        testIndices = batteryConfiguration->getBatteryDefaultTests(battery);
+    if(testIndices.empty())
+        throw RTTException(objectInfo , "no tests were set for execution");
+
+    for(int i : testIndices) {
+        std::unique_ptr<ITest> test = ITest::getInstance(i , globals);
+        tests.push_back(std::move(test));
     }
-    Utils::sort(rval);
-    return rval;
+
+    initialized = true;
 }
 
 } // namespace batteries

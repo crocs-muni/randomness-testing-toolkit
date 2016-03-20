@@ -36,6 +36,7 @@
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/globals.h"
 #include "rtt/version.h"
+#include "rtt/batteries/dieharder/battery-dh.h"
 
 //#include <map>
 
@@ -103,7 +104,7 @@ int main (int argc , char * argv[]) {
 
     /* Actual functionality will be here... in time. */
     try {
-        /* Initialization ofrun settings from config files */
+        /* Initialization of run settings from config files */
         Globals globals;
         globals.initCliOptions(argc , argv);
         globals.initBatteriesConfiguration(globals.getCliOptions()->getInputCfgPath());
@@ -111,7 +112,10 @@ int main (int argc , char * argv[]) {
 
         /* Creation and execution of battery */
         auto battery = batteries::IBattery::getInstance(globals);
+        //auto battery = batteries::dieharder::Battery::getInstance(globals);
+        /* Executing tests as set in settings */
         battery->runTests();
+        /* Processing and storing of results of the run */
         battery->processStoredResults();
 
     } catch(RTTException ex) {

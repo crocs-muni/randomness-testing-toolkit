@@ -155,8 +155,8 @@ const std::string Test::XPATH_ATTRIBUTE_PAR_NAME            = "name";
 
 std::unique_ptr<Test> Test::getInstance(int testIndex ,
                                         const Globals & globals) {
-
     std::unique_ptr<Test> t (new Test());
+
     t->cliOptions = globals.getCliOptions();
     t->toolkitSettings = globals.getToolkitSettings();
     t->batteryConfiguration = globals.getBatteryConfiguration();
@@ -168,6 +168,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
 
     t->battery = t->cliOptions->getBattery();
     t->testIndex = testIndex;
+
     std::string batteryXPath;
 
     try {
@@ -176,13 +177,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     } catch (std::runtime_error ex) {
         throw RTTException(t->objectInfo , ex.what());
     }
-    /* Repetitions */
-    t->repetitions = t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
-                                                                               t->testIndex);
-    if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
-        t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions();
-    if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
-        throw RTTException(t->objectInfo , "repetitions not set");
+
     /* TestU01 executable path */
     t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
     if(t->executablePath.empty())
@@ -191,6 +186,15 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     t->binaryDataPath = t->cliOptions->getBinFilePath();
     if(t->binaryDataPath.empty())
         raiseBugException("empty input binary data");
+
+    /* Repetitions */
+    t->repetitions = t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
+                                                                               t->testIndex);
+    if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
+        t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions();
+    if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
+        throw RTTException(t->objectInfo , "repetitions not set");
+
     /* Getting params - only for Crush batteries */
     if(t->battery == Constants::Battery::TU01_SMALLCRUSH ||
             t->battery == Constants::Battery::TU01_CRUSH ||

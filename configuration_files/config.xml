@@ -42,15 +42,6 @@
         <DEFAULT_TESTS>1-15</DEFAULT_TESTS>
         <DEFAULT_STREAM_SIZE>1000000</DEFAULT_STREAM_SIZE>
         <DEFAULT_STREAM_COUNT>100</DEFAULT_STREAM_COUNT>
-        
-        <TESTS_SETTINGS>
-            <SETTINGS test="2">
-                <STREAM_SIZE>100000</STREAM_SIZE>
-                <STREAM_COUNT>1000</STREAM_COUNT>
-                <BLOCK_LENGTH>256</BLOCK_LENGTH>
-            </SETTINGS>
-        </TESTS_SETTINGS>
-        
     </NIST_STS_SETTINGS>
 
     <TESTU01_SETTINGS>
@@ -64,33 +55,6 @@
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S>
         
-        <SMALL_CRUSH_SETTINGS>
-            <SETTINGS test="1"> <!-- smarsa_BirthdaySpacing -->
-                <REPETITIONS>5</REPETITIONS>
-                <PARAMS>
-                    <PAR name="N">10</PAR>
-                    <PAR name="n">10</PAR>
-                    <PAR name="r">10</PAR>
-                    <PAR name="d">10</PAR>
-                    <PAR name="t">10</PAR>
-                    <PAR name="p">10</PAR>
-                </PARAMS>
-            </SETTINGS>
-        </SMALL_CRUSH_SETTINGS>
-        
-        <CRUSH_SETTINGS>
-            <SETTINGS test="2"> <!-- smarsa_SerialOver -->
-                <REPETITIONS>5</REPETITIONS>
-                <PARAMS>
-                    <PAR name="N">125</PAR>
-                    <PAR name="r">8957</PAR>
-                    <PAR name="d">122345</PAR>
-                    <PAR name="t">0</PAR>
-                    <PAR name="n">485</PAR>
-                </PARAMS>
-            </SETTINGS>
-
-        </CRUSH_SETTINGS>
     </TESTU01_SETTINGS>
 
     <EACIRC_SETTINGS>empty</EACIRC_SETTINGS>

@@ -38,62 +38,48 @@
 #include "rtt/version.h"
 #include "rtt/batteries/dieharder/battery-dh.h"
 
-//#include <map>
+#include <map>
 
 //#define TESTING
 
 using namespace rtt;
 
+
+class Comparable {
+public:
+    Comparable(int x) : bot(x) , top(x) {}
+    Comparable(int b , int t) : bot(b) , top(t) {
+        if(t < b)
+            raiseBugException("bad comparable creation");
+    }
+
+    bool operator<(const Comparable & cmp) const {
+        return cmp.top < this->bot;
+    }
+
+private:
+    int bot;
+    int top;
+};
+
 int main (int argc , char * argv[]) {
 #ifdef TESTING
     /* Only temporary code here*/
-    try {
-        //auto conf = batteries::Configuration::getInstance("config.xml");
-        Globals globals;
-        //globals.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
-        auto ts = globals.getToolkitSettings();
-        std::cout << ts->getRsFileOutFile() << std::endl;
-    } catch(RTTException ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl;
-    } catch(XMLException ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl;
-    } catch (BugException ex) {
-        std::cout << "[BUG]   " << ex.what() << std::endl;
-    } catch(std::runtime_error ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl;
-    } catch(std::bad_alloc ex) {
-        std::cout << "[ERROR] Memory allocation failed: " << ex.what() << std::endl;
-    }
 
-//    class Comparable {
-//    public:
-//        Comparable(int x) : bot(x) , top(x) {}
-//        Comparable(int b , int t) : bot(b) , top(t) {
-//            if(t < b)
-//                raiseBugException("bad comparable creation");
-//        }
 
-//        bool operator<(const Comparable & cmp) const {
-//            return cmp.top < this->bot;
-//        }
 
-//    private:
-//        int bot;
-//        int top;
-//    };
+    std::map<Comparable , std::string> mymap;
+    Comparable a(1);
+    Comparable b(2);
+    Comparable c(3);
 
-//    std::map<Comparable , std::string> mymap;
-//    Comparable a(1,3);
-//    Comparable b(4,6);
-//    Comparable c(7,9);
-
-//    mymap[a] = "1-3";
-//    mymap[b] = "4-6";
-//    mymap[c] = "7-9";
-//    /* Use find instead */
-//    std::cout << mymap[2] << std::endl;
-//    std::cout << mymap[6] << std::endl;
-//    std::cout << mymap[7] << std::endl;
+    mymap[a] = "1-3";
+    mymap[b] = "4-6";
+    mymap[c] = "7-9";
+    /* Use find instead */
+    std::cout << mymap[1] << std::endl;
+    std::cout << mymap[3] << std::endl;
+    std::cout << mymap[4] << std::endl;
 
 #else
     std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;

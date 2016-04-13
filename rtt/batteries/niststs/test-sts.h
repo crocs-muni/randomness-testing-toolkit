@@ -10,6 +10,7 @@
 #include "rtt/globals.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
+#include "rtt/batteries/testconstants.h"
 
 namespace rtt {
 namespace batteries {

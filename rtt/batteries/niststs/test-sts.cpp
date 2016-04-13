@@ -70,6 +70,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
              t->subTestCount ,
              t->adjustableBlockLen) = testInfo;
 
+
     /* Binary data path */
     t->binaryDataPath = t->cliOptions->getBinFilePath();
     if(t->binaryDataPath.empty())

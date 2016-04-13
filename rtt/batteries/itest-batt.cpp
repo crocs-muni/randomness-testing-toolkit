@@ -9,40 +9,44 @@ namespace batteries {
 
 std::unique_ptr<ITest> ITest::getInstance(int testIndex,
                                           const Globals & globals) {
+    std::unique_ptr<ITest> t;
+
     switch(globals.getCliOptions()->getBattery()) {
     case Constants::Battery::DIEHARDER:
-        return dieharder::Test::getInstance(testIndex , globals);
+        t = dieharder::Test::getInstance(testIndex , globals);
+        break;
     case Constants::Battery::NIST_STS:
-        return niststs::Test::getInstance(testIndex , globals);
+        t = niststs::Test::getInstance(testIndex , globals);
+        break;
     case Constants::Battery::TU01_SMALLCRUSH:
     case Constants::Battery::TU01_CRUSH:
     case Constants::Battery::TU01_BIGCRUSH:
     case Constants::Battery::TU01_RABBIT:
     case Constants::Battery::TU01_ALPHABIT:
-        return testu01::Test::getInstance(testIndex , globals);
+        t = testu01::Test::getInstance(testIndex , globals);
+        break;
     default:raiseBugException("invalid battery");
     }
+    /* Some checks here */
+    return t;
 }
 
-std::string ITest::getTestOrDefOpt(TiXmlNode * cfgRoot , TiXmlNode * testNode ,
-                                   const std::string & defaultPath ,
-                                   const std::string & testPath) {
-    if(!cfgRoot)
-        throw std::runtime_error("null root");
+void ITest::initializeVariables(int ti , const Globals & globals) {
+    /* Not yet used */
+    cliOptions = globals.getCliOptions();
+    toolkitSettings = globals.getToolkitSettings();
+    batteryConfiguration = globals.getBatteryConfiguration();
+    testIndex = ti;
+    battery = cliOptions->getBattery();
+    objectInfo = Constants::batteryToString(battery) + " - test " + Utils::itostr(testIndex);
 
-    std::string nodeValue;
-    if(!testNode) {
-        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
-        return nodeValue;
-    }
+    binaryDataPath = cliOptions->getBinFilePath();
+    if(binaryDataPath.empty())
+        raiseBugException("empty input binary data path");
 
-    nodeValue = getXMLElementValue(testNode , testPath);
-    if(nodeValue.empty()) {
-        nodeValue = getXMLElementValue(cfgRoot , defaultPath);
-        return nodeValue;
-    } else {
-        return nodeValue;
-    }
+    executablePath = toolkitSettings->getBinaryBattery(battery);
+    if(executablePath.empty())
+        raiseBugException("empty executable path");
 }
 
 } // namespace batteries

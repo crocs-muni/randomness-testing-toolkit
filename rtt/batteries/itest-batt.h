@@ -34,10 +34,28 @@ public:
     /* Following methods are used more or less by all tests */
     /* So for the sake of code non-duplicity, I declare them here */
 
-    static std::string getTestOrDefOpt(TiXmlNode * cfgRoot,
-                                       TiXmlNode * testNode,
-                                       const std::string & defaultPath,
-                                       const std::string & testPath);
+protected:
+    void initializeVariables(int ti , const Globals & globals);
+
+    /* Pointers to global configurations */
+    std::shared_ptr<CliOptions> cliOptions;
+    std::shared_ptr<ToolkitSettings> toolkitSettings;
+    std::shared_ptr<batteries::Configuration> batteryConfiguration;
+
+    /* These fields will be set after initialization in */
+    /* getInstance() */
+    Constants::Battery battery;
+    int testIndex = -1;
+    std::string logicName;
+    std::string executablePath;
+    std::string binaryDataPath;
+    std::string objectInfo;
+    std::string testLog;
+    std::vector<tTestPvals> results;
+    bool executed = false;
+
+private:
+    bool initialized = false;
 };
 
 } // namespace batteries

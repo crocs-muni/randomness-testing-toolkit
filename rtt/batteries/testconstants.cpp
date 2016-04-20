@@ -257,8 +257,7 @@ const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsAlphabit = {
 };
 
 tNistStsData TestConstants::getNistStsTestData(Constants::Battery battery,
-                                               int testIndex,
-                                               const std::string & callerInfo)
+                                               int testIndex)
 {
     try {
         switch(battery) {
@@ -268,13 +267,13 @@ tNistStsData TestConstants::getNistStsTestData(Constants::Battery battery,
             raiseBugException("invalid battery");
         }
     } catch (std::out_of_range) {
-        throw RTTException(callerInfo , "unknown test constant");
+        throw RTTException(Constants::batteryToString(battery) ,
+                           "unknown test constant - " + Utils::itostr(testIndex));
     }
 }
 
 tDieharderData TestConstants::getDieharderTestData(Constants::Battery battery,
-                                                   int testIndex, const
-                                                   std::string & callerInfo)
+                                                   int testIndex)
 {
     try {
         switch(battery) {
@@ -284,13 +283,13 @@ tDieharderData TestConstants::getDieharderTestData(Constants::Battery battery,
             raiseBugException("invalid battery");
         }
     } catch (std::out_of_range) {
-        throw RTTException(callerInfo , "unknown test constant");
+        throw RTTException(Constants::batteryToString(battery) ,
+                           "unknown test constant - " + Utils::itostr(testIndex));
     }
 }
 
 tTestU01Data TestConstants::getTu01TestData(Constants::Battery battery,
-                                            int testIndex,
-                                            const std::string & callerInfo)
+                                            int testIndex)
 {
     try {
         switch(battery) {
@@ -308,7 +307,8 @@ tTestU01Data TestConstants::getTu01TestData(Constants::Battery battery,
             raiseBugException("invalid battery");
         }
     } catch (std::out_of_range) {
-        throw RTTException(callerInfo , "unknown test constant");
+        throw RTTException(Constants::batteryToString(battery) ,
+                           "unknown test constant - " + Utils::itostr(testIndex));
     }
 }
 

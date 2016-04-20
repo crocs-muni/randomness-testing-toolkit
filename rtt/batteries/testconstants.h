@@ -51,16 +51,13 @@ class TestConstants {
 public:
 
     static tNistStsData getNistStsTestData(Constants::Battery battery ,
-                                           int testIndex ,
-                                           const std::string & callerInfo);
+                                           int testIndex );
 
     static tDieharderData getDieharderTestData(Constants::Battery battery ,
-                                               int testIndex ,
-                                               const std::string & callerInfo);
+                                               int testIndex );
 
     static tTestU01Data getTu01TestData(Constants::Battery battery ,
-                                        int testIndex ,
-                                        const std::string & callerInfo);
+                                        int testIndex );
 
 private:
     /* Maps with test indices assigned to test data */

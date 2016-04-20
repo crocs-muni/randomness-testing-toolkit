@@ -7,6 +7,7 @@
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
+#include "rtt/batteries/testconstants.h"
 
 namespace rtt {
 namespace batteries {
@@ -17,47 +18,47 @@ typedef std::pair<int , std::string> tTestInfo;
 class Test : public ITest {
 public:
     /* Test info constants */
-    static const tTestInfo INFO_BIRTHDAYS;
-    static const tTestInfo INFO_OPERM5;
-    static const tTestInfo INFO_BINARYRANK1;
-    static const tTestInfo INFO_BINARYRANK2;
-    static const tTestInfo INFO_BITSTREAM;
-    static const tTestInfo INFO_OPSO;
-    static const tTestInfo INFO_OQSO;
-    static const tTestInfo INFO_DNA;
-    static const tTestInfo INFO_COUNT1SBYTE;
-    static const tTestInfo INFO_COUNT1SSTREAM;
-    static const tTestInfo INFO_PARKING;
-    static const tTestInfo INFO_MINDISTANCECIRCLE;
-    static const tTestInfo INFO_MINDISTANCESPHERE;
-    static const tTestInfo INFO_SQUEEZE;
-    static const tTestInfo INFO_SUMS;
-    static const tTestInfo INFO_RUNS;
-    static const tTestInfo INFO_CRAPS;
-    static const tTestInfo INFO_GCD;
-    static const tTestInfo INFO_MONOBIT;
-    static const tTestInfo INFO_STSRUNS;
-    static const tTestInfo INFO_SERIAL;
-    static const tTestInfo INFO_BITDIST;
-    static const tTestInfo INFO_MINDISTANCE;
-    static const tTestInfo INFO_PERMUTATIONS;
-    static const tTestInfo INFO_LAGGED;
-    static const tTestInfo INFO_KS;
-    static const tTestInfo INFO_BYTEDIST;
-    static const tTestInfo INFO_DABDCT;
-    static const tTestInfo INFO_DABFILLTREE;
-    static const tTestInfo INFO_DABFILLTREE2;
-    static const tTestInfo INFO_DABMONOBIT;
+//    static const tTestInfo INFO_BIRTHDAYS;
+//    static const tTestInfo INFO_OPERM5;
+//    static const tTestInfo INFO_BINARYRANK1;
+//    static const tTestInfo INFO_BINARYRANK2;
+//    static const tTestInfo INFO_BITSTREAM;
+//    static const tTestInfo INFO_OPSO;
+//    static const tTestInfo INFO_OQSO;
+//    static const tTestInfo INFO_DNA;
+//    static const tTestInfo INFO_COUNT1SBYTE;
+//    static const tTestInfo INFO_COUNT1SSTREAM;
+//    static const tTestInfo INFO_PARKING;
+//    static const tTestInfo INFO_MINDISTANCECIRCLE;
+//    static const tTestInfo INFO_MINDISTANCESPHERE;
+//    static const tTestInfo INFO_SQUEEZE;
+//    static const tTestInfo INFO_SUMS;
+//    static const tTestInfo INFO_RUNS;
+//    static const tTestInfo INFO_CRAPS;
+//    static const tTestInfo INFO_GCD;
+//    static const tTestInfo INFO_MONOBIT;
+//    static const tTestInfo INFO_STSRUNS;
+//    static const tTestInfo INFO_SERIAL;
+//    static const tTestInfo INFO_BITDIST;
+//    static const tTestInfo INFO_MINDISTANCE;
+//    static const tTestInfo INFO_PERMUTATIONS;
+//    static const tTestInfo INFO_LAGGED;
+//    static const tTestInfo INFO_KS;
+//    static const tTestInfo INFO_BYTEDIST;
+//    static const tTestInfo INFO_DABDCT;
+//    static const tTestInfo INFO_DABFILLTREE;
+//    static const tTestInfo INFO_DABFILLTREE2;
+//    static const tTestInfo INFO_DABMONOBIT;
 
-    /* Default XPath constants for Dieharder battery */
-    static const std::string XPATH_BINARY_PATH;
-    static const std::string XPATH_DEFAULT_ARGUMENTS;
-    static const std::string XPATH_DEFAULT_PSAMPLES;
-    static const std::string XPATH_TESTS_SETTINGS;
-    static const std::string XPATH_ATTRIBUTE_TEST_INDEX;
-    static const std::string XPATH_TEST_ARGUMENTS;
-    static const std::string XPATH_TEST_PSAMPLES;
-    /* Parent test result directory */
+//    /* Default XPath constants for Dieharder battery */
+//    static const std::string XPATH_BINARY_PATH;
+//    static const std::string XPATH_DEFAULT_ARGUMENTS;
+//    static const std::string XPATH_DEFAULT_PSAMPLES;
+//    static const std::string XPATH_TESTS_SETTINGS;
+//    static const std::string XPATH_ATTRIBUTE_TEST_INDEX;
+//    static const std::string XPATH_TEST_ARGUMENTS;
+//    static const std::string XPATH_TEST_PSAMPLES;
+//    /* Parent test result directory */
     /* Default options that are always used when starting battery */
     static const int OPTION_HEADER_FLAG;
     static const int OPTION_FILE_GENERATOR;

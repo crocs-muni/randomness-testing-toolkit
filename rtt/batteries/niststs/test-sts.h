@@ -20,36 +20,6 @@ typedef std::tuple<int , std::string , std::string , int , bool> tTestInfo;
 
 class Test : public ITest {
 public:
-    /* Test info constants */
-    static const tTestInfo INFO_FREQ;
-    static const tTestInfo INFO_BLOCKFREQ;
-    static const tTestInfo INFO_CUSUMS;
-    static const tTestInfo INFO_RUNS;
-    static const tTestInfo INFO_LONGESTRUN;
-    static const tTestInfo INFO_RANK;
-    static const tTestInfo INFO_FFT;
-    static const tTestInfo INFO_NONOVERTEMP;
-    static const tTestInfo INFO_OVERTEMP;
-    static const tTestInfo INFO_UNIVERSAL;
-    static const tTestInfo INFO_APPROXENT;
-    static const tTestInfo INFO_RNDEXCURSIONS;
-    static const tTestInfo INFO_RNDEXCURSIONSVAR;
-    static const tTestInfo INFO_SERIAL;
-    static const tTestInfo INFO_LINEARCOMPLEXITY;
-
-    /* Default XPATH constants for NIST STS battery */
-    static const std::string XPATH_BINARY_PATH;
-    static const std::string XPATH_OUTPUT_DIRECTORY;
-    static const std::string XPATH_TESTS_SETTINGS;
-    static const std::string XPATH_DEFAULT_STREAM_SIZE;
-    static const std::string XPATH_DEFAULT_STREAM_COUNT;
-    static const std::string XPATH_TEST_STREAM_SIZE;
-    static const std::string XPATH_TEST_STREAM_COUNT;
-    static const std::string XPATH_TEST_BLOCK_LENGTH;
-    static const std::string XPATH_ATTRIBUTE_TEST_INDEX;
-    /* Parent test result directory */
-    static const std::string PATH_MAIN_RESULT_DIR;
-
     /*
     ======================
     *** Public methods ***

@@ -9,7 +9,7 @@ namespace testu01 {
 
 class Battery : public IBattery {
 public:
-    static std::unique_ptr<Battery> getInstance(const Globals & globals);
+    static std::unique_ptr<Battery> getInstance(const GlobalContainer & container);
 
     void processStoredResults();
 private:
@@ -19,7 +19,8 @@ private:
     ===============
     */
     /* So initialization in getInstance can't be avoided */
-    Battery () {}
+    Battery(const GlobalContainer & container)
+        : IBattery(container) {}
 };
 
 } // namespace testu01

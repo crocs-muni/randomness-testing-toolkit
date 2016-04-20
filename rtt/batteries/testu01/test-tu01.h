@@ -7,7 +7,7 @@
 #include <sstream>
 #include <tuple>
 
-#include "rtt/globals.h"
+#include "rtt/globalcontainer.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/testconstants.h"
@@ -28,23 +28,13 @@ public:
     ======================
     */
     static std::unique_ptr<Test> getInstance(int testIndex ,
-                                             const Globals & globals);
-
-    void appendTestLog(std::string & batteryLog) const;
-
-    bool wasExecuted() const { return executed; }
+                                             const GlobalContainer & container);
 
     void execute();
-
-    std::string getLogicName() const;
 
     std::vector<std::string> getParameters() const;
 
     std::vector<std::string> getStatistics() const;
-
-    std::vector<tTestPvals> getResults() const;
-
-    int getTestIndex() const;
 
 private:
     /*
@@ -52,22 +42,11 @@ private:
     *** Variables ***
     =================
     */
-    /* Pointers to global configurations */
-    std::shared_ptr<CliOptions> cliOptions;
-    std::shared_ptr<ToolkitSettings> toolkitSettings;
-    std::shared_ptr<batteries::Configuration> batteryConfiguration;
-
     /* These fields will be set after initialization in */
     /* getInstance() */
-    Constants::Battery battery;
-    int testIndex = -1;
-    std::string logicName;
     tStringVector paramNames;
     tStringVector statisticNames;
     int repetitions;
-    std::string executablePath;
-    std::string binaryDataPath;
-    std::string objectInfo;
     /* Only used in crush batteres */
     std::vector<tParam> params;
     /* Used in rabbit/alphabit battery */
@@ -75,21 +54,17 @@ private:
     std::string bit_r;
     std::string bit_s;
     /* Following vars will be set after test execution */
-    bool executed = false;
     /* Number of statistics calculated in each test
      * resulting pval count = reps*statCount */
     uint statCount;
-    std::string testLog;
-    /* Each tTestPval holds results of single test and its statistics */
-    /* This is in vector - multiple test repetitions are possible */
-    std::vector<tTestPvals> results;
 
     /*
     ===============
     *** Methods ***
     ===============
     */
-    Test() {}
+    Test(int testIndex , const GlobalContainer & container)
+        : ITest(testIndex , container) {}
 
     std::string createArgs() const;
 

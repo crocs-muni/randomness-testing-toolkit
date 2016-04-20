@@ -7,7 +7,7 @@
 #include <vector>
 #include <iomanip>
 
-#include "rtt/globals.h"
+#include "rtt/globalcontainer.h"
 #include "rtt/output/ioutput-out.h"
 
 namespace rtt {
@@ -32,7 +32,7 @@ public:
     static const size_t MISC_TAB_SIZE;
     static const size_t MISC_COL_WIDTH;
 
-    static std::unique_ptr<Storage> getInstance(const Globals & globals ,
+    static std::unique_ptr<Storage> getInstance(const GlobalContainer & container ,
                                                 const time_t & creationTime);
 
     void addNewTest(const std::string & testName);

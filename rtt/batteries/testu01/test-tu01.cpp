@@ -5,34 +5,18 @@ namespace batteries {
 namespace testu01 {
 
 std::unique_ptr<Test> Test::getInstance(int testIndex ,
-                                        const Globals & globals) {
-    std::unique_ptr<Test> t (new Test());
-
-    t->cliOptions = globals.getCliOptions();
-    t->toolkitSettings = globals.getToolkitSettings();
-    t->batteryConfiguration = globals.getBatteryConfiguration();
-    t->battery = t->cliOptions->getBattery();
-    t->testIndex = testIndex;
-    t->objectInfo = Constants::batteryToString(t->battery) +
-                       " - test " + Utils::itostr(testIndex);
+                                        const GlobalContainer & container) {
+    std::unique_ptr<Test> t (new Test(testIndex , container));
 
     std::tie(t->logicName ,
              t->paramNames ,
              t->statisticNames) =
             TestConstants::getTu01TestData(t->battery , t->testIndex);
 
-    /* TestU01 executable path */
-    t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
-    if(t->executablePath.empty())
-        raiseBugException("empty executable path");
-    /* Input binary data path */
-    t->binaryDataPath = t->cliOptions->getBinFilePath();
-    if(t->binaryDataPath.empty())
-        raiseBugException("empty input binary data");
-
     /* Repetitions */
-    t->repetitions = t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
-                                                                               t->testIndex);
+    t->repetitions =
+            t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
+                                                                      t->testIndex);
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
         t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions();
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
@@ -45,9 +29,10 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         tParam tmp;
         for(const auto & par : t->paramNames) {
             tmp.first = par;
-            tmp.second = t->batteryConfiguration->getTestU01BatteryTestParams(t->battery ,
-                                                                              t->testIndex ,
-                                                                              par);
+            tmp.second =
+                    t->batteryConfiguration->getTestU01BatteryTestParams(t->battery ,
+                                                                         t->testIndex ,
+                                                                         par);
             if(!tmp.second.empty())
                 t->params.push_back(tmp);
         }
@@ -84,13 +69,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     return t;
 }
 
-void Test::appendTestLog(std::string & batteryLog) const {
-    if(!executed)
-        throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
-
-    batteryLog.append(testLog);
-}
-
 void Test::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
@@ -100,10 +78,6 @@ void Test::execute() {
 
     extractPvalues();
     executed = true;
-}
-
-std::string Test::getLogicName() const {
-    return logicName;
 }
 
 std::vector<std::string> Test::getParameters() const {
@@ -131,16 +105,6 @@ std::vector<std::string> Test::getParameters() const {
 
 std::vector<std::string> Test::getStatistics() const {
     return statisticNames;
-}
-
-std::vector<tTestPvals> Test::getResults() const {
-    if(!executed)
-        throw RTTException(objectInfo , "test wasn't executed, can't provide results");
-
-    return results;
-}
-int Test::getTestIndex() const {
-    return testIndex;
 }
 
 /*

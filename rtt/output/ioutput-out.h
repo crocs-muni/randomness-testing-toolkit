@@ -1,7 +1,7 @@
 #ifndef RTT_OUTPUT_IOUTPUT_H
 #define RTT_OUTPUT_IOUTPUT_H
 
-#include "rtt/globals.h"
+#include "rtt/globalcontainer.h"
 
 #include <string>
 #include <vector>
@@ -11,7 +11,7 @@ namespace output {
 
 class IOutput {
 public:
-    static std::unique_ptr<IOutput> getInstance(const Globals & globals ,
+    static std::unique_ptr<IOutput> getInstance(const GlobalContainer & container ,
                                                 const time_t & creationTime);
 
     virtual ~IOutput() {}

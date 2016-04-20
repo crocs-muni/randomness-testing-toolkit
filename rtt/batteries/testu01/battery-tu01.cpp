@@ -4,9 +4,8 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-std::unique_ptr<Battery> Battery::getInstance(const Globals & globals) {
-    std::unique_ptr<Battery> b (new Battery());
-    b->initializeVariables(globals);
+std::unique_ptr<Battery> Battery::getInstance(const GlobalContainer & container) {
+    std::unique_ptr<Battery> b (new Battery(container));
     return b;
 }
 

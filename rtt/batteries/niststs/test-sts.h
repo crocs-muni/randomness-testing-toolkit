@@ -7,7 +7,7 @@
 #include <sstream>
 #include <tuple>
 
-#include "rtt/globals.h"
+#include "rtt/globalcontainer.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/testconstants.h"
@@ -27,23 +27,13 @@ public:
     */
     /* Some getters for results will be probably added in time */
     static std::unique_ptr<Test> getInstance(int testIndex ,
-                                             const Globals & globals);
+                                             const GlobalContainer & container);
 
     void execute();
-
-    bool wasExecuted() const { return executed; }
-
-    void appendTestLog(std::string & outputLog) const;
-
-    int getTestIndex() const;
-
-    std::string getLogicName() const;
 
     std::vector<std::string> getParameters() const;
 
     std::vector<std::string> getStatistics() const;
-
-    std::vector<tTestPvals> getResults() const;
 
 private:
     /*
@@ -51,33 +41,19 @@ private:
     *** Variables ***
     =================
     */
-    /* Pointers to global configurations */
-    std::shared_ptr<CliOptions> cliOptions;
-    std::shared_ptr<ToolkitSettings> toolkitSettings;
-    std::shared_ptr<batteries::Configuration> batteryConfiguration;
-
     /* These fields will be set after initialization in */
     /* getInstance */
-    Constants::Battery battery;
-    bool executed = false;
-    std::string objectInfo;
-    std::string executablePath;
-    std::string binaryDataPath;
     std::string streamSize;
     std::string streamCount;
     std::string blockLength;
     /* Following fields will be initialized in getInstance */
     /* to default values according to test index */
-    int testIndex;
-    std::string logicName;
     std::string resultSubDir;
     int subTestCount;
     bool adjustableBlockLen;
     /* Following fileds will be set after calling */
     /* execute */
     std::string outputLog;
-    std::string testLog;
-    std::vector<tTestPvals> results;
 
     /*
     ===============
@@ -86,7 +62,8 @@ private:
     */
     /* I don't want to allow existence of Test objects */
     /* without initialization that is in getInstance */
-    Test() {}
+    Test(int testIndex , const GlobalContainer & container)
+        : ITest(testIndex , container) {}
 
     std::string createArgs() const;
 

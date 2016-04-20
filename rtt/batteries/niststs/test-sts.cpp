@@ -5,15 +5,8 @@ namespace batteries {
 namespace niststs {
 
 std::unique_ptr<Test> Test::getInstance(int testIndex,
-                                        const Globals & globals) {
-    std::unique_ptr<Test> t (new Test());
-    t->cliOptions = globals.getCliOptions();
-    t->toolkitSettings = globals.getToolkitSettings();
-    t->batteryConfiguration = globals.getBatteryConfiguration();
-    t->testIndex = testIndex;
-    t->battery = t->cliOptions->getBattery();
-    t->objectInfo = Constants::batteryToString(t->battery) +
-                       " - test " + Utils::itostr(testIndex);
+                                        const GlobalContainer & container) {
+    std::unique_ptr<Test> t (new Test(testIndex , container));
 
     std::tie(t->logicName ,
              t->resultSubDir,
@@ -21,14 +14,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
              t->adjustableBlockLen) =
             TestConstants::getNistStsTestData(t->battery , t->testIndex);
 
-    /* Binary data path */
-    t->binaryDataPath = t->cliOptions->getBinFilePath();
-    if(t->binaryDataPath.empty())
-        raiseBugException("empty input binary data");
-    /* NIST STS executable path */
-    t->executablePath = t->toolkitSettings->getBinaryBattery(t->battery);
-    if(t->executablePath.empty())
-        raiseBugException("empty executable binary");
     /* Stream size */
     t->streamSize = t->batteryConfiguration->getNiststsTestStreamSize(testIndex);
     if(t->streamSize.empty())
@@ -45,18 +30,6 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     t->blockLength = t->batteryConfiguration->getNiststsTestBlockLength(testIndex);
 
     return t;
-}
-
-void Test::appendTestLog(std::string & batteryLog) const {
-    if(!executed)
-        throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
-
-    batteryLog.append(outputLog);
-    batteryLog.append(testLog);
-}
-
-int Test::getTestIndex() const {
-    return testIndex;
 }
 
 void Test::execute() {
@@ -78,10 +51,6 @@ void Test::execute() {
     executed = true;
 }
 
-std::string Test::getLogicName() const {
-    return logicName;
-}
-
 std::vector<std::string> Test::getParameters() const {
     std::stringstream parameters;
     parameters << "Stream size: " << streamSize << std::endl;
@@ -94,14 +63,6 @@ std::vector<std::string> Test::getParameters() const {
 
 std::vector<std::string> Test::getStatistics() const {
     return {"Chi-square" , "Proportion"};
-}
-
-std::vector<tTestPvals> Test::getResults() const {
-    if(!executed)
-        throw RTTException(objectInfo , "test wasn't executed, can't provide results");
-        //throw std::runtime_error("can't return results before execution of test");
-
-    return results;
 }
 
 /*
@@ -226,6 +187,9 @@ void Test::parseStoreResults() {
                 }
             }
         }
+
+        /* Preppending output from test run to test run */
+        testLog = outputLog.append(testLog);
     } catch (std::runtime_error ex) {
         throw RTTException(objectInfo , ex.what());
     }
@@ -234,7 +198,7 @@ void Test::parseStoreResults() {
 tTestPvals Test::readPvals(const std::string & fileName) {
     std::ifstream pValFile(fileName);
     if(!pValFile.is_open())
-            throw std::runtime_error("can't open file: " + fileName);
+            throw RTTException(objectInfo , "can't open file: " + fileName);
 
     std::string strPval;
     float pVal;
@@ -245,10 +209,11 @@ tTestPvals Test::readPvals(const std::string & fileName) {
     while(std::getline(pValFile , strPval)) {
         pVal = Utils::strtod(strPval);
         if(pVal < 0 || pVal > 1)
-            throw std::runtime_error("file: " + fileName + " contains p-value"
-                                     "that is not in <0,1> interval");
+            throw RTTException(objectInfo ,
+                               "file: " + fileName + " contains p-value"
+                               "that is not in <0,1> interval");
         /* This silly condition is here for random excursions test */
-        /* Because when you can't apply test it is feasible to give 0 as answer *eyeroll* */
+        /* Because when you can't apply test it is feasible to give 0 as answer *rolls eyes* */
         if(pVal == 0 && (testIndex == 12 || testIndex == 13))
             continue;
 
@@ -260,4 +225,3 @@ tTestPvals Test::readPvals(const std::string & fileName) {
 } // namespace niststs
 } // namespace batteries
 } // namespace rtt
-

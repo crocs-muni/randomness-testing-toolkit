@@ -1,5 +1,5 @@
-#ifndef RTT_GLOBALS_H
-#define RTT_GLOBALS_H
+#ifndef RTT_GLOBALCONTAINER_H
+#define RTT_GLOBALCONTAINER_H
 
 #include "rtt/clioptions.h"
 #include "rtt/toolkitsettings.h"
@@ -13,9 +13,9 @@ namespace rtt {
  * calling getter on desired object, it must be first initialized using
  * init methods. Init only calls class's constructor or getInstance
  * method and creates a shared pointer. */
-class Globals {
+class GlobalContainer {
 public:
-    Globals() {}
+    GlobalContainer() {}
 
     void initCliOptions(int argc , char * argv[]);
 
@@ -37,4 +37,4 @@ private:
 
 } // namespace rtt
 
-#endif // RTT_GLOBALS_H
+#endif // RTT_GLOBALCONTAINER_H

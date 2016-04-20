@@ -9,7 +9,7 @@ namespace dieharder {
 
 class Battery : public IBattery {
 public:
-    static std::unique_ptr<Battery> getInstance(const Globals & globals);
+    static std::unique_ptr<Battery> getInstance(const GlobalContainer & container);
 
     void processStoredResults();
 
@@ -20,8 +20,10 @@ private:
     ===============
     */
     /* So initialization in getInstance can't be avoided */
-    Battery () {}
+    Battery(const GlobalContainer & container)
+        : IBattery(container) {}
 
+    /* Math functions used to calculate resulting KS statistic */
     static double kstest(const std::vector<double> & pvalue);
 
     static double p_ks_new(int n , double d);

@@ -18,48 +18,6 @@ typedef std::pair<int , std::string> tTestInfo;
 class Test : public ITest {
 public:
     /* Test info constants */
-//    static const tTestInfo INFO_BIRTHDAYS;
-//    static const tTestInfo INFO_OPERM5;
-//    static const tTestInfo INFO_BINARYRANK1;
-//    static const tTestInfo INFO_BINARYRANK2;
-//    static const tTestInfo INFO_BITSTREAM;
-//    static const tTestInfo INFO_OPSO;
-//    static const tTestInfo INFO_OQSO;
-//    static const tTestInfo INFO_DNA;
-//    static const tTestInfo INFO_COUNT1SBYTE;
-//    static const tTestInfo INFO_COUNT1SSTREAM;
-//    static const tTestInfo INFO_PARKING;
-//    static const tTestInfo INFO_MINDISTANCECIRCLE;
-//    static const tTestInfo INFO_MINDISTANCESPHERE;
-//    static const tTestInfo INFO_SQUEEZE;
-//    static const tTestInfo INFO_SUMS;
-//    static const tTestInfo INFO_RUNS;
-//    static const tTestInfo INFO_CRAPS;
-//    static const tTestInfo INFO_GCD;
-//    static const tTestInfo INFO_MONOBIT;
-//    static const tTestInfo INFO_STSRUNS;
-//    static const tTestInfo INFO_SERIAL;
-//    static const tTestInfo INFO_BITDIST;
-//    static const tTestInfo INFO_MINDISTANCE;
-//    static const tTestInfo INFO_PERMUTATIONS;
-//    static const tTestInfo INFO_LAGGED;
-//    static const tTestInfo INFO_KS;
-//    static const tTestInfo INFO_BYTEDIST;
-//    static const tTestInfo INFO_DABDCT;
-//    static const tTestInfo INFO_DABFILLTREE;
-//    static const tTestInfo INFO_DABFILLTREE2;
-//    static const tTestInfo INFO_DABMONOBIT;
-
-//    /* Default XPath constants for Dieharder battery */
-//    static const std::string XPATH_BINARY_PATH;
-//    static const std::string XPATH_DEFAULT_ARGUMENTS;
-//    static const std::string XPATH_DEFAULT_PSAMPLES;
-//    static const std::string XPATH_TESTS_SETTINGS;
-//    static const std::string XPATH_ATTRIBUTE_TEST_INDEX;
-//    static const std::string XPATH_TEST_ARGUMENTS;
-//    static const std::string XPATH_TEST_PSAMPLES;
-//    /* Parent test result directory */
-    /* Default options that are always used when starting battery */
     static const int OPTION_HEADER_FLAG;
     static const int OPTION_FILE_GENERATOR;
 
@@ -69,23 +27,13 @@ public:
     ======================
     */
     static std::unique_ptr<Test> getInstance(int testIndex ,
-                                             const Globals & globals);
+                                             const GlobalContainer & container);
 
     void execute();
-
-    bool wasExecuted() const { return executed; }
-
-    void appendTestLog(std::string & batteryLog) const;
-
-    int getTestIndex() const;
-
-    std::string getLogicName() const;
 
     std::vector<std::string> getParameters() const;
 
     std::vector<std::string> getStatistics() const;
-
-    std::vector<tTestPvals> getResults() const;
 
 private:
     /*
@@ -93,29 +41,11 @@ private:
     *** Variables ***
     =================
     */
-    /* Pointers to global configurations */
-    std::shared_ptr<CliOptions> cliOptions;
-    std::shared_ptr<ToolkitSettings> toolkitSettings;
-    std::shared_ptr<batteries::Configuration> batteryConfiguration;
-
     /* These fields will be set after initialization in */
     /* getInstance() */
-    Constants::Battery battery;
-    bool executed = false;
-    std::string executablePath;
-    std::string binaryDataPath;
     std::vector<Setting> settings;
-    std::string objectInfo;
     int pSampleCount;
-    /* Following fields will be initialized in getInstance */
-    /* to default values according to test index */
-    int testIndex;
-    std::string logicName;
-    /* Following fields will be set after calling */
-    /* execute */
     int subTestsCount;
-    std::string testLog;
-    std::vector<tTestPvals> results;
 
     /*
     ===============
@@ -124,7 +54,8 @@ private:
     */
     /* I don't want to allow existence of Test objects */
     /* without initialization that is in getInstance */
-    Test() {}
+    Test(int testIndex , const GlobalContainer & container)
+        : ITest(testIndex , container) {}
 
     std::string createArgs() const;
 

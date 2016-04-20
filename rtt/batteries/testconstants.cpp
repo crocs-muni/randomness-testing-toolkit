@@ -257,8 +257,7 @@ const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsAlphabit = {
 };
 
 tNistStsData TestConstants::getNistStsTestData(Constants::Battery battery,
-                                               int testIndex)
-{
+                                               int testIndex) {
     try {
         switch(battery) {
         case Constants::Battery::NIST_STS :
@@ -273,8 +272,7 @@ tNistStsData TestConstants::getNistStsTestData(Constants::Battery battery,
 }
 
 tDieharderData TestConstants::getDieharderTestData(Constants::Battery battery,
-                                                   int testIndex)
-{
+                                                   int testIndex) {
     try {
         switch(battery) {
         case Constants::Battery::DIEHARDER :
@@ -289,8 +287,7 @@ tDieharderData TestConstants::getDieharderTestData(Constants::Battery battery,
 }
 
 tTestU01Data TestConstants::getTu01TestData(Constants::Battery battery,
-                                            int testIndex)
-{
+                                            int testIndex) {
     try {
         switch(battery) {
         case Constants::Battery::TU01_SMALLCRUSH:
@@ -314,4 +311,3 @@ tTestU01Data TestConstants::getTu01TestData(Constants::Battery battery,
 
 } // namespace batteries
 } // namespace rtt
-

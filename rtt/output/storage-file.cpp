@@ -16,11 +16,11 @@ const std::string Storage::XPATH_DIR_TU01_AB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/
 const size_t Storage::MISC_TAB_SIZE     = 4;
 const size_t Storage::MISC_COL_WIDTH    = 30;
 
-std::unique_ptr<Storage> Storage::getInstance(const Globals & globals ,
+std::unique_ptr<Storage> Storage::getInstance(const GlobalContainer & container ,
                                               const time_t & creationTime) {
     std::unique_ptr<Storage> s (new Storage());
-    s->cliOptions = globals.getCliOptions();
-    s->toolkitSettings= globals.getToolkitSettings();
+    s->cliOptions =      container.getCliOptions();
+    s->toolkitSettings = container.getToolkitSettings();
     s->creationTime = creationTime;
     s->batteryConstant = s->cliOptions->getBattery();
     s->inFilePath = s->cliOptions->getBinFilePath();

@@ -137,6 +137,10 @@ public:
     static void sort2D(std::vector<std::pair<int , int>> & a );
 
     static void rmDirFiles(const std::string & n);
+
+    static std::string createLogFileName(time_t creationTime ,
+                                         const std::string & logDir ,
+                                         const std::string & inputFile);
 };
 
 } // namespace rtt

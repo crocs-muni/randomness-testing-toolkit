@@ -263,11 +263,11 @@ tNistStsData TestConstants::getNistStsTestData(Constants::Battery battery,
         case Constants::Battery::NIST_STS :
             return nistStsTests.at(testIndex);
         default:
-            raiseBugException("invalid battery");
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
         }
     } catch (std::out_of_range) {
         throw RTTException(Constants::batteryToString(battery) ,
-                           "unknown test constant - " + Utils::itostr(testIndex));
+                           Strings::ERR_INVALID_TEST_CONST + Utils::itostr(testIndex));
     }
 }
 
@@ -278,11 +278,11 @@ tDieharderData TestConstants::getDieharderTestData(Constants::Battery battery,
         case Constants::Battery::DIEHARDER :
             return dieharderTests.at(testIndex);
         default:
-            raiseBugException("invalid battery");
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
         }
     } catch (std::out_of_range) {
         throw RTTException(Constants::batteryToString(battery) ,
-                           "unknown test constant - " + Utils::itostr(testIndex));
+                           Strings::ERR_INVALID_TEST_CONST + Utils::itostr(testIndex));
     }
 }
 
@@ -301,11 +301,11 @@ tTestU01Data TestConstants::getTu01TestData(Constants::Battery battery,
         case Constants::Battery::TU01_ALPHABIT:
             return tu01testsAlphabit.at(testIndex);
         default:
-            raiseBugException("invalid battery");
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
         }
     } catch (std::out_of_range) {
         throw RTTException(Constants::batteryToString(battery) ,
-                           "unknown test constant - " + Utils::itostr(testIndex));
+                           Strings::ERR_INVALID_TEST_CONST + Utils::itostr(testIndex));
     }
 }
 

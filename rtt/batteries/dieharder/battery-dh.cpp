@@ -11,9 +11,10 @@ std::unique_ptr<Battery> Battery::getInstance(const GlobalContainer & container)
 
 void Battery::processStoredResults() {
     if(!executed)
-        throw RTTException(objectInfo , "battery must be executed before result processing");
+        throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
 
-    std::cout << "Storing log and results." << std::endl;
+    //std::cout << "Storing log and results." << std::endl;
+    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
 
     /* Log storage */
     std::string batteryLog;
@@ -52,6 +53,7 @@ void Battery::processStoredResults() {
         storage->finalizeTest();
     }
     storage->finalizeReport();
+    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_COMPLETE);
 }
 
 /* Following code is taken from DIEHARDER battery. */
@@ -63,7 +65,7 @@ double Battery::kstest(const std::vector<double> & pvalue) {
     int count = pvalue.size();
 
     if (count < 1)
-        throw std::runtime_error("can't calculate KS from 0 p-samples");
+        throw RTTException(objectInfo , Strings::BATT_ERR_KS_NO_PSAMPLES);
     if (count == 1) return pvalue[0];
 
     dmax = 0.0;

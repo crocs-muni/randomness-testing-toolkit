@@ -78,6 +78,10 @@ std::string ToolkitSettings::getLoggerRunLogDir() const {
     return loggerRunLogDir;
 }
 
+std::string ToolkitSettings::getLoggerRunLogFileName() const {
+    return loggerRunLogDir + Utils::formatRawTime(Utils::getRawTime() , "%Y%m%d%H%M%S") + ".log";
+}
+
 std::string ToolkitSettings::getRsFileOutFile() const {
     return rsFileOutFile;
 }

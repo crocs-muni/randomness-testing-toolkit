@@ -24,13 +24,13 @@ private:
         : IBattery(container) {}
 
     /* Math functions used to calculate resulting KS statistic */
-    static double kstest(const std::vector<double> & pvalue);
+    double kstest(const std::vector<double> & pvalue);
 
-    static double p_ks_new(int n , double d);
+    double p_ks_new(int n , double d);
 
-    static void mMultiply(double *A,double *B,double *C,int m);
+    void mMultiply(double *A,double *B,double *C,int m);
 
-    static void mPower(double *A,int eA,double *V,int *eV,int m,int n);
+    void mPower(double *A,int eA,double *V,int *eV,int m,int n);
 };
 
 } // namespace dieharder

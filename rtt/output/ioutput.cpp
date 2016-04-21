@@ -5,9 +5,8 @@
 namespace rtt {
 namespace output {
 
-std::unique_ptr<IOutput> IOutput::getInstance(const GlobalContainer & container,
-                                              const time_t & creationTime) {
-    return file::Storage::getInstance(container , creationTime);
+std::unique_ptr<IOutput> IOutput::getInstance(const GlobalContainer & container) {
+    return file::Storage::getInstance(container);
 }
 
 } // namespace output

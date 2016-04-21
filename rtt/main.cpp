@@ -14,9 +14,9 @@
  *  2.2. Into file structure                    (Ok)
  *  2.3. Into database                          (Not until Misc is completed)
  * 3. Miscelaneous
- *  3.1. Better exception handling              (WIP)
- *  3.2. Batteries runtime error handling       (Partially)
- *  3.3. File logger
+ *  3.1. Better exception handling              (Ok - updated with logging)
+ *  3.2. Batteries runtime error handling       (Ok - updated with logging)
+ *  3.3. File logger                            (Ok - rewrite output)
  *  3.4. Better config file organization        (Ok)
  *  3.5. Create CMake project                   (Final step)
  *  3.6. Write documentation, refactor          (More final step)
@@ -38,34 +38,59 @@
 #include "rtt/version.h"
 #include "rtt/batteries/dieharder/battery-dh.h"
 
-#include <map>
-
-//#define TESTING
+/* This line must stay in main! */
+INITIALIZE_EASYLOGGINGPP
 
 using namespace rtt;
 
+//#define TESTING
+
 int main (int argc , char * argv[]) {
 #ifdef TESTING
-    /* Only temporary code here*/
-
+    /* Only testing code here */
 #else
-    std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
-    std::cout << "Start: " << Utils::getTime() << std::endl;
+    //std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
+    //std::cout << "Start: " << Utils::getTime() << std::endl;
 
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;
         return -1;
     }
 
-    /* Actual functionality will be here... in time. */
-    /* EDIT: In fact there already is some functionality. */
+    /* Initialization of global container.
+     * Since I can't be sure if logger was initialized,
+     * errors are written to cout and no log is created. */
+    GlobalContainer container;
     try {
-        /* Initialization of globally used objects */
-        GlobalContainer container;
         container.initCliOptions(argc , argv);
         container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
         container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+        /* A bit clumsy logger initialization */
+        container.initLogger("Main_Application" ,
+                             Utils::createLogFileName(container.getCreationTime() ,
+                                                      container.getToolkitSettings()->getLoggerRunLogDir() ,
+                                                      container.getCliOptions()->getBinFilePath()),
+                             true);
+    } catch(RTTException ex) {
+        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
+        return -1;
+    } catch(XMLException ex) {
+        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
+        return -1;
+    } catch (BugException ex) {
+        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
+        return -1;
+    } catch(std::runtime_error ex) {
+        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
+        return -1;
+    } catch(std::bad_alloc ex) {
+        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
+        return -1;
+    }
 
+    /* Actual functionality will be here... in time. */
+    /* EDIT: In fact there already is some functionality. */
+    try {
         /* Creation and execution of battery */
         auto battery = batteries::IBattery::getInstance(container);
         /* Executing tests as set in settings */
@@ -74,16 +99,21 @@ int main (int argc , char * argv[]) {
         battery->processStoredResults();
 
     } catch(RTTException ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl;
+        //std::cout << "[ERROR] " << ex.what() << std::endl;
+        container.getLogger()->error(ex.what());
     } catch(XMLException ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl;
+        //std::cout << "[ERROR] " << ex.what() << std::endl;
+        container.getLogger()->error(ex.what());
     } catch (BugException ex) {
-        std::cout << "[BUG]   " << ex.what() << std::endl;
+        //std::cout << "[BUG]   " << ex.what() << std::endl;
+        container.getLogger()->error(ex.what());
     } catch(std::runtime_error ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl;
+        //std::cout << "[ERROR] " << ex.what() << std::endl;
+        container.getLogger()->error(ex.what());
     } catch(std::bad_alloc ex) {
-        std::cout << "[ERROR] Memory allocation failed: " << ex.what() << std::endl;
+        //std::cout << "[ERROR] Memory allocation failed: " << ex.what() << std::endl;
+        container.getLogger()->error(ex.what());
     }
-    std::cout << "End: " << Utils::getTime() << std::endl;
+    //std::cout << "End: " << Utils::getTime() << std::endl;
 #endif
 }

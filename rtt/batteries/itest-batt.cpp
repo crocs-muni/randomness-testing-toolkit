@@ -20,7 +20,7 @@ std::unique_ptr<ITest> ITest::getInstance(int testIndex , const GlobalContainer 
     case Constants::Battery::TU01_ALPHABIT:
         return testu01::Test::getInstance(testIndex , container);
     default:
-        raiseBugException("invalid battery");
+        raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
 }
 
@@ -38,14 +38,14 @@ int ITest::getTestIndex() const {
 
 std::vector<tTestPvals> ITest::getResults() const {
     if(!executed)
-        throw RTTException(objectInfo , "test wasn't executed, can't provide results");
+        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
 
     return results;
 }
 
 void ITest::appendTestLog(std::string & batteryLog) const {
     if(!executed)
-        throw RTTException(objectInfo , "test wasn't executed, can't provide logs");
+        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_LOGS);
 
     batteryLog.append(testLog);
 }
@@ -54,6 +54,7 @@ ITest::ITest(int testIndex, const GlobalContainer & container) {
     cliOptions           = container.getCliOptions();
     toolkitSettings      = container.getToolkitSettings();
     batteryConfiguration = container.getBatteryConfiguration();
+    logger               = container.getLogger();
     this->testIndex      = testIndex;
     battery              = cliOptions->getBattery();
     binaryDataPath       = cliOptions->getBinFilePath();
@@ -63,10 +64,10 @@ ITest::ITest(int testIndex, const GlobalContainer & container) {
             Constants::batteryToString(battery) + " - test " + Utils::itostr(testIndex);
 
     if(binaryDataPath.empty())
-        raiseBugException("empty input binary data path");
+        raiseBugException(Strings::TEST_ERR_NO_BINARY_DATA);
 
     if(executablePath.empty())
-        raiseBugException("empty executable path");
+        raiseBugException(Strings::TEST_ERR_NO_EXECUTABLE);
 }
 
 } // namespace batteries

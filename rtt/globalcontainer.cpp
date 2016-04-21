@@ -19,6 +19,11 @@ void GlobalContainer::initBatteriesConfiguration(const std::string & filename) {
             std::make_shared<Configuration>(Configuration::getInstance(filename));
 }
 
+void GlobalContainer::initLogger(const std::string & logId,
+                                 const std::string & logFile, bool toCout) {
+    logger = std::shared_ptr<Logger>(new Logger(logId , logFile , toCout));
+}
+
 std::shared_ptr<CliOptions> GlobalContainer::getCliOptions() const {
     if(cliOptions == nullptr)
         raiseBugException("cliOptions were not initialized");
@@ -37,5 +42,17 @@ std::shared_ptr<batteries::Configuration> GlobalContainer::getBatteryConfigurati
 
     return batteryConfiguration;
 }
+
+std::shared_ptr<Logger> GlobalContainer::getLogger() const {
+    if(logger == nullptr)
+        raiseBugException("logger was not initialized");
+
+    return logger;
+}
+
+time_t GlobalContainer::getCreationTime() const {
+    return creationTime;
+}
+
 
 } // namespace rtt

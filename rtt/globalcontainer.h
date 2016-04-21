@@ -4,6 +4,7 @@
 #include "rtt/clioptions.h"
 #include "rtt/toolkitsettings.h"
 #include "rtt/batteries/configuration-batt.h"
+#include "rtt/logger.h"
 
 namespace rtt {
 
@@ -15,7 +16,8 @@ namespace rtt {
  * method and creates a shared pointer. */
 class GlobalContainer {
 public:
-    GlobalContainer() {}
+    GlobalContainer()
+        : creationTime(Utils::getRawTime()) {}
 
     void initCliOptions(int argc , char * argv[]);
 
@@ -23,16 +25,26 @@ public:
 
     void initBatteriesConfiguration(const std::string & filename);
 
+    void initLogger(const std::string & logId ,
+                    const std::string & logFile , bool toCout);
+
+    time_t getCreationTime() const;
+
     std::shared_ptr<CliOptions> getCliOptions() const;
 
     std::shared_ptr<ToolkitSettings> getToolkitSettings() const;
 
     std::shared_ptr<batteries::Configuration> getBatteryConfiguration() const;
 
+    std::shared_ptr<Logger> getLogger() const;
+
 private:
+    /* Application start time, will be used in naming files, etc. */
+    time_t creationTime;
     std::shared_ptr<CliOptions> cliOptions;
     std::shared_ptr<ToolkitSettings> toolkitSettings;
     std::shared_ptr<batteries::Configuration> batteryConfiguration;
+    std::shared_ptr<Logger> logger;
 };
 
 } // namespace rtt

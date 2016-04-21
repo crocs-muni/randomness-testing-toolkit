@@ -16,6 +16,8 @@ public:
     /* Getters for variables */
     std::string getLoggerRunLogDir() const;
 
+    std::string getLoggerRunLogFileName() const;
+
     std::string getRsFileOutFile() const;
 
     std::string getLoggerBatteryDir(Constants::Battery battery) const;

@@ -37,8 +37,10 @@ std::mutex              threadState_mux;
  * should lock this mutex first to avoid scrambled output */
 static std::mutex       cout_mux;
 
-void TestRunner::executeTests(std::vector<std::unique_ptr<ITest> > & tests) {
+void TestRunner::executeTests(std::shared_ptr<Logger> logger, std::vector<std::unique_ptr<ITest> > & tests) {
     std::thread manager(threadManager , std::ref(tests));
+    /* String that will be used in logs */
+    std::string objectInfo = "Process reaper";
 
     /* Thread can proceed only after threadMaker notifies this thread. */
     std::unique_lock<std::mutex> threadsReady_lock(threadState_mux);
@@ -59,7 +61,7 @@ void TestRunner::executeTests(std::vector<std::unique_ptr<ITest> > & tests) {
         /* Here, I need to lock waitingForChild and withoutChild
          * so no new threads will be created while this thread will wait.
          * Furthermore, this thread will start reaping processes only if all currently
-         * active threads are waiting for child through finishedPid*/
+         * active threads are waiting for child through finishedPid */
         std::lock(waitingForChild_lock , withoutChild_lock);
         waitingForChild_cv.wait(waitingForChild_lock ,
                                 []{ return waitingForChild == withoutChild; });
@@ -74,11 +76,13 @@ void TestRunner::executeTests(std::vector<std::unique_ptr<ITest> > & tests) {
         if(finishedPid > 0) {
             /* Some child process finished, hand it out to corresponding
              * thread for processing */
-            {
-                std::lock_guard<std::mutex> l (cout_mux);
-                std::cout << "Reaping process " << finishedPid
-                          << ". Exit code " << status << std::endl;
-            }
+//            {
+//                std::lock_guard<std::mutex> l (cout_mux);
+//                std::cout << "Reaping process " << finishedPid
+//                          << ". Exit code " << status << std::endl;
+//            }
+            logger->info(objectInfo + ": finished test with pid " + Utils::itostr(finishedPid) +
+                         ". Exit code " + Utils::itostr(status));
             /* Notifying all waiting threads that there is new finished process. */
             finishedPid_cv.notify_all();
             /* Thread that owns annouced pid will set childReceived to true.
@@ -94,19 +98,24 @@ void TestRunner::executeTests(std::vector<std::unique_ptr<ITest> > & tests) {
              * child processes (this thread can end), or some other error
              * happened (very unlikely). */
             if(errno == ECHILD) {
-                {
-                    std::lock_guard<std::mutex> l(cout_mux);
-                    std::cout << "All tests were executed and finished." << std::endl;
-                }
+//                {
+//                    std::lock_guard<std::mutex> l(cout_mux);
+//                    std::cout << "All tests were executed and finished." << std::endl;
+//                }
+                logger->info(objectInfo + ": all tests were executed and finished");
                 break;
             } else {
-                {
-                    std::lock_guard<std::mutex> l(cout_mux);
-                    std::cout << "wait() returned with EINTR or EINVAL." << std::endl;
-                    std::cout << "This thread will try to continue reaping processes, "
-                                 "but deadlock or some other errors are possible. "
-                                 "Inspect this further." << std::endl;
-                }
+//                {
+//                    std::lock_guard<std::mutex> l(cout_mux);
+//                    std::cout << "wait() returned with EINTR or EINVAL." << std::endl;
+//                    std::cout << "This thread will try to continue reaping processes, "
+//                                 "but deadlock or some other errors are possible. "
+//                                 "Inspect this further." << std::endl;
+//                }
+                logger->warn(objectInfo + ": wait() returned invalid value. "
+                                          "This thread will continue reaping "
+                                          "processes but deadlock or some other "
+                                          "errors are possible. Inspect logs.");
             }
         }
     }
@@ -114,7 +123,9 @@ void TestRunner::executeTests(std::vector<std::unique_ptr<ITest> > & tests) {
     manager.join();
 }
 
-std::string TestRunner::executeBinary(const std::string & binaryPath,
+std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
+                                      const std::string & objectInfo,
+                                      const std::string & binaryPath,
                                       const std::string & arguments,
                                       const std::string & input) {
     int stdin_pipe[2];
@@ -127,11 +138,12 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
     posix_spawn_file_actions_t actions;
 
     if(pipe(stdin_pipe) || pipe(stdout_pipe) || pipe(stderr_pipe)) {
-        {
-            std::lock_guard<std::mutex> l (cout_mux);
-            std::cout << "[WARNING] Pipe creation in test: " << arguments
-                      << " failed. Test won't be executed."<< std::endl;
-        }
+//        {
+//            std::lock_guard<std::mutex> l (cout_mux);
+//            std::cout << "[WARNING] Pipe creation in test: " << arguments
+//                      << " failed. Test won't be executed."<< std::endl;
+//        }
+        logger->warn(objectInfo + ": pipe creation failed. Test won't be executed.");
         {
             /* Remove thread from list of threads without child, notify and end */
             std::lock_guard<std::mutex> l (withoutChild_mux);
@@ -172,15 +184,17 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
     std::lock(finishedPid_lock , waitingForChild_lock);
 
     /* Starting child process of this thread */
+    logger->info(objectInfo + ": spawning child process with arguments " + arguments);
     int status = posix_spawn(&pid , binaryPath.c_str() ,
                              &actions , NULL , args , NULL);
 
     if(status == 0) {
         /* Process was started without problems, proceed */
-        {
-            std::lock_guard<std::mutex>l(cout_mux);
-            std::cout << "Executing " << arguments << " with pid: " << pid << std::endl;
-        }
+//        {
+//            std::lock_guard<std::mutex>l(cout_mux);
+//            std::cout << "Executing " << arguments << " with pid: " << pid << std::endl;
+//        }
+        logger->info(objectInfo + ": child process has pid " + Utils::itostr(pid));
         /* Closing pipes */
         close(stdin_pipe[0]);
         close(stdout_pipe[1]);
@@ -212,11 +226,13 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
             /* If thread goes into this branch, it's process timeouted.
              * Send kill signal to it, main thread will then reap it.
              * That's why this go into wait once more (usually it will instantly return) */
-            {
-                std::lock_guard<std::mutex> l(cout_mux);
-                std::cout << "Process: " << pid << " timeouted. "
-                                                   "Sending SIGKILL." << std::endl;
-            }
+//            {
+//                std::lock_guard<std::mutex> l(cout_mux);
+//                std::cout << "Process: " << pid << " timeouted. "
+//                                                   "Sending SIGKILL." << std::endl;
+//            }
+            logger->warn(objectInfo + ": child process with pid " + Utils::itostr(pid) + " timeouted."
+                         " Process will be killed now.");
             kill(pid , SIGKILL);
             finishedPid_cv.wait(finishedPid_lock , [&] { return finishedPid == pid; });
         }
@@ -224,6 +240,7 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
          * track waiting and active threads, setting childReceived to true
          * so main thread will be notified */
         std::lock(withoutChild_lock , waitingForChild_lock , childReceived_lock);
+        logger->info(objectInfo + ": child process with pid " + Utils::itostr(pid) + " finished");
         childReceived = true;
         --waitingForChild;
         --withoutChild;
@@ -257,20 +274,25 @@ std::string TestRunner::executeBinary(const std::string & binaryPath,
         reader.join();
         if(!stderr.empty()) {
             std::lock_guard<std::mutex> l(cout_mux);
-            std::cout << "[WARNING] Process " << pid << " had following standard error output: " << std::endl;
-            std::cout << stderr << std::endl;
-            std::cout << "[WARNING] If there are any results of this test, they are probably invalid." << std::endl;
-            std::cout << "========================================" << std::endl;
+//            std::cout << "[WARNING] Process " << pid << " had following standard error output: " << std::endl;
+//            std::cout << stderr << std::endl;
+//            std::cout << "[WARNING] If there are any results of this test, they are probably invalid." << std::endl;
+//            std::cout << "========================================" << std::endl;
+            logger->warn(objectInfo + ": child process has non-empty error output. "
+                         "Results will be still processed but they might be invalid. "
+                         "Inspect logs.");
         }
 
         return output;
     } else {
         /* Some nasty error happened at execution. Report and end thread */
-        {
-            std::lock_guard<std::mutex> l (cout_mux);
-            std::cout << "[WARNING] Can't execute " << arguments << ": "
-                      << strerror(status) << std::endl;
-        }
+//        {
+//            std::lock_guard<std::mutex> l (cout_mux);
+//            std::cout << "[WARNING] Can't execute " << arguments << ": "
+//                      << strerror(status) << std::endl;
+//        }
+        logger->warn(objectInfo + ": can't execute child process. "
+                     "This never happened during development.");
         {
             /* Remove thread from list of threads without child, notify and end */
             std::lock_guard<std::mutex> l (withoutChild_mux);

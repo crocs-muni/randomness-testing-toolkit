@@ -21,42 +21,42 @@ std::unique_ptr<IBattery> IBattery::getInstance(const GlobalContainer & containe
     case Constants::Battery::TU01_ALPHABIT:
         return testu01::Battery::getInstance(container);
     default:
-        raiseBugException("invalid battery");
+        raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
 }
 
 void IBattery::runTests() {
     if(executed)
-        throw RTTException(objectInfo , "battery was already executed");
+        throw RTTException(objectInfo , Strings::BATT_ERR_ALREADY_EXECUTED);
 
-    TestRunner::executeTests(std::ref(tests));
+    logger->info(objectInfo + ": Test execution started!");
+    TestRunner::executeTests(logger , std::ref(tests));
+    logger->info(objectInfo + ": Test execution finished!");
     executed = true;
 }
 
 IBattery::IBattery(const GlobalContainer & container) {
-    creationTime         = Utils::getRawTime();
     cliOptions           = container.getCliOptions();
     batteryConfiguration = container.getBatteryConfiguration();
     toolkitSettings      = container.getToolkitSettings();
+    logger               = container.getLogger();
+    storage              = output::IOutput::getInstance(container);
 
-    std::cout << "[INFO] Processing file: " << cliOptions->getBinFilePath()
-              << std::endl;
+    creationTime = container.getCreationTime();
+    battery      = cliOptions->getBattery();
+    objectInfo   = Constants::batteryToString(battery);
+    logFilePath  = Utils::createLogFileName(creationTime,
+                                            toolkitSettings->getLoggerBatteryDir(battery),
+                                            cliOptions->getBinFilePath());
+    //std::cout << "[INFO] Processing file: " << cliOptions->getBinFilePath()
+    //          << std::endl;
+    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + cliOptions->getBinFilePath());
 
-    battery = cliOptions->getBattery();
-    objectInfo = Constants::batteryToString(battery);
-    logFilePath = toolkitSettings->getLoggerBatteryDir(battery);
-    logFilePath.append(Utils::formatRawTime(creationTime , "%Y%m%d%H%M%S"));
-
-    logFilePath.append("-" +
-                       Utils::getLastItemInPath(cliOptions->getBinFilePath()) +
-                       ".log");
-
-    storage = output::IOutput::getInstance(container , creationTime);
     std::vector<int> testIndices = cliOptions->getTestConsts();
     if(testIndices.empty())
         testIndices = batteryConfiguration->getBatteryDefaultTests(battery);
     if(testIndices.empty())
-        throw RTTException(objectInfo , "no tests were set for execution");
+        throw RTTException(objectInfo , Strings::BATT_ERR_NO_TESTS);
 
     for(int i : testIndices) {
         std::unique_ptr<ITest> test = ITest::getInstance(i , container);

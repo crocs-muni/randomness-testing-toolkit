@@ -40,6 +40,7 @@ protected:
     std::shared_ptr<CliOptions> cliOptions;
     std::shared_ptr<ToolkitSettings> toolkitSettings;
     std::shared_ptr<batteries::Configuration> batteryConfiguration;
+    std::shared_ptr<Logger> logger;
     /* Test specific fields - will be set in constructor (base class) and
      * getInstance(derived classes) */
     int testIndex;

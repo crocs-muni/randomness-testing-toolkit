@@ -32,8 +32,7 @@ public:
     static const size_t MISC_TAB_SIZE;
     static const size_t MISC_COL_WIDTH;
 
-    static std::unique_ptr<Storage> getInstance(const GlobalContainer & container ,
-                                                const time_t & creationTime);
+    static std::unique_ptr<Storage> getInstance(const GlobalContainer & container);
 
     void addNewTest(const std::string & testName);
 

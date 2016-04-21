@@ -11,8 +11,7 @@ namespace output {
 
 class IOutput {
 public:
-    static std::unique_ptr<IOutput> getInstance(const GlobalContainer & container ,
-                                                const time_t & creationTime);
+    static std::unique_ptr<IOutput> getInstance(const GlobalContainer & container);
 
     virtual ~IOutput() {}
 

@@ -18,7 +18,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex , const GlobalContainer & 
     if(t->pSampleCount == Configuration::VALUE_INT_NOT_SET)
         t->pSampleCount = t->batteryConfiguration->getDieharderDefaultPSamples();
     if(t->pSampleCount == Configuration::VALUE_INT_NOT_SET)
-        throw RTTException(t->objectInfo , "psample count not set");
+        throw RTTException(t->objectInfo , Strings::TEST_ERR_PSAMPLES_NOT_SET);
 
     /* Getting default Dieharder options from config */
     std::string defaultArguments = t->batteryConfiguration->getDieharderDefaultArguments();
@@ -31,8 +31,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex , const GlobalContainer & 
     std::vector<std::string> vecOptions =
                 std::move(Utils::split(defaultArguments , ' '));
     if(vecOptions.size() % 2 != 0)
-        throw RTTException(t->objectInfo ,
-                           "invalid test arguments format: each option must have value");
+        throw RTTException(t->objectInfo , Strings::TEST_ERR_ARGS_BAD_FORMAT_OPT_WO_VAL);
     for(size_t i = 0 ; i < vecOptions.size() ; ++i) {
         try {
             Setting setting =
@@ -52,8 +51,8 @@ void Test::execute() {
      * Will deadlock if run without main thread. */
     /* Add some logger info here */
 
-    testLog = TestRunner::executeBinary(executablePath ,
-                                        createArgs());
+    testLog = TestRunner::executeBinary(logger, objectInfo,
+                                        executablePath, createArgs());
     extractPvalues();
     executed = true;
 }
@@ -120,14 +119,16 @@ void Test::extractPvalues() {
 
     int pValCount = std::distance(begin , end);
     if(pValCount == 0) {
-        std::cout << "[WARNING] No pValues were extracted" << std::endl;
+        //std::cout << "[WARNING] No pValues were extracted" << std::endl;
+        logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
         return;
     }
 
     if(pValCount % pSampleCount != 0) {
-        std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
-                     "Number of p-values present is not divisible by "
-                     "number of p-samples per test." << std::endl;
+        //std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
+        //             "Number of p-values present is not divisible by "
+        //             "number of p-samples per test." << std::endl;
+        logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
         return;
     }
 

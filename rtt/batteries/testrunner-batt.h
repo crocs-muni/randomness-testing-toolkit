@@ -14,6 +14,7 @@
 #include <chrono>
 #include <atomic>
 
+#include "rtt/logger.h"
 #include "rtt/batteries/itest-batt.h"
 
 namespace rtt {
@@ -44,11 +45,13 @@ public:
     /* Called from battery's runTests code. This is main thread,
      * creates one threadManager and receives and hands out IDs of
      * finished child processes of RTT. */
-    static void executeTests(std::vector<std::unique_ptr<ITest>> & tests);
+    static void executeTests(std::shared_ptr<Logger> logger , std::vector<std::unique_ptr<ITest>> & tests);
 
     /* Called from test code in method execute. Thread is not created
      * directly from this method, but from test's execute. */
-    static std::string executeBinary(const std::string & binaryPath,
+    static std::string executeBinary(std::shared_ptr<Logger> logger,
+                                     const std::string & objectInfo,
+                                     const std::string & binaryPath,
                                      const std::string & arguments,
                                      const std::string & input = "");
 private:

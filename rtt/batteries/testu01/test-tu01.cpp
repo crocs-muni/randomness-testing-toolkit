@@ -20,7 +20,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
         t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions();
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
-        throw RTTException(t->objectInfo , "repetitions not set");
+        throw RTTException(t->objectInfo , Strings::TEST_ERR_REPS_NOT_SET);
 
     /* Getting params - only for Crush batteries */
     if(t->battery == Constants::Battery::TU01_SMALLCRUSH ||
@@ -37,7 +37,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
                 t->params.push_back(tmp);
         }
         if(!t->params.empty() && t->params.size() != t->paramNames.size())
-            throw RTTException(t->objectInfo , "incomplete parameter settings");
+            throw RTTException(t->objectInfo , Strings::TEST_ERR_PARAM_INCOMPLETE);
     }
 
     /* Getting nb - Rabbit and Alphabit */
@@ -48,7 +48,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         if(t->bit_nb.empty())
             t->bit_nb = t->batteryConfiguration->getTestu01DefaultBitNB();
         if(t->bit_nb.empty())
-            throw RTTException(t->objectInfo , "bit_nb option not set");
+            throw RTTException(t->objectInfo , Strings::TEST_ERR_BITNB_NOT_SET);
     }
     /* Getting r s - Alphabit */
     if(t->battery == Constants::Battery::TU01_ALPHABIT) {
@@ -57,14 +57,14 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         if(t->bit_r.empty())
             t->bit_r = t->batteryConfiguration->getTestu01DefaultBitR();
         if(t->bit_r.empty())
-            throw RTTException(t->objectInfo , "bit_r option not set");
+            throw RTTException(t->objectInfo , Strings::TEST_ERR_BITR_NOT_SET);
 
         t->bit_s = t->batteryConfiguration->getTestU01BatteryTestBitS(t->battery ,
                                                                       t->testIndex);
         if(t->bit_s.empty())
             t->bit_s = t->batteryConfiguration->getTestu01DefaultBitS();
         if(t->bit_s.empty())
-            throw RTTException(t->objectInfo , "bit_s option not set");
+            throw RTTException(t->objectInfo , Strings::TEST_ERR_BITS_NOT_SET);
     }
     return t;
 }
@@ -73,8 +73,8 @@ void Test::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
 
-    testLog = TestRunner::executeBinary(executablePath ,
-                                        createArgs());
+    testLog = TestRunner::executeBinary(logger, objectInfo,
+                                        executablePath, createArgs());
 
     extractPvalues();
     executed = true;
@@ -138,7 +138,7 @@ std::string Test::createArgs() const {
     case Constants::Battery::TU01_ALPHABIT:
         arguments << "alphabit "; break;
     default:
-        throw std::runtime_error("unknown battery");
+        throw std::runtime_error(Strings::ERR_INVALID_BATTERY);
     }
     /* Test number option */
     arguments << "-t " << testIndex << " ";
@@ -181,14 +181,16 @@ void Test::extractPvalues() {
 
     int pValCount = std::distance(begin , end);
     if(pValCount == 0) {
-        std::cout << "[WARNING] No pValues were extracted" << std::endl;
+        //std::cout << "[WARNING] No pValues were extracted" << std::endl;
+        logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
         return;
     }
 
     if(pValCount % repetitions != 0) {
-        std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
-                     "Number of p-values present is not divisible by "
-                                                   "number of repetitions per test." << std::endl;
+        //std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
+        //             "Number of p-values present is not divisible by "
+        //                                           "number of repetitions per test." << std::endl;
+        logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
         return;
     }
     statCount = pValCount / repetitions;
@@ -197,8 +199,9 @@ void Test::extractPvalues() {
          * output based on their parameters. For example scomp_LempevZiv has
          * different output when executed from Crush battery and Rabbit battery.
          * In that case, say that to user and use unknown statistics names. */
-        std::cout << "[WARNING] Number of statistics extracted from log differs from default number."
-                     " Inspect the log for correct statistics names." << std::endl;
+        //std::cout << "[WARNING] Number of statistics extracted from log differs from default number."
+        //             " Inspect the log for correct statistics names." << std::endl;
+        logger->warn(objectInfo + Strings::TEST_ERR_UNKNOWN_STATISTICS);
         std::vector<std::string> newStatNames;
         for(size_t i = 1 ; i <= statCount ; ++i)
             newStatNames.push_back("Unknown " + Utils::itostr(i));
@@ -214,8 +217,9 @@ void Test::extractPvalues() {
                 pValues.push_back(
                             convertStringToDouble(match[1].str() , match[2].str()));
             } catch (std::runtime_error ex) {
-                std::cout << "[WARNING] " << objectInfo << ": error happened: " << ex.what() <<
-                             " test won't be further processed." << std::endl;
+                //std::cout << "[WARNING] " << objectInfo << ": error happened: " << ex.what() <<
+                //             " test won't be further processed." << std::endl;
+                logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
                 results.clear();
                 return;
             }

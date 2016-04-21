@@ -16,14 +16,13 @@ const std::string Storage::XPATH_DIR_TU01_AB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/
 const size_t Storage::MISC_TAB_SIZE     = 4;
 const size_t Storage::MISC_COL_WIDTH    = 30;
 
-std::unique_ptr<Storage> Storage::getInstance(const GlobalContainer & container ,
-                                              const time_t & creationTime) {
+std::unique_ptr<Storage> Storage::getInstance(const GlobalContainer & container) {
     std::unique_ptr<Storage> s (new Storage());
-    s->cliOptions =      container.getCliOptions();
+    s->cliOptions      = container.getCliOptions();
     s->toolkitSettings = container.getToolkitSettings();
-    s->creationTime = creationTime;
+    s->creationTime    = container.getCreationTime();
     s->batteryConstant = s->cliOptions->getBattery();
-    s->inFilePath = s->cliOptions->getBinFilePath();
+    s->inFilePath      = s->cliOptions->getBinFilePath();
 
     /* Getting file name for main output file */
     s->mainOutFilePath = s->toolkitSettings->getRsFileOutFile();

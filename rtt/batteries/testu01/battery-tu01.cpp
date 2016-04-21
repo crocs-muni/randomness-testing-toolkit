@@ -11,9 +11,10 @@ std::unique_ptr<Battery> Battery::getInstance(const GlobalContainer & container)
 
 void Battery::processStoredResults() {
     if(!executed)
-        throw RTTException(objectInfo , "battery must be executed before result processing");
+        throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
 
-    std::cout << "Storing battery logs and results." << std::endl;
+    //std::cout << "Storing battery logs and results." << std::endl;
+    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
 
     /* Log storage */
     std::string batteryLog;
@@ -46,6 +47,7 @@ void Battery::processStoredResults() {
         storage->finalizeTest();
     }
     storage->finalizeReport();
+    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_COMPLETE);
 }
 
 } // namespace testu01

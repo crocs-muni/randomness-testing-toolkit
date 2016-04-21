@@ -250,6 +250,16 @@ void Utils::rmDirFiles(const std::string & n) {
     closedir(d);
 }
 
+std::string Utils::createLogFileName(time_t creationTime,
+                                     const std::string & logDir, const std::string & inputFile) {
+    std::string rval;
+    rval.append(logDir);
+    rval.append(Utils::formatRawTime(creationTime , "%Y%m%d%H%M%S"));
+    rval.append("-");
+    rval.append(Utils::getLastItemInPath(inputFile));
+    rval.append(".log");
+    return rval;
+}
 
 std::string Utils::readFileToString(const std::string & path) {
     std::ifstream file(path , std::ios::in);
@@ -260,8 +270,6 @@ std::string Utils::readFileToString(const std::string & path) {
     if(file.is_open()) throw std::runtime_error("can't close input file: " + path);
     return buffer.str();
 }
-
-
 
 void Utils::saveStringToFile(const std::string & path , const std::string & source) {
     std::ofstream file(path , std::ios::out);

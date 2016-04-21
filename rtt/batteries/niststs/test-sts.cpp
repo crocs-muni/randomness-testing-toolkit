@@ -19,13 +19,13 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     if(t->streamSize.empty())
         t->streamSize = t->batteryConfiguration->getNiststsDefaultStreamSize();
     if(t->streamSize.empty())
-        throw RTTException(t->objectInfo , "stream size not set");
+        throw RTTException(t->objectInfo , Strings::TEST_ERR_STREAM_SIZE_NOT_SET);
     /* Count of streams */
     t->streamCount = t->batteryConfiguration->getNiststsTestStreamCount(testIndex);
     if(t->streamCount.empty())
         t->streamCount = t->batteryConfiguration->getNiststsDefaultStreamCount();
     if(t->streamCount.empty())
-        throw RTTException(t->objectInfo , "stream count not set");
+        throw RTTException(t->objectInfo , Strings::TEST_ERR_STREAM_COUNT_NOT_SET);
     /* Block length */
     t->blockLength = t->batteryConfiguration->getNiststsTestBlockLength(testIndex);
 
@@ -38,16 +38,9 @@ void Test::execute() {
 
     /* Cleaning the test result directory */
     Utils::rmDirFiles(resultSubDir);
-    outputLog = TestRunner::executeBinary(executablePath ,
-                                          createArgs() ,
-                                          createInput());
-    //try {
-        parseStoreResults();
-    //} catch (std::runtime_error ex) {
-    //    std::cout << "[ERROR] An exception was thrown "
-    //                 "during thread execution: " << ex.what() << std::endl;
-    //}
-
+    outputLog = TestRunner::executeBinary(logger, objectInfo, executablePath,
+                                          createArgs(), createInput());
+    parseStoreResults();
     executed = true;
 }
 
@@ -140,17 +133,17 @@ void Test::parseStoreResults() {
             auto end = std::sregex_iterator();
             int pValCount = std::distance(begin , end);
             if(pValCount == 0) {
-                std::cout << "[WARNING] No pValues were extracted." << std::endl;
+                //std::cout << "[WARNING] No pValues were extracted." << std::endl;
+                logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
                 streamCount = "0";
                 return;
             }
 
             if(pValCount % subTestCount != 0) {
-                std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log: "
-                             "Number of p-values is not divisible by number of repetitions." << std::endl;
+                //std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log: "
+                //             "Number of p-values is not divisible by number of repetitions." << std::endl;
+                logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
                 return;
-                //throw std::runtime_error("can't extract p-values from log: number of"
-                //                         " p-value is not divisible by repetitions");
             }
             int strCount = pValCount / subTestCount;
             streamCount = Utils::itostr(strCount);
@@ -191,14 +184,15 @@ void Test::parseStoreResults() {
         /* Preppending output from test run to test run */
         testLog = outputLog.append(testLog);
     } catch (std::runtime_error ex) {
-        throw RTTException(objectInfo , ex.what());
+        //std::cout << objectInfo << " exception thrown during execution: " << ex.what() << std::endl;
+        logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
     }
 }
 
 tTestPvals Test::readPvals(const std::string & fileName) {
     std::ifstream pValFile(fileName);
     if(!pValFile.is_open())
-            throw RTTException(objectInfo , "can't open file: " + fileName);
+            throw std::runtime_error("can't open file: " + fileName);
 
     std::string strPval;
     float pVal;
@@ -209,9 +203,9 @@ tTestPvals Test::readPvals(const std::string & fileName) {
     while(std::getline(pValFile , strPval)) {
         pVal = Utils::strtod(strPval);
         if(pVal < 0 || pVal > 1)
-            throw RTTException(objectInfo ,
-                               "file: " + fileName + " contains p-value"
-                               "that is not in <0,1> interval");
+            //throw std::runtime_error("file: " + fileName + " contains p-value"
+            //                         "that is not in <0,1> interval");
+            throw std::runtime_error(Strings::TEST_ERR_PVAL_OUTSIDE_INTERVAL + fileName);
         /* This silly condition is here for random excursions test */
         /* Because when you can't apply test it is feasible to give 0 as answer *rolls eyes* */
         if(pVal == 0 && (testIndex == 12 || testIndex == 13))

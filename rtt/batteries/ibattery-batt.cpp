@@ -30,7 +30,7 @@ void IBattery::runTests() {
         throw RTTException(objectInfo , Strings::BATT_ERR_ALREADY_EXECUTED);
 
     logger->info(objectInfo + ": Test execution started!");
-    TestRunner::executeTests(logger , std::ref(tests));
+    TestRunner::executeTests(logger , std::ref(tests) , toolkitSettings->getExecMaximumThreads());
     logger->info(objectInfo + ": Test execution finished!");
     executed = true;
 }

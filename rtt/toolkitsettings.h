@@ -28,6 +28,8 @@ public:
 
     std::string getMiscNiststsMainResDir() const;
 
+    int getExecMaximumThreads() const;
+
 private:
     /* Variable types for getters. Should a new variable be added,
      * add it here too. */
@@ -61,6 +63,7 @@ private:
     static const std::string XPATH_RS_FILE_TU01_ALPHABIT_DIR;
     /* Database result storage */
     // Nothing yet
+
     /* Executable binaries paths */
     static const std::string XPATH_BINARIES_DIEHARDER;
     static const std::string XPATH_BINARIES_NISTSTS;
@@ -68,6 +71,9 @@ private:
     /* Miscelaneous values. Each battery has its own section
      * and variables loaded have own getters */
     static const std::string XPATH_MISC_NISTSTS_MAIN_RESULT_DIR;
+    /* Values related to battery execution */
+    static const std::string XPATH_EXEC_MAXIMUM_THREADS;
+
 
     /* Member variables */
     std::string objectInfo = "Toolkit Settings";
@@ -95,6 +101,8 @@ private:
     std::string binaryTestU01;
 
     std::string miscNiststsMainResDir;
+
+    int execMaximumThreads = 1;
 
     /* Private methods */
     ToolkitSettings() {}

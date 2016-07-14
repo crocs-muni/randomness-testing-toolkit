@@ -29,6 +29,8 @@ const std::string ToolkitSettings::XPATH_BINARIES_TESTU01               = "BINAR
 
 const std::string ToolkitSettings::XPATH_MISC_NISTSTS_MAIN_RESULT_DIR   = "MISCELANEOUS/NIST_STS/MAIN_RESULT_DIR";
 
+const std::string ToolkitSettings::XPATH_EXEC_MAXIMUM_THREADS           = "EXECUTION/MAXIMUM_THREADS";
+
 ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     TiXmlNode * xmlCfg = NULL;
     loadXMLFile(xmlCfg , cfgFileName);
@@ -78,6 +80,9 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     /* Miscelaneous variables */
     ts.miscNiststsMainResDir = ts.getDirValue(xmlCfg , XPATH_MISC_NISTSTS_MAIN_RESULT_DIR);
 
+    /* Battery execution related variables */
+    ts.execMaximumThreads = ts.getIntegerValue(xmlCfg , XPATH_EXEC_MAXIMUM_THREADS, false);
+
     free(xmlCfg);
     return ts;
 }
@@ -108,6 +113,10 @@ std::string ToolkitSettings::getBinaryBattery(Constants::Battery battery) const 
 std::string ToolkitSettings::getMiscNiststsMainResDir() const {
     return miscNiststsMainResDir;
 }
+int ToolkitSettings::getExecMaximumThreads() const {
+    return execMaximumThreads;
+}
+
 
 /*
                      __                       __

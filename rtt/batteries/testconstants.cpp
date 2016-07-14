@@ -89,10 +89,11 @@ const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT2       {"sstring
 const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGCORR          {"sstring_HammingCorr" ,         {"N","n","r","s","L"} ,             {"Normal"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGINDEP         {"sstring_HammingIndep" ,        {"N","n","r","s","L","d"} ,         {"Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_RUN                  {"sstring_Run" ,                 {"N","n","r","s"} ,                 {"Chi-square" , "Normal"}};
+const tTestU01Data TestConstants::TESTU01_SSTRING_RUN_RABBIT           {"sstring_Run" ,                 {} ,                                {"Kolmogorov-Smirnov (D+) (runs)" , "Kolmogorov-Smirnov (D-) (runs)" , "Anderson-Darling (A2) (runs)" , "Chi-square (runs)" , "Kolmogorov-Smirnov (D+) (bits)" , "Kolmogorov-Smirnov (D-) (bits)" , "Anderson-Darling (A2) (bits)" , "Normal (bits)" , "Sample variance (bits)"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR              {"sstring_AutoCor" ,             {} ,                                {"Normal"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN         {"sstring_AutoCor" ,             {"N","n","r","s","d"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Normal" , "Sample variance"}};
-const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsIver" , {} ,                                {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN    {"smultin_MultinomialBitsIver" , {} ,                                {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling (A2)" ,"Std empirical mean" , "Std empirical correlation"}};
+const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsOver" , {} ,                                {"Collision"}};
+const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN    {"smultin_MultinomialBitsOver" , {} ,                                {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling (A2)" ,"Std empirical mean" , "Std empirical correlation"}};
 
 const std::map<int , tNistStsData> TestConstants::nistStsTests {
     { 1, TestConstants::NISTSTS_FREQ},
@@ -243,8 +244,8 @@ const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsRabbit = {
     { IndexRange(11,11) , TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT},
     { IndexRange(12,14) , TestConstants::TESTU01_SSTRING_HAMMINGCORR},
     { IndexRange(15,17) , TestConstants::TESTU01_SSTRING_HAMMINGINDEP},
-    { IndexRange(18,19) , TestConstants::TESTU01_SSTRING_AUTOCOR},
-    { IndexRange(20,20) , TestConstants::TESTU01_SSTRING_RUN},
+    { IndexRange(18,19) , TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN},
+    { IndexRange(20,20) , TestConstants::TESTU01_SSTRING_RUN_RABBIT},
     { IndexRange(21,23) , TestConstants::TESTU01_SMARSA_MATRIXRANK},
     { IndexRange(24,26) , TestConstants::TESTU01_SWALK_RANDOMWALK1}
 };

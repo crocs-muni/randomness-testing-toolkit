@@ -187,6 +187,7 @@ private:
     static const tTestU01Data TESTU01_SSTRING_HAMMINGCORR;
     static const tTestU01Data TESTU01_SSTRING_HAMMINGINDEP;
     static const tTestU01Data TESTU01_SSTRING_RUN;
+    static const tTestU01Data TESTU01_SSTRING_RUN_RABBIT;
     static const tTestU01Data TESTU01_SSTRING_AUTOCOR;
     static const tTestU01Data TESTU01_SSTRING_AUTOCOR_BIGN;
     static const tTestU01Data TESTU01_SMULTIN_MULTINOMIALBITSOVER;

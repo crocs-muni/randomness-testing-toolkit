@@ -5,14 +5,13 @@ CFLAGS=-std=c++11 -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===
 DEPS = \
-	libs/tinyXML/tinystr.h \
-	libs/tinyXML/tinyxml.cpp \
+    libs/tinyXML/tinystr.cpp \
+    libs/tinyXML/tinyxml.cpp \
     libs/tinyXML/tinyxmlerror.cpp \
     libs/tinyXML/tinyxmlparser.cpp \
     libs/tinyXML/xmlproc.cpp \
     rtt/constants.cpp \
     rtt/main.cpp \
-    rtt/options.cpp \
     rtt/utils.cpp \
     rtt/batteries/dieharder/battery-dh.cpp \
     rtt/batteries/dieharder/test-dh.cpp \
@@ -25,18 +24,25 @@ DEPS = \
     libs/cephes/cephes.cpp \
     rtt/batteries/ibattery-batt.cpp \
     rtt/batteries/itest-batt.cpp \
-    rtt/batteries/testrunner-batt.cpp
+    rtt/batteries/testrunner-batt.cpp \
+    rtt/clioptions.cpp \
+    rtt/toolkitsettings.cpp \
+    rtt/batteries/configuration-batt.cpp \
+    rtt/output/ioutput.cpp \
+    rtt/batteries/testconstants.cpp \
+    rtt/globalcontainer.cpp \
+    rtt/logger.cpp \
+    rtt/strings.cpp
 
 # === Target object files ===
 OBJ = \
-	tinystr.o \
+    tinystr.o \
 	tinyxml.o \
 	tinyxmlerror.o \
 	tinyxmlparser.o \
 	xmlproc.o \
 	constants.o \
 	main.o \
-	options.o \
 	utils.o \
 	battery-dh.o \
 	test-dh.o \
@@ -49,7 +55,15 @@ OBJ = \
 	cephes.o \
 	ibattery-batt.o \
 	itest-batt.o \
-	testrunner-batt.o
+	testrunner-batt.o \
+	clioptions.o \
+	toolkitsettings.o \
+	configuration-batt.o \
+	ioutput.o \
+	testconstants.o \
+	globalcontainer.o \
+	logger.o \
+	strings.o
 
 # === All paths inside project directory ===
 # === Ugly but works ===

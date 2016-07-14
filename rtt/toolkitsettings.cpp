@@ -67,6 +67,14 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     ts.binaryNiststs    = ts.getStringValue(xmlCfg , XPATH_BINARIES_NISTSTS);
     ts.binaryTestU01    = ts.getStringValue(xmlCfg , XPATH_BINARIES_TESTU01);
 
+    /* Check existence of binaries */
+    if(!Utils::fileExist(ts.binaryDieharder))
+        throw RTTException(ts.objectInfo, Strings::ERR_FILE_OPEN_FAIL + ts.binaryDieharder);
+    if(!Utils::fileExist(ts.binaryNiststs))
+        throw RTTException(ts.objectInfo, Strings::ERR_FILE_OPEN_FAIL + ts.binaryNiststs);
+    if(!Utils::fileExist(ts.binaryTestU01))
+        throw RTTException(ts.objectInfo, Strings::ERR_FILE_OPEN_FAIL + ts.binaryTestU01);
+
     /* Miscelaneous variables */
     ts.miscNiststsMainResDir = ts.getDirValue(xmlCfg , XPATH_MISC_NISTSTS_MAIN_RESULT_DIR);
 

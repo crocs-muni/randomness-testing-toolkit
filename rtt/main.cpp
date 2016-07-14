@@ -49,9 +49,6 @@ int main (int argc , char * argv[]) {
 #ifdef TESTING
     /* Only testing code here */
 #else
-    //std::cout << "Randomness Testing Toolkit start. (build " << GIT_COMMIT_SHORT << ")" << std::endl;
-    //std::cout << "Start: " << Utils::getTime() << std::endl;
-
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;
         return -1;
@@ -99,21 +96,15 @@ int main (int argc , char * argv[]) {
         battery->processStoredResults();
 
     } catch(RTTException ex) {
-        //std::cout << "[ERROR] " << ex.what() << std::endl;
         container.getLogger()->error(ex.what());
     } catch(XMLException ex) {
-        //std::cout << "[ERROR] " << ex.what() << std::endl;
         container.getLogger()->error(ex.what());
     } catch (BugException ex) {
-        //std::cout << "[BUG]   " << ex.what() << std::endl;
         container.getLogger()->error(ex.what());
     } catch(std::runtime_error ex) {
-        //std::cout << "[ERROR] " << ex.what() << std::endl;
         container.getLogger()->error(ex.what());
     } catch(std::bad_alloc ex) {
-        //std::cout << "[ERROR] Memory allocation failed: " << ex.what() << std::endl;
         container.getLogger()->error(ex.what());
     }
-    //std::cout << "End: " << Utils::getTime() << std::endl;
 #endif
 }

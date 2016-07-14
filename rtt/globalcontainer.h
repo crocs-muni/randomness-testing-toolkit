@@ -41,6 +41,7 @@ public:
 private:
     /* Application start time, will be used in naming files, etc. */
     time_t creationTime;
+
     std::shared_ptr<CliOptions> cliOptions;
     std::shared_ptr<ToolkitSettings> toolkitSettings;
     std::shared_ptr<batteries::Configuration> batteryConfiguration;

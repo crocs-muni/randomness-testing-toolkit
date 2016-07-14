@@ -9,7 +9,6 @@ namespace rtt {
  * to notify about errors, progress, etc. */
 class Strings {
 public:
-
     static const std::string ERR_FILE_OPEN_FAIL;
     static const std::string ERR_INVALID_BATTERY;
     static const std::string ERR_INVALID_TEST_CONST;

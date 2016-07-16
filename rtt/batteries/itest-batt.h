@@ -30,8 +30,6 @@ public:
 
     std::vector<tTestPvals> getResults() const;
 
-    void appendTestLog(std::string & batteryLog) const;
-
 protected:
     ITest(int testIndex , const GlobalContainer & container);
 
@@ -46,6 +44,7 @@ protected:
     int testIndex;
     Constants::Battery battery;
     std::string logicName;
+    std::string logFilePath;
     std::string executablePath;
     std::string binaryDataPath;
     std::string objectInfo;

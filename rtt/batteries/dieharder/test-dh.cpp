@@ -7,6 +7,8 @@ namespace dieharder {
 const int Test::OPTION_HEADER_FLAG      = 66047;
 const int Test::OPTION_FILE_GENERATOR   = 201;
 
+std::mutex outputFile_mux;
+
 std::unique_ptr<Test> Test::getInstance(int testIndex , const GlobalContainer & container) {
     std::unique_ptr<Test> t (new Test(testIndex , container));
 
@@ -54,6 +56,12 @@ void Test::execute() {
     testLog = TestRunner::executeBinary(logger, objectInfo,
                                         executablePath, createArgs());
     extractPvalues();
+
+    /* Store test output into file */
+    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
+    Utils::appendStringToFile(logFilePath , testLog);
+    outputFile_lock.unlock();
+
     executed = true;
 }
 

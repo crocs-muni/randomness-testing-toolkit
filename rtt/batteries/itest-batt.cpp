@@ -43,13 +43,6 @@ std::vector<tTestPvals> ITest::getResults() const {
     return results;
 }
 
-void ITest::appendTestLog(std::string & batteryLog) const {
-    if(!executed)
-        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_LOGS);
-
-    batteryLog.append(testLog);
-}
-
 ITest::ITest(int testIndex, const GlobalContainer & container) {
     cliOptions           = container.getCliOptions();
     toolkitSettings      = container.getToolkitSettings();
@@ -59,6 +52,9 @@ ITest::ITest(int testIndex, const GlobalContainer & container) {
     battery              = cliOptions->getBattery();
     binaryDataPath       = cliOptions->getBinFilePath();
     executablePath       = toolkitSettings->getBinaryBattery(battery);
+    logFilePath          = Utils::createLogFileName(container.getCreationTime(),
+                                                    toolkitSettings->getLoggerBatteryDir(battery),
+                                                    binaryDataPath);
 
     objectInfo =
             Constants::batteryToString(battery) + " - test " + Utils::itostr(testIndex);

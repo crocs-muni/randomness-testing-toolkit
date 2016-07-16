@@ -33,7 +33,6 @@ protected:
     /* Variables initialized in getInstance() */
     time_t creationTime;
     Constants::Battery battery;
-    std::string logFilePath;
     std::string objectInfo;
     std::unique_ptr<output::IOutput> storage;
     /* Battery is keeping track of tests set to execution.

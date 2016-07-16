@@ -30,7 +30,9 @@ void IBattery::runTests() {
         throw RTTException(objectInfo , Strings::BATT_ERR_ALREADY_EXECUTED);
 
     logger->info(objectInfo + ": Test execution started!");
-    TestRunner::executeTests(logger , std::ref(tests) , toolkitSettings->getExecMaximumThreads());
+    /* Tests will create output file in output directory */
+    Utils::createDirectory(toolkitSettings->getLoggerBatteryDir(battery));
+    TestRunner::executeTests(logger , std::ref(tests)/* , logFilePath */, toolkitSettings->getExecMaximumThreads());
     logger->info(objectInfo + ": Test execution finished!");
     executed = true;
 }
@@ -45,9 +47,6 @@ IBattery::IBattery(const GlobalContainer & container) {
     creationTime = container.getCreationTime();
     battery      = cliOptions->getBattery();
     objectInfo   = Constants::batteryToString(battery);
-    logFilePath  = Utils::createLogFileName(creationTime,
-                                            toolkitSettings->getLoggerBatteryDir(battery),
-                                            cliOptions->getBinFilePath());
     logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + cliOptions->getBinFilePath());
 
     std::vector<int> testIndices = cliOptions->getTestConsts();

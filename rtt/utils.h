@@ -68,6 +68,8 @@ public:
       */
     static void saveStringToFile(const std::string & path , const std::string & source);
 
+    static void appendStringToFile(const std::string & path , const std::string & source);
+
     /** Returns string after last separator in path.
       * If no separator is found, whole path is returned.
       * ../../example returns example

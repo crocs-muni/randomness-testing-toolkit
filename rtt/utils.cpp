@@ -273,7 +273,6 @@ std::string Utils::readFileToString(const std::string & path) {
     std::stringstream buffer;
     buffer << file.rdbuf();
     file.close();
-    if(file.is_open()) throw std::runtime_error("can't close input file: " + path);
     return buffer.str();
 }
 
@@ -282,7 +281,13 @@ void Utils::saveStringToFile(const std::string & path , const std::string & sour
     if(!file.is_open()) throw std::runtime_error("can't open output file: " + path);
     file << source;
     file.close();
-    if(file.is_open()) throw std::runtime_error("can't close output file: " + path);
+}
+
+void Utils::appendStringToFile(const std::string & path, const std::string & source) {
+    std::ofstream file(path , std::ios::out | std::ios::app);
+    if(!file.is_open()) throw std::runtime_error("can't open output file: " + path);
+    file << source;
+    file.close();
 }
 
 } // namespace rtt

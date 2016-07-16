@@ -7,6 +7,10 @@ namespace batteries {
  * Used mainly by code in .cpp file but cout_mux is used in other methods
  * as well. */
 
+/* Path to file with outputs of all tests. Outputs are written into file by
+ * threads that executed the tests, lock must be locked during writing. */
+//std::string batteryOutputFile;
+//std::mutex  batteryOutputFile_mux;
 /* Sets how many test threads will be run at once. */
 std::atomic_int threadCount{1};
 /* Keeps tracks of how many running threads have not yet
@@ -35,12 +39,13 @@ std::mutex              childReceived_mux;
 int                     threadState = 0;
 std::condition_variable threadState_cv;
 std::mutex              threadState_mux;
-/* Standard console output mutex - every time thread want to write to console, it
- * should lock this mutex first to avoid scrambled output */
-static std::mutex       cout_mux;
 
-void TestRunner::executeTests(std::shared_ptr<Logger> logger, std::vector<std::unique_ptr<ITest> > & tests, int maxThreads) {
+void TestRunner::executeTests(std::shared_ptr<Logger> logger,
+                              std::vector<std::unique_ptr<ITest> > & tests,
+                              /*std::string logFilePath,*/ int maxThreads) {
     threadCount = maxThreads;
+    //batteryOutputFile = logFilePath;
+
     std::thread manager(threadManager , std::ref(tests));
     /* String that will be used in logs */
     std::string objectInfo = "Process reaper";
@@ -197,7 +202,7 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
          * will work with his associated process only
          * (because the thread owns the pipes to this process) */
         auto now = std::chrono::system_clock::now();
-        // Don't know why, but if I use TIMEOUT constant directly in argument it won't compile...
+        /* Don't know why, but if I use TIMEOUT constant directly in argument it won't compile... */
         int vArgumenteToJebeChybu = PROCESS_TIMEOUT_SECONDS;
         if(!finishedPid_cv.wait_until(finishedPid_lock ,
                                       now + std::chrono::seconds(vArgumenteToJebeChybu) ,
@@ -229,7 +234,7 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
 
         /* This thread need to wait for notification from threadMaker
          * that it is ok to continue and after that, main thread can
-         * be notified that chils process was received and is being
+         * be notified that child process was received and is being
          * processed.*/
         threadsReady_lock.lock();
         threadState_cv.wait(threadsReady_lock ,
@@ -247,7 +252,6 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
          *  DO YOUR WORK SLAVE!!! */
         reader.join();
         if(!stderr.empty()) {
-            std::lock_guard<std::mutex> l(cout_mux);
             logger->warn(objectInfo + ": child process has non-empty error output. "
                          "Results will be still processed but they might be invalid. "
                          "Inspect logs.");
@@ -312,7 +316,7 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     threadState_lock.lock();
     threadState = THREAD_STATE_DONE;
     threadState_lock.unlock();
-    /* I don't thonk there will be ever thread that will wait for this.
+    /* I don't think there will be ever thread that will wait for this.
      * But better be safe than sorry. */
     threadState_cv.notify_all();
 

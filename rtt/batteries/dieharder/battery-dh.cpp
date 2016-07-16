@@ -15,14 +15,6 @@ void Battery::processStoredResults() {
 
     logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
 
-    /* Log storage */
-    std::string batteryLog;
-    for(auto & i : tests)
-        i->appendTestLog(batteryLog);
-
-    Utils::createDirectory(Utils::getPathWithoutLastItem(logFilePath));
-    Utils::saveStringToFile(logFilePath , batteryLog);
-
     /* Result storage */
     for(const auto & test : tests) {
         storage->addNewTest(test->getLogicName());

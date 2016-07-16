@@ -30,4 +30,25 @@ std::string Constants::batteryToString(Battery batteryConstant) {
     }
 }
 
+std::string Constants::batteryToStringShort(Battery batteryConstant) {
+    switch(batteryConstant) {
+    case Battery::DIEHARDER:
+        return "dieharder";
+    case Battery::NIST_STS:
+        return "nist_sts";
+    case Battery::TU01_SMALLCRUSH:
+        return "tu01_smallcrush";
+    case Battery::TU01_CRUSH:
+        return "tu01_crush";
+    case Battery::TU01_BIGCRUSH:
+        return "tu01_bigcrush";
+    case Battery::TU01_RABBIT:
+        return "tu01_rabbit";
+    case Battery::TU01_ALPHABIT:
+        return "tu01_alphabit";
+    default:
+        raiseBugException(Strings::ERR_INVALID_BATTERY);
+    }
+}
+
 } // namespace rtt

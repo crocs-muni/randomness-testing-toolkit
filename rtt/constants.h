@@ -3,7 +3,7 @@
 
 #include "rtt/strings.h"
 #include "rtt/bugexception.h"
-#include "rtt/utils.h"
+//#include "rtt/utils.h"
 
 namespace rtt {
 
@@ -40,6 +40,8 @@ public:
     /********* Toolkit global methods ************/
     ///////////////////////////////////////////////
     static std::string batteryToString(Battery batteryConstant);
+
+    static std::string batteryToStringShort(Battery batteryConstant);
 
 private:
     Constants () {}

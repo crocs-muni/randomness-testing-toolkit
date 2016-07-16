@@ -251,10 +251,16 @@ void Utils::rmDirFiles(const std::string & n) {
 }
 
 std::string Utils::createLogFileName(time_t creationTime,
-                                     const std::string & logDir, const std::string & inputFile) {
+                                     const std::string & logDir,
+                                     const std::string & inputFile,
+                                     std::string batteryShort) {
     std::string rval;
     rval.append(logDir);
     rval.append(Utils::formatRawTime(creationTime , "%Y%m%d%H%M%S"));
+    if(!batteryShort.empty()) {
+        rval.append("-");
+        rval.append(batteryShort);
+    }
     rval.append("-");
     rval.append(Utils::getLastItemInPath(inputFile));
     rval.append(".log");

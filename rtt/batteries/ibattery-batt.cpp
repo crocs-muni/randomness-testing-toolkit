@@ -48,8 +48,6 @@ IBattery::IBattery(const GlobalContainer & container) {
     logFilePath  = Utils::createLogFileName(creationTime,
                                             toolkitSettings->getLoggerBatteryDir(battery),
                                             cliOptions->getBinFilePath());
-    //std::cout << "[INFO] Processing file: " << cliOptions->getBinFilePath()
-    //          << std::endl;
     logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + cliOptions->getBinFilePath());
 
     std::vector<int> testIndices = cliOptions->getTestConsts();

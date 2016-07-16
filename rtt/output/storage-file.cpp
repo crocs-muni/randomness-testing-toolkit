@@ -13,6 +13,8 @@ const std::string Storage::XPATH_DIR_TU01_BC    = "TOOLKIT_SETTINGS/OUTPUT/FILE/
 const std::string Storage::XPATH_DIR_TU01_RB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_RABBIT_DIR";
 const std::string Storage::XPATH_DIR_TU01_AB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_ALPHABIT_DIR";
 
+const std::string Storage::STRING_PASSED_PROP   = "Passed/Total test statistics: ";
+
 const size_t Storage::MISC_TAB_SIZE     = 4;
 const size_t Storage::MISC_COL_WIDTH    = 30;
 
@@ -120,11 +122,14 @@ void Storage::finalizeTest() {
 
 void Storage::finalizeReport() {
     /* Add passed tests proportion at the end of report */
-    passedTestProp = {Utils::itostr(passedStatisticsCount) + "/" + Utils::itostr(totalStatisticsCount)};
-    report << "Proportion of passed statistics: " << passedTestProp << std::endl;
+    passedTestProp = { Utils::itostr(passedStatisticsCount) + "/" + Utils::itostr(totalStatisticsCount) };
+    std::string reportStr = report.str();
+    size_t pos = reportStr.find(STRING_PASSED_PROP);
+    reportStr.insert(pos + STRING_PASSED_PROP.length(), passedTestProp);
+
     /* Storing report */
     Utils::createDirectory(Utils::getPathWithoutLastItem(outFilePath));
-    Utils::saveStringToFile(outFilePath , report.str());
+    Utils::saveStringToFile(outFilePath , reportStr);
     /* Adding result into table file */
     /* Files with same name as the file processed in
      * this run will be assigned new results */
@@ -132,13 +137,15 @@ void Storage::finalizeReport() {
 }
 
 void Storage::makeReportHeader() {
-    report << "***** Randomness Testing Toolkit file analysis report *****" << std::endl;
+    report << "***** Randomness Testing Toolkit data stream analysis report *****" << std::endl;
     report << "Date:    " << Utils::formatRawTime(creationTime , "%d-%m-%Y") << std::endl;
     report << "File:    " << inFilePath << std::endl;
     report << "Battery: " << Constants::batteryToString(batteryConstant) << std::endl;
     report << std::endl;
     report << "Alpha:   " << std::setw(3) << Constants::MATH_ALPHA << std::endl;
     report << "Epsilon: " << Constants::MATH_EPS << std::endl;
+    report << std::endl;
+    report << STRING_PASSED_PROP << std::endl;
     report << std::endl << std::endl;
 }
 

@@ -28,6 +28,9 @@ public:
     static const std::string XPATH_DIR_TU01_RB;
     static const std::string XPATH_DIR_TU01_AB;
 
+    /* Strings in report */
+    static const std::string STRING_PASSED_PROP;
+
     /* Other constants */
     static const size_t MISC_TAB_SIZE;
     static const size_t MISC_COL_WIDTH;

@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// File with global methods declared
+/* File with global methods declared */
 
 #define my_min(a,b) (((a)<(b))?(a):(b))
 #define my_max(a,b) (((a)>(b))?(a):(b))
@@ -140,7 +140,8 @@ public:
 
     static std::string createLogFileName(time_t creationTime ,
                                          const std::string & logDir ,
-                                         const std::string & inputFile);
+                                         const std::string & inputFile ,
+                                         std::string batteryShort = "");
 };
 
 } // namespace rtt

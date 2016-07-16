@@ -119,15 +119,11 @@ void Test::extractPvalues() {
 
     int pValCount = std::distance(begin , end);
     if(pValCount == 0) {
-        //std::cout << "[WARNING] No pValues were extracted" << std::endl;
         logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
         return;
     }
 
     if(pValCount % pSampleCount != 0) {
-        //std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
-        //             "Number of p-values present is not divisible by "
-        //             "number of p-samples per test." << std::endl;
         logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
         return;
     }

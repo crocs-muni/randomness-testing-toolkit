@@ -63,10 +63,12 @@ int main (int argc , char * argv[]) {
         container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
         container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
         /* A bit clumsy logger initialization */
+        /* I should really change it to something more elegant */
         container.initLogger("Main_Application" ,
                              Utils::createLogFileName(container.getCreationTime() ,
                                                       container.getToolkitSettings()->getLoggerRunLogDir() ,
-                                                      container.getCliOptions()->getBinFilePath()),
+                                                      container.getCliOptions()->getBinFilePath() ,
+                                                      Constants::batteryToStringShort(container.getCliOptions()->getBattery())),
                              true);
     } catch(RTTException ex) {
         std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;

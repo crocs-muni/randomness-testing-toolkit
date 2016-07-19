@@ -3,14 +3,9 @@
 namespace rtt {
 namespace batteries {
 
-/* Defined variables and corresponding condition variables and mutexes.
- * Used mainly by code in .cpp file but cout_mux is used in other methods
- * as well. */
-
-/* Path to file with outputs of all tests. Outputs are written into file by
- * threads that executed the tests, lock must be locked during writing. */
-//std::string batteryOutputFile;
-//std::mutex  batteryOutputFile_mux;
+/************************************************************************/
+/* Defined variables and corresponding condition variables and mutexes. */
+/************************************************************************/
 /* Sets how many test threads will be run at once. */
 std::atomic_int threadCount{1};
 /* Keeps tracks of how many running threads have not yet
@@ -40,11 +35,13 @@ int                     threadState = 0;
 std::condition_variable threadState_cv;
 std::mutex              threadState_mux;
 
+/*************/
+/* Functions */
+/*************/
 void TestRunner::executeTests(std::shared_ptr<Logger> logger,
                               std::vector<std::unique_ptr<ITest> > & tests,
-                              /*std::string logFilePath,*/ int maxThreads) {
+                              int maxThreads) {
     threadCount = maxThreads;
-    //batteryOutputFile = logFilePath;
 
     std::thread manager(threadManager , std::ref(tests));
     /* String that will be used in logs */
@@ -101,7 +98,6 @@ void TestRunner::executeTests(std::shared_ptr<Logger> logger,
              * child processes (this thread can end), or some other error
              * happened (very unlikely). */
             if(errno == ECHILD) {
-
                 logger->info(objectInfo + ": all tests were executed and finished");
                 break;
             } else {
@@ -116,7 +112,7 @@ void TestRunner::executeTests(std::shared_ptr<Logger> logger,
     manager.join();
 }
 
-std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
+/*std::string*/ BatteryOutput TestRunner::executeBinary(std::shared_ptr<Logger> logger,
                                       const std::string & objectInfo,
                                       const std::string & binaryPath,
                                       const std::string & arguments,
@@ -125,8 +121,8 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
     int stdout_pipe[2];
     int stderr_pipe[2];
 
-    std::string output;
-    std::string stderr;
+    //std::string output;
+    //std::string stderr;
     pid_t pid = 0;
     posix_spawn_file_actions_t actions;
 
@@ -138,7 +134,7 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
             --withoutChild;
         }
         withoutChild_cv.notify_one();
-        return "";
+        return {};
     }
 
     /* Pipes will be mapped to I/O after process start */
@@ -188,7 +184,9 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
         /* Start thread for output reading. Thread will be mostly in blocked wait.
          * Also will be essentially over as soon as the process finishes.
          * With this, pipes won't be filled and won't block underlying process. */
-        std::thread reader(readOutput , std::ref(output) , std::ref(stderr) ,
+        BatteryOutput output;
+        std::thread reader(readOutput , /*std::ref(output) , std::ref(stderr) ,*/
+                           std::ref(output),
                            stdout_pipe , stderr_pipe);
 
         /* Incrementing number of threads waiting.
@@ -251,11 +249,11 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
         /* This thread now completed all communication with other threads.
          *  DO YOUR WORK SLAVE!!! */
         reader.join();
-        if(!stderr.empty()) {
-            logger->warn(objectInfo + ": child process has non-empty error output. "
-                         "Results will be still processed but they might be invalid. "
-                         "Inspect logs.");
-        }
+        //if(!output.getStdErr().empty()) {
+        //    logger->warn(objectInfo + ": child process has non-empty error output. "
+        //                 "Results will be still processed but they might be invalid. "
+        //                 "Inspect logs.");
+        //}
 
         return output;
     } else {
@@ -268,7 +266,7 @@ std::string TestRunner::executeBinary(std::shared_ptr<Logger> logger,
             --withoutChild;
         }
         withoutChild_cv.notify_one();
-        return "";
+        return {};
     }
     /* All locks go out of scope, so everything will be unlocked here */
 }
@@ -327,9 +325,11 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     /* Joining complete, end. */
 }
 
-void TestRunner::readOutput(std::string & output , std::string & stderr ,
+void TestRunner::readOutput(/*std::string & output , std::string & stderr ,*/
+                            BatteryOutput & output ,
                             int * stdout_pipe, int * stderr_pipe) {
     std::string buffer(1024 , ' ');
+    std::string tmpStr;
     size_t bytes_read;
 
     std::vector<pollfd> pollVector {{stdout_pipe[0] , POLLIN , 0},
@@ -337,12 +337,16 @@ void TestRunner::readOutput(std::string & output , std::string & stderr ,
     for(; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
         if(pollVector[0].revents&POLLIN) {
             bytes_read = read(stdout_pipe[0] , &buffer[0] , buffer.length());
-            output.append(buffer , 0 , bytes_read);
+            //output.append(buffer , 0 , bytes_read);
+            tmpStr = buffer.substr(0, bytes_read);
+            output.appendStdOut(tmpStr);
         }
         else if(pollVector[1].revents&POLLIN) {
             bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
-            output.append(buffer , 0 , bytes_read);
-            stderr.append(buffer , 0 , bytes_read);
+            //output.append(buffer , 0 , bytes_read);
+            //stderr.append(buffer , 0 , bytes_read);
+            tmpStr = buffer.substr(0, bytes_read);
+            output.appendStdErr(tmpStr);
         }
         else break; /* Nothing else to read */
     }

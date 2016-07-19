@@ -16,6 +16,7 @@
 
 #include "rtt/logger.h"
 #include "rtt/batteries/itest-batt.h"
+#include "rtt/batteries/batteryoutput.h"
 
 namespace rtt {
 namespace batteries {
@@ -49,7 +50,7 @@ public:
 
     /* Called from test code in method execute. Thread is not created
      * directly from this method, but from test's execute. */
-    static std::string executeBinary(std::shared_ptr<Logger> logger,
+    static /*std::string*/ BatteryOutput executeBinary(std::shared_ptr<Logger> logger,
                                      const std::string & objectInfo,
                                      const std::string & binaryPath,
                                      const std::string & arguments,
@@ -59,7 +60,8 @@ private:
      * wait for the threads to end and joins them. */
     static void threadManager(std::vector<std::unique_ptr<ITest>> & tests);
 
-    static void readOutput(std::string & output, std::string & stderr,
+    static void readOutput(/*std::string & output, std::string & stderr,*/
+                           BatteryOutput & output,
                            int * stdout_pipe, int * stderr_pipe);
 
     static char ** buildArgv(const std::string & arguments , int * argc);

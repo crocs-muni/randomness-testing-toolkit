@@ -40,13 +40,29 @@ void Test::execute() {
 
     /* Cleaning the test result directory */
     Utils::rmDirFiles(resultSubDir);
-    outputLog = TestRunner::executeBinary(logger, objectInfo, executablePath,
-                                          createArgs(), createInput());
+    //outputLog = TestRunner::executeBinary(logger, objectInfo, executablePath,
+    //                                      createArgs(), createInput());
+    batteryOutput = TestRunner::executeBinary(logger, objectInfo,
+                                              executablePath, createArgs(), createInput());
+
+    //outputLog = output.getStdOut();
+    //outputLog.append(output.getStdErr());
     parseStoreResults();
+    //auto errors = output.getErrors();
+    //auto warnings = output.getWarnings();
+
+    if(!batteryOutput.getStdErr().empty())
+        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
+    if(!batteryOutput.getErrors().empty())
+        logger->warn(objectInfo + ": test output contains errors.");
+    if(!batteryOutput.getWarnings().empty())
+        logger->warn(objectInfo + ": test output contains warnings.");
+
 
     /* Store test output into file */
     std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    Utils::appendStringToFile(logFilePath , testLog);
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
     outputFile_lock.unlock();
 
     executed = true;
@@ -63,7 +79,7 @@ std::vector<std::string> Test::getParameters() const {
 }
 
 std::vector<std::string> Test::getStatistics() const {
-    return {"Chi-square" , "Proportion"};
+    return { "Chi-square" , "Proportion" };
 }
 
 /*
@@ -129,27 +145,25 @@ std::string Test::createInput() const {
 
 void Test::parseStoreResults() {
     try {
-        testLog = Utils::readFileToString(resultSubDir + "stats.txt");
+        auto testLog = Utils::readFileToString(resultSubDir + "stats.txt");
+        batteryOutput.appendStdOut(testLog);
 
-        if(testIndex == 12 || /* Random excursions */
-           testIndex == 13    /* Random excursions variant */) {
+        if(testIndex == 12 ||  /* Random excursions */
+           testIndex == 13 ) { /* Random excursions variant */
             /* Random excursions tests are exceptions (of course they are)
              * p-values must be read directly from log and their count must
-             * be divisible by subtestcount. Otherwise something happened. */
+             * be divisible by subTestCount. Otherwise something happened. */
             static const std::regex RE_PVALUE {"p[\\-_]value = ([0|1]?\\.[0-9]+?)\\n"};
             auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
             auto end = std::sregex_iterator();
             int pValCount = std::distance(begin , end);
             if(pValCount == 0) {
-                //std::cout << "[WARNING] No pValues were extracted." << std::endl;
                 logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
                 streamCount = "0";
                 return;
             }
 
             if(pValCount % subTestCount != 0) {
-                //std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log: "
-                //             "Number of p-values is not divisible by number of repetitions." << std::endl;
                 logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
                 return;
             }
@@ -190,9 +204,8 @@ void Test::parseStoreResults() {
         }
 
         /* Preppending output from test run to test run */
-        testLog = outputLog.append(testLog);
+        //testLog = outputLog.append(testLog);
     } catch (std::runtime_error ex) {
-        //std::cout << objectInfo << " exception thrown during execution: " << ex.what() << std::endl;
         logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
     }
 }

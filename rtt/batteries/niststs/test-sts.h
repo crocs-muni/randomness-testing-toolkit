@@ -53,7 +53,7 @@ private:
     bool adjustableBlockLen;
     /* Following fileds will be set after calling */
     /* execute */
-    std::string outputLog;
+    //std::string outputLog;
 
     /*
     ===============

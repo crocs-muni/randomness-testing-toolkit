@@ -95,9 +95,11 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     if(options.binFilePath.empty())
         throw RTTException(options.objectInfo ,
                            "option \"-f\" must be set in arguments");
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Commented out only for testing!!
     if(!Utils::fileExist(options.binFilePath))
         throw RTTException(options.objectInfo ,
-                           Strings::ERR_FILE_OPEN_FAIL + options.objectInfo);
+                           Strings::ERR_FILE_OPEN_FAIL + options.binFilePath);
 
     /* If test options were entered set them! */
     if((testsBot != -1 && testsTop == -1) || (testsBot == -1 && testsTop != -1))

@@ -75,13 +75,18 @@ void Test::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
 
-    testLog = TestRunner::executeBinary(logger, objectInfo,
-                                        executablePath, createArgs());
+    //testLog = TestRunner::executeBinary(logger, objectInfo,
+    //                                    executablePath, createArgs());
+    BatteryOutput output = TestRunner::executeBinary(logger, objectInfo,
+                                                     executablePath, createArgs());
+
     extractPvalues();
 
     /* Store test output into file */
     std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    Utils::appendStringToFile(logFilePath , testLog);
+    //Utils::appendStringToFile(logFilePath , testLog);
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
     outputFile_lock.unlock();
 
     executed = true;
@@ -183,8 +188,11 @@ void Test::extractPvalues() {
         ") *?(\\*\\*\\*\\*\\*)?\\n"       /* Capture ending "*****" - pvalue is suspect */
     };
 
-    auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
-    auto end = std::sregex_iterator();
+    //auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
+    auto begin = std::sregex_iterator(batteryOutput.getStdOut().begin(),
+                                      batteryOutput.getStdOut().end(),
+                                      RE_PVALUE);
+    auto end   = std::sregex_iterator();
 
     int pValCount = std::distance(begin , end);
     if(pValCount == 0) {

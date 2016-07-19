@@ -53,13 +53,23 @@ void Test::execute() {
      * Will deadlock if run without main thread. */
     /* Add some logger info here */
 
-    testLog = TestRunner::executeBinary(logger, objectInfo,
-                                        executablePath, createArgs());
+    //testLog = TestRunner::executeBinary(logger, objectInfo,
+    //                                    executablePath, createArgs());
+    batteryOutput = TestRunner::executeBinary(logger, objectInfo,
+                                              executablePath, createArgs());
+    if(!batteryOutput.getStdErr().empty())
+        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
+    if(!batteryOutput.getErrors().empty())
+        logger->warn(objectInfo + ": test output contains errors.");
+    if(!batteryOutput.getStdOut().empty())
+        logger->warn(objectInfo + ": test output contains warnings.");
+
     extractPvalues();
 
     /* Store test output into file */
     std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    Utils::appendStringToFile(logFilePath , testLog);
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
     outputFile_lock.unlock();
 
     executed = true;
@@ -121,7 +131,8 @@ std::string Test::createArgs() const {
 void Test::extractPvalues() {
     static const std::regex RE_PSAMPLE_VALUE {"\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"};
 
-    auto begin = std::sregex_iterator(testLog.begin() , testLog.end() ,
+    auto begin = std::sregex_iterator(batteryOutput.getStdOut().begin() ,
+                                      batteryOutput.getStdOut().end() ,
                                       RE_PSAMPLE_VALUE);
     auto end = std::sregex_iterator();
 

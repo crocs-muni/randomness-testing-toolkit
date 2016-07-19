@@ -2,7 +2,7 @@
 
 namespace rtt {
 
-const std::string Strings::ERR_FILE_OPEN_FAIL                   = "can't open file ";
+const std::string Strings::ERR_FILE_OPEN_FAIL                   = "can't open file - ";
 const std::string Strings::ERR_INVALID_BATTERY                  = "invalid battery";
 const std::string Strings::ERR_INVALID_TEST_CONST               = "unknown test constant - ";
 

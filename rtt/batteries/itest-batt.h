@@ -2,6 +2,7 @@
 #define RTT_BATTERIES_ITEST_H
 
 #include "rtt/globalcontainer.h"
+#include "rtt/batteries/batteryoutput.h"
 
 namespace rtt {
 namespace batteries {
@@ -51,7 +52,8 @@ protected:
     /* Will be set after test execution.
      * It is not extractable before execution. */
     bool executed = false;
-    std::string testLog;
+    //std::string testLog;
+    BatteryOutput batteryOutput;
     std::vector<tTestPvals> results;
 };
 

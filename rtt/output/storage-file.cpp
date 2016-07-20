@@ -57,6 +57,53 @@ void Storage::setTestOptions(const std::vector<std::string> & options) {
     report << std::endl;
 }
 
+void Storage::setRuntimeIssues(const std::string & stdErr,
+                               const std::vector<std::string> & errors,
+                               const std::vector<std::string> & warnings) {
+    if(stdErr.empty() && errors.empty() && warnings.empty())
+        return;
+
+    report << doIndent() << "Test runtime issues: " << std::endl;
+    ++indent;
+    /* Reporting error output */
+    if(!stdErr.empty()) {
+        auto stdErrStrings = Utils::split(stdErr , '\n');
+        report << doIndent() << "Standard error output: " << std::endl;
+        ++indent;
+        auto tabs = doIndent();
+        for(const auto & i : stdErrStrings)
+            report << tabs << i << std::endl;
+        --indent;
+        report << doIndent() << "%%%%%%%%%%%%" << std::endl << std::endl;
+    }
+
+    /* Reporting strings containing error */
+    if(!errors.empty()) {
+        report << doIndent() << "Errors in log: " << std::endl;
+        ++indent;
+        auto tabs = doIndent();
+        for(const auto & i : errors)
+            report << tabs << i << std::endl;
+        --indent;
+        report << doIndent() << "%%%%%%%%%%%%" << std::endl << std::endl;
+    }
+
+    /* Reporting strings containing warning */
+    if(!warnings.empty()) {
+        report << doIndent() << "Warnings in log: " << std::endl;
+        ++indent;
+        auto tabs = doIndent();
+        for(const auto & i : warnings)
+            report << tabs << i << std::endl;
+        --indent;
+        report << doIndent() << "%%%%%%%%%%%%" << std::endl << std::endl;
+    }
+
+    --indent;
+    report << doIndent() << "!!!!!!!!!!!!" << std::endl << std::endl;
+
+}
+
 void Storage::addSubTest() {
     ++currentSubtest;
     report << doIndent() << "Subtest " << currentSubtest << ":" << std::endl;

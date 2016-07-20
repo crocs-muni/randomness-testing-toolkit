@@ -41,6 +41,11 @@ public:
 
     void setTestOptions(const std::vector<std::string> & options);
 
+    virtual void setRuntimeIssues(const std::string & stdErr ,
+                                  const std::vector<std::string> & errors ,
+                                  const std::vector<std::string> & warnings);
+
+
     void addSubTest();
 
     void addStatisticResult(const std::string & statName , double value , int precision = 2);

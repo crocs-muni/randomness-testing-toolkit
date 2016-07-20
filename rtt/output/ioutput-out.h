@@ -19,6 +19,10 @@ public:
 
     virtual void setTestOptions(const std::vector<std::string> & options) = 0;
 
+    virtual void setRuntimeIssues(const std::string & stdErr ,
+                                  const std::vector<std::string> & errors ,
+                                  const std::vector<std::string> & warnings) = 0;
+
     virtual void addSubTest() = 0;
 
     virtual void addStatisticResult(const std::string & statName , double value , int precision) = 0;

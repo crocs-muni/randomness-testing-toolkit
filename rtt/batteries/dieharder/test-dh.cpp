@@ -44,37 +44,11 @@ std::unique_ptr<Test> Test::getInstance(int testIndex , const GlobalContainer & 
             throw RTTException(t->objectInfo , ex.what());
         }
     }
+    /* Setting battery arguments and input */
+    t->batteryArgs = t->createArgs();
+    t->batteryInput = "";
 
     return t;
-}
-
-void Test::execute() {
-    /* This method is turned into thread.
-     * Will deadlock if run without main thread. */
-    /* Add some logger info here */
-
-    //testLog = TestRunner::executeBinary(logger, objectInfo,
-    //                                    executablePath, createArgs());
-    batteryOutput = TestRunner::executeBinary(logger, objectInfo,
-                                              executablePath, createArgs());
-
-    batteryOutput.doDetection();
-    if(!batteryOutput.getStdErr().empty())
-        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
-    if(!batteryOutput.getErrors().empty())
-        logger->warn(objectInfo + ": test output contains errors.");
-    if(!batteryOutput.getWarnings().empty())
-        logger->warn(objectInfo + ": test output contains warnings.");
-
-    extractPvalues();
-
-    /* Store test output into file */
-    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
-    outputFile_lock.unlock();
-
-    executed = true;
 }
 
 std::vector<std::string> Test::getParameters() const {
@@ -130,7 +104,7 @@ std::string Test::createArgs() const {
     return arguments.str();
 }
 
-void Test::extractPvalues() {
+void Test::processBatteryOutput() {
     static const std::regex RE_PSAMPLE_VALUE {"\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"};
 
     auto testLog = batteryOutput.getStdOut();

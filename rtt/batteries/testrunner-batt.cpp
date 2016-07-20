@@ -112,7 +112,7 @@ void TestRunner::executeTests(std::shared_ptr<Logger> logger,
     manager.join();
 }
 
-/*std::string*/ BatteryOutput TestRunner::executeBinary(std::shared_ptr<Logger> logger,
+ BatteryOutput TestRunner::executeBinary(std::shared_ptr<Logger> logger,
                                       const std::string & objectInfo,
                                       const std::string & binaryPath,
                                       const std::string & arguments,
@@ -121,8 +121,6 @@ void TestRunner::executeTests(std::shared_ptr<Logger> logger,
     int stdout_pipe[2];
     int stderr_pipe[2];
 
-    //std::string output;
-    //std::string stderr;
     pid_t pid = 0;
     posix_spawn_file_actions_t actions;
 
@@ -249,11 +247,6 @@ void TestRunner::executeTests(std::shared_ptr<Logger> logger,
         /* This thread now completed all communication with other threads.
          *  DO YOUR WORK SLAVE!!! */
         reader.join();
-        //if(!output.getStdErr().empty()) {
-        //    logger->warn(objectInfo + ": child process has non-empty error output. "
-        //                 "Results will be still processed but they might be invalid. "
-        //                 "Inspect logs.");
-        //}
 
         return output;
     } else {
@@ -337,14 +330,11 @@ void TestRunner::readOutput(/*std::string & output , std::string & stderr ,*/
     for(; poll(&pollVector[0] , pollVector.size() , -1) > 0 ; ) {
         if(pollVector[0].revents&POLLIN) {
             bytes_read = read(stdout_pipe[0] , &buffer[0] , buffer.length());
-            //output.append(buffer , 0 , bytes_read);
             tmpStr = buffer.substr(0, bytes_read);
             output.appendStdOut(tmpStr);
         }
         else if(pollVector[1].revents&POLLIN) {
             bytes_read = read(stderr_pipe[0] , &buffer[0] , buffer.length());
-            //output.append(buffer , 0 , bytes_read);
-            //stderr.append(buffer , 0 , bytes_read);
             tmpStr = buffer.substr(0, bytes_read);
             output.appendStdErr(tmpStr);
         }

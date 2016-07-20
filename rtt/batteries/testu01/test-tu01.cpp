@@ -68,35 +68,11 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         if(t->bit_s.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITS_NOT_SET);
     }
+    /* Setting battery arguments and input */
+    t->batteryArgs = t->createArgs();
+    t->batteryInput = "";
+
     return t;
-}
-
-void Test::execute() {
-    /* This method is turned into thread.
-     * Will deadlock if run without main thread. */
-
-    //testLog = TestRunner::executeBinary(logger, objectInfo,
-    //                                    executablePath, createArgs());
-    batteryOutput = TestRunner::executeBinary(logger, objectInfo,
-                                               executablePath, createArgs());
-
-    batteryOutput.doDetection();
-    if(!batteryOutput.getStdErr().empty())
-        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
-    if(!batteryOutput.getErrors().empty())
-        logger->warn(objectInfo + ": test output contains errors.");
-    if(!batteryOutput.getWarnings().empty())
-        logger->warn(objectInfo + ": test output contains warnings.");
-
-    extractPvalues();
-
-    /* Store test output into file */
-    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
-    outputFile_lock.unlock();
-
-    executed = true;
 }
 
 std::vector<std::string> Test::getParameters() const {
@@ -185,7 +161,7 @@ std::string Test::createArgs() const {
     return arguments.str();
 }
 
-void Test::extractPvalues() {
+void Test::processBatteryOutput() {
     static const std::regex RE_PVALUE {
         "p-value of test {23}: *?("
         "eps|"                            /* Just "eps" */
@@ -195,7 +171,6 @@ void Test::extractPvalues() {
         ") *?(\\*\\*\\*\\*\\*)?\\n"       /* Capture ending "*****" - pvalue is suspect */
     };
 
-    //auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
     auto testLog = batteryOutput.getStdOut();
     auto begin = std::sregex_iterator(testLog.begin(),
                                       testLog.end(),
@@ -204,15 +179,11 @@ void Test::extractPvalues() {
 
     int pValCount = std::distance(begin , end);
     if(pValCount == 0) {
-        //std::cout << "[WARNING] No pValues were extracted" << std::endl;
         logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
         return;
     }
 
     if(pValCount % repetitions != 0) {
-        //std::cout << "[WARNING] " << objectInfo << ": p-values can't be extracted from log. "
-        //             "Number of p-values present is not divisible by "
-        //                                           "number of repetitions per test." << std::endl;
         logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
         return;
     }
@@ -222,8 +193,6 @@ void Test::extractPvalues() {
          * output based on their parameters. For example scomp_LempevZiv has
          * different output when executed from Crush battery and Rabbit battery.
          * In that case, say that to user and use unknown statistics names. */
-        //std::cout << "[WARNING] Number of statistics extracted from log differs from default number."
-        //             " Inspect the log for correct statistics names." << std::endl;
         logger->warn(objectInfo + Strings::TEST_ERR_UNKNOWN_STATISTICS);
         std::vector<std::string> newStatNames;
         for(size_t i = 1 ; i <= statCount ; ++i)
@@ -240,8 +209,6 @@ void Test::extractPvalues() {
                 pValues.push_back(
                             convertStringToDouble(match[1].str() , match[2].str()));
             } catch (std::runtime_error ex) {
-                //std::cout << "[WARNING] " << objectInfo << ": error happened: " << ex.what() <<
-                //             " test won't be further processed." << std::endl;
                 logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
                 results.clear();
                 return;

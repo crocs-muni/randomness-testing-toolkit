@@ -29,8 +29,6 @@ public:
     static std::unique_ptr<Test> getInstance(int testIndex ,
                                              const GlobalContainer & container);
 
-    void execute();
-
     std::vector<std::string> getParameters() const;
 
     std::vector<std::string> getStatistics() const;
@@ -53,7 +51,6 @@ private:
     bool adjustableBlockLen;
     /* Following fileds will be set after calling */
     /* execute */
-    //std::string outputLog;
 
     /*
     ===============
@@ -69,7 +66,7 @@ private:
 
     std::string createInput() const;
 
-    void parseStoreResults();
+    void processBatteryOutput();
 
     tTestPvals readPvals(const std::string & fileName);
 };

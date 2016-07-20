@@ -29,8 +29,6 @@ public:
     static std::unique_ptr<Test> getInstance(int testIndex ,
                                              const GlobalContainer & container);
 
-    void execute();
-
     std::vector<std::string> getParameters() const;
 
     std::vector<std::string> getStatistics() const;
@@ -59,7 +57,7 @@ private:
 
     std::string createArgs() const;
 
-    void extractPvalues();
+    void processBatteryOutput();
 };
 
 } // namespace dieharder

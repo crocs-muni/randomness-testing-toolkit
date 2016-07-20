@@ -16,11 +16,11 @@ public:
 
     virtual ~ITest() {}
 
-    virtual void execute() = 0;
-
     virtual std::vector<std::string> getParameters() const = 0;
 
     virtual std::vector<std::string> getStatistics() const = 0;
+
+    void execute();
 
     /* Getters for results and some variables */
     bool wasExecuted() const;
@@ -55,12 +55,17 @@ protected:
     std::string executablePath;
     std::string binaryDataPath;
     std::string objectInfo;
+    std::string batteryArgs;
+    std::string batteryInput;
     /* Will be set after test execution.
      * It is not extractable before execution. */
     bool executed = false;
     //std::string testLog;
     BatteryOutput batteryOutput;
     std::vector<tTestPvals> results;
+
+private:
+    virtual void processBatteryOutput() = 0;
 };
 
 } // namespace batteries

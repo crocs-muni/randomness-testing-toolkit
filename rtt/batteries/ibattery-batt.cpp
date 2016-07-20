@@ -32,7 +32,7 @@ void IBattery::runTests() {
     logger->info(objectInfo + ": Test execution started!");
     /* Tests will create output file in output directory */
     Utils::createDirectory(toolkitSettings->getLoggerBatteryDir(battery));
-    TestRunner::executeTests(logger , std::ref(tests)/* , logFilePath */, toolkitSettings->getExecMaximumThreads());
+    TestRunner::executeTests(logger , std::ref(tests) , toolkitSettings->getExecMaximumThreads());
     logger->info(objectInfo + ": Test execution finished!");
     executed = true;
 }

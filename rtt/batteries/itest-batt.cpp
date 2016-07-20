@@ -7,6 +7,8 @@
 namespace rtt {
 namespace batteries {
 
+std::mutex outputFile_mux;
+
 std::unique_ptr<ITest> ITest::getInstance(int testIndex , const GlobalContainer & container) {
     switch(container.getCliOptions()->getBattery()) {
     case Constants::Battery::DIEHARDER:
@@ -22,6 +24,32 @@ std::unique_ptr<ITest> ITest::getInstance(int testIndex , const GlobalContainer 
     default:
         raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
+}
+
+void ITest::execute() {
+    /* This method is turned into thread.
+     * Will deadlock if run without main thread. */
+    batteryOutput = TestRunner::executeBinary(logger , objectInfo , executablePath ,
+                                              batteryArgs , batteryInput);
+
+    /* p-values will be extracted from logs and stored in results */
+    processBatteryOutput();
+
+    batteryOutput.doDetection();
+    if(!batteryOutput.getStdErr().empty())
+        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
+    if(!batteryOutput.getErrors().empty())
+        logger->warn(objectInfo + ": test output contains errors.");
+    if(!batteryOutput.getWarnings().empty())
+        logger->warn(objectInfo + ": test output contains warnings.");
+
+    /* Store test output into file */
+    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
+    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
+    outputFile_lock.unlock();
+
+    executed = true;
 }
 
 bool ITest::wasExecuted() const {

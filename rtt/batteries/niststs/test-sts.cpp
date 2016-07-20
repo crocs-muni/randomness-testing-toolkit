@@ -30,43 +30,11 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
         throw RTTException(t->objectInfo , Strings::TEST_ERR_STREAM_COUNT_NOT_SET);
     /* Block length */
     t->blockLength = t->batteryConfiguration->getNiststsTestBlockLength(testIndex);
+    /* Setting battery arguments and input */
+    t->batteryArgs = t->createArgs();
+    t->batteryInput = t->createInput();
 
     return t;
-}
-
-void Test::execute() {
-    /* This method is turned into thread.
-     * Will deadlock if run without main thread. */
-
-    /* Cleaning the test result directory */
-    Utils::rmDirFiles(resultSubDir);
-    //outputLog = TestRunner::executeBinary(logger, objectInfo, executablePath,
-    //                                      createArgs(), createInput());
-    batteryOutput = TestRunner::executeBinary(logger, objectInfo,
-                                              executablePath, createArgs(), createInput());
-
-    //outputLog = output.getStdOut();
-    //outputLog.append(output.getStdErr());
-    parseStoreResults();
-    //auto errors = output.getErrors();
-    //auto warnings = output.getWarnings();
-
-    batteryOutput.doDetection();
-    if(!batteryOutput.getStdErr().empty())
-        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
-    if(!batteryOutput.getErrors().empty())
-        logger->warn(objectInfo + ": test output contains errors.");
-    if(!batteryOutput.getWarnings().empty())
-        logger->warn(objectInfo + ": test output contains warnings.");
-
-
-    /* Store test output into file */
-    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
-    outputFile_lock.unlock();
-
-    executed = true;
 }
 
 std::vector<std::string> Test::getParameters() const {
@@ -144,7 +112,7 @@ std::string Test::createInput() const {
     return inputSequence.str();
 }
 
-void Test::parseStoreResults() {
+void Test::processBatteryOutput() {
     try {
         auto testLog = Utils::readFileToString(resultSubDir + "stats.txt");
         batteryOutput.appendStdOut(testLog);
@@ -205,7 +173,6 @@ void Test::parseStoreResults() {
         }
 
         /* Preppending output from test run to test run */
-        //testLog = outputLog.append(testLog);
     } catch (std::runtime_error ex) {
         logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
     }
@@ -225,8 +192,6 @@ tTestPvals Test::readPvals(const std::string & fileName) {
     while(std::getline(pValFile , strPval)) {
         pVal = Utils::strtod(strPval);
         if(pVal < 0 || pVal > 1)
-            //throw std::runtime_error("file: " + fileName + " contains p-value"
-            //                         "that is not in <0,1> interval");
             throw std::runtime_error(Strings::TEST_ERR_PVAL_OUTSIDE_INTERVAL + fileName);
         /* This silly condition is here for random excursions test */
         /* Because when you can't apply test it is feasible to give 0 as answer *rolls eyes* */

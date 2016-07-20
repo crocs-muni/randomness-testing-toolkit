@@ -17,9 +17,14 @@ void Battery::processStoredResults() {
     logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
 
     /* Result storage */
-    for(const auto & test : tests) {
+    for(auto & test : tests) {
         storage->addNewTest(test->getLogicName());
         storage->setTestOptions(test->getParameters());
+
+        /* Writing issues */
+        storage->setRuntimeIssues(test->getBatteryStdErr(),
+                                  test->getBatteryErrors(),
+                                  test->getBatteryWarnings());
 
         std::vector<tTestPvals> results = test->getResults();
         /* There are always two statistics in NIST STS, namely

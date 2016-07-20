@@ -40,7 +40,7 @@ Logger::Logger(const std::string &logId, const std::string &logFile, bool toCout
 
     /* Set format for normal logging */
     rawLoggerConf.set(el::Level::Global, el::ConfigurationType::Format,
-                  "[%datetime{%Y-%M-%d %H:%m:%s}] Thread %thread: %level - %msg");
+                  "[%datetime{%H:%m:%s}] Thread %thread: %level - %msg");
 
     el::Loggers::reconfigureLogger(rawLogger , rawLoggerConf);
 }

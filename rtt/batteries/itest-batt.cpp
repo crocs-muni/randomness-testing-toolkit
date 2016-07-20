@@ -43,6 +43,27 @@ std::vector<tTestPvals> ITest::getResults() const {
     return results;
 }
 
+std::string ITest::getBatteryStdErr() const {
+    if(!executed)
+        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
+
+    return batteryOutput.getStdErr();
+}
+
+std::vector<std::string> ITest::getBatteryErrors() {
+    if(!executed)
+        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
+
+    return batteryOutput.getErrors();
+}
+
+std::vector<std::string> ITest::getBatteryWarnings() {
+    if(!executed)
+        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
+
+    return batteryOutput.getWarnings();
+}
+
 ITest::ITest(int testIndex, const GlobalContainer & container) {
     cliOptions           = container.getCliOptions();
     toolkitSettings      = container.getToolkitSettings();

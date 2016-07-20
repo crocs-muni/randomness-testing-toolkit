@@ -77,14 +77,21 @@ void Test::execute() {
 
     //testLog = TestRunner::executeBinary(logger, objectInfo,
     //                                    executablePath, createArgs());
-    BatteryOutput output = TestRunner::executeBinary(logger, objectInfo,
-                                                     executablePath, createArgs());
+    batteryOutput = TestRunner::executeBinary(logger, objectInfo,
+                                               executablePath, createArgs());
+
+    batteryOutput.doDetection();
+    if(!batteryOutput.getStdErr().empty())
+        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
+    if(!batteryOutput.getErrors().empty())
+        logger->warn(objectInfo + ": test output contains errors.");
+    if(!batteryOutput.getWarnings().empty())
+        logger->warn(objectInfo + ": test output contains warnings.");
 
     extractPvalues();
 
     /* Store test output into file */
     std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    //Utils::appendStringToFile(logFilePath , testLog);
     Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
     Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
     outputFile_lock.unlock();
@@ -189,8 +196,9 @@ void Test::extractPvalues() {
     };
 
     //auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
-    auto begin = std::sregex_iterator(batteryOutput.getStdOut().begin(),
-                                      batteryOutput.getStdOut().end(),
+    auto testLog = batteryOutput.getStdOut();
+    auto begin = std::sregex_iterator(testLog.begin(),
+                                      testLog.end(),
                                       RE_PVALUE);
     auto end   = std::sregex_iterator();
 

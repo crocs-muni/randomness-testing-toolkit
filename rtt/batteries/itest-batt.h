@@ -31,6 +31,12 @@ public:
 
     std::vector<tTestPvals> getResults() const;
 
+    std::string getBatteryStdErr() const;
+
+    std::vector<std::string> getBatteryErrors();
+
+    std::vector<std::string> getBatteryWarnings();
+
 protected:
     ITest(int testIndex , const GlobalContainer & container);
 

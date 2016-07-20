@@ -4,7 +4,7 @@ namespace rtt {
 namespace batteries {
 
 void BatteryOutput::appendStdOut(const std::string & stdOut) {
-    errsWarnsDetected = false;
+    detectionDone = false;
 
     this->stdOut.append(stdOut);
 }
@@ -22,21 +22,25 @@ std::string BatteryOutput::getStdErr() const {
 }
 
 std::vector<std::string> BatteryOutput::getErrors() {
-    if(!errsWarnsDetected)
+    if(!detectionDone)
         detectErrsWarnsInStdOut();
 
     return errors;
 }
 
 std::vector<std::string> BatteryOutput::getWarnings() {
-    if(!errsWarnsDetected)
+    if(!detectionDone)
         detectErrsWarnsInStdOut();
 
     return warnings;
 }
 
+void BatteryOutput::doDetection() {
+    detectErrsWarnsInStdOut();
+}
+
 void BatteryOutput::detectErrsWarnsInStdOut() {
-    if(errsWarnsDetected)
+    if(detectionDone)
         return;
 
     /* Detect warnings and errors here.
@@ -62,12 +66,8 @@ void BatteryOutput::detectErrsWarnsInStdOut() {
         warnings.push_back(match[1].str());
     }
 
-    errsWarnsDetected = true;
+    detectionDone = true;
 }
-
-
-
-
 
 } // namespace batteries
 } // namespace rtt

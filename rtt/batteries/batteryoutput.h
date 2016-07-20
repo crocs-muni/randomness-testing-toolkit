@@ -28,9 +28,13 @@ public:
 
     std::vector<std::string> getWarnings();
 
+    /* This will force detection. Detection is time heavy
+     * operation and should be done inside test threads
+     * instead of running it via getter later. */
+    void doDetection();
 
 private:
-    bool errsWarnsDetected = false;
+    bool detectionDone = false;
     std::string stdOut;
     std::string stdErr;
     std::vector<std::string> errors;

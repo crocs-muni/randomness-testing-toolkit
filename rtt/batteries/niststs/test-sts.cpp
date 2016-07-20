@@ -51,6 +51,7 @@ void Test::execute() {
     //auto errors = output.getErrors();
     //auto warnings = output.getWarnings();
 
+    batteryOutput.doDetection();
     if(!batteryOutput.getStdErr().empty())
         logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
     if(!batteryOutput.getErrors().empty())

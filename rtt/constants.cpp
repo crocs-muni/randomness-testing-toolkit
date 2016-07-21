@@ -25,6 +25,8 @@ std::string Constants::batteryToString(Battery batteryConstant) {
         return "TestU01 Rabbit";
     case Battery::TU01_ALPHABIT:
         return "TestU01 Alphabit";
+    case Battery::TU01_BLOCK_ALPHABIT:
+        return "TestU01 Block Alphabit";
     default:
         raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
@@ -46,6 +48,8 @@ std::string Constants::batteryToStringShort(Battery batteryConstant) {
         return "tu01_rabbit";
     case Battery::TU01_ALPHABIT:
         return "tu01_alphabit";
+    case Battery::TU01_BLOCK_ALPHABIT:
+        return "tu01_blockalphabit";
     default:
         raiseBugException(Strings::ERR_INVALID_BATTERY);
     }

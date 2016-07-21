@@ -50,6 +50,7 @@ private:
     static const std::string XPATH_LOGGER_TU01_BCRUSH_DIR;
     static const std::string XPATH_LOGGER_TU01_RABBIT_DIR;
     static const std::string XPATH_LOGGER_TU01_ALPHABIT_DIR;
+    static const std::string XPATH_LOGGER_TU01_BLALPHABIT_DIR;
     /* Result storage paths */
     /* File result storage */
     static const std::string XPATH_RS_FILE_OUTPUT_FILE;
@@ -61,6 +62,7 @@ private:
     static const std::string XPATH_RS_FILE_TU01_BCRUSH_DIR;
     static const std::string XPATH_RS_FILE_TU01_RABBIT_DIR;
     static const std::string XPATH_RS_FILE_TU01_ALPHABIT_DIR;
+    static const std::string XPATH_RS_FILE_TU01_BLALPHABIT_DIR;
     /* Database result storage */
     // Nothing yet
 
@@ -86,6 +88,7 @@ private:
     std::string loggerBCrushDir;
     std::string loggerRabbitDir;
     std::string loggerAlphabitDir;
+    std::string loggerBlAlphabitDir;
 
     std::string rsFileOutFile;
     std::string rsFileDieharderDir;
@@ -95,6 +98,7 @@ private:
     std::string rsFileBCrushDir;
     std::string rsFileRabbitDir;
     std::string rsFileAlphabitDir;
+    std::string rsFileBlAlphabitDir;
 
     std::string binaryDieharder;
     std::string binaryNiststs;

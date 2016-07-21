@@ -38,7 +38,7 @@ std::shared_ptr<ToolkitSettings> GlobalContainer::getToolkitSettings() const {
 }
 std::shared_ptr<batteries::Configuration> GlobalContainer::getBatteryConfiguration() const {
     if(batteryConfiguration == nullptr)
-        raiseBugException("batteriesConfiguration was not initialized");
+        raiseBugException("batteryConfiguration was not initialized");
 
     return batteryConfiguration;
 }

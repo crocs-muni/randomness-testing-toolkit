@@ -25,6 +25,7 @@ public:
         TU01_BIGCRUSH,
         TU01_RABBIT,
         TU01_ALPHABIT,
+        TU01_BLOCK_ALPHABIT,
         LAST_ITEM
     };
 

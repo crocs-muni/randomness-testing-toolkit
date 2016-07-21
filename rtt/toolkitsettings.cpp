@@ -12,6 +12,7 @@ const std::string ToolkitSettings::XPATH_LOGGER_TU01_CRUSH_DIR          = "LOGGE
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_BCRUSH_DIR         = "LOGGER/TU01_BIGCRUSH_DIR";
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_RABBIT_DIR         = "LOGGER/TU01_RABBIT_DIR";
 const std::string ToolkitSettings::XPATH_LOGGER_TU01_ALPHABIT_DIR       = "LOGGER/TU01_ALPHABIT_DIR";
+const std::string ToolkitSettings::XPATH_LOGGER_TU01_BLALPHABIT_DIR     = "LOGGER/TU01_BLOCKALPHABIT_DIR";
 
 const std::string ToolkitSettings::XPATH_RS_FILE_OUTPUT_FILE            = "RESULT_STORAGE/FILE/OUTPUT_FILE";
 const std::string ToolkitSettings::XPATH_RS_FILE_DIR_PREFIX             = "RESULT_STORAGE/FILE/DIR_PREFIX";
@@ -22,6 +23,7 @@ const std::string ToolkitSettings::XPATH_RS_FILE_TU01_CRUSH_DIR         = "RESUL
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_BCRUSH_DIR        = "RESULT_STORAGE/FILE/TU01_BIGCRUSH_DIR";
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_RABBIT_DIR        = "RESULT_STORAGE/FILE/TU01_RABBIT_DIR";
 const std::string ToolkitSettings::XPATH_RS_FILE_TU01_ALPHABIT_DIR      = "RESULT_STORAGE/FILE/TU01_ALPHABIT_DIR";
+const std::string ToolkitSettings::XPATH_RS_FILE_TU01_BLALPHABIT_DIR    = "RESULT_STORAGE/FILE/TU01_BLOCKALPHABIT_DIR";
 
 const std::string ToolkitSettings::XPATH_BINARIES_DIEHARDER             = "BINARIES/DIEHARDER";
 const std::string ToolkitSettings::XPATH_BINARIES_NISTSTS               = "BINARIES/NIST_STS";
@@ -49,6 +51,7 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     ts.loggerBCrushDir      = dirPfx + ts.getDirValue(xmlCfg , XPATH_LOGGER_TU01_BCRUSH_DIR);
     ts.loggerRabbitDir      = dirPfx + ts.getDirValue(xmlCfg , XPATH_LOGGER_TU01_RABBIT_DIR);
     ts.loggerAlphabitDir    = dirPfx + ts.getDirValue(xmlCfg , XPATH_LOGGER_TU01_ALPHABIT_DIR);
+    ts.loggerBlAlphabitDir  = dirPfx + ts.getDirValue(xmlCfg , XPATH_LOGGER_TU01_BLALPHABIT_DIR);
 
     /* Result storage directories */
     /* File */
@@ -61,6 +64,7 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     ts.rsFileBCrushDir      = dirPfx + ts.getDirValue(xmlCfg , XPATH_RS_FILE_TU01_BCRUSH_DIR);
     ts.rsFileRabbitDir      = dirPfx + ts.getDirValue(xmlCfg , XPATH_RS_FILE_TU01_RABBIT_DIR);
     ts.rsFileAlphabitDir    = dirPfx + ts.getDirValue(xmlCfg , XPATH_RS_FILE_TU01_ALPHABIT_DIR);
+    ts.rsFileBlAlphabitDir  = dirPfx + ts.getDirValue(xmlCfg , XPATH_RS_FILE_TU01_BLALPHABIT_DIR);
     /* Database */
     // not yet!
 
@@ -192,6 +196,14 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerAlphabitDir;
+        case VariableType::rsFileDir: return rsFileAlphabitDir;
+        default:raiseBugException("invalid variable type");
+        }
+    }
+    case Constants::Battery::TU01_BLOCK_ALPHABIT: {
+        switch(variableType) {
+        case VariableType::binary:    return binaryTestU01;
+        case VariableType::loggerDir: return loggerBlAlphabitDir;
         case VariableType::rsFileDir: return rsFileAlphabitDir;
         default:raiseBugException("invalid variable type");
         }

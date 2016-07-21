@@ -25,20 +25,24 @@ const std::string Configuration::XPATH_TU01_CRUSH_DEFAULT_TESTS             = "T
 const std::string Configuration::XPATH_TU01_BIG_CRUSH_DEFAULT_TESTS         = "TESTU01_SETTINGS/DEFAULT_TESTS_BCRUSH";
 const std::string Configuration::XPATH_TU01_RABBIT_DEFAULT_TESTS            = "TESTU01_SETTINGS/DEFAULT_TESTS_RABBIT";
 const std::string Configuration::XPATH_TU01_ALPHABIT_DEFAULT_TESTS          = "TESTU01_SETTINGS/DEFAULT_TESTS_ALPHABIT";
+const std::string Configuration::XPATH_TU01_BLOCK_ALPHABIT_DEFAULT_TESTS    = "TESTU01_SETTINGS/DEFAULT_TESTS_BLOCK_ALPHABIT";
 const std::string Configuration::XPATH_TU01_DEFAULT_REPS                    = "TESTU01_SETTINGS/DEFAULT_REPETITIONS";
 const std::string Configuration::XPATH_TU01_DEFAULT_BIT_NB                  = "TESTU01_SETTINGS/DEFAULT_BIT_NB";
 const std::string Configuration::XPATH_TU01_DEFAULT_BIT_R                   = "TESTU01_SETTINGS/DEFAULT_BIT_R";
 const std::string Configuration::XPATH_TU01_DEFAULT_BIT_S                   = "TESTU01_SETTINGS/DEFAULT_BIT_S";
+const std::string Configuration::XPATH_TU01_DEFAULT_BIT_W                   = "TESTU01_SETTINGS/DEFAULT_BIT_W";
 const std::string Configuration::XPATH_TU01_SMALL_CRUSH_SETTINGS            = "TESTU01_SETTINGS/SMALL_CRUSH_SETTINGS";
 const std::string Configuration::XPATH_TU01_CRUSH_SETTINGS                  = "TESTU01_SETTINGS/CRUSH_SETTINGS";
 const std::string Configuration::XPATH_TU01_BIG_CRUSH_SETTINGS              = "TESTU01_SETTINGS/BIG_CRUSH_SETTINGS";
 const std::string Configuration::XPATH_TU01_RABBIT_SETTINGS                 = "TESTU01_SETTINGS/RABBIT_SETTINGS";
 const std::string Configuration::XPATH_TU01_ALPHABIT_SETTINGS               = "TESTU01_SETTINGS/ALPHABIT_SETTINGS";
+const std::string Configuration::XPATH_TU01_BLOCK_ALPHABIT_SETTINGS         = "TESTU01_SETTINGS/BLOCK_ALPHABIT_SETTINGS";
 const std::string Configuration::XPATH_TU01_TEST_REPS                       = "REPETITIONS";
 const std::string Configuration::XPATH_TU01_TEST_PARAMS                     = "PARAMS";
 const std::string Configuration::XPATH_TU01_TEST_BIT_NB                     = "BIT_NB";
 const std::string Configuration::XPATH_TU01_TEST_BIT_R                      = "BIT_R";
 const std::string Configuration::XPATH_TU01_TEST_BIT_S                      = "BIT_S";
+const std::string Configuration::XPATH_TU01_TEST_BIT_W                      = "BIT_W";
 const std::string Configuration::XPATH_TU01_ATTRIBUTE_TEST_INDEX            = "test";
 const std::string Configuration::XPATH_TU01_ATTRIBUTE_PAR_NAME              = "name";
 
@@ -55,13 +59,14 @@ Configuration Configuration::getInstance(const std::string & configFileName) {
 
 std::vector<int> Configuration::getBatteryDefaultTests(Constants::Battery battery) const {
     switch(battery) {
-    case Constants::Battery::DIEHARDER:         return dieharderDefaultTests;
-    case Constants::Battery::NIST_STS:          return niststsDefaultTests;
-    case Constants::Battery::TU01_SMALLCRUSH:   return tu01SmallCrushDefaultTests;
-    case Constants::Battery::TU01_CRUSH:        return tu01CrushDefaultTests;
-    case Constants::Battery::TU01_BIGCRUSH:     return tu01BigCrushDefaultTests;
-    case Constants::Battery::TU01_RABBIT:       return tu01RabbitDefaultTests;
-    case Constants::Battery::TU01_ALPHABIT:     return tu01AlphabitDefaultTests;
+    case Constants::Battery::DIEHARDER:             return dieharderDefaultTests;
+    case Constants::Battery::NIST_STS:              return niststsDefaultTests;
+    case Constants::Battery::TU01_SMALLCRUSH:       return tu01SmallCrushDefaultTests;
+    case Constants::Battery::TU01_CRUSH:            return tu01CrushDefaultTests;
+    case Constants::Battery::TU01_BIGCRUSH:         return tu01BigCrushDefaultTests;
+    case Constants::Battery::TU01_RABBIT:           return tu01RabbitDefaultTests;
+    case Constants::Battery::TU01_ALPHABIT:         return tu01AlphabitDefaultTests;
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:   return tu01BlockAlphabitDefaultTests;
     default:raiseBugException("invalid battery");
     }
 }
@@ -133,6 +138,10 @@ std::string Configuration::getTestu01DefaultBitS() const {
     return testu01DefaultBitS;
 }
 
+std::string Configuration::getTestu01DefaultBitW() const {
+    return testu01DefaultBitW;
+}
+
 int Configuration::getTestU01BatteryTestRepetitions(Constants::Battery battery,
                                                     int testIndex) const {
     const std::map<int , int> * variable;
@@ -151,6 +160,9 @@ int Configuration::getTestU01BatteryTestRepetitions(Constants::Battery battery,
         break;
     case Constants::Battery::TU01_ALPHABIT:
         variable = &tu01AlphabitTestRepetitions;
+        break;
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        variable = &tu01BlockAlphabitTestRepetitions;
         break;
     default:raiseBugException("invalid battery");
     }
@@ -194,6 +206,9 @@ std::string Configuration::getTestU01BatteryTestBitNB(Constants::Battery battery
     case Constants::Battery::TU01_ALPHABIT:
         variable = &tu01AlphabitTestBitNB;
         break;
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        variable = &tu01BlockAlphabitTestBitNB;
+        break;
     default:raiseBugException("invalid battery");
     }
     if(variable->find(testIndex) == variable->end())
@@ -209,6 +224,9 @@ std::string Configuration::getTestU01BatteryTestBitR(Constants::Battery battery,
     case Constants::Battery::TU01_ALPHABIT:
         variable = &tu01AlphabitTestBitR;
         break;
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        variable = &tu01BlockAlphabitTestBitR;
+        break;
     default:raiseBugException("invalid battery");
     }
     if(variable->find(testIndex) == variable->end())
@@ -223,6 +241,24 @@ std::string Configuration::getTestU01BatteryTestBitS(Constants::Battery battery,
     switch(battery) {
     case Constants::Battery::TU01_ALPHABIT:
         variable = &tu01AlphabitTestBitS;
+        break;
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        variable = &tu01BlockAlphabitTestBitS;
+        break;
+    default:raiseBugException("invalid battery");
+    }
+    if(variable->find(testIndex) == variable->end())
+        return "";
+
+    return variable->at(testIndex);
+}
+
+std::string Configuration::getTestU01BatteryTestBitW(Constants::Battery battery,
+                                                     int testIndex) {
+    const std::map<int , std::string> * variable;
+    switch(battery) {
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        variable = &tu01BlockAlphabitTestBitW;
         break;
     default:raiseBugException("invalid battery");
     }
@@ -288,18 +324,21 @@ void Configuration::loadNiststsVariables(TiXmlNode * xmlCfg) {
 void Configuration::loadTestU01Variables(TiXmlNode * xmlCfg) {
     if(!xmlCfg)
         raiseBugException("null xml node");
-
-    testu01DefaultRepetitions = getIntValue(xmlCfg , XPATH_TU01_DEFAULT_REPS);
-    testu01DefaultBitNB = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_NB);
-    testu01DefaultBitR = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_R);
-    testu01DefaultBitS = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_S);
-
-    tu01SmallCrushDefaultTests = getDefaultTests(xmlCfg , XPATH_TU01_SMALL_CRUSH_DEFAULT_TESTS);
-    tu01CrushDefaultTests = getDefaultTests(xmlCfg , XPATH_TU01_CRUSH_DEFAULT_TESTS);
-    tu01BigCrushDefaultTests = getDefaultTests(xmlCfg , XPATH_TU01_BIG_CRUSH_DEFAULT_TESTS);
-    tu01RabbitDefaultTests = getDefaultTests(xmlCfg , XPATH_TU01_RABBIT_DEFAULT_TESTS);
-    tu01AlphabitDefaultTests = getDefaultTests(xmlCfg , XPATH_TU01_ALPHABIT_DEFAULT_TESTS);
-
+    /* Default repetitions */
+    testu01DefaultRepetitions   = getIntValue(xmlCfg , XPATH_TU01_DEFAULT_REPS);
+    /* Default NB, R, S, W */
+    testu01DefaultBitNB         = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_NB);
+    testu01DefaultBitR          = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_R);
+    testu01DefaultBitS          = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_S);
+    testu01DefaultBitW          = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_W);
+    /* Default test constants */
+    tu01SmallCrushDefaultTests      = getDefaultTests(xmlCfg , XPATH_TU01_SMALL_CRUSH_DEFAULT_TESTS);
+    tu01CrushDefaultTests           = getDefaultTests(xmlCfg , XPATH_TU01_CRUSH_DEFAULT_TESTS);
+    tu01BigCrushDefaultTests        = getDefaultTests(xmlCfg , XPATH_TU01_BIG_CRUSH_DEFAULT_TESTS);
+    tu01RabbitDefaultTests          = getDefaultTests(xmlCfg , XPATH_TU01_RABBIT_DEFAULT_TESTS);
+    tu01AlphabitDefaultTests        = getDefaultTests(xmlCfg , XPATH_TU01_ALPHABIT_DEFAULT_TESTS);
+    tu01BlockAlphabitDefaultTests   = getDefaultTests(xmlCfg , XPATH_TU01_BLOCK_ALPHABIT_DEFAULT_TESTS);
+    /* Test and battery specific repetitions */
     tu01SmallCrushTestRepetitions = createMapIntInt(xmlCfg ,
                                                     XPATH_TU01_SMALL_CRUSH_SETTINGS ,
                                                     XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
@@ -320,7 +359,11 @@ void Configuration::loadTestU01Variables(TiXmlNode * xmlCfg) {
                                                   XPATH_TU01_ALPHABIT_SETTINGS ,
                                                   XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
                                                   XPATH_TU01_TEST_REPS);
-
+    tu01BlockAlphabitTestRepetitions = createMapIntInt(xmlCfg ,
+                                                       XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
+                                                       XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
+                                                       XPATH_TU01_TEST_REPS);
+    /* Test and battery specific additional parameters */
     tu01SmallCrushTestParams = createMapIntMap(xmlCfg ,
                                                XPATH_TU01_SMALL_CRUSH_SETTINGS ,
                                                XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
@@ -336,7 +379,7 @@ void Configuration::loadTestU01Variables(TiXmlNode * xmlCfg) {
                                              XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
                                              XPATH_TU01_TEST_PARAMS ,
                                              XPATH_TU01_ATTRIBUTE_PAR_NAME);
-
+    /* Test and battery specific NB */
     tu01RabbitTestBitNB = createMapIntString(xmlCfg ,
                                              XPATH_TU01_RABBIT_SETTINGS ,
                                              XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
@@ -345,16 +388,34 @@ void Configuration::loadTestU01Variables(TiXmlNode * xmlCfg) {
                                                XPATH_TU01_ALPHABIT_SETTINGS ,
                                                XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
                                                XPATH_TU01_TEST_BIT_NB);
-
+    tu01BlockAlphabitTestBitNB = createMapIntString(xmlCfg ,
+                                                    XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
+                                                    XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
+                                                    XPATH_TU01_TEST_BIT_NB);
+    /* Test and battery specific R */
     tu01AlphabitTestBitR = createMapIntString(xmlCfg ,
                                               XPATH_TU01_ALPHABIT_SETTINGS ,
                                               XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
                                               XPATH_TU01_TEST_BIT_R);
+    tu01BlockAlphabitTestBitR = createMapIntString(xmlCfg ,
+                                                   XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
+                                                   XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
+                                                   XPATH_TU01_TEST_BIT_R);
 
+    /* Test and battery specific S */
     tu01AlphabitTestBitS = createMapIntString(xmlCfg ,
                                               XPATH_TU01_ALPHABIT_SETTINGS ,
                                               XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
                                               XPATH_TU01_TEST_BIT_S);
+    tu01BlockAlphabitTestBitS = createMapIntString(xmlCfg ,
+                                                   XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
+                                                   XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
+                                                   XPATH_TU01_TEST_BIT_S);
+    /* Test and battery specific W */
+    tu01BlockAlphabitTestBitW = createMapIntString(xmlCfg ,
+                                                   XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
+                                                   XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
+                                                   XPATH_TU01_TEST_BIT_W);
 }
 
 std::map<std::string , std::string> Configuration::createMapStringString(

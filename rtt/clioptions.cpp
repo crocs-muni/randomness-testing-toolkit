@@ -14,7 +14,7 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
             throw RTTException(options.objectInfo ,
                                "invalid usage of command-line arguments");
 
-        // Battery option
+        /* Battery option */
         if(strcmp(argv[i] , "-b") == 0) {
             if(batterySet || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
@@ -34,55 +34,57 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
                 options.battery = Constants::Battery::TU01_RABBIT;
             else if(strcmp(argv[i + 1] , "tu01_alphabit") == 0)
                 options.battery = Constants::Battery::TU01_ALPHABIT;
+            else if(strcmp(argv[i + 1] , "tu01_blockalphabit") == 0)
+                options.battery = Constants::Battery::TU01_BLOCK_ALPHABIT;
             else
                 throw RTTException(options.objectInfo ,
                                    "unknown battery set: " + (std::string)argv[i + 1]);
             batterySet = true;
 
         }
-        // Input binary file option
+        /* Input binary file option */
         else if(strcmp(argv[i] , "-f") == 0) {
             if(!options.binFilePath.empty() || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
                                    "can't set \"-b\" option multiple times or without any value");
             options.binFilePath = argv[i + 1];
         }
-        // Custom output file option
+        /* Custom output file option */
         else if(strcmp(argv[i] , "-o") == 0) {
             if(!options.binFilePath.empty() || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
                                    "can't set \"-o\" option multiple times or without any value");
             options.outFilePath = argv[i + 1];
         }
-        // Custom input config option
+        /* Custom input config option */
         else if(strcmp(argv[i] , "-c") == 0) {
             if(!options.inputCfgPath.empty() || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
                                    "can't set \"-c\" option multiple times or without any value");
             options.inputCfgPath = argv[i + 1];
         }
-        // Test option
+        /* Test option */
         else if(strcmp(argv[i] , "-t") == 0) {
             if(test != -1 || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
                                    "can't set \"-t\" option multiple times or without any value");
             test = Utils::strtoi(argv[i + 1]);
         }
-        // Bottom limit test option
+        /* Bottom limit test option */ /* Both top and bottom limit test options should be removed - useless, multiple tests can be set in config */
         else if(strcmp(argv[i] , "-tbot") == 0) {
             if(testsBot != -1 || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
                                    "can't set \"-tbot\" option multiple times or without any value");
             testsBot = Utils::strtoi(argv[i + 1]);
         }
-        // Top limit test option
+        /* Top limit test option */
         else if(strcmp(argv[i] , "-ttop") == 0) {
             if(testsTop != -1 || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
                                    "can't set \"-tbot\" option multiple times or without any value");
             testsTop = Utils::strtoi(argv[i + 1]);
         }
-        // None of the above, error
+        /* None of the above, error */
         else {
             throw RTTException(options.objectInfo ,
                                "unknown option used: " + (std::string)argv[i]);

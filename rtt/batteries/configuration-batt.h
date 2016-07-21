@@ -51,6 +51,8 @@ public:
 
     std::string getTestu01DefaultBitS() const;
 
+    std::string getTestu01DefaultBitW() const;
+
     int getTestU01BatteryTestRepetitions(Constants::Battery battery ,
                                          int testIndex) const;
 
@@ -65,6 +67,9 @@ public:
                                           int testIndex);
 
     std::string getTestU01BatteryTestBitS(Constants::Battery battery,
+                                          int testIndex);
+
+    std::string getTestU01BatteryTestBitW(Constants::Battery battery,
                                           int testIndex);
 
 private:
@@ -94,20 +99,24 @@ private:
     static const std::string XPATH_TU01_BIG_CRUSH_DEFAULT_TESTS;
     static const std::string XPATH_TU01_RABBIT_DEFAULT_TESTS;
     static const std::string XPATH_TU01_ALPHABIT_DEFAULT_TESTS;
+    static const std::string XPATH_TU01_BLOCK_ALPHABIT_DEFAULT_TESTS;
     static const std::string XPATH_TU01_DEFAULT_REPS;
     static const std::string XPATH_TU01_DEFAULT_BIT_NB;
     static const std::string XPATH_TU01_DEFAULT_BIT_R;
     static const std::string XPATH_TU01_DEFAULT_BIT_S;
+    static const std::string XPATH_TU01_DEFAULT_BIT_W;
     static const std::string XPATH_TU01_SMALL_CRUSH_SETTINGS;
     static const std::string XPATH_TU01_CRUSH_SETTINGS;
     static const std::string XPATH_TU01_BIG_CRUSH_SETTINGS;
     static const std::string XPATH_TU01_RABBIT_SETTINGS;
     static const std::string XPATH_TU01_ALPHABIT_SETTINGS;
+    static const std::string XPATH_TU01_BLOCK_ALPHABIT_SETTINGS;
     static const std::string XPATH_TU01_TEST_REPS;
     static const std::string XPATH_TU01_TEST_PARAMS;
     static const std::string XPATH_TU01_TEST_BIT_NB;
     static const std::string XPATH_TU01_TEST_BIT_R;
     static const std::string XPATH_TU01_TEST_BIT_S;
+    static const std::string XPATH_TU01_TEST_BIT_W;
     static const std::string XPATH_TU01_ATTRIBUTE_TEST_INDEX;
     static const std::string XPATH_TU01_ATTRIBUTE_PAR_NAME;
 
@@ -134,6 +143,7 @@ private:
     std::string testu01DefaultBitNB;
     std::string testu01DefaultBitR;
     std::string testu01DefaultBitS;
+    std::string testu01DefaultBitW;
 
     /* Following groups of variables have variant for
      * one or more batteries in TestU01 (e.g. crush batteries
@@ -146,6 +156,7 @@ private:
     std::vector<int> tu01BigCrushDefaultTests;
     std::vector<int> tu01RabbitDefaultTests;
     std::vector<int> tu01AlphabitDefaultTests;
+    std::vector<int> tu01BlockAlphabitDefaultTests;
 
     /* Test repetitions - all batteries */
     std::map<int , int> tu01SmallCrushTestRepetitions;
@@ -153,21 +164,28 @@ private:
     std::map<int , int> tu01BigCrushTestRepetitions;
     std::map<int , int> tu01RabbitTestRepetitions;
     std::map<int , int> tu01AlphabitTestRepetitions;
+    std::map<int , int> tu01BlockAlphabitTestRepetitions;
 
     /* Test parameters - crush batteries */
     std::map<int , std::map<std::string , std::string>> tu01SmallCrushTestParams;
     std::map<int , std::map<std::string , std::string>> tu01CrushTestParams;
     std::map<int , std::map<std::string , std::string>> tu01BigCrushTestParams;
 
-    /* BitNB - rabbit, alphabit */
+    /* BitNB - rabbit, alphabit, block alphabit */
     std::map<int , std::string> tu01RabbitTestBitNB;
     std::map<int , std::string> tu01AlphabitTestBitNB;
+    std::map<int , std::string> tu01BlockAlphabitTestBitNB;
 
-    /* BitR - alphabit */
+    /* BitR - alphabit, block alphabit */
     std::map<int , std::string> tu01AlphabitTestBitR;
+    std::map<int , std::string> tu01BlockAlphabitTestBitR;
 
-    /* BitS - alphabit */
+    /* BitS - alphabit, block alphabit */
     std::map<int , std::string> tu01AlphabitTestBitS;
+    std::map<int , std::string> tu01BlockAlphabitTestBitS;
+
+    /* BitW - block alphabit */
+    std::map<int , std::string> tu01BlockAlphabitTestBitW;
 
     Configuration() {}
 

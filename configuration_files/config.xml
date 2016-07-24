@@ -55,7 +55,7 @@
         <DEFAULT_BIT_NB>8388608000</DEFAULT_BIT_NB>
         <DEFAULT_BIT_R>0</DEFAULT_BIT_R>
         <DEFAULT_BIT_S>32</DEFAULT_BIT_S>
-        <DEFAULT_BIT_W>32</DEFAULT_BIT_W> <!-- Optional, default is set in TU01 binary -->
+        <!-- <DEFAULT_BIT_W>32</DEFAULT_BIT_W> Optional, default is set in TU01 binary  -->
         
     </TESTU01_SETTINGS>
 

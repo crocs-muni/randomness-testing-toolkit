@@ -126,19 +126,19 @@ int Configuration::getTestu01DefaultRepetitions() const {
     return testu01DefaultRepetitions;
 }
 
-std::string Configuration::getTestu01DefaultBitNB() const {
+std::string Configuration::getTestU01DefaultBitNB() const {
     return testu01DefaultBitNB;
 }
 
-std::string Configuration::getTestu01DefaultBitR() const {
+std::string Configuration::getTestU01DefaultBitR() const {
     return testu01DefaultBitR;
 }
 
-std::string Configuration::getTestu01DefaultBitS() const {
+std::string Configuration::getTestU01DefaultBitS() const {
     return testu01DefaultBitS;
 }
 
-std::string Configuration::getTestu01DefaultBitW() const {
+std::string Configuration::getTestU01DefaultBitW() const {
     return testu01DefaultBitW;
 }
 

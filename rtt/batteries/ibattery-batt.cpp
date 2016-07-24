@@ -19,6 +19,7 @@ std::unique_ptr<IBattery> IBattery::getInstance(const GlobalContainer & containe
     case Constants::Battery::TU01_BIGCRUSH:
     case Constants::Battery::TU01_RABBIT:
     case Constants::Battery::TU01_ALPHABIT:
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
         return testu01::Battery::getInstance(container);
     default:
         raiseBugException(Strings::ERR_INVALID_BATTERY);

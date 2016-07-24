@@ -15,7 +15,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
              t->statisticNames) =
             TestConstants::getTu01TestData(t->battery , t->testIndex);
 
-    /* Repetitions */
+    /* Repetitions - mandatory */
     t->repetitions =
             t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
                                                                       t->testIndex);
@@ -24,7 +24,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(t->objectInfo , Strings::TEST_ERR_REPS_NOT_SET);
 
-    /* Getting params - only for Crush batteries */
+    /* Getting params - only for Crush batteries - optional */
     if(t->battery == Constants::Battery::TU01_SMALLCRUSH ||
             t->battery == Constants::Battery::TU01_CRUSH ||
             t->battery == Constants::Battery::TU01_BIGCRUSH) {
@@ -42,31 +42,40 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
             throw RTTException(t->objectInfo , Strings::TEST_ERR_PARAM_INCOMPLETE);
     }
 
-    /* Getting nb - Rabbit and Alphabit */
+    /* Getting nb - Rabbit and (Block) Alphabit - mandatory */
     if(t->battery == Constants::Battery::TU01_RABBIT ||
-            t->battery == Constants::Battery::TU01_ALPHABIT) {
+            t->battery == Constants::Battery::TU01_ALPHABIT ||
+            t->battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
         t->bit_nb = t->batteryConfiguration->getTestU01BatteryTestBitNB(t->battery ,
                                                                         t->testIndex);
         if(t->bit_nb.empty())
-            t->bit_nb = t->batteryConfiguration->getTestu01DefaultBitNB();
+            t->bit_nb = t->batteryConfiguration->getTestU01DefaultBitNB();
         if(t->bit_nb.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITNB_NOT_SET);
     }
-    /* Getting r s - Alphabit */
-    if(t->battery == Constants::Battery::TU01_ALPHABIT) {
+    /* Getting r s - (Block) Alphabit - mandatory */
+    if(t->battery == Constants::Battery::TU01_ALPHABIT ||
+            t->battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
         t->bit_r = t->batteryConfiguration->getTestU01BatteryTestBitR(t->battery ,
                                                                       t->testIndex);
         if(t->bit_r.empty())
-            t->bit_r = t->batteryConfiguration->getTestu01DefaultBitR();
+            t->bit_r = t->batteryConfiguration->getTestU01DefaultBitR();
         if(t->bit_r.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITR_NOT_SET);
 
         t->bit_s = t->batteryConfiguration->getTestU01BatteryTestBitS(t->battery ,
                                                                       t->testIndex);
         if(t->bit_s.empty())
-            t->bit_s = t->batteryConfiguration->getTestu01DefaultBitS();
+            t->bit_s = t->batteryConfiguration->getTestU01DefaultBitS();
         if(t->bit_s.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITS_NOT_SET);
+    }
+    /* Getting w - Block Alphabit - optional */
+    if(t->battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
+        t->bit_w = t->batteryConfiguration->getTestU01BatteryTestBitW(t->battery ,
+                                                                      t->testIndex);
+        if(t->bit_w.empty())
+            t->bit_w = t->batteryConfiguration->getTestU01DefaultBitW();
     }
     /* Setting battery arguments and input */
     t->batteryArgs = t->createArgs();
@@ -79,10 +88,12 @@ std::vector<std::string> Test::getParameters() const {
     std::stringstream rval;
     rval << "Repetitions: " << repetitions << std::endl;
     if(battery == Constants::Battery::TU01_RABBIT ||
-            battery == Constants::Battery::TU01_ALPHABIT)
+            battery == Constants::Battery::TU01_ALPHABIT ||
+            battery == Constants::Battery::TU01_BLOCK_ALPHABIT)
         rval << "Bit NB: " << bit_nb << std::endl;
 
-    if(battery == Constants::Battery::TU01_ALPHABIT) {
+    if(battery == Constants::Battery::TU01_ALPHABIT ||
+            battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
         rval << "Bit R: " << bit_r << std::endl;
         rval << "Bit S: " << bit_s << std::endl;
     }
@@ -132,6 +143,8 @@ std::string Test::createArgs() const {
         arguments << "rabbit "; break;
     case Constants::Battery::TU01_ALPHABIT:
         arguments << "alphabit "; break;
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        arguments << "block_alphabit "; break;
     default:
         throw std::runtime_error(Strings::ERR_INVALID_BATTERY);
     }
@@ -156,7 +169,10 @@ std::string Test::createArgs() const {
         arguments << "--bit_r " << bit_r << " ";
     /* s */
     if(!bit_s.empty())
-        arguments << "--bit_s " << bit_s;
+        arguments << "--bit_s " << bit_s << " ";
+    /* w */
+    if(!bit_w.empty())
+        arguments << "--bit_w " << bit_w;
 
     return arguments.str();
 }
@@ -166,12 +182,16 @@ void Test::processBatteryOutput() {
         "p-value of test {23}: *?("
         "eps|"                            /* Just "eps" */
         "1 - eps1|"                       /* Just "1 - eps1" */
-        "0\\.\\d{2,4}|"                   /* Decimal rounded from 2 to  digits */
+        "0\\.\\d{2,4}|"                   /* Decimal rounded from 2 to 4 digits */
         "(1 -  ?)?\\d\\.\\de-\\d{1,3}"    /* Decimal in scientific notation that can be preceeded by "1 - " */
         ") *?(\\*\\*\\*\\*\\*)?\\n"       /* Capture ending "*****" - pvalue is suspect */
     };
 
     auto testLog = batteryOutput.getStdOut();
+    /* Extract settings must be called ASAP -
+     * it sets subTestCount variable */
+    extractSettingsFromLog(testLog);
+
     auto begin = std::sregex_iterator(testLog.begin(),
                                       testLog.end(),
                                       RE_PVALUE);
@@ -183,11 +203,17 @@ void Test::processBatteryOutput() {
         return;
     }
 
-    if(pValCount % repetitions != 0) {
+    /*if(pValCount % repetitions != 0) {
         logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
         return;
     }
-    statCount = pValCount / repetitions;
+    statCount = pValCount / repetitions;*/
+    if(pValCount % (repetitions * subTestCount) != 0) {
+        logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
+        return;
+    }
+    statCount = pValCount / (repetitions * subTestCount);
+
     if(statCount != statisticNames.size()) {
         /* So this normally doesn't happen but(!) some tests have variable
          * output based on their parameters. For example scomp_LempevZiv has
@@ -202,7 +228,7 @@ void Test::processBatteryOutput() {
 
     tTestPvals pValues;
 
-    for(; begin != end ;) {
+    for( ; begin != end ; ) {
         for(uint i = 0 ; i < statCount ; ++i) {
             std::smatch match = *begin;
             try {
@@ -218,6 +244,70 @@ void Test::processBatteryOutput() {
         }
         results.push_back(std::move(pValues));
         pValues.clear();
+    }
+}
+
+void Test::extractSettingsFromLog(const std::string & testLog) {
+    /* Find out how many tests was executed */
+    std::regex RE_TEST_HEADER { logicName + " test:" };
+    subTestCount = std::distance(
+            std::sregex_iterator(testLog.begin() , testLog.end() , RE_TEST_HEADER),
+            std::sregex_iterator()
+    ) / repetitions;
+
+    /* Constructing regex for capturing parameter values */
+    std::string regexString;
+    for(uint i = 0 ; i < paramNames.size() ; ++i) {
+        regexString.append("\\s+?" + paramNames.at(i) + " = +?([^\\s,]+?)");
+        if(i + 1 != paramNames.size()) {
+            regexString.append(",");
+        } else {
+            regexString.append("\\s");
+        }
+    }
+    /* Extracting values of settings from log */
+    std::regex RE_PAR_VALUE_CAP { regexString };
+    auto begin = std::sregex_iterator(testLog.begin() ,
+                                      testLog.end() ,
+                                      RE_PAR_VALUE_CAP);
+    auto end   = std::sregex_iterator();
+    if(std::distance(begin , end) != (subTestCount * repetitions)) {
+        logger->warn(objectInfo + " Settings extraction error. "
+                                  "No settings extracted.");
+        return;
+    }
+    for( ; begin != end ; ++begin) {
+        std::smatch match = *begin;
+        tParam singleParameter;
+        std::vector<tParam> singleTestSettings;
+        for(uint i = 0 ; i < paramNames.size() ; ++i) {
+            singleParameter.first = paramNames.at(i);
+            singleParameter.second = match[i + 1].str();
+            singleTestSettings.push_back(singleParameter);
+        }
+        subTestSettings.push_back(singleTestSettings);
+    }
+    /* Extracting w from logs - Only in Block Alphabit battery. */
+    if(battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
+        std::regex RE_W_VALUE_CAP {
+            "\\sw = +?([1-9]+?)\\s"
+        };
+        auto begin = std::sregex_iterator(testLog.begin() ,
+                                          testLog.end() ,
+                                          RE_W_VALUE_CAP);
+        auto end   = std::sregex_iterator();
+        if(std::distance(begin , end) != (subTestCount * repetitions)) {
+            logger->warn(objectInfo + " Settings extraction error. "
+                                      "No settings extracted.");
+            return;
+        }
+        for(int i = 0 ; begin != end ; ++begin, ++i) {
+            std::smatch match = *begin;
+            tParam tmp;
+            tmp.first = "w";
+            tmp.second = match[1].str();
+            subTestSettings.at(i).push_back(tmp);
+        }
     }
 }
 

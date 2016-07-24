@@ -12,6 +12,7 @@ public:
     static std::unique_ptr<Battery> getInstance(const GlobalContainer & container);
 
     void processStoredResults();
+
 private:
     /*
     ===============

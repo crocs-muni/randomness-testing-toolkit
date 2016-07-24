@@ -20,6 +20,7 @@ std::unique_ptr<ITest> ITest::getInstance(int testIndex , const GlobalContainer 
     case Constants::Battery::TU01_BIGCRUSH:
     case Constants::Battery::TU01_RABBIT:
     case Constants::Battery::TU01_ALPHABIT:
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
         return testu01::Test::getInstance(testIndex , container);
     default:
         raiseBugException(Strings::ERR_INVALID_BATTERY);

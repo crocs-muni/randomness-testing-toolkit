@@ -45,16 +45,22 @@ private:
     tStringVector paramNames;
     tStringVector statisticNames;
     int repetitions;
-    /* Only used in crush batteres */
+    /* Only used in configuration of crush batteries */
     std::vector<tParam> params;
     /* Used in rabbit/alphabit battery */
     std::string bit_nb;
     std::string bit_r;
     std::string bit_s;
+    std::string bit_w;
     /* Following vars will be set after test execution */
     /* Number of statistics calculated in each test
      * resulting pval count = reps*statCount */
     uint statCount;
+    /* Number of subtests executed - different from repetitions,
+     * as multiple subtests can be executed in single repetition. */
+    uint subTestCount;
+    /* Parsed settings of each subtest. */
+    std::vector<std::vector<tParam>> subTestSettings;
 
     /*
     ===============
@@ -68,7 +74,9 @@ private:
 
     void processBatteryOutput();
 
-    void saveTestLogToFile();
+    //void saveTestLogToFile();
+
+    void extractSettingsFromLog(const std::string & testLog);
 
     double convertStringToDouble(const std::string & num,
                                  const std::string & oneMinus);

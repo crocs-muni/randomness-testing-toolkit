@@ -204,7 +204,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerBlAlphabitDir;
-        case VariableType::rsFileDir: return rsFileAlphabitDir;
+        case VariableType::rsFileDir: return rsFileBlAlphabitDir;
         default:raiseBugException("invalid variable type");
         }
     }

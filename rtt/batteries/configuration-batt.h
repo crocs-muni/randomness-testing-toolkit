@@ -45,13 +45,13 @@ public:
     /* TestU01 */
     int getTestu01DefaultRepetitions() const;
 
-    std::string getTestu01DefaultBitNB() const;
+    std::string getTestU01DefaultBitNB() const;
 
-    std::string getTestu01DefaultBitR() const;
+    std::string getTestU01DefaultBitR() const;
 
-    std::string getTestu01DefaultBitS() const;
+    std::string getTestU01DefaultBitS() const;
 
-    std::string getTestu01DefaultBitW() const;
+    std::string getTestU01DefaultBitW() const;
 
     int getTestU01BatteryTestRepetitions(Constants::Battery battery ,
                                          int testIndex) const;

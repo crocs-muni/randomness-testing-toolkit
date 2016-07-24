@@ -92,8 +92,8 @@ const tTestU01Data TestConstants::TESTU01_SSTRING_RUN                  {"sstring
 const tTestU01Data TestConstants::TESTU01_SSTRING_RUN_RABBIT           {"sstring_Run" ,                 {} ,                                {"Kolmogorov-Smirnov (D+) (runs)" , "Kolmogorov-Smirnov (D-) (runs)" , "Anderson-Darling (A2) (runs)" , "Chi-square (runs)" , "Kolmogorov-Smirnov (D+) (bits)" , "Kolmogorov-Smirnov (D-) (bits)" , "Anderson-Darling (A2) (bits)" , "Normal (bits)" , "Sample variance (bits)"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR              {"sstring_AutoCor" ,             {} ,                                {"Normal"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN         {"sstring_AutoCor" ,             {"N","n","r","s","d"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Normal" , "Sample variance"}};
-const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsOver" , {} ,                                {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN    {"smultin_MultinomialBitsOver" , {} ,                                {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling (A2)" ,"Std empirical mean" , "Std empirical correlation"}};
+const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsOver" , {"N","n","r","s","L","Sparse"} ,    {"Collision"}};
+const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN    {"smultin_MultinomialBitsOver" , {"N","n","r","s","L","Sparse"} ,    {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling (A2)" ,"Std empirical mean" , "Std empirical corr"}};
 
 const std::map<int , tNistStsData> TestConstants::nistStsTests {
     { 1, TestConstants::NISTSTS_FREQ},
@@ -300,6 +300,9 @@ tTestU01Data TestConstants::getTu01TestData(Constants::Battery battery,
         case Constants::Battery::TU01_RABBIT:
             return tu01testsRabbit.at(testIndex);
         case Constants::Battery::TU01_ALPHABIT:
+            return tu01testsAlphabit.at(testIndex);
+        case Constants::Battery::TU01_BLOCK_ALPHABIT:
+            /* Block Alphabit has same tests as Alphabit. */
             return tu01testsAlphabit.at(testIndex);
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);

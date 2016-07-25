@@ -36,7 +36,7 @@ public:
      * Reader thread  - Reads process pipes. Usually is blocked by read.
      *                  It is important that this thread is running, otherwise
      *                  pipes could be filled up, blocking associated process.*/
-    static const int PROCESS_TIMEOUT_SECONDS    = 600;
+    static const int PROCESS_TIMEOUT_SECONDS    = 1800;
 
     static const int THREAD_STATE_PENDING       = 0;
     static const int THREAD_STATE_READY         = 1;

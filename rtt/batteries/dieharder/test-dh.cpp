@@ -51,13 +51,18 @@ std::unique_ptr<Test> Test::getInstance(int testIndex , const GlobalContainer & 
     return t;
 }
 
-std::vector<std::string> Test::getParameters() const {
+std::vector<std::string> Test::getTestUserSettings() const {
     std::stringstream parameters;
     parameters << "p-sample count: " << pSampleCount << std::endl;
     for(const Setting & setting : settings)
         parameters << setting.getLogicName() << ": "
                    << setting.getArgumentValue() << std::endl;
     return Utils::split(parameters.str() , '\n');
+}
+
+std::vector<std::vector<std::string> > Test::getTestsParameters() const {
+    /* Nothing interesting */
+    return {};
 }
 
 std::vector<std::string> Test::getStatistics() const {

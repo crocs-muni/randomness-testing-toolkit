@@ -84,7 +84,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
     return t;
 }
 
-std::vector<std::string> Test::getParameters() const {
+std::vector<std::string> Test::getTestUserSettings() const {
     std::stringstream rval;
     rval << "Repetitions: " << repetitions << std::endl;
     if(battery == Constants::Battery::TU01_RABBIT ||
@@ -96,6 +96,11 @@ std::vector<std::string> Test::getParameters() const {
             battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
         rval << "Bit R: " << bit_r << std::endl;
         rval << "Bit S: " << bit_s << std::endl;
+    }
+
+    if(battery == Constants::Battery::TU01_BLOCK_ALPHABIT &&
+            !bit_w.empty()) {
+        rval << "Bit W: " << bit_w << std::endl;
     }
 
     if(!params.empty() &&
@@ -111,6 +116,38 @@ std::vector<std::string> Test::getParameters() const {
 
 std::vector<std::string> Test::getStatistics() const {
     return statisticNames;
+}
+
+std::vector<std::vector<std::string>> Test::getTestsParameters() const {
+    if(!executed)
+        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
+
+    std::vector<std::vector<std::string>> rval;
+    std::string singleTestParameters;
+
+    for(const auto & subTest : subTestsParameters) {
+        for(const auto & testParam : subTest) {
+            singleTestParameters.append(testParam.first);
+            singleTestParameters.append(" = ");
+            singleTestParameters.append(testParam.second);
+            singleTestParameters.append("\n");
+        }
+        rval.push_back(Utils::split(singleTestParameters , '\n'));
+        singleTestParameters.clear();
+    }
+
+    return rval;
+}
+
+int Test::getRepetitions() const {
+    return repetitions;
+}
+
+uint Test::getSubTestCount() const {
+    if(!executed)
+        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
+
+    return subTestCount;
 }
 
 /*
@@ -248,17 +285,28 @@ void Test::processBatteryOutput() {
 }
 
 void Test::extractSettingsFromLog(const std::string & testLog) {
-    /* Find out how many tests was executed */
+    /* Find out how many tests were executed. Specific test name is not used here
+     * since sometimes another test is executed and only its statistics are
+     * processed by main test. Logic test names then doesn't match
+     * and regex with specific test name would detect nothing. */
     std::regex RE_TEST_HEADER { logicName + " test:" };
+    //const static std::regex RE_TEST_HEADER { "\\w+? test:" };
     subTestCount = std::distance(
             std::sregex_iterator(testLog.begin() , testLog.end() , RE_TEST_HEADER),
             std::sregex_iterator()
     ) / repetitions;
 
+    if(subTestCount == 0) {
+        logger->warn(objectInfo + ": No settings extracted. "
+                                  "Subtest detection failed.");
+        subTestCount = 1;
+        return;
+    }
+
     /* Constructing regex for capturing parameter values */
     std::string regexString;
     for(uint i = 0 ; i < paramNames.size() ; ++i) {
-        regexString.append("\\s+?" + paramNames.at(i) + " = +?([^\\s,]+?)");
+        regexString.append("\\s+?" + paramNames.at(i) + " +?= +?([^\\s,]+?)");
         if(i + 1 != paramNames.size()) {
             regexString.append(",");
         } else {
@@ -272,8 +320,8 @@ void Test::extractSettingsFromLog(const std::string & testLog) {
                                       RE_PAR_VALUE_CAP);
     auto end   = std::sregex_iterator();
     if(std::distance(begin , end) != (subTestCount * repetitions)) {
-        logger->warn(objectInfo + " Settings extraction error. "
-                                  "No settings extracted.");
+        logger->warn(objectInfo + ": No settings extracted. "
+                                  "Parameter matching failed.");
         return;
     }
     for( ; begin != end ; ++begin) {
@@ -285,7 +333,7 @@ void Test::extractSettingsFromLog(const std::string & testLog) {
             singleParameter.second = match[i + 1].str();
             singleTestSettings.push_back(singleParameter);
         }
-        subTestSettings.push_back(singleTestSettings);
+        subTestsParameters.push_back(singleTestSettings);
     }
     /* Extracting w from logs - Only in Block Alphabit battery. */
     if(battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
@@ -297,8 +345,8 @@ void Test::extractSettingsFromLog(const std::string & testLog) {
                                           RE_W_VALUE_CAP);
         auto end   = std::sregex_iterator();
         if(std::distance(begin , end) != (subTestCount * repetitions)) {
-            logger->warn(objectInfo + " Settings extraction error. "
-                                      "No settings extracted.");
+            logger->warn(objectInfo + ": Settings extraction error. "
+                                      "Bit parameter w matching failed.");
             return;
         }
         for(int i = 0 ; begin != end ; ++begin, ++i) {
@@ -306,7 +354,7 @@ void Test::extractSettingsFromLog(const std::string & testLog) {
             tParam tmp;
             tmp.first = "w";
             tmp.second = match[1].str();
-            subTestSettings.at(i).push_back(tmp);
+            subTestsParameters.at(i).push_back(tmp);
         }
     }
 }

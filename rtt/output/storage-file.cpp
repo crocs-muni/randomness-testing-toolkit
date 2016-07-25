@@ -46,8 +46,8 @@ void Storage::addNewTest(const std::string & testName) {
     ++indent;
 }
 
-void Storage::setTestOptions(const std::vector<std::string> & options) {
-    report << doIndent() << "Test settings: " << std::endl;
+void Storage::setUserSettings(const std::vector<std::string> & options) {
+    report << doIndent() << "User settings: " << std::endl;
     ++indent;
     std::string tabs = doIndent();
     for(const std::string & i : options)
@@ -57,16 +57,32 @@ void Storage::setTestOptions(const std::vector<std::string> & options) {
     report << std::endl;
 }
 
+void Storage::setTestParameters(const std::vector<std::string> & options) {
+    if(options.empty())
+        return;
+
+    report << doIndent() << "Test parameters: " << std::endl;
+    ++indent;
+    std::string tabs = doIndent();
+    for(const std::string & i : options)
+        report << tabs << i << std::endl;
+    --indent;
+    report << doIndent() << "%%%%%%%%%%" << std::endl;
+    report << std::endl;
+}
+
 void Storage::setRuntimeIssues(const std::string & stdErr,
                                const std::vector<std::string> & errors,
                                const std::vector<std::string> & warnings) {
     if(stdErr.empty() && errors.empty() && warnings.empty())
         return;
 
+    bool first = true;
     report << doIndent() << "Test runtime issues: " << std::endl;
     ++indent;
     /* Reporting error output */
     if(!stdErr.empty()) {
+        first = false;
         auto stdErrStrings = Utils::split(stdErr , '\n');
         report << doIndent() << "Standard error output: " << std::endl;
         ++indent;
@@ -74,29 +90,39 @@ void Storage::setRuntimeIssues(const std::string & stdErr,
         for(const auto & i : stdErrStrings)
             report << tabs << i << std::endl;
         --indent;
-        report << doIndent() << "%%%%%%%%%%%%" << std::endl << std::endl;
+        report << doIndent() << "!!!!!!!!!!!!" << std::endl;
     }
 
     /* Reporting strings containing error */
     if(!errors.empty()) {
+        if(!first)
+            report << std::endl;
+        else
+            first = false;
+
         report << doIndent() << "Errors in log: " << std::endl;
         ++indent;
         auto tabs = doIndent();
         for(const auto & i : errors)
             report << tabs << i << std::endl;
         --indent;
-        report << doIndent() << "%%%%%%%%%%%%" << std::endl << std::endl;
+        report << doIndent() << "!!!!!!!!!!!!" << std::endl;
     }
 
     /* Reporting strings containing warning */
     if(!warnings.empty()) {
+        if(!first)
+            report << std::endl;
+        else
+            first = false;
+
         report << doIndent() << "Warnings in log: " << std::endl;
         ++indent;
         auto tabs = doIndent();
         for(const auto & i : warnings)
             report << tabs << i << std::endl;
         --indent;
-        report << doIndent() << "%%%%%%%%%%%%" << std::endl << std::endl;
+        report << doIndent() << "!!!!!!!!!!!!" << std::endl;
     }
 
     --indent;

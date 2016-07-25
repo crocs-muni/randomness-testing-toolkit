@@ -16,7 +16,9 @@ public:
 
     virtual ~ITest() {}
 
-    virtual std::vector<std::string> getParameters() const = 0;
+    virtual std::vector<std::string> getTestUserSettings() const = 0;
+
+    virtual std::vector<std::vector<std::string>> getTestsParameters() const = 0;
 
     virtual std::vector<std::string> getStatistics() const = 0;
 

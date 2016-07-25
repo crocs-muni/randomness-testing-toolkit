@@ -18,7 +18,7 @@ void Battery::processStoredResults() {
     /* Result storage */
     for(auto & test : tests) {
         storage->addNewTest(test->getLogicName());
-        storage->setTestOptions(test->getParameters());
+        storage->setUserSettings(test->getTestUserSettings());
 
         /* Writing issues */
         storage->setRuntimeIssues(test->getBatteryStdErr(),

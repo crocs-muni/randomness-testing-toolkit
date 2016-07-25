@@ -1,4 +1,5 @@
 #include "battery-tu01.h"
+#include "rtt/batteries/testu01/test-tu01.h"
 
 namespace rtt {
 namespace batteries {
@@ -18,25 +19,38 @@ void Battery::processStoredResults() {
     /* Result storage */
     for(auto & test : tests) {
         storage->addNewTest(test->getLogicName());
-        storage->setTestOptions(test->getParameters());
+        storage->setUserSettings(test->getTestUserSettings());
 
         /* Writing issues */
         storage->setRuntimeIssues(test->getBatteryStdErr(),
                                   test->getBatteryErrors(),
                                   test->getBatteryWarnings());
 
+        /* Indicates whether parameters will or will not be stored in report.
+         * Parameters are not stored when they are inproperly extracted from logs.
+         * This does not indicate invalidity of results, only log in unexpected format!! */
+        bool storeParams = true;
         std::vector<std::string> statistics = test->getStatistics();
         std::vector<tTestPvals> results = test->getResults();
+        std::vector<std::vector<std::string>>  parameters = test->getTestsParameters();
+        if(parameters.size() != results.size())
+            storeParams = false;
+
         if(results.size() == 1) { /* Test w/out repetitions */
+            if(storeParams)
+                storage->setTestParameters(parameters.at(0));
             for(size_t i = 0 ; i < statistics.size() ; ++i)
                 /* Number of statistics and number of results of single
                    test is always the same */
                 storage->addStatisticResult(statistics.at(i) , results.at(0).at(i) , 4);
         } else { /* Test had repetitions, create multiple subtests */
-            for(const auto & result : results) {
+            //for(const auto & result : results) {
+            for(size_t i = 0 ; i < results.size() ; ++i) {
                 storage->addSubTest();
-                for(size_t i = 0 ; i < statistics.size() ; ++i)
-                    storage->addStatisticResult(statistics.at(i) , result.at(i) , 4);
+                if(storeParams)
+                    storage->setTestParameters(parameters.at(i));
+                for(size_t l = 0 ; l < statistics.size() ; ++l)
+                    storage->addStatisticResult(statistics.at(l) , results.at(i).at(l) , 4);
                 storage->finalizeSubTest();
             }
         }

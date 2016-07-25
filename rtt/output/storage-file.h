@@ -39,7 +39,9 @@ public:
 
     void addNewTest(const std::string & testName);
 
-    void setTestOptions(const std::vector<std::string> & options);
+    void setUserSettings(const std::vector<std::string> & options);
+
+    void setTestParameters(const std::vector<std::string> & options);
 
     virtual void setRuntimeIssues(const std::string & stdErr ,
                                   const std::vector<std::string> & errors ,

@@ -29,7 +29,9 @@ public:
     static std::unique_ptr<Test> getInstance(int testIndex ,
                                              const GlobalContainer & container);
 
-    std::vector<std::string> getParameters() const;
+    std::vector<std::string> getTestUserSettings() const;
+
+    std::vector<std::vector<std::string>> getTestsParameters() const;
 
     std::vector<std::string> getStatistics() const;
 

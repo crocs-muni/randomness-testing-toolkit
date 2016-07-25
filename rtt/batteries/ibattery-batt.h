@@ -34,7 +34,8 @@ protected:
     time_t creationTime;
     Constants::Battery battery;
     std::string objectInfo;
-    std::unique_ptr<output::IOutput> storage;
+    //std::unique_ptr<output::IOutput> storage;
+    std::shared_ptr<output::IOutput> storage;
     /* Battery is keeping track of tests set to execution.
      * Test objects keep track of their settings and execution results. */
     std::vector<std::unique_ptr<ITest>> tests;

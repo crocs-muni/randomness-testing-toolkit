@@ -55,8 +55,8 @@ const tDieharderData TestConstants::DIEHARDER_DABMONOBIT           {"DAB Monobit
 const tTestU01Data TestConstants::TESTU01_SMARSA_SERIALOVER            {"smarsa_SerialOver" ,           {"N","n","r","d","t"} ,             {"Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SMARSA_COLLISIONOVER         {"smarsa_CollisionOver" ,        {"N","n","r","d","t"} ,             {"Collision"}};
 const tTestU01Data TestConstants::TESTU01_SMARSA_BIRTHDAYSPACINGS      {"smarsa_BirthdaySpacings" ,     {"N","n","r","d","t","p"} ,         {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS            {"snpair_ClosePairs" ,           {"N","n","r","t","p","m"} ,         {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)"}};
-const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS_BIGT       {"snpair_ClosePairs" ,           {"N","n","r","t","p","m"} ,         {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)" ,"AD (mNP2-S)"}};
+const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS            {"snpair_ClosePairs" ,           {"N","n","r","t","p","m","Torus"} , {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)"}};
+const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS_BIGT       {"snpair_ClosePairs" ,           {"N","n","r","t","p","m","Torus"} , {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)" ,"AD (mNP2-S)"}};
 const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRSBITMATCH    {"snpair_ClosePairsBitMatch" ,   {"N","n","r","t"} ,                 {"Bit distance"}};
 const tTestU01Data TestConstants::TESTU01_SKNUTH_COLLISION             {"sknuth_Collision" ,            {"N","n","r","d","t"} ,             {"Collision"}};
 const tTestU01Data TestConstants::TESTU01_SKNUTH_SIMPPOKER             {"sknuth_SimpPoker" ,            {"N","n","r","d","k"} ,             {"Chi-square"}};
@@ -78,18 +78,18 @@ const tTestU01Data TestConstants::TESTU01_SMARSA_SAVIR2                {"smarsa_
 const tTestU01Data TestConstants::TESTU01_SMARSA_GDC                   {"smarsa_GCD" ,                  {"N","n","r","s"} ,                 {"Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SWALK_RANDOMWALK1            {"swalk_RandomWalk1" ,           {"N","n","r","s","L0","L1"} ,       {"Chi-square(H)" , "Chi-square(M)" ,"Chi-square(J)" , "Chi-square(R)" , "Chi-square(C)"}};
 const tTestU01Data TestConstants::TESTU01_SCOMP_LINEARCOMP             {"scomp_LinearComp" ,            {"N","n","r","s"} ,                 {"Chi-square" , "Normal"}};
-const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV              {"scomp_LempelZiv" ,             {} ,                                {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV_BIGN         {"scomp_LempelZiv" ,             {"N","k","r","s"} ,                 {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Normal" , "Sample variance"}};
-const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER1           {"sspectral_Fourier1" ,          {} ,                                {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER3           {"sspectral_Fourier3" ,          {"N","k","r","s"} ,                 {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
+const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV              {"scomp_LempelZiv" ,             {"N","n","r","s","k"} ,             {"Normal"}};
+const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV_BIGN         {"scomp_LempelZiv" ,             {"N","n","r","s","k"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Normal" , "Sample variance"}};
+const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER1           {"sspectral_Fourier1" ,          {"N","n","r","s","k"} ,             {"Normal"}};
+const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER3           {"sspectral_Fourier3" ,          {"N","n","r","s","k"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_LONGESTHEADRUN       {"sstring_LongestHeadRun" ,      {"N","n","r","s","L"} ,             {"Chi-square" , "Global longest run of 1"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_PERIODSINSTRINGS     {"sstring_PeriodsInStrings" ,    {"N","n","r","s"} ,                 {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT        {"sstring_HammingWeight" ,       {} ,                                {"Chi-square"}};
+const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT        {"sstring_HammingWeight" ,       {"N","n","r","s","L"} ,             {"Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT2       {"sstring_HammingWeight2" ,      {"N","n","r","s","L"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGCORR          {"sstring_HammingCorr" ,         {"N","n","r","s","L"} ,             {"Normal"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGINDEP         {"sstring_HammingIndep" ,        {"N","n","r","s","L","d"} ,         {"Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_RUN                  {"sstring_Run" ,                 {"N","n","r","s"} ,                 {"Chi-square" , "Normal"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_RUN_RABBIT           {"sstring_Run" ,                 {} ,                                {"Kolmogorov-Smirnov (D+) (runs)" , "Kolmogorov-Smirnov (D-) (runs)" , "Anderson-Darling (A2) (runs)" , "Chi-square (runs)" , "Kolmogorov-Smirnov (D+) (bits)" , "Kolmogorov-Smirnov (D-) (bits)" , "Anderson-Darling (A2) (bits)" , "Normal (bits)" , "Sample variance (bits)"}};
+const tTestU01Data TestConstants::TESTU01_SSTRING_RUN_RABBIT           {"sstring_Run" ,                 {"N","n","r","s"} ,                 {"Kolmogorov-Smirnov (D+) (runs)" , "Kolmogorov-Smirnov (D-) (runs)" , "Anderson-Darling (A2) (runs)" , "Chi-square (runs)" , "Kolmogorov-Smirnov (D+) (bits)" , "Kolmogorov-Smirnov (D-) (bits)" , "Anderson-Darling (A2) (bits)" , "Normal (bits)" , "Sample variance (bits)"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR              {"sstring_AutoCor" ,             {} ,                                {"Normal"}};
 const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN         {"sstring_AutoCor" ,             {"N","n","r","s","d"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Normal" , "Sample variance"}};
 const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsOver" , {"N","n","r","s","L","Sparse"} ,    {"Collision"}};
@@ -232,8 +232,8 @@ const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsBigCrush = {
 };
 
 const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsRabbit = {
-    { IndexRange(1,2)   , TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER},
-    { IndexRange(3,3)   , TestConstants::TESTU01_SNPAIR_CLOSEPAIRSBITMATCH},
+    { IndexRange(1,1)   , TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER},
+    { IndexRange(2,3)   , TestConstants::TESTU01_SNPAIR_CLOSEPAIRSBITMATCH},
     { IndexRange(4,4)   , TestConstants::TESTU01_SVARIA_APPEARANCESPACINGS},
     { IndexRange(5,5)   , TestConstants::TESTU01_SCOMP_LINEARCOMP},
     { IndexRange(6,6)   , TestConstants::TESTU01_SCOMP_LEMPELZIV},

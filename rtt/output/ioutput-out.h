@@ -17,7 +17,9 @@ public:
 
     virtual void addNewTest(const std::string & testName) = 0;
 
-    virtual void setTestOptions(const std::vector<std::string> & options) = 0;
+    virtual void setUserSettings(const std::vector<std::string> & options) = 0;
+
+    virtual void setTestParameters(const std::vector<std::string> & parameters) = 0;
 
     virtual void setRuntimeIssues(const std::string & stdErr ,
                                   const std::vector<std::string> & errors ,

@@ -37,7 +37,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     return t;
 }
 
-std::vector<std::string> Test::getParameters() const {
+std::vector<std::string> Test::getTestUserSettings() const {
     std::stringstream parameters;
     parameters << "Stream size: " << streamSize << std::endl;
     parameters << "Stream count: " << streamCount << std::endl;
@@ -45,6 +45,11 @@ std::vector<std::string> Test::getParameters() const {
         parameters << "Block length: " << blockLength;
 
     return Utils::split(parameters.str() , '\n');
+}
+
+std::vector<std::vector<std::string> > Test::getTestsParameters() const {
+    /* Nothing interesting */
+    return {};
 }
 
 std::vector<std::string> Test::getStatistics() const {

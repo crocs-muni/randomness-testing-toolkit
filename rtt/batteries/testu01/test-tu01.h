@@ -30,9 +30,17 @@ public:
     static std::unique_ptr<Test> getInstance(int testIndex ,
                                              const GlobalContainer & container);
 
-    std::vector<std::string> getParameters() const;
+    std::vector<std::string> getTestUserSettings() const;
 
     std::vector<std::string> getStatistics() const;
+
+    std::vector<std::vector<std::string>> getTestsParameters() const;
+
+    //std::vector<std::vector<tParam>> getSubTestSettings() const;
+
+    int getRepetitions() const;
+
+    uint getSubTestCount() const;
 
 private:
     /*
@@ -54,13 +62,13 @@ private:
     std::string bit_w;
     /* Following vars will be set after test execution */
     /* Number of statistics calculated in each test
-     * resulting pval count = reps*statCount */
+     * resulting pval count = reps*statCount*subTestCount */
     uint statCount;
     /* Number of subtests executed - different from repetitions,
      * as multiple subtests can be executed in single repetition. */
     uint subTestCount;
-    /* Parsed settings of each subtest. */
-    std::vector<std::vector<tParam>> subTestSettings;
+    /* Parsed parameters of each subtest. */
+    std::vector<std::vector<tParam>> subTestsParameters;
 
     /*
     ===============
@@ -73,8 +81,6 @@ private:
     std::string createArgs() const;
 
     void processBatteryOutput();
-
-    //void saveTestLogToFile();
 
     void extractSettingsFromLog(const std::string & testLog);
 

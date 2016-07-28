@@ -3,7 +3,7 @@
 namespace rtt {
 
 /* Constant definition */
-const std::string Constants::FILE_DEFAULT_CFG_PATH = "./config.xml";
+const std::string Constants::FILE_DEFAULT_CFG_PATH = "./config.json";
 const std::string Constants::FILE_TOOLKIT_SETTINGS = "./rtt-settings.conf";
 
 const double Constants::MATH_ALPHA = 0.01;

@@ -20,7 +20,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
             t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
                                                                       t->testIndex);
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
-        t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions();
+        t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions(t->battery);
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(t->objectInfo , Strings::TEST_ERR_REPS_NOT_SET);
 
@@ -49,7 +49,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         t->bit_nb = t->batteryConfiguration->getTestU01BatteryTestBitNB(t->battery ,
                                                                         t->testIndex);
         if(t->bit_nb.empty())
-            t->bit_nb = t->batteryConfiguration->getTestU01DefaultBitNB();
+            t->bit_nb = t->batteryConfiguration->getTestU01DefaultBitNB(t->battery);
         if(t->bit_nb.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITNB_NOT_SET);
     }
@@ -59,14 +59,14 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         t->bit_r = t->batteryConfiguration->getTestU01BatteryTestBitR(t->battery ,
                                                                       t->testIndex);
         if(t->bit_r.empty())
-            t->bit_r = t->batteryConfiguration->getTestU01DefaultBitR();
+            t->bit_r = t->batteryConfiguration->getTestU01DefaultBitR(t->battery);
         if(t->bit_r.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITR_NOT_SET);
 
         t->bit_s = t->batteryConfiguration->getTestU01BatteryTestBitS(t->battery ,
                                                                       t->testIndex);
         if(t->bit_s.empty())
-            t->bit_s = t->batteryConfiguration->getTestU01DefaultBitS();
+            t->bit_s = t->batteryConfiguration->getTestU01DefaultBitS(t->battery);
         if(t->bit_s.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITS_NOT_SET);
     }
@@ -75,7 +75,7 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
         t->bit_w = t->batteryConfiguration->getTestU01BatteryTestBitW(t->battery ,
                                                                       t->testIndex);
         if(t->bit_w.empty())
-            t->bit_w = t->batteryConfiguration->getTestU01DefaultBitW();
+            t->bit_w = t->batteryConfiguration->getTestU01DefaultBitW(t->battery);
     }
     /* Setting battery arguments and input */
     t->batteryArgs = t->createArgs();

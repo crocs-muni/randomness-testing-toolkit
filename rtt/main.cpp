@@ -32,11 +32,13 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <functional>
 
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/globalcontainer.h"
 #include "rtt/version.h"
 #include "rtt/batteries/dieharder/battery-dh.h"
+#include "libs/moderncppjson/json.hpp"
 
 /* This line must stay in main! */
 INITIALIZE_EASYLOGGINGPP
@@ -45,8 +47,38 @@ using namespace rtt;
 
 //#define TESTING
 
+/*template <class C , class P>
+nlohmann::json::object_t where(C container , P && pred) {
+    for(auto & el : container)
+        if(pred(el))
+            return el;
+    return {};
+}
+
+bool pred(nlohmann::json::object_t el , std::string att , int v) {
+    return (el.find(att) !=  el.end()) && (el.at(att) == v);
+}*/
+
 int main (int argc , char * argv[]) {
 #ifdef TESTING
+    /*using json = nlohmann::json;
+    using namespace std::placeholders;
+
+    json j = json::parse(Utils::readFileToString("config.json"));
+
+    auto vec = j
+            .at("randomness-testing-toolkit")
+            .at("dieharder-settings")
+            .at("test-specific-settings");
+
+    auto o = where(vec , std::bind(pred , _1 , "test" , 200));
+
+    if(o.empty()) {
+        std::cout << "Not found." << std::endl;
+    } else {
+        std::cout << o << std::endl;
+    }*/
+
 #else
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;

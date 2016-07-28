@@ -1,0 +1,175 @@
+{
+    "randomness-testing-toolkit": {
+        "dieharder-settings": {
+            "defaults": {
+                "tests": ["0-4","8-13","15-17","100-102","200-209"],
+                "psamples": 100,
+                "arguments": "-W 0.01 -X 0.01"
+            },
+            "test-specific-settings": [
+                {
+                    "test": 200,
+                    "arguments": "-n 12"
+                },
+                {
+                    "test": 201,
+                    "psamples": 1000,
+                    "arguments": "-n 2 -t 8000"
+                },
+                {
+                    "test": 204,
+                    "psamples": 1000
+                },
+                {
+                    "test": 205,
+                    "psamples": 1
+                },
+                {
+                    "test": 206,
+                    "psamples": 1
+                },
+                {
+                    "test": 207,
+                    "psamples": 1
+                },
+                {
+                    "test": 208,
+                    "psamples": 1
+                },
+                {
+                    "test": 209,
+                    "psamples": 1
+                }
+            ]
+        },
+    
+        "nist-sts-settings": {
+            "defaults": {
+                "tests": ["1-15"],    
+                "stream-size": "1000000",
+                "stream-count": "100"
+            },
+            "test-specific-settings": [
+                {
+                   "test": 1,
+                   "stream-size": "11",
+                   "stream-count": "12",
+                   "block-size": "13"
+                },
+                {
+                   "test": 2,
+                   "stream-count": "22",
+                   "block-size": "23"
+                },
+                {
+                   "test": 3,
+                   "stream-size": "31",
+                   "block-size": "33"
+                },
+                {
+                   "test": 4,
+                   "stream-size": "41",
+                   "stream-count": "42"
+                }
+            ]  
+        },
+    
+        "testu01-settings": {
+            "defaults": {
+                "small-crush": {
+                    "tests": ["1-10"],
+                    "repetitions": 1
+                },
+                "crush": {
+                    "tests": ["1-96"],
+                    "repetitions": 1
+                },
+                "big-crush": {
+                    "tests": ["1-106"],
+                    "repetitions": 1
+                },
+                "rabbit": {
+                    "tests": ["1-26"],
+                    "repetitions": 1,
+                    "bit-nb": "8388608000"
+                },
+                "alphabit": {
+                    "tests": ["1-9"],
+                    "repetitions": 1,
+                    "bit-nb": "8388608000",
+                    "bit-r": "0",
+                    "bit-s": "32"
+                },
+                "block-alphabit": {
+                    "tests": ["1-9"],
+                    "repetitions": 1,
+                    "bit-nb": "8388608000",
+                    "bit-r": "0",
+                    "bit-s": "32"
+                }
+            }, 
+            
+            "test-specific-settings": {
+                "small-crush": [
+                    {
+                        "test": 1,
+                        "repetitions": 2 
+                    },
+                    {
+                        "test": 5,
+                        "repetitions": 5,
+                        "parameters": [
+                            ["N","1"],
+                            ["n","2"],
+                            ["r","3"],
+                            ["d","4"]
+                        ]
+                    }
+                ],
+                "crush": [
+                    {
+                        "test": 2,
+                        "repetitions": 4
+                    } 
+                ],
+                "big-crush": [
+                    {
+                        "test": 72,
+                        "parameters": [
+                            ["N","11"],
+                            ["n","12"],
+                            ["r","13"],
+                            ["m","14"],
+                            ["t","15"]
+                        ]
+                    }
+                ],
+                "rabbit": [
+                    {
+                        "test": 1,
+                        "bit-nb": "5000000"
+                    }
+                ],
+                "alphabit": [
+                    {
+                        "test": 2,
+                        "bit-nb": "12"
+                    },
+                    {
+                        "test": 3,
+                        "bit-r": "4",
+                        "bit-s": "5" 
+                    }
+                ],
+                "block-alphabit": [
+                    {
+                        "test": 4,
+                        "bit-r": "5",
+                        "bit-s": "6",
+                        "bit-w": "7"
+                    }
+                ]
+            }
+        }
+    }
+}

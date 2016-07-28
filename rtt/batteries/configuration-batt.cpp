@@ -3,269 +3,192 @@
 namespace rtt {
 namespace batteries {
 
-const std::string Configuration::XPATH_DIEHARDER_DEFAULT_TESTS         = "DIEHARDER_SETTINGS/DEFAULT_TESTS";
-const std::string Configuration::XPATH_DIEHARDER_DEFAULT_ARGUMENTS     = "DIEHARDER_SETTINGS/DEFAULT_ARGUMENTS";
-const std::string Configuration::XPATH_DIEHARDER_DEFAULT_PSAMPLES      = "DIEHARDER_SETTINGS/DEFAULT_PSAMPLES";
-const std::string Configuration::XPATH_DIEHARDER_TESTS_SETTINGS        = "DIEHARDER_SETTINGS/TESTS_SETTINGS";
-const std::string Configuration::XPATH_DIEHARDER_ATTRIBUTE_TEST_INDEX  = "test";
-const std::string Configuration::XPATH_DIEHARDER_TEST_ARGUMENTS        = "ARGUMENTS";
-const std::string Configuration::XPATH_DIEHARDER_TEST_PSAMPLES         = "PSAMPLES";
-
-const std::string Configuration::XPATH_NISTSTS_DEFAULT_TESTS         = "NIST_STS_SETTINGS/DEFAULT_TESTS";
-const std::string Configuration::XPATH_NISTSTS_DEFAULT_STREAM_SIZE   = "NIST_STS_SETTINGS/DEFAULT_STREAM_SIZE";
-const std::string Configuration::XPATH_NISTSTS_DEFAULT_STREAM_COUNT  = "NIST_STS_SETTINGS/DEFAULT_STREAM_COUNT";
-const std::string Configuration::XPATH_NISTSTS_TEST_STREAM_SIZE      = "STREAM_SIZE";
-const std::string Configuration::XPATH_NISTSTS_TEST_STREAM_COUNT     = "STREAM_COUNT";
-const std::string Configuration::XPATH_NISTSTS_TEST_BLOCK_LENGTH     = "BLOCK_LENGTH";
-const std::string Configuration::XPATH_NISTSTS_TESTS_SETTINGS        = "NIST_STS_SETTINGS/TESTS_SETTINGS";
-const std::string Configuration::XPATH_NISTSTS_ATTRIBUTE_TEST_INDEX  = "test";
-
-const std::string Configuration::XPATH_TU01_SMALL_CRUSH_DEFAULT_TESTS       = "TESTU01_SETTINGS/DEFAULT_TESTS_SCRUSH";
-const std::string Configuration::XPATH_TU01_CRUSH_DEFAULT_TESTS             = "TESTU01_SETTINGS/DEFAULT_TESTS_CRUSH";
-const std::string Configuration::XPATH_TU01_BIG_CRUSH_DEFAULT_TESTS         = "TESTU01_SETTINGS/DEFAULT_TESTS_BCRUSH";
-const std::string Configuration::XPATH_TU01_RABBIT_DEFAULT_TESTS            = "TESTU01_SETTINGS/DEFAULT_TESTS_RABBIT";
-const std::string Configuration::XPATH_TU01_ALPHABIT_DEFAULT_TESTS          = "TESTU01_SETTINGS/DEFAULT_TESTS_ALPHABIT";
-const std::string Configuration::XPATH_TU01_BLOCK_ALPHABIT_DEFAULT_TESTS    = "TESTU01_SETTINGS/DEFAULT_TESTS_BLOCK_ALPHABIT";
-const std::string Configuration::XPATH_TU01_DEFAULT_REPS                    = "TESTU01_SETTINGS/DEFAULT_REPETITIONS";
-const std::string Configuration::XPATH_TU01_DEFAULT_BIT_NB                  = "TESTU01_SETTINGS/DEFAULT_BIT_NB";
-const std::string Configuration::XPATH_TU01_DEFAULT_BIT_R                   = "TESTU01_SETTINGS/DEFAULT_BIT_R";
-const std::string Configuration::XPATH_TU01_DEFAULT_BIT_S                   = "TESTU01_SETTINGS/DEFAULT_BIT_S";
-const std::string Configuration::XPATH_TU01_DEFAULT_BIT_W                   = "TESTU01_SETTINGS/DEFAULT_BIT_W";
-const std::string Configuration::XPATH_TU01_SMALL_CRUSH_SETTINGS            = "TESTU01_SETTINGS/SMALL_CRUSH_SETTINGS";
-const std::string Configuration::XPATH_TU01_CRUSH_SETTINGS                  = "TESTU01_SETTINGS/CRUSH_SETTINGS";
-const std::string Configuration::XPATH_TU01_BIG_CRUSH_SETTINGS              = "TESTU01_SETTINGS/BIG_CRUSH_SETTINGS";
-const std::string Configuration::XPATH_TU01_RABBIT_SETTINGS                 = "TESTU01_SETTINGS/RABBIT_SETTINGS";
-const std::string Configuration::XPATH_TU01_ALPHABIT_SETTINGS               = "TESTU01_SETTINGS/ALPHABIT_SETTINGS";
-const std::string Configuration::XPATH_TU01_BLOCK_ALPHABIT_SETTINGS         = "TESTU01_SETTINGS/BLOCK_ALPHABIT_SETTINGS";
-const std::string Configuration::XPATH_TU01_TEST_REPS                       = "REPETITIONS";
-const std::string Configuration::XPATH_TU01_TEST_PARAMS                     = "PARAMS";
-const std::string Configuration::XPATH_TU01_TEST_BIT_NB                     = "BIT_NB";
-const std::string Configuration::XPATH_TU01_TEST_BIT_R                      = "BIT_R";
-const std::string Configuration::XPATH_TU01_TEST_BIT_S                      = "BIT_S";
-const std::string Configuration::XPATH_TU01_TEST_BIT_W                      = "BIT_W";
-const std::string Configuration::XPATH_TU01_ATTRIBUTE_TEST_INDEX            = "test";
-const std::string Configuration::XPATH_TU01_ATTRIBUTE_PAR_NAME              = "name";
-
 Configuration Configuration::getInstance(const std::string & configFileName) {
-    TiXmlNode * xmlCfg;
-    loadXMLFile(xmlCfg , configFileName);
+    json root = json::parse(Utils::readFileToString(configFileName));
 
     Configuration conf;
-    conf.loadDieharderVariables(xmlCfg);
-    conf.loadNiststsVariables(xmlCfg);
-    conf.loadTestU01Variables(xmlCfg);
+
+    try {
+        root = root.at("randomness-testing-toolkit");
+
+        conf.loadDieharderVariables(root.at("dieharder-settings"));
+        conf.loadNiststsVariables(root.at("nist-sts-settings"));
+        conf.loadTestU01Variables(root.at("testu01-settings"));
+    } catch (std::runtime_error ex) {
+        throw RTTException(conf.objectInfo,
+                           "error during JSON processing - " + (std::string)ex.what());
+    } catch (std::out_of_range ex) {
+        throw RTTException(conf.objectInfo,
+                           "missing tag in JSON - " + (std::string)ex.what());
+    }
     return conf;
 }
 
 std::vector<int> Configuration::getBatteryDefaultTests(Constants::Battery battery) const {
     switch(battery) {
-    case Constants::Battery::DIEHARDER:             return dieharderDefaultTests;
-    case Constants::Battery::NIST_STS:              return niststsDefaultTests;
-    case Constants::Battery::TU01_SMALLCRUSH:       return tu01SmallCrushDefaultTests;
-    case Constants::Battery::TU01_CRUSH:            return tu01CrushDefaultTests;
-    case Constants::Battery::TU01_BIGCRUSH:         return tu01BigCrushDefaultTests;
-    case Constants::Battery::TU01_RABBIT:           return tu01RabbitDefaultTests;
-    case Constants::Battery::TU01_ALPHABIT:         return tu01AlphabitDefaultTests;
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:   return tu01BlockAlphabitDefaultTests;
+    case Constants::Battery::DIEHARDER:             return dhDefaultTests;
+    case Constants::Battery::NIST_STS:              return stsDefaultTests;
+    case Constants::Battery::TU01_SMALLCRUSH:
+    case Constants::Battery::TU01_CRUSH:
+    case Constants::Battery::TU01_BIGCRUSH:
+    case Constants::Battery::TU01_RABBIT:
+    case Constants::Battery::TU01_ALPHABIT:
+    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        if(tu01DefaultTests.count(battery) != 1)
+            return {};
+
+        return tu01DefaultTests.at(battery);
     default:raiseBugException("invalid battery");
     }
 }
 
 int Configuration::getDieharderDefaultPSamples() const {
-    return dieharderDefaultPSamples;
+    return dhDefaultPSamples;
 }
 
 std::string Configuration::getDieharderDefaultArguments() const {
-    return dieharderDefaultArguments;
+    return dhDefaultArguments;
 }
 
 int Configuration::getDieharderTestPSamples(int testIndex) const {
-    if(dieharderTestPSamples.find(testIndex) == dieharderTestPSamples.end())
+    if(dhTestPSamples.find(testIndex) == dhTestPSamples.end())
         return VALUE_INT_NOT_SET;
 
-    return dieharderTestPSamples.at(testIndex);
+    return dhTestPSamples.at(testIndex);
 }
 
 std::string Configuration::getDieharderTestArguments(int testIndex) const {
-    if(dieharderTestArguments.find(testIndex) == dieharderTestArguments.end())
+    if(dhTestArguments.find(testIndex) == dhTestArguments.end())
         return "";
 
-    return dieharderTestArguments.at(testIndex);
+    return dhTestArguments.at(testIndex);
 }
 
 std::string Configuration::getNiststsDefaultStreamSize() const {
-    return niststsDefaultStreamSize;
+    return stsDefaultStreamSize;
 }
 
 std::string Configuration::getNiststsDefaultStreamCount() const {
-    return niststsDefaultStreamCount;
+    return stsDefaultStreamCount;
 }
 
 std::string Configuration::getNiststsTestStreamSize(int testIndex) const {
-    if(niststsTestStreamSize.find(testIndex) == niststsTestStreamSize.end())
+    if(stsTestStreamSize.find(testIndex) == stsTestStreamSize.end())
         return "";
 
-    return niststsTestStreamSize.at(testIndex);
+    return stsTestStreamSize.at(testIndex);
 }
 
 std::string Configuration::getNiststsTestStreamCount(int testIndex) const {
-    if(niststsTestStreamCount.find(testIndex) == niststsTestStreamCount.end())
+    if(stsTestStreamCount.find(testIndex) == stsTestStreamCount.end())
         return "";
 
-    return niststsTestStreamCount.at(testIndex);
+    return stsTestStreamCount.at(testIndex);
 }
 
 std::string Configuration::getNiststsTestBlockLength(int testIndex) const {
-    if(niststsTestBlockLength.find(testIndex) == niststsTestBlockLength.end())
+    if(stsTestBlockSize.find(testIndex) == stsTestBlockSize.end())
         return "";
 
-    return niststsTestBlockLength.at(testIndex);
+    return stsTestBlockSize.at(testIndex);
 }
 
-int Configuration::getTestu01DefaultRepetitions() const {
-    return testu01DefaultRepetitions;
+int Configuration::getTestu01DefaultRepetitions(Constants::Battery battery) const {
+    if(tu01DefaultReps.count(battery))
+        return VALUE_INT_NOT_SET;
+
+    return tu01DefaultReps.at(battery);
 }
 
-std::string Configuration::getTestU01DefaultBitNB() const {
-    return testu01DefaultBitNB;
+std::string Configuration::getTestU01DefaultBitNB(Constants::Battery battery) const {
+    if(tu01DefaultBitNB.count(battery))
+        return "";
+
+    return tu01DefaultBitNB.at(battery);
 }
 
-std::string Configuration::getTestU01DefaultBitR() const {
-    return testu01DefaultBitR;
+std::string Configuration::getTestU01DefaultBitR(Constants::Battery battery) const {
+    if(tu01DefaultBitR.count(battery) != 1)
+        return "";
+
+    return tu01DefaultBitR.at(battery);
 }
 
-std::string Configuration::getTestU01DefaultBitS() const {
-    return testu01DefaultBitS;
+std::string Configuration::getTestU01DefaultBitS(Constants::Battery battery) const {
+    if(tu01DefaultBitS.count(battery) != 1)
+        return "";
+
+    return tu01DefaultBitS.at(battery);
 }
 
-std::string Configuration::getTestU01DefaultBitW() const {
-    return testu01DefaultBitW;
+std::string Configuration::getTestU01DefaultBitW(Constants::Battery battery) const {
+    if(tu01DefaultBitW.count(battery) != 1)
+        return "";
+
+    return tu01DefaultBitW.at(battery);
 }
 
 int Configuration::getTestU01BatteryTestRepetitions(Constants::Battery battery,
                                                     int testIndex) const {
-    const std::map<int , int> * variable;
-    switch(battery) {
-    case Constants::Battery::TU01_SMALLCRUSH:
-        variable = &tu01SmallCrushTestRepetitions;
-        break;
-    case Constants::Battery::TU01_CRUSH:
-        variable = &tu01CrushTestRepetitions;
-        break;
-    case Constants::Battery::TU01_BIGCRUSH:
-        variable = &tu01BigCrushTestRepetitions;
-        break;
-    case Constants::Battery::TU01_RABBIT:
-        variable = &tu01RabbitTestRepetitions;
-        break;
-    case Constants::Battery::TU01_ALPHABIT:
-        variable = &tu01AlphabitTestRepetitions;
-        break;
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:
-        variable = &tu01BlockAlphabitTestRepetitions;
-        break;
-    default:raiseBugException("invalid battery");
-    }
-    if(variable->find(testIndex) == variable->end())
+    if(tu01TestReps.count(battery) != 1)
+        return VALUE_INT_NOT_SET;
+    if(tu01TestReps.at(battery).count(testIndex) != 1)
         return VALUE_INT_NOT_SET;
 
-    return variable->at(testIndex);
+    return tu01TestReps.at(battery).at(testIndex);
 }
 
 std::string Configuration::getTestU01BatteryTestParams(Constants::Battery battery,
                                                        int testIndex,
                                                        const std::string & parName) {
-    const std::map<int , std::map<std::string , std::string>> * variable;
-    switch(battery) {
-    case Constants::Battery::TU01_SMALLCRUSH:
-        variable = &tu01SmallCrushTestParams;
-        break;
-    case Constants::Battery::TU01_CRUSH:
-        variable = &tu01CrushTestParams;
-        break;
-    case Constants::Battery::TU01_BIGCRUSH:
-        variable = &tu01BigCrushTestParams;
-        break;
-    default:raiseBugException("invalid battery");
-    }
-    if(variable->find(testIndex) == variable->end())
+    if(tu01TestParams.count(battery) != 1)
         return "";
-    if(variable->at(testIndex).find(parName) == variable->at(testIndex).end())
+    if(tu01TestParams.at(battery).count(testIndex) != 1)
+        return "";
+    if(tu01TestParams.at(battery).at(testIndex).count(parName) != 1)
         return "";
 
-    return variable->at(testIndex).at(parName);
+    return tu01TestParams.at(battery).at(testIndex).at(parName);
 }
 
 std::string Configuration::getTestU01BatteryTestBitNB(Constants::Battery battery,
                                                       int testIndex) {
-    const std::map<int , std::string> * variable;
-    switch(battery) {
-    case Constants::Battery::TU01_RABBIT:
-        variable = &tu01RabbitTestBitNB;
-        break;
-    case Constants::Battery::TU01_ALPHABIT:
-        variable = &tu01AlphabitTestBitNB;
-        break;
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:
-        variable = &tu01BlockAlphabitTestBitNB;
-        break;
-    default:raiseBugException("invalid battery");
-    }
-    if(variable->find(testIndex) == variable->end())
+    if(tu01TestBitNB.count(battery) != 1)
+        return "";
+    if(tu01TestBitNB.at(battery).count(testIndex) != 1)
         return "";
 
-    return variable->at(testIndex);
+    return tu01TestBitNB.at(battery).at(testIndex);
 }
 
 std::string Configuration::getTestU01BatteryTestBitR(Constants::Battery battery,
                                                      int testIndex) {
-    const std::map<int , std::string> * variable;
-    switch(battery) {
-    case Constants::Battery::TU01_ALPHABIT:
-        variable = &tu01AlphabitTestBitR;
-        break;
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:
-        variable = &tu01BlockAlphabitTestBitR;
-        break;
-    default:raiseBugException("invalid battery");
-    }
-    if(variable->find(testIndex) == variable->end())
+    if(tu01TestBitR.count(battery) != 1)
+        return "";
+    if(tu01TestBitR.at(battery).count(testIndex) != 1)
         return "";
 
-    return variable->at(testIndex);
+    return tu01TestBitR.at(battery).at(testIndex);
 }
 
 std::string Configuration::getTestU01BatteryTestBitS(Constants::Battery battery,
                                                      int testIndex) {
-    const std::map<int , std::string> * variable;
-    switch(battery) {
-    case Constants::Battery::TU01_ALPHABIT:
-        variable = &tu01AlphabitTestBitS;
-        break;
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:
-        variable = &tu01BlockAlphabitTestBitS;
-        break;
-    default:raiseBugException("invalid battery");
-    }
-    if(variable->find(testIndex) == variable->end())
+    if(tu01TestBitS.count(battery) != 1)
+        return "";
+    if(tu01TestBitS.at(battery).count(testIndex) != 1)
         return "";
 
-    return variable->at(testIndex);
+    return tu01TestBitS.at(battery).at(testIndex);
 }
 
 std::string Configuration::getTestU01BatteryTestBitW(Constants::Battery battery,
                                                      int testIndex) {
-    const std::map<int , std::string> * variable;
-    switch(battery) {
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:
-        variable = &tu01BlockAlphabitTestBitW;
-        break;
-    default:raiseBugException("invalid battery");
-    }
-    if(variable->find(testIndex) == variable->end())
+    if(tu01TestBitW.count(battery) != 1)
+        return "";
+    if(tu01TestBitW.at(battery).count(testIndex) != 1)
         return "";
 
-    return variable->at(testIndex);
+    return tu01TestBitW.at(battery).at(testIndex);
 }
 
 /*
@@ -283,301 +206,327 @@ std::string Configuration::getTestU01BatteryTestBitW(Constants::Battery battery,
  \$$
 */
 
-void Configuration::loadDieharderVariables(TiXmlNode * xmlCfg) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
+void Configuration::loadDieharderVariables(/*TiXmlNode * xmlCfg*/const json::object_t & dhSettingsNode) {
+    if(dhSettingsNode.empty())
+        throw RTTException(objectInfo , "empty Dieharder settings");
 
-    dieharderDefaultTests = getDefaultTests(xmlCfg , XPATH_DIEHARDER_DEFAULT_TESTS);
-    dieharderDefaultPSamples = getIntValue(xmlCfg , XPATH_DIEHARDER_DEFAULT_PSAMPLES);
-    dieharderDefaultArguments = getXMLElementValue(xmlCfg , XPATH_DIEHARDER_DEFAULT_ARGUMENTS);
-    dieharderTestPSamples = createMapIntInt(xmlCfg ,
-                                            XPATH_DIEHARDER_TESTS_SETTINGS ,
-                                            XPATH_DIEHARDER_ATTRIBUTE_TEST_INDEX ,
-                                            XPATH_DIEHARDER_TEST_PSAMPLES);
-    dieharderTestArguments = createMapIntString(xmlCfg ,
-                                                XPATH_DIEHARDER_TESTS_SETTINGS ,
-                                                XPATH_DIEHARDER_ATTRIBUTE_TEST_INDEX ,
-                                                XPATH_DIEHARDER_TEST_ARGUMENTS);
-}
+    if(dhSettingsNode.count("defaults") == 1) {
+        const auto & nDefaults = dhSettingsNode.at("defaults");
 
-void Configuration::loadNiststsVariables(TiXmlNode * xmlCfg) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
-
-    niststsDefaultTests = getDefaultTests(xmlCfg , XPATH_NISTSTS_DEFAULT_TESTS);
-    niststsDefaultStreamCount = getXMLElementValue(xmlCfg , XPATH_NISTSTS_DEFAULT_STREAM_COUNT);
-    niststsDefaultStreamSize = getXMLElementValue(xmlCfg , XPATH_NISTSTS_DEFAULT_STREAM_SIZE);
-    niststsTestStreamCount = createMapIntString(xmlCfg ,
-                                                XPATH_NISTSTS_TESTS_SETTINGS,
-                                                XPATH_NISTSTS_ATTRIBUTE_TEST_INDEX,
-                                                XPATH_NISTSTS_TEST_STREAM_COUNT);
-    niststsTestStreamSize = createMapIntString(xmlCfg ,
-                                               XPATH_NISTSTS_TESTS_SETTINGS,
-                                               XPATH_NISTSTS_ATTRIBUTE_TEST_INDEX,
-                                               XPATH_NISTSTS_TEST_STREAM_SIZE);
-    niststsTestBlockLength = createMapIntString(xmlCfg ,
-                                                XPATH_NISTSTS_TESTS_SETTINGS,
-                                                XPATH_NISTSTS_ATTRIBUTE_TEST_INDEX,
-                                                XPATH_NISTSTS_TEST_BLOCK_LENGTH);
-}
-
-void Configuration::loadTestU01Variables(TiXmlNode * xmlCfg) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
-    /* Default repetitions */
-    testu01DefaultRepetitions   = getIntValue(xmlCfg , XPATH_TU01_DEFAULT_REPS);
-    /* Default NB, R, S, W */
-    testu01DefaultBitNB         = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_NB);
-    testu01DefaultBitR          = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_R);
-    testu01DefaultBitS          = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_S);
-    testu01DefaultBitW          = getXMLElementValue(xmlCfg , XPATH_TU01_DEFAULT_BIT_W);
-    /* Default test constants */
-    tu01SmallCrushDefaultTests      = getDefaultTests(xmlCfg , XPATH_TU01_SMALL_CRUSH_DEFAULT_TESTS);
-    tu01CrushDefaultTests           = getDefaultTests(xmlCfg , XPATH_TU01_CRUSH_DEFAULT_TESTS);
-    tu01BigCrushDefaultTests        = getDefaultTests(xmlCfg , XPATH_TU01_BIG_CRUSH_DEFAULT_TESTS);
-    tu01RabbitDefaultTests          = getDefaultTests(xmlCfg , XPATH_TU01_RABBIT_DEFAULT_TESTS);
-    tu01AlphabitDefaultTests        = getDefaultTests(xmlCfg , XPATH_TU01_ALPHABIT_DEFAULT_TESTS);
-    tu01BlockAlphabitDefaultTests   = getDefaultTests(xmlCfg , XPATH_TU01_BLOCK_ALPHABIT_DEFAULT_TESTS);
-    /* Test and battery specific repetitions */
-    tu01SmallCrushTestRepetitions = createMapIntInt(xmlCfg ,
-                                                    XPATH_TU01_SMALL_CRUSH_SETTINGS ,
-                                                    XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                    XPATH_TU01_TEST_REPS);
-    tu01CrushTestRepetitions = createMapIntInt(xmlCfg ,
-                                               XPATH_TU01_CRUSH_SETTINGS ,
-                                               XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                               XPATH_TU01_TEST_REPS);
-    tu01BigCrushTestRepetitions = createMapIntInt(xmlCfg ,
-                                                  XPATH_TU01_BIG_CRUSH_SETTINGS ,
-                                                  XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                  XPATH_TU01_TEST_REPS);
-    tu01RabbitTestRepetitions = createMapIntInt(xmlCfg ,
-                                                XPATH_TU01_RABBIT_SETTINGS ,
-                                                XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                XPATH_TU01_TEST_REPS);
-    tu01AlphabitTestRepetitions = createMapIntInt(xmlCfg ,
-                                                  XPATH_TU01_ALPHABIT_SETTINGS ,
-                                                  XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                  XPATH_TU01_TEST_REPS);
-    tu01BlockAlphabitTestRepetitions = createMapIntInt(xmlCfg ,
-                                                       XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
-                                                       XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                       XPATH_TU01_TEST_REPS);
-    /* Test and battery specific additional parameters */
-    tu01SmallCrushTestParams = createMapIntMap(xmlCfg ,
-                                               XPATH_TU01_SMALL_CRUSH_SETTINGS ,
-                                               XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                               XPATH_TU01_TEST_PARAMS ,
-                                               XPATH_TU01_ATTRIBUTE_PAR_NAME);
-    tu01CrushTestParams = createMapIntMap(xmlCfg,
-                                          XPATH_TU01_CRUSH_SETTINGS,
-                                          XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                          XPATH_TU01_TEST_PARAMS ,
-                                          XPATH_TU01_ATTRIBUTE_PAR_NAME);
-    tu01BigCrushTestParams = createMapIntMap(xmlCfg,
-                                             XPATH_TU01_BIG_CRUSH_SETTINGS,
-                                             XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                             XPATH_TU01_TEST_PARAMS ,
-                                             XPATH_TU01_ATTRIBUTE_PAR_NAME);
-    /* Test and battery specific NB */
-    tu01RabbitTestBitNB = createMapIntString(xmlCfg ,
-                                             XPATH_TU01_RABBIT_SETTINGS ,
-                                             XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                             XPATH_TU01_TEST_BIT_NB);
-    tu01AlphabitTestBitNB = createMapIntString(xmlCfg ,
-                                               XPATH_TU01_ALPHABIT_SETTINGS ,
-                                               XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                               XPATH_TU01_TEST_BIT_NB);
-    tu01BlockAlphabitTestBitNB = createMapIntString(xmlCfg ,
-                                                    XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
-                                                    XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                    XPATH_TU01_TEST_BIT_NB);
-    /* Test and battery specific R */
-    tu01AlphabitTestBitR = createMapIntString(xmlCfg ,
-                                              XPATH_TU01_ALPHABIT_SETTINGS ,
-                                              XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                              XPATH_TU01_TEST_BIT_R);
-    tu01BlockAlphabitTestBitR = createMapIntString(xmlCfg ,
-                                                   XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
-                                                   XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                   XPATH_TU01_TEST_BIT_R);
-
-    /* Test and battery specific S */
-    tu01AlphabitTestBitS = createMapIntString(xmlCfg ,
-                                              XPATH_TU01_ALPHABIT_SETTINGS ,
-                                              XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                              XPATH_TU01_TEST_BIT_S);
-    tu01BlockAlphabitTestBitS = createMapIntString(xmlCfg ,
-                                                   XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
-                                                   XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                   XPATH_TU01_TEST_BIT_S);
-    /* Test and battery specific W */
-    tu01BlockAlphabitTestBitW = createMapIntString(xmlCfg ,
-                                                   XPATH_TU01_BLOCK_ALPHABIT_SETTINGS ,
-                                                   XPATH_TU01_ATTRIBUTE_TEST_INDEX ,
-                                                   XPATH_TU01_TEST_BIT_W);
-}
-
-std::map<std::string , std::string> Configuration::createMapStringString(
-        TiXmlNode * xmlCfg,
-        const std::string & parentXpath,
-        const std::string & keyAttribute,
-        const std::string & valueTag) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
-
-    TiXmlNode * parent = getXMLElement(xmlCfg , parentXpath);
-    if(!parent || !parent->FirstChild())
-        return {};
-
-    std::map<std::string , std::string> rval;
-    const char * key = NULL;
-    std::string value;
-    TiXmlElement * childEl = NULL;
-
-    for(TiXmlNode * child = parent->FirstChild() ;
-        child ; child = child->NextSibling()) {
-        childEl = child->ToElement();
-        key = childEl->Attribute(keyAttribute.c_str());
-        if(!key || strlen(key) < 1)
-            throw RTTException(objectInfo ,
-                               "child element of tag " + parentXpath +
-                               " must have attribute: " + keyAttribute);
-
-        value = getXMLElementValue(child , valueTag);
-
-        if(rval.find(key) != rval.end())
-            throw RTTException(objectInfo ,
-                               parentXpath + " tag contains multiple children with following " +
-                               "value of attribute \"" + keyAttribute + "\": " + key);
-        if(!value.empty())
-            rval[key] = std::move(value);
+        dhDefaultTests =
+                parseTestConstants(valueOrDefault(nDefaults , "tests" , json::array_t()));
+        if(nDefaults.count("psamples") == 1)
+            dhDefaultPSamples = nDefaults.at("psamples");
+        dhDefaultArguments =
+                valueOrDefault(nDefaults , "arguments" , std::string());
     }
 
-    return rval;
+    if(dhSettingsNode.count("test-specific-settings") == 1) {
+        const auto & nTestSpecific = dhSettingsNode.at("test-specific-settings");
+
+        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
+                      [this] (const json::object_t & o) {
+            getKeyAndValue(o , "test" , "psamples" , dhTestPSamples);
+        });
+
+        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
+                      [this] (const json::object_t & o) {
+            getKeyAndValue(o , "test" , "arguments" , dhTestArguments);
+        });
+
+    }
 }
 
-std::map<int, std::string> Configuration::createMapIntString(
-        TiXmlNode * xmlCfg,
-        const std::string & parentXpath,
-        const std::string & keyAttribute,
-        const std::string & valueTag) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
+void Configuration::loadNiststsVariables(const json::object_t & stsSettingsNode) {
+    if(stsSettingsNode.empty())
+        throw RTTException(objectInfo , "empty NIST STS settings");
 
-    std::map<std::string , std::string> tmp =
-            createMapStringString(xmlCfg , parentXpath , keyAttribute , valueTag);
-    std::map<int , std::string> rval;
-    for(const auto & it : tmp) {
-        try {
-            rval[Utils::strtoi(it.first)] = it.second;
-        } catch (std::runtime_error ex) {
-            throw RTTException(objectInfo , parentXpath + " tag contains invalid child: " +
-                               ex.what());
+    if(stsSettingsNode.count("defaults") == 1) {
+        const json::object_t & nDefaults = stsSettingsNode.at("defaults");
+
+        stsDefaultTests =
+                parseTestConstants(valueOrDefault(nDefaults , "tests" , json::array_t()));
+        stsDefaultStreamSize =
+                valueOrDefault(nDefaults , "stream-size" , std::string());
+        stsDefaultStreamCount =
+                valueOrDefault(nDefaults , "stream-count" , std::string());
+    }
+
+    if(stsSettingsNode.count("test-specific-settings") == 1) {
+        const auto & nTestSpecific = stsSettingsNode.at("test-specific-settings");
+
+        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
+                      [this] (const json::object_t & o) {
+           getKeyAndValue(o , "test" , "stream-count" , stsTestStreamCount);
+        });
+        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
+                      [this] (const json::object_t & o) {
+            getKeyAndValue(o , "test" , "stream-size" , stsTestStreamSize);
+        });
+        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
+                      [this] (const json::object_t & o) {
+             getKeyAndValue(o , "test" , "block-size" , stsTestBlockSize);
+        });
+    }
+}
+
+void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode) {
+    if(tu01SettingsNode.empty())
+        throw RTTException(objectInfo , "empty TestU01 settings");
+
+    using Battery = Constants::Battery;
+
+    if(tu01SettingsNode.count("defaults") == 1) {
+        const auto & nDefaults = tu01SettingsNode.at("defaults");
+
+        if(nDefaults.count("small-crush") == 1) {
+            const auto & nScDefaults = nDefaults.at("small-crush");
+
+            tu01DefaultTests[Battery::TU01_SMALLCRUSH] =
+                    parseTestConstants(valueOrDefault(nScDefaults , "tests" , json::array_t()));
+            if(nScDefaults.count("repetitions"))
+                tu01DefaultReps[Battery::TU01_SMALLCRUSH] = nScDefaults.at("repetitions");
+        }
+        if(nDefaults.count("crush") == 1) {
+            const auto & nCDefaults = nDefaults.at("crush");
+
+            tu01DefaultTests[Battery::TU01_CRUSH] =
+                    parseTestConstants(valueOrDefault(nCDefaults , "tests" , json::array_t()));
+            if(nCDefaults.count("repetitions"))
+                tu01DefaultReps[Battery::TU01_CRUSH] = nCDefaults.at("repetitions");
+        }
+        if(nDefaults.count("big-crush") == 1) {
+            const auto & nBcDefaults = nDefaults.at("big-crush");
+
+            tu01DefaultTests[Battery::TU01_BIGCRUSH] =
+                    parseTestConstants(valueOrDefault(nBcDefaults , "tests" , json::array_t()));
+            if(nBcDefaults.count("repetitions"))
+                tu01DefaultReps[Battery::TU01_BIGCRUSH] = nBcDefaults.at("repetitions");
+        }
+        if(nDefaults.count("rabbit") == 1) {
+            const auto & nRabDefaults = nDefaults.at("rabbit");
+
+            tu01DefaultTests[Battery::TU01_RABBIT] =
+                    parseTestConstants(valueOrDefault(nRabDefaults , "tests" , json::array_t()));
+            if(nRabDefaults.count("repetitions"))
+                tu01DefaultReps[Battery::TU01_RABBIT] = nRabDefaults.at("repetitions");
+            tu01DefaultBitNB[Battery::TU01_RABBIT] =
+                    valueOrDefault(nRabDefaults , "bit-nb" , std::string());
+        }
+        if(nDefaults.count("alphabit") == 1) {
+            const auto & nAbDefaults = nDefaults.at("alphabit");
+
+            tu01DefaultTests[Battery::TU01_ALPHABIT] =
+                    parseTestConstants(valueOrDefault(nAbDefaults , "tests" , json::array_t()));
+            if(nAbDefaults.count("repetitions"))
+                tu01DefaultReps[Battery::TU01_ALPHABIT] = nAbDefaults.at("repetitions");
+            tu01DefaultBitNB[Battery::TU01_ALPHABIT] =
+                    valueOrDefault(nAbDefaults , "bit-nb" , std::string());
+            tu01DefaultBitR[Battery::TU01_ALPHABIT] =
+                    valueOrDefault(nAbDefaults , "bit-r" , std::string());
+            tu01DefaultBitS[Battery::TU01_ALPHABIT] =
+                    valueOrDefault(nAbDefaults , "bit-s" , std::string());
+        }
+        if(nDefaults.count("block-alphabit") == 1) {
+            const auto & nBAbDefaults = nDefaults.at("block-alphabit");
+
+            tu01DefaultTests[Battery::TU01_BLOCK_ALPHABIT] =
+                    parseTestConstants(valueOrDefault(nBAbDefaults , "tests" , json::array_t()));
+            if(nBAbDefaults.count("repetitions"))
+                tu01DefaultReps[Battery::TU01_ALPHABIT] = nBAbDefaults.at("repetitions");
+            tu01DefaultBitNB[Battery::TU01_BLOCK_ALPHABIT] =
+                    valueOrDefault(nBAbDefaults , "bit-nb" , std::string());
+            tu01DefaultBitR[Battery::TU01_BLOCK_ALPHABIT] =
+                    valueOrDefault(nBAbDefaults , "bit-r" , std::string());
+            tu01DefaultBitS[Battery::TU01_BLOCK_ALPHABIT] =
+                    valueOrDefault(nBAbDefaults , "bit-s" , std::string());
+            tu01DefaultBitW[Battery::TU01_BLOCK_ALPHABIT] =
+                    valueOrDefault(nBAbDefaults , "bit-w" , std::string());
         }
     }
-    return rval;
-}
 
-std::map<int, int> Configuration::createMapIntInt(
-        TiXmlNode * xmlCfg,
-        const std::string & parentXpath,
-        const std::string & keyAttribute,
-        const std::string & valueTag) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
+    if(tu01SettingsNode.count("test-specific-settings") == 1) {
+        const auto & nTestSpecific = tu01SettingsNode.at("test-specific-settings");
 
-    std::map<std::string , std::string> tmp =
-            createMapStringString(xmlCfg , parentXpath , keyAttribute , valueTag);
-    std::map<int , int> rval;
-    for(const auto & it : tmp) {
-        try {
-            rval[Utils::strtoi(it.first)] = Utils::strtoi(it.second);
-        } catch (std::runtime_error ex) {
-            throw RTTException(objectInfo , parentXpath + " tag contains invalid child: " +
-                               ex.what());
+        if(nTestSpecific.count("small-crush") == 1) {
+            const auto & nScTestSpecific = nTestSpecific.at("small-crush");
+
+            tIntIntMap repsMap;
+            std::for_each(nScTestSpecific.begin() , nScTestSpecific.end() ,
+                          [&repsMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "repetitions" , repsMap);
+            });
+            tu01TestReps[Battery::TU01_SMALLCRUSH] = std::move(repsMap);
+
+            /* IMPLEMENT PARAMETERS EXTRACTION!!! */
+            /*std::map<int , tStringStringMap> paramsMap;
+
+            std::for_each(nScTestSpecific.begin() , nScTestSpecific.end() ,
+                          [&paramsMap] (const json::object_t & o) {
+                if(o.count("parameters") == 1) {
+                    const auto & node = o.at("parameters");
+                    std::for_each(node.begin() , node.end() ,
+                                  [&paramsMap] (const json::object_t o) {
+                        getKey
+                    });
+                }
+
+            });*/
+
+        }
+        if(nTestSpecific.count("crush") == 1) {
+            const auto & nCTestSpecific = nTestSpecific.at("crush");
+
+            tIntIntMap repsMap;
+            std::for_each(nCTestSpecific.begin() , nCTestSpecific.end() ,
+                          [&repsMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "repetitions" , repsMap);
+            });
+            tu01TestReps[Battery::TU01_CRUSH] = std::move(repsMap);
+        }
+        if(nTestSpecific.count("big-crush") == 1) {
+            const auto & nBcTestSpecific = nTestSpecific.at("big-crush");
+
+            tIntIntMap repsMap;
+            std::for_each(nBcTestSpecific.begin() , nBcTestSpecific.end() ,
+                          [&repsMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "repetitions" , repsMap);
+            });
+            tu01TestReps[Battery::TU01_BIGCRUSH] = std::move(repsMap);
+        }
+        if(nTestSpecific.count("rabbit") == 1) {
+            const auto & nRabTestSpecific = nTestSpecific.at("rabbit");
+
+            tIntIntMap repsMap;
+            std::for_each(nRabTestSpecific.begin() , nRabTestSpecific.end() ,
+                          [&repsMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "repetitions" , repsMap);
+            });
+            tu01TestReps[Battery::TU01_RABBIT] = std::move(repsMap);
+
+            tIntStringMap bitNbMap;
+            std::for_each(nRabTestSpecific.begin() , nRabTestSpecific.end() ,
+                          [&bitNbMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "bit-nb" , bitNbMap);
+            });
+            tu01TestBitNB[Battery::TU01_RABBIT] = std::move(bitNbMap);
+        }
+        if(nTestSpecific.count("alphabit") == 1) {
+            const auto & nAlTestSpecific = nTestSpecific.at("alphabit");
+
+            tIntIntMap repsMap;
+            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
+                          [&repsMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "repetitions" , repsMap);
+            });
+            tu01TestReps[Battery::TU01_ALPHABIT] = std::move(repsMap);
+
+            tIntStringMap bitNbMap;
+            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
+                          [&bitNbMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "bit-nb" , bitNbMap);
+            });
+            tu01TestBitNB[Battery::TU01_ALPHABIT] = std::move(bitNbMap);
+
+            tIntStringMap bitRMap;
+            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
+                          [&bitRMap] (const json::object_t & o) {
+               getKeyAndValue(o , "test" , "bit-r" , bitRMap);
+            });
+            tu01TestBitR[Battery::TU01_ALPHABIT] = std::move(bitRMap);
+
+            tIntStringMap bitSMap;
+            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
+                          [&bitSMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "bit-s" , bitSMap);
+            });
+            tu01TestBitS[Battery::TU01_ALPHABIT] = std::move(bitSMap);
+        }
+        if(nTestSpecific.count("block-alphabit") == 1) {
+            const auto & nBAlTestSpecific = nTestSpecific.at("block-alphabit");
+
+            tIntIntMap repsMap;
+            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
+                          [&repsMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "repetitions" , repsMap);
+            });
+            tu01TestReps[Battery::TU01_BLOCK_ALPHABIT] = std::move(repsMap);
+
+            tIntStringMap bitNbMap;
+            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
+                          [&bitNbMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "bit-nb" , bitNbMap);
+            });
+            tu01TestBitNB[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitNbMap);
+
+            tIntStringMap bitRMap;
+            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
+                          [&bitRMap] (const json::object_t & o) {
+               getKeyAndValue(o , "test" , "bit-r" , bitRMap);
+            });
+            tu01TestBitR[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitRMap);
+
+            tIntStringMap bitSMap;
+            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
+                          [&bitSMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "bit-s" , bitSMap);
+            });
+            tu01TestBitS[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitSMap);
+
+            tIntStringMap bitWMap;
+            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
+                          [&bitWMap] (const json::object_t & o) {
+                getKeyAndValue(o , "test" , "bit-w" , bitWMap);
+            });
+            tu01TestBitW[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitWMap);
         }
     }
-    return rval;
 }
 
-std::map<int, std::map<std::string, std::string> > Configuration::createMapIntMap(
-        TiXmlNode *xmlCfg,
-        const std::string &parentXpath,
-        const std::string &mainKeyAttribute,
-        const std::string &mainValueTag,
-        const std::string &secKeyAttribute,
-        const std::string &secValueTag) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
+template <class K , class V>
+void Configuration::getKeyAndValue(const json::object_t & o,
+                                   const std::string & key,
+                                   const std::string & value,
+                                   std::map<K , V> & map) {
+    if(o.count(key) == 1 && o.count(value) == 1 && map.count(o.at(key)) == 0) {
+        map[o.at(key)] = o.at(value);
+    }
+}
 
-    TiXmlNode * parent = getXMLElement(xmlCfg , parentXpath);
-    if(!parent || !parent->FirstChild())
+template <class T>
+static T Configuration::valueOrDefault(json::object_t o, const std::string & key, T && def) {
+    if(o.count(key) == 1)
+        return o.at(key);
+
+    return def;
+}
+
+std::vector<int> Configuration::parseTestConstants(json::array_t node) {
+    if(node.empty())
         return {};
 
-    std::map<int , std::map<std::string , std::string>> rval;
-    const char * key = NULL;
-    int keyInt = 0;
-    std::map<std::string , std::string> value;
-    TiXmlElement * childEl = NULL;
+    std::vector<int> rval;
 
-    for(TiXmlNode * child = parent->FirstChild() ;
-        child ; child = child->NextSibling()) {
-        childEl = child->ToElement();
-        key = childEl->Attribute(mainKeyAttribute.c_str());
-        if(!key || strlen(key) < 1)
+    for(const std::string & el : node) {
+        if(std::count(el.begin() , el.end() , '-') == 0) {
+            /* Single number */
+            rval.push_back(Utils::strtoi(el));
+        } else if(std::count(el.begin() , el.end() , '-') == 1) {
+            /* Range of numbers */
+            auto splitted = Utils::split(el , '-');
+            int bot = Utils::strtoi(splitted.at(0));
+            int top = Utils::strtoi(splitted.at(1));
+            for( ; bot <= top ; ++bot)
+                rval.push_back(bot);
+        } else {
+            /* Multiple dashes, wrong format */
             throw RTTException(objectInfo ,
-                               "child element of tag " + parentXpath +
-                               " must have attribute: " + mainKeyAttribute);
-        try {
-            keyInt = Utils::strtoi(key);
-        } catch (std::runtime_error ex) {
-            throw RTTException(objectInfo , parentXpath + " tag contains invalid child: " +
-                               ex.what());
+                               "invalid range value: " + el);
         }
-
-        if(rval.find(keyInt) != rval.end())
-            throw RTTException(objectInfo ,
-                               parentXpath + " tag contains multiple children with following " +
-                               "value of attribute \"" + mainKeyAttribute + "\": " + key);
-        value = createMapStringString(child , mainValueTag , secKeyAttribute , secValueTag);
-        if(!value.empty())
-            rval[keyInt] = std::move(value);
     }
+    std::sort(rval.begin() , rval.end());
+    rval.erase(std::unique(rval.begin() , rval.end()) , rval.end());
     return rval;
-}
-
-std::vector<int> Configuration::getDefaultTests(TiXmlNode * xmlCfg,
-                                                const std::string & xpath) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
-
-    std::string tmp = getXMLElementValue(xmlCfg , xpath);
-    if(tmp.empty())
-        return {};
-
-    try {
-        return Utils::parseStringWithIntRanges(tmp);
-    } catch (std::runtime_error ex) {
-        throw RTTException(objectInfo ,
-                           "error in tag " + xpath + ": " + ex.what());
-    }
-}
-
-int Configuration::getIntValue(TiXmlNode * xmlCfg, const std::string &xpath) {
-    if(!xmlCfg)
-        raiseBugException("null xml node");
-
-    std::string tmp = getXMLElementValue(xmlCfg , xpath);
-    if(tmp.empty())
-        return VALUE_INT_NOT_SET;
-
-    try {
-        return Utils::strtoi(tmp);
-    } catch (std::runtime_error ex) {
-        throw RTTException(objectInfo ,
-                           "error in tag " + xpath + ": " + ex.what());
-    }
 }
 
 } // namespace batteries

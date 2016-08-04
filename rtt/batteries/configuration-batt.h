@@ -126,10 +126,10 @@ private:
     void loadTestU01Variables(const json::object_t & tu01SettingsNode);
 
     template <class K , class V>
-    static void getKeyAndValue(const json::object_t & o ,
-                               const std::string & key ,
-                               const std::string & value ,
-                               std::map<K , V> & map);
+    static void getKeyAndValueToMap(const json::array_t & o ,
+                                    const std::string & key ,
+                                    const std::string & value ,
+                                    std::map<K , V> & map);
 
     template <class T>
     static T valueOrDefault(json::object_t o, const std::string & key, T && def);

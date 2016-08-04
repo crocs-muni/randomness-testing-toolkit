@@ -26,8 +26,10 @@ Configuration Configuration::getInstance(const std::string & configFileName) {
 
 std::vector<int> Configuration::getBatteryDefaultTests(Constants::Battery battery) const {
     switch(battery) {
-    case Constants::Battery::DIEHARDER:             return dhDefaultTests;
-    case Constants::Battery::NIST_STS:              return stsDefaultTests;
+    case Constants::Battery::DIEHARDER:
+        return dhDefaultTests;
+    case Constants::Battery::NIST_STS:
+        return stsDefaultTests;
     case Constants::Battery::TU01_SMALLCRUSH:
     case Constants::Battery::TU01_CRUSH:
     case Constants::Battery::TU01_BIGCRUSH:
@@ -224,16 +226,8 @@ void Configuration::loadDieharderVariables(/*TiXmlNode * xmlCfg*/const json::obj
     if(dhSettingsNode.count("test-specific-settings") == 1) {
         const auto & nTestSpecific = dhSettingsNode.at("test-specific-settings");
 
-        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
-                      [this] (const json::object_t & o) {
-            getKeyAndValue(o , "test" , "psamples" , dhTestPSamples);
-        });
-
-        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
-                      [this] (const json::object_t & o) {
-            getKeyAndValue(o , "test" , "arguments" , dhTestArguments);
-        });
-
+        getKeyAndValueToMap(nTestSpecific , "test" , "psamples" , dhTestPSamples);
+        getKeyAndValueToMap(nTestSpecific , "test" , "arguments" , dhTestArguments);
     }
 }
 
@@ -255,18 +249,9 @@ void Configuration::loadNiststsVariables(const json::object_t & stsSettingsNode)
     if(stsSettingsNode.count("test-specific-settings") == 1) {
         const auto & nTestSpecific = stsSettingsNode.at("test-specific-settings");
 
-        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
-                      [this] (const json::object_t & o) {
-           getKeyAndValue(o , "test" , "stream-count" , stsTestStreamCount);
-        });
-        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
-                      [this] (const json::object_t & o) {
-            getKeyAndValue(o , "test" , "stream-size" , stsTestStreamSize);
-        });
-        std::for_each(nTestSpecific.begin() , nTestSpecific.end() ,
-                      [this] (const json::object_t & o) {
-             getKeyAndValue(o , "test" , "block-size" , stsTestBlockSize);
-        });
+        getKeyAndValueToMap(nTestSpecific , "test" , "stream-count" , stsTestStreamCount);
+        getKeyAndValueToMap(nTestSpecific , "test" , "stream-size" , stsTestStreamSize);
+        getKeyAndValueToMap(nTestSpecific , "test" , "block-size" , stsTestBlockSize);
     }
 }
 
@@ -276,9 +261,11 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
 
     using Battery = Constants::Battery;
 
+    /**** DEFAULTS ****/
     if(tu01SettingsNode.count("defaults") == 1) {
         const auto & nDefaults = tu01SettingsNode.at("defaults");
 
+        /**** SMALL CRUSH ****/
         if(nDefaults.count("small-crush") == 1) {
             const auto & nScDefaults = nDefaults.at("small-crush");
 
@@ -287,6 +274,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
             if(nScDefaults.count("repetitions"))
                 tu01DefaultReps[Battery::TU01_SMALLCRUSH] = nScDefaults.at("repetitions");
         }
+        /**** CRUSH ****/
         if(nDefaults.count("crush") == 1) {
             const auto & nCDefaults = nDefaults.at("crush");
 
@@ -295,6 +283,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
             if(nCDefaults.count("repetitions"))
                 tu01DefaultReps[Battery::TU01_CRUSH] = nCDefaults.at("repetitions");
         }
+        /**** BIG CRUSH ****/
         if(nDefaults.count("big-crush") == 1) {
             const auto & nBcDefaults = nDefaults.at("big-crush");
 
@@ -303,6 +292,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
             if(nBcDefaults.count("repetitions"))
                 tu01DefaultReps[Battery::TU01_BIGCRUSH] = nBcDefaults.at("repetitions");
         }
+        /**** RABBIT ****/
         if(nDefaults.count("rabbit") == 1) {
             const auto & nRabDefaults = nDefaults.at("rabbit");
 
@@ -313,6 +303,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
             tu01DefaultBitNB[Battery::TU01_RABBIT] =
                     valueOrDefault(nRabDefaults , "bit-nb" , std::string());
         }
+        /**** ALPHABIT ****/
         if(nDefaults.count("alphabit") == 1) {
             const auto & nAbDefaults = nDefaults.at("alphabit");
 
@@ -327,6 +318,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
             tu01DefaultBitS[Battery::TU01_ALPHABIT] =
                     valueOrDefault(nAbDefaults , "bit-s" , std::string());
         }
+        /**** BLOCK ALPHABIT ****/
         if(nDefaults.count("block-alphabit") == 1) {
             const auto & nBAbDefaults = nDefaults.at("block-alphabit");
 
@@ -345,17 +337,16 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
         }
     }
 
+    /**** TEST SPECIFIC SETTINGS ****/
     if(tu01SettingsNode.count("test-specific-settings") == 1) {
         const auto & nTestSpecific = tu01SettingsNode.at("test-specific-settings");
 
+        /**** SMALL CRUSH ****/
         if(nTestSpecific.count("small-crush") == 1) {
             const auto & nScTestSpecific = nTestSpecific.at("small-crush");
 
             tIntIntMap repsMap;
-            std::for_each(nScTestSpecific.begin() , nScTestSpecific.end() ,
-                          [&repsMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "repetitions" , repsMap);
-            });
+            getKeyAndValueToMap(nScTestSpecific , "test" , "repetitions" , repsMap);
             tu01TestReps[Battery::TU01_SMALLCRUSH] = std::move(repsMap);
 
             /* IMPLEMENT PARAMETERS EXTRACTION!!! */
@@ -374,127 +365,106 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
             });*/
 
         }
+        /**** CRUSH ****/
         if(nTestSpecific.count("crush") == 1) {
             const auto & nCTestSpecific = nTestSpecific.at("crush");
 
             tIntIntMap repsMap;
-            std::for_each(nCTestSpecific.begin() , nCTestSpecific.end() ,
-                          [&repsMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "repetitions" , repsMap);
-            });
+            getKeyAndValueToMap(nCTestSpecific , "test" , "repetitions" , repsMap);
             tu01TestReps[Battery::TU01_CRUSH] = std::move(repsMap);
         }
+        /**** BIG CRUSH ****/
         if(nTestSpecific.count("big-crush") == 1) {
             const auto & nBcTestSpecific = nTestSpecific.at("big-crush");
 
             tIntIntMap repsMap;
-            std::for_each(nBcTestSpecific.begin() , nBcTestSpecific.end() ,
-                          [&repsMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "repetitions" , repsMap);
-            });
+            getKeyAndValueToMap(nBcTestSpecific , "test" , "repetitions" , repsMap);
             tu01TestReps[Battery::TU01_BIGCRUSH] = std::move(repsMap);
         }
+        /**** RABBIT ****/
         if(nTestSpecific.count("rabbit") == 1) {
             const auto & nRabTestSpecific = nTestSpecific.at("rabbit");
 
             tIntIntMap repsMap;
-            std::for_each(nRabTestSpecific.begin() , nRabTestSpecific.end() ,
-                          [&repsMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "repetitions" , repsMap);
-            });
+            getKeyAndValueToMap(nRabTestSpecific , "test" , "repetitions" , repsMap);
             tu01TestReps[Battery::TU01_RABBIT] = std::move(repsMap);
 
             tIntStringMap bitNbMap;
-            std::for_each(nRabTestSpecific.begin() , nRabTestSpecific.end() ,
-                          [&bitNbMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "bit-nb" , bitNbMap);
-            });
+            getKeyAndValueToMap(nRabTestSpecific , "test" , "bit-nb" , bitNbMap);
             tu01TestBitNB[Battery::TU01_RABBIT] = std::move(bitNbMap);
         }
+        /**** ALPHABIT ****/
         if(nTestSpecific.count("alphabit") == 1) {
             const auto & nAlTestSpecific = nTestSpecific.at("alphabit");
 
             tIntIntMap repsMap;
-            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
-                          [&repsMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "repetitions" , repsMap);
-            });
+            getKeyAndValueToMap(nAlTestSpecific , "test" , "repetitions" , repsMap);
             tu01TestReps[Battery::TU01_ALPHABIT] = std::move(repsMap);
 
             tIntStringMap bitNbMap;
-            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
-                          [&bitNbMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "bit-nb" , bitNbMap);
-            });
+            getKeyAndValueToMap(nAlTestSpecific , "test" , "bit-nb" , bitNbMap);
             tu01TestBitNB[Battery::TU01_ALPHABIT] = std::move(bitNbMap);
 
             tIntStringMap bitRMap;
-            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
-                          [&bitRMap] (const json::object_t & o) {
-               getKeyAndValue(o , "test" , "bit-r" , bitRMap);
-            });
+            getKeyAndValueToMap(nAlTestSpecific , "test" , "bit-r" , bitRMap);
             tu01TestBitR[Battery::TU01_ALPHABIT] = std::move(bitRMap);
 
             tIntStringMap bitSMap;
-            std::for_each(nAlTestSpecific.begin() , nAlTestSpecific.end() ,
-                          [&bitSMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "bit-s" , bitSMap);
-            });
+            getKeyAndValueToMap(nAlTestSpecific , "test" , "bit-s" , bitSMap);
             tu01TestBitS[Battery::TU01_ALPHABIT] = std::move(bitSMap);
         }
+        /**** BLOCK ALPHABIT ****/
         if(nTestSpecific.count("block-alphabit") == 1) {
             const auto & nBAlTestSpecific = nTestSpecific.at("block-alphabit");
 
             tIntIntMap repsMap;
-            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
-                          [&repsMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "repetitions" , repsMap);
-            });
+            getKeyAndValueToMap(nBAlTestSpecific , "test" , "repetitions" , repsMap);
             tu01TestReps[Battery::TU01_BLOCK_ALPHABIT] = std::move(repsMap);
 
             tIntStringMap bitNbMap;
-            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
-                          [&bitNbMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "bit-nb" , bitNbMap);
-            });
+            getKeyAndValueToMap(nBAlTestSpecific , "test" , "bit-nb" , bitNbMap);
             tu01TestBitNB[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitNbMap);
 
             tIntStringMap bitRMap;
-            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
-                          [&bitRMap] (const json::object_t & o) {
-               getKeyAndValue(o , "test" , "bit-r" , bitRMap);
-            });
+            getKeyAndValueToMap(nBAlTestSpecific , "test" , "bit-r" , bitRMap);
             tu01TestBitR[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitRMap);
 
             tIntStringMap bitSMap;
-            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
-                          [&bitSMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "bit-s" , bitSMap);
-            });
+            getKeyAndValueToMap(nBAlTestSpecific , "test" , "bit-s" , bitSMap);
             tu01TestBitS[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitSMap);
 
             tIntStringMap bitWMap;
-            std::for_each(nBAlTestSpecific.begin() , nBAlTestSpecific.end() ,
-                          [&bitWMap] (const json::object_t & o) {
-                getKeyAndValue(o , "test" , "bit-w" , bitWMap);
-            });
+            getKeyAndValueToMap(nBAlTestSpecific , "test" , "bit-w" , bitWMap);
             tu01TestBitW[Battery::TU01_BLOCK_ALPHABIT] = std::move(bitWMap);
         }
     }
 }
 
 template <class K , class V>
-void Configuration::getKeyAndValue(const json::object_t & o,
-                                   const std::string & key,
-                                   const std::string & value,
-                                   std::map<K , V> & map) {
-    if(o.count(key) == 1 && o.count(value) == 1 && map.count(o.at(key)) == 0) {
-        map[o.at(key)] = o.at(value);
+void Configuration::getKeyAndValueToMap(const json::array_t & o,
+                                        const std::string & key,
+                                        const std::string & value,
+                                        std::map<K , V> & map) {
+    for(const json::object_t & el : o) {
+        if(el.count(key) == 1 && el.count(value) == 1 && map.count(el.at(key)) == 0)
+            map[el.at(key)] = el.at(value);
     }
 }
 
+/*void Configuration::getTestParams(const json::object_t & batteryNode,
+                                  std::map<int , tStringStringMap> map) {
+    for(const auto & el : batteryNode) {
+        if(el.count("test") == 1 && el.count("parameters") == 1) {
+            for(const auto & param : el.at("parameters")) {
+
+            }
+            map[el.at("test")];
+        }
+    }
+}*/
+
 template <class T>
-static T Configuration::valueOrDefault(json::object_t o, const std::string & key, T && def) {
+T Configuration::valueOrDefault(json::object_t o, const std::string & key, T && def) {
     if(o.count(key) == 1)
         return o.at(key);
 

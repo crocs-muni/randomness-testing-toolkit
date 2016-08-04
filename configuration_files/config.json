@@ -113,17 +113,18 @@
                 "small-crush": [
                     {
                         "test": 1,
-                        "repetitions": 2 
+                        "parameters": [
+                            ["N","1"],
+                            ["n","5000000"],
+                            ["r","0"],
+                            ["d","1073741824"],
+                            ["t","2"],
+                            ["p","1"]
+                        ]
                     },
                     {
                         "test": 5,
-                        "repetitions": 5,
-                        "parameters": [
-                            ["N","1"],
-                            ["n","2"],
-                            ["r","3"],
-                            ["d","4"]
-                        ]
+                        "repetitions": 3
                     }
                 ],
                 "crush": [

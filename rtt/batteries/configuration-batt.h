@@ -134,6 +134,9 @@ private:
     template <class T>
     static T valueOrDefault(json::object_t o, const std::string & key, T && def);
 
+    static void getTestParams(const json::array_t & batteryNode,
+                              std::map<int, tStringStringMap> & map);
+
     std::vector<int> parseTestConstants(json::array_t node);
 };
 

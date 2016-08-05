@@ -4,9 +4,12 @@
 #include "rtt/constants.h"
 #include "rtt/bugexception.h"
 #include "rtt/rttexception.h"
-#include "libs/tinyXML/xmlproc.h"
+
+#include "libs/moderncppjson/json.hpp"
 
 namespace rtt {
+
+using json = nlohmann::json;
 
 class ToolkitSettings {
 public:
@@ -39,46 +42,8 @@ private:
         binary
     };
 
-    /* XPaths inside config file */
-    /* Logger paths */
-    static const std::string XPATH_LOGGER_DIR_PREFIX;
-    static const std::string XPATH_LOGGER_RUN_LOG_DIR;
-    static const std::string XPATH_LOGGER_DIEHARDER_DIR;
-    static const std::string XPATH_LOGGER_NISTSTS_DIR;
-    static const std::string XPATH_LOGGER_TU01_SCRUSH_DIR;
-    static const std::string XPATH_LOGGER_TU01_CRUSH_DIR;
-    static const std::string XPATH_LOGGER_TU01_BCRUSH_DIR;
-    static const std::string XPATH_LOGGER_TU01_RABBIT_DIR;
-    static const std::string XPATH_LOGGER_TU01_ALPHABIT_DIR;
-    static const std::string XPATH_LOGGER_TU01_BLALPHABIT_DIR;
-    /* Result storage paths */
-    /* File result storage */
-    static const std::string XPATH_RS_FILE_OUTPUT_FILE;
-    static const std::string XPATH_RS_FILE_DIR_PREFIX;
-    static const std::string XPATH_RS_FILE_DIEHARDER_DIR;
-    static const std::string XPATH_RS_FILE_NISTSTS_DIR;
-    static const std::string XPATH_RS_FILE_TU01_SCRUSH_DIR;
-    static const std::string XPATH_RS_FILE_TU01_CRUSH_DIR;
-    static const std::string XPATH_RS_FILE_TU01_BCRUSH_DIR;
-    static const std::string XPATH_RS_FILE_TU01_RABBIT_DIR;
-    static const std::string XPATH_RS_FILE_TU01_ALPHABIT_DIR;
-    static const std::string XPATH_RS_FILE_TU01_BLALPHABIT_DIR;
-    /* Database result storage */
-    // Nothing yet
-
-    /* Executable binaries paths */
-    static const std::string XPATH_BINARIES_DIEHARDER;
-    static const std::string XPATH_BINARIES_NISTSTS;
-    static const std::string XPATH_BINARIES_TESTU01;
-    /* Miscelaneous values. Each battery has its own section
-     * and variables loaded have own getters */
-    static const std::string XPATH_MISC_NISTSTS_MAIN_RESULT_DIR;
-    /* Values related to battery execution */
-    static const std::string XPATH_EXEC_MAXIMUM_THREADS;
-
-
     /* Member variables */
-    std::string objectInfo = "Toolkit Settings";
+    static const std::string objectInfo;
 
     std::string loggerRunLogDir;
     std::string loggerDieharderDir;
@@ -114,28 +79,17 @@ private:
     std::string getBatteryVariable(VariableType variableType ,
                                    Constants::Battery battery) const;
 
-    std::string getDirValue(TiXmlNode * xmlConfig ,
-                            const std::string & xpath ,
-                            bool mandatory = true);
+    static std::string parseDirectoryPath(const json::object_t & parentNode,
+                                          const std::string & childTagName,
+                                          bool mandatory = true);
 
-    std::string getStringValue(TiXmlNode * xmlConfig ,
-                               const std::string & xpath ,
-                               bool mandatory = true);
+    static std::string parseStringValue(const json::object_t & parentNode,
+                                        const std::string & childTagName,
+                                 bool mandatory = true);
 
-    /**
-     * @brief getIntegerValue Takes value in xmlConfig on xpath path and
-     * converts it into integer. If mandatory is set to false and tag is
-     * empty or nonexistent returns 0. In any case, if the value cannot
-     * be converted throw exception.
-     * @param xmlConfig Config root
-     * @param xpath Path to tag
-     * @param mandatory If tag does not exist or is empty throws exception if
-     * this is set to true.
-     * @return integer value
-     */
-    int getIntegerValue(TiXmlNode * xmlConfig ,
-                        const std::string & xpath ,
-                        bool mandatory = true);
+    static int parseIntegerValue(const json::object_t & parentNode,
+                                 const std::string & childTagName,
+                                 bool mandatory = true);
 };
 
 } // namespace rtt

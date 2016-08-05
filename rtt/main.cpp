@@ -47,38 +47,8 @@ using namespace rtt;
 
 //#define TESTING
 
-/*template <class C , class P>
-nlohmann::json::object_t where(C container , P && pred) {
-    for(auto & el : container)
-        if(pred(el))
-            return el;
-    return {};
-}
-
-bool pred(nlohmann::json::object_t el , std::string att , int v) {
-    return (el.find(att) !=  el.end()) && (el.at(att) == v);
-}*/
-
-int main (int argc , char * argv[]) {
+int main (int argc , char * argv[]) try {
 #ifdef TESTING
-    /*using json = nlohmann::json;
-    using namespace std::placeholders;
-
-    json j = json::parse(Utils::readFileToString("config.json"));
-
-    auto vec = j
-            .at("randomness-testing-toolkit")
-            .at("dieharder-settings")
-            .at("test-specific-settings");
-
-    auto o = where(vec , std::bind(pred , _1 , "test" , 200));
-
-    if(o.empty()) {
-        std::cout << "Not found." << std::endl;
-    } else {
-        std::cout << o << std::endl;
-    }*/
-
 #else
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;
@@ -89,34 +59,18 @@ int main (int argc , char * argv[]) {
      * Since I can't be sure if logger was initialized,
      * errors are written to cout and no log is created. */
     GlobalContainer container;
-    try {
-        container.initCliOptions(argc , argv);
-        container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
-        container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
-        /* A bit clumsy logger initialization */
-        /* I should really change it to something more elegant */
-        container.initLogger("Main_Application" ,
-                             Utils::createLogFileName(container.getCreationTime() ,
-                                                      container.getToolkitSettings()->getLoggerRunLogDir() ,
-                                                      container.getCliOptions()->getBinFilePath() ,
-                                                      Constants::batteryToStringShort(container.getCliOptions()->getBattery())),
-                             true);
-    } catch(RTTException ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
-        return -1;
-    } catch(XMLException ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
-        return -1;
-    } catch (BugException ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
-        return -1;
-    } catch(std::runtime_error ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
-        return -1;
-    } catch(std::bad_alloc ex) {
-        std::cout << "[ERROR] " << ex.what() << std::endl << std::endl;
-        return -1;
-    }
+
+    container.initCliOptions(argc , argv);
+    container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
+    container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+    /* A bit clumsy logger initialization */
+    /* I should really change it to something more elegant */
+    container.initLogger("Main_Application" ,
+                         Utils::createLogFileName(container.getCreationTime() ,
+                                                  container.getToolkitSettings()->getLoggerRunLogDir() ,
+                                                  container.getCliOptions()->getBinFilePath() ,
+                                                  Constants::batteryToStringShort(container.getCliOptions()->getBattery())),
+                         true);
 
     /* Actual functionality will be here... in time. */
     /* EDIT: In fact there already is some functionality. */
@@ -130,14 +84,24 @@ int main (int argc , char * argv[]) {
 
     } catch(RTTException ex) {
         container.getLogger()->error(ex.what());
-    } catch(XMLException ex) {
-        container.getLogger()->error(ex.what());
     } catch (BugException ex) {
         container.getLogger()->error(ex.what());
     } catch(std::runtime_error ex) {
         container.getLogger()->error(ex.what());
-    } catch(std::bad_alloc ex) {
+    } catch(std::exception ex) {
         container.getLogger()->error(ex.what());
     }
 #endif
-}
+} catch(RTTException ex) {
+    std::cout << "[RTT Exception] " << ex.what() << std::endl << std::endl;
+    return -1;
+} catch (BugException ex) {
+    std::cout << "[Bug Exception] " << ex.what() << std::endl << std::endl;
+    return -1;
+} catch(std::runtime_error ex) {
+    std::cout << "[Runtime Error] " << ex.what() << std::endl << std::endl;
+    return -1;
+} /*catch(std::exception ex) {
+    std::cout << "[General Exception] " << ex.what() << std::endl << std::endl;
+    return -1;
+}*/

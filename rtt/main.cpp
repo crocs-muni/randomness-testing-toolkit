@@ -84,7 +84,7 @@ int main (int argc , char * argv[]) try {
 
     } catch(RTTException ex) {
         container.getLogger()->error(ex.what());
-    } catch (BugException ex) {
+    } catch(BugException ex) {
         container.getLogger()->error(ex.what());
     } catch(std::runtime_error ex) {
         container.getLogger()->error(ex.what());
@@ -101,7 +101,7 @@ int main (int argc , char * argv[]) try {
 } catch(std::runtime_error ex) {
     std::cout << "[Runtime Error] " << ex.what() << std::endl << std::endl;
     return -1;
-} /*catch(std::exception ex) {
+} catch(std::exception ex) {
     std::cout << "[General Exception] " << ex.what() << std::endl << std::endl;
     return -1;
-}*/
+}

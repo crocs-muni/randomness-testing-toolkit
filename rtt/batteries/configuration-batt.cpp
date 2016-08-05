@@ -3,6 +3,8 @@
 namespace rtt {
 namespace batteries {
 
+const std::string Configuration::objectInfo = "Battery Configuration";
+
 Configuration Configuration::getInstance(const std::string & configFileName) {
     json root = json::parse(Utils::readFileToString(configFileName));
 
@@ -15,12 +17,16 @@ Configuration Configuration::getInstance(const std::string & configFileName) {
         conf.loadNiststsVariables(root.at("nist-sts-settings"));
         conf.loadTestU01Variables(root.at("testu01-settings"));
     } catch (std::runtime_error ex) {
-        throw RTTException(conf.objectInfo,
+        throw RTTException(objectInfo,
                            "error during JSON processing - " + (std::string)ex.what());
     } catch (std::out_of_range ex) {
-        throw RTTException(conf.objectInfo,
+        throw RTTException(objectInfo,
                            "missing tag in JSON - " + (std::string)ex.what());
+    } catch (std::domain_error ex) {
+        throw RTTException(objectInfo,
+                           "conversion error in JSON - " + (std::string)ex.what());
     }
+
     return conf;
 }
 
@@ -217,8 +223,14 @@ void Configuration::loadDieharderVariables(const json::object_t & dhSettingsNode
 
         dhDefaultTests =
                 parseTestConstants(valueOrDefault(nDefaults , "tests" , json::array_t()));
-        if(nDefaults.count("psamples") == 1)
-            dhDefaultPSamples = nDefaults.at("psamples");
+        if(nDefaults.count("psamples") == 1) {
+            try {
+                dhDefaultPSamples = nDefaults.at("psamples");
+            } catch (std::domain_error ex) {
+                throw RTTException(objectInfo , "error in tag: psamples - "
+                                   + (std::string)ex.what());
+            }
+        }
         dhDefaultArguments =
                 valueOrDefault(nDefaults , "arguments" , std::string());
     }
@@ -271,7 +283,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
 
             tu01DefaultTests[Battery::TU01_SMALLCRUSH] =
                     parseTestConstants(valueOrDefault(nScDefaults , "tests" , json::array_t()));
-            if(nScDefaults.count("repetitions"))
+            if(nScDefaults.count("repetitions") == 1)
                 tu01DefaultReps[Battery::TU01_SMALLCRUSH] = nScDefaults.at("repetitions");
         }
         /**** CRUSH ****/
@@ -280,7 +292,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
 
             tu01DefaultTests[Battery::TU01_CRUSH] =
                     parseTestConstants(valueOrDefault(nCDefaults , "tests" , json::array_t()));
-            if(nCDefaults.count("repetitions"))
+            if(nCDefaults.count("repetitions") == 1)
                 tu01DefaultReps[Battery::TU01_CRUSH] = nCDefaults.at("repetitions");
         }
         /**** BIG CRUSH ****/
@@ -289,7 +301,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
 
             tu01DefaultTests[Battery::TU01_BIGCRUSH] =
                     parseTestConstants(valueOrDefault(nBcDefaults , "tests" , json::array_t()));
-            if(nBcDefaults.count("repetitions"))
+            if(nBcDefaults.count("repetitions") == 1)
                 tu01DefaultReps[Battery::TU01_BIGCRUSH] = nBcDefaults.at("repetitions");
         }
         /**** RABBIT ****/
@@ -298,7 +310,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
 
             tu01DefaultTests[Battery::TU01_RABBIT] =
                     parseTestConstants(valueOrDefault(nRabDefaults , "tests" , json::array_t()));
-            if(nRabDefaults.count("repetitions"))
+            if(nRabDefaults.count("repetitions") == 1)
                 tu01DefaultReps[Battery::TU01_RABBIT] = nRabDefaults.at("repetitions");
             tu01DefaultBitNB[Battery::TU01_RABBIT] =
                     valueOrDefault(nRabDefaults , "bit-nb" , std::string());
@@ -309,7 +321,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
 
             tu01DefaultTests[Battery::TU01_ALPHABIT] =
                     parseTestConstants(valueOrDefault(nAbDefaults , "tests" , json::array_t()));
-            if(nAbDefaults.count("repetitions"))
+            if(nAbDefaults.count("repetitions") == 1)
                 tu01DefaultReps[Battery::TU01_ALPHABIT] = nAbDefaults.at("repetitions");
             tu01DefaultBitNB[Battery::TU01_ALPHABIT] =
                     valueOrDefault(nAbDefaults , "bit-nb" , std::string());
@@ -324,7 +336,7 @@ void Configuration::loadTestU01Variables(const json::object_t & tu01SettingsNode
 
             tu01DefaultTests[Battery::TU01_BLOCK_ALPHABIT] =
                     parseTestConstants(valueOrDefault(nBAbDefaults , "tests" , json::array_t()));
-            if(nBAbDefaults.count("repetitions"))
+            if(nBAbDefaults.count("repetitions") == 1)
                 tu01DefaultReps[Battery::TU01_ALPHABIT] = nBAbDefaults.at("repetitions");
             tu01DefaultBitNB[Battery::TU01_BLOCK_ALPHABIT] =
                     valueOrDefault(nBAbDefaults , "bit-nb" , std::string());
@@ -414,8 +426,9 @@ void Configuration::getKeyAndValueToMap(const json::array_t & o,
                                         const std::string & value,
                                         std::map<K , V> & map) {
     for(const json::object_t & el : o) {
-        if(el.count(key) == 1 && el.count(value) == 1 && map.count(el.at(key)) == 0)
+        if(el.count(key) == 1 && el.count(value) == 1 && map.count(el.at(key)) == 0) {
             map[el.at(key)] = el.at(value);
+        }
     }
 }
 

@@ -7,7 +7,6 @@
 #include "rtt/constants.h"
 #include "rtt/bugexception.h"
 #include "rtt/rttexception.h"
-#include "libs/tinyXML/xmlproc.h"
 #include "libs/moderncppjson/json.hpp"
 
 namespace rtt {
@@ -86,7 +85,7 @@ private:
     // TBA!!!!
 
     /* Member variables */
-    std::string objectInfo = "Battery Configuration";
+    static const std::string objectInfo;
 
     /* Variables for Dieharder */
     std::vector<int>            dhDefaultTests;

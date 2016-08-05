@@ -17,6 +17,3 @@ The framework is developed at the [Centre for Research on Cryptography and Secur
 Randomness Testing Toolkit is licenced under MIT Licence, Copyright (c) 2015 Centre for Research on Cryptography and Security. For details on MIT Licence, see file LICENSE.
 
 Some sub-parts of the project have their own licencing conditions. The brief list of such sub-parts follows. For up-to-date list of third party code consult TBD.
-
-* **TyniXML**  
-TyniXML was created by Lee Thomason and is distributed under the zlib/libpng License (full licence included in the project, located at libs/tinyXML/). For further details see [project's website](http://www.grinninglizard.com/tinyxml/) or [project's SourceForge site](http://sourceforge.net/projects/tinyxml).

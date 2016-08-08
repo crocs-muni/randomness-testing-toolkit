@@ -1,5 +1,5 @@
-#ifndef RTT_OUTPUT_IOUTPUT_H
-#define RTT_OUTPUT_IOUTPUT_H
+#ifndef RTT_STORAGE_ISTORAGE_H
+#define RTT_STORAGE_ISTORAGE_H
 
 #include "rtt/globalcontainer.h"
 
@@ -7,13 +7,13 @@
 #include <vector>
 
 namespace rtt {
-namespace output {
+namespace storage {
 
-class IOutput {
+class IStorage {
 public:
-    static std::unique_ptr<IOutput> getInstance(const GlobalContainer & container);
+    static std::unique_ptr<IStorage> getInstance(const GlobalContainer & container);
 
-    virtual ~IOutput() {}
+    virtual ~IStorage() {}
 
     virtual void addNewTest(const std::string & testName) = 0;
 
@@ -40,7 +40,7 @@ public:
     virtual void finalizeReport() = 0;
 };
 
-} // namespace output
+} // namespace storage
 } // namespace rtt
 
-#endif // RTT_OUTPUT_IOUTPUT_H
+#endif // RTT_STORAGE_ISTORAGE_H

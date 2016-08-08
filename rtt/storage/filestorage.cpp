@@ -1,25 +1,15 @@
-#include "storage-file.h"
+#include "filestorage.h"
 
 namespace rtt {
-namespace output {
-namespace file {
+namespace storage {
 
-const std::string Storage::XPATH_FILE_MAIN      = "TOOLKIT_SETTINGS/OUTPUT/FILE/MAIN_FILE";
-const std::string Storage::XPATH_DIR_DH         = "TOOLKIT_SETTINGS/OUTPUT/FILE/DIEHARDER_DIR";
-const std::string Storage::XPATH_DIR_NIST       = "TOOLKIT_SETTINGS/OUTPUT/FILE/NIST_STS_DIR";
-const std::string Storage::XPATH_DIR_TU01_SC    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_SMALLCRUSH_DIR";
-const std::string Storage::XPATH_DIR_TU01_C     = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_CRUSH_DIR";
-const std::string Storage::XPATH_DIR_TU01_BC    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_BIGCRUSH_DIR";
-const std::string Storage::XPATH_DIR_TU01_RB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_RABBIT_DIR";
-const std::string Storage::XPATH_DIR_TU01_AB    = "TOOLKIT_SETTINGS/OUTPUT/FILE/TU01_ALPHABIT_DIR";
+const std::string FileStorage::STRING_PASSED_PROP   = "Passed/Total test statistics: ";
 
-const std::string Storage::STRING_PASSED_PROP   = "Passed/Total test statistics: ";
+const size_t FileStorage::MISC_TAB_SIZE     = 4;
+const size_t FileStorage::MISC_COL_WIDTH    = 30;
 
-const size_t Storage::MISC_TAB_SIZE     = 4;
-const size_t Storage::MISC_COL_WIDTH    = 30;
-
-std::unique_ptr<Storage> Storage::getInstance(const GlobalContainer & container) {
-    std::unique_ptr<Storage> s (new Storage());
+std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & container) {
+    std::unique_ptr<FileStorage> s (new FileStorage());
     s->cliOptions      = container.getCliOptions();
     s->toolkitSettings = container.getToolkitSettings();
     s->creationTime    = container.getCreationTime();
@@ -40,13 +30,13 @@ std::unique_ptr<Storage> Storage::getInstance(const GlobalContainer & container)
     return s;
 }
 
-void Storage::addNewTest(const std::string & testName) {
+void FileStorage::addNewTest(const std::string & testName) {
     report << "-----------------------------------------------------------" << std::endl;
     report << testName << " test results:" << std::endl;
     ++indent;
 }
 
-void Storage::setUserSettings(const std::vector<std::string> & options) {
+void FileStorage::setUserSettings(const std::vector<std::string> & options) {
     report << doIndent() << "User settings: " << std::endl;
     ++indent;
     std::string tabs = doIndent();
@@ -57,7 +47,7 @@ void Storage::setUserSettings(const std::vector<std::string> & options) {
     report << std::endl;
 }
 
-void Storage::setTestParameters(const std::vector<std::string> & options) {
+void FileStorage::setTestParameters(const std::vector<std::string> & options) {
     if(options.empty())
         return;
 
@@ -71,7 +61,7 @@ void Storage::setTestParameters(const std::vector<std::string> & options) {
     report << std::endl;
 }
 
-void Storage::setRuntimeIssues(const std::string & stdErr,
+void FileStorage::setRuntimeIssues(const std::string & stdErr,
                                const std::vector<std::string> & errors,
                                const std::vector<std::string> & warnings) {
     if(stdErr.empty() && errors.empty() && warnings.empty())
@@ -130,13 +120,13 @@ void Storage::setRuntimeIssues(const std::string & stdErr,
 
 }
 
-void Storage::addSubTest() {
+void FileStorage::addSubTest() {
     ++currentSubtest;
     report << doIndent() << "Subtest " << currentSubtest << ":" << std::endl;
     ++indent;
 }
 
-void Storage::addStatisticResult(const std::string & statName,
+void FileStorage::addStatisticResult(const std::string & statName,
                                  double value, int precision) {
     std::stringstream tmp;
     tmp << doIndent() << statName <<" statistic p-value: "
@@ -155,7 +145,7 @@ void Storage::addStatisticResult(const std::string & statName,
     }
 }
 
-void Storage::addStatisticResult(const std::string & statName ,
+void FileStorage::addStatisticResult(const std::string & statName ,
                                  const std::string & value, bool failed) {
     std::stringstream tmp;
     tmp << doIndent() << statName << " statistic: " << value;
@@ -170,7 +160,7 @@ void Storage::addStatisticResult(const std::string & statName ,
     }
 }
 
-void Storage::addPValues(const std::vector<double> & pvals , int precision) {
+void FileStorage::addPValues(const std::vector<double> & pvals , int precision) {
     report << doIndent() << "p-values: " << std::endl;
     ++indent;
     std::string tabs = doIndent();
@@ -180,20 +170,20 @@ void Storage::addPValues(const std::vector<double> & pvals , int precision) {
     report << doIndent() << "============" << std::endl;
 }
 
-void Storage::finalizeSubTest() {
+void FileStorage::finalizeSubTest() {
     --indent;
     report << doIndent() << "############" << std::endl;
     report << std::endl;
 }
 
-void Storage::finalizeTest() {
+void FileStorage::finalizeTest() {
     report << "-----------------------------------------------------------"
            << std::endl << std::endl;
     --indent;
     currentSubtest = 0;
 }
 
-void Storage::finalizeReport() {
+void FileStorage::finalizeReport() {
     /* Add passed tests proportion at the end of report */
     passedTestProp = { Utils::itostr(passedStatisticsCount) + "/" + Utils::itostr(totalStatisticsCount) };
     std::string reportStr = report.str();
@@ -209,7 +199,7 @@ void Storage::finalizeReport() {
     addResultToTableFile();
 }
 
-void Storage::makeReportHeader() {
+void FileStorage::makeReportHeader() {
     report << "***** Randomness Testing Toolkit data stream analysis report *****" << std::endl;
     report << "Date:    " << Utils::formatRawTime(creationTime , "%d-%m-%Y") << std::endl;
     report << "File:    " << inFilePath << std::endl;
@@ -222,14 +212,14 @@ void Storage::makeReportHeader() {
     report << std::endl << std::endl;
 }
 
-std::string Storage::doIndent() const {
+std::string FileStorage::doIndent() const {
     if(indent > 0)
         return std::string(indent * MISC_TAB_SIZE, ' ');
     else
         return "";
 }
 
-void Storage::addResultToTableFile() const {
+void FileStorage::addResultToTableFile() const {
     if(Utils::fileExist(mainOutFilePath)) {
         /* Table file already exist */
         tStringVector header;
@@ -278,7 +268,7 @@ void Storage::addResultToTableFile() const {
     }
 }
 
-void Storage::loadMainTable(tStringVector & header,
+void FileStorage::loadMainTable(tStringVector & header,
                             tStringVector & fileNames,
                             std::vector<tStringVector> & tableData) const {
     std::string table = std::move(Utils::readFileToString(mainOutFilePath));
@@ -307,7 +297,7 @@ void Storage::loadMainTable(tStringVector & header,
     }
 }
 
-void Storage::saveMainTable(const tStringVector & header,
+void FileStorage::saveMainTable(const tStringVector & header,
                             const tStringVector & fileNames,
                             const std::vector<tStringVector> & tableData) const {
     if(fileNames.size() != tableData.size())
@@ -351,7 +341,7 @@ void Storage::saveMainTable(const tStringVector & header,
     Utils::saveStringToFile(mainOutFilePath , table.str());
 }
 
-void Storage::addNewRow(tStringVector & fileNames,
+void FileStorage::addNewRow(tStringVector & fileNames,
                         std::vector<tStringVector> & tableData) const {
     /* Add file path to file names column */
     fileNames.push_back(inFilePath);
@@ -363,12 +353,11 @@ void Storage::addNewRow(tStringVector & fileNames,
     tableData.push_back(std::move(row));
 }
 
-std::string Storage::stripSpacesFromString(const std::string & str) {
+std::string FileStorage::stripSpacesFromString(const std::string & str) {
     size_t start = str.find_first_not_of(" ");
     size_t end = str.find_last_not_of(" ");
     return str.substr(start , end + 1);
 }
 
-} // namespace file
-} // namespace output
+} // namespace storage
 } // namespace rtt

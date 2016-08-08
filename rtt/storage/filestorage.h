@@ -1,5 +1,5 @@
-#ifndef RTT_OUTPUT_FILE_STORAGE_H
-#define RTT_OUTPUT_FILE_STORAGE_H
+#ifndef RTT_STORAGE_FILESTORAGE_H
+#define RTT_STORAGE_FILESTORAGE_H
 
 #include <algorithm>
 #include <memory>
@@ -8,26 +8,15 @@
 #include <iomanip>
 
 #include "rtt/globalcontainer.h"
-#include "rtt/output/ioutput-out.h"
+#include "rtt/storage/istorage.h"
 
 namespace rtt {
-namespace output {
-namespace file {
+namespace storage {
 
 typedef std::vector<std::string> tStringVector;
 
-class Storage : public IOutput {
+class FileStorage : public IStorage {
 public:
-    /* XPath constants */
-    static const std::string XPATH_FILE_MAIN;
-    static const std::string XPATH_DIR_DH;
-    static const std::string XPATH_DIR_NIST;
-    static const std::string XPATH_DIR_TU01_SC;
-    static const std::string XPATH_DIR_TU01_C;
-    static const std::string XPATH_DIR_TU01_BC;
-    static const std::string XPATH_DIR_TU01_RB;
-    static const std::string XPATH_DIR_TU01_AB;
-
     /* Strings in report */
     static const std::string STRING_PASSED_PROP;
 
@@ -35,7 +24,7 @@ public:
     static const size_t MISC_TAB_SIZE;
     static const size_t MISC_COL_WIDTH;
 
-    static std::unique_ptr<Storage> getInstance(const GlobalContainer & container);
+    static std::unique_ptr<FileStorage> getInstance(const GlobalContainer & container);
 
     void addNewTest(const std::string & testName);
 
@@ -46,7 +35,6 @@ public:
     virtual void setRuntimeIssues(const std::string & stdErr ,
                                   const std::vector<std::string> & errors ,
                                   const std::vector<std::string> & warnings);
-
 
     void addSubTest();
 
@@ -89,7 +77,7 @@ private:
     *** Methods ***
     ===============
     */
-    Storage() {}
+    FileStorage() {}
 
     void makeReportHeader();
 
@@ -111,8 +99,7 @@ private:
     static std::string stripSpacesFromString(const std::string & str);
 };
 
-} // namespace file
-} // namespace output
+} // namespace storage
 } // namespace rtt
 
-#endif // RTT_OUTPUT_FILE_STORAGE_H
+#endif // RTT_STORAGE_FILESTORAGE_H

@@ -111,7 +111,7 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     if(test >= 0)
         options.testConsts.push_back(test);
     if(testsBot >= 0 && testsTop >= 0){
-        for(int i = testsBot; i <= testsTop; i++)
+        for(int i = testsBot; i <= testsTop; ++i)
             options.testConsts.push_back(i);
     }
     Utils::sort(options.testConsts);

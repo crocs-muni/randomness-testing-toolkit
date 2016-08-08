@@ -2,7 +2,7 @@
 #define RTT_IBATTERY_H
 
 #include "rtt/globalcontainer.h"
-#include "rtt/output/ioutput-out.h"
+#include "rtt/storage/istorage.h"
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 
@@ -35,7 +35,7 @@ protected:
     Constants::Battery battery;
     std::string objectInfo;
     //std::unique_ptr<output::IOutput> storage;
-    std::unique_ptr<output::IOutput> storage;
+    std::unique_ptr<storage::IStorage> storage;
     /* Battery is keeping track of tests set to execution.
      * Test objects keep track of their settings and execution results. */
     std::vector<std::unique_ptr<ITest>> tests;

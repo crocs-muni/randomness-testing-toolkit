@@ -43,7 +43,7 @@ IBattery::IBattery(const GlobalContainer & container) {
     batteryConfiguration = container.getBatteryConfiguration();
     toolkitSettings      = container.getToolkitSettings();
     logger               = container.getLogger();
-    storage              = output::IOutput::getInstance(container);
+    storage              = storage::IStorage::getInstance(container);
 
     creationTime = container.getCreationTime();
     battery      = cliOptions->getBattery();

@@ -31,9 +31,9 @@
         },
         
         "binaries": {
-            "nist-sts": "/home/lubo/Desktop/Fast_NIST_STS_v4/assess",
-            "dieharder": "/home/lubo/Desktop/dieharder/bin/dieharder",
-            "testu01": "/home/lubo/Desktop/TestU01/TestU01"
+            "nist-sts": "/home/xobrati1/Desktop/statistical-testing-utils/nist-sts-exe",
+            "dieharder": "/home/xobrati1/Desktop/statistical-testing-utils/dieharder-exe",
+            "testu01": "/home/xobrati1/Desktop/statistical-testing-utils/testu01-exe"
         },
         
         "miscelaneous": {

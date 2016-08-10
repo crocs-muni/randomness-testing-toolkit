@@ -2,42 +2,107 @@
     "randomness-testing-toolkit": {
         "dieharder-settings": {
             "defaults": {
-                "tests": ["0-4","8-13","15-17","100-102","200-209"],
+                "test-ids": ["0-4","8-13","15-17","100-102","200-209"],
                 "psamples": 100,
                 "arguments": "-W 0.01 -X 0.01"
             },
             "test-specific-settings": [
                 {
-                    "test": 200,
-                    "arguments": "-n 12"
+                    "test-id": 200,
+                    "variations": [
+                        { "arguments": "-n 1" },
+                        { "arguments": "-n 2" },
+                        { "arguments": "-n 3" },
+                        { "arguments": "-n 4" },
+                        { "arguments": "-n 5" },
+                        { "arguments": "-n 6" },
+                        { "arguments": "-n 7" },
+                        { "arguments": "-n 8" },
+                        { "arguments": "-n 9" },
+                        { "arguments": "-n 10" },
+                        { "arguments": "-n 11" },
+                        { "arguments": "-n 12" }
+                    ]    
                 },
                 {
-                    "test": 201,
+                    "test-id": 201,
                     "psamples": 1000,
-                    "arguments": "-n 2 -t 8000"
+            		"variations": [
+            		    { "arguments": "-n 2 -t 10000" },
+            		    { "arguments": "-n 3 -t 10000" },
+            		    { "arguments": "-n 4 -t 10000" },
+            		    { "arguments": "-n 5 -t 10000" },
+            		]
                 },
                 {
-                    "test": 204,
+                    "test-id": 202,
+                    "variations": [
+                        { "arguments": "-n 2" },
+                        { "arguments": "-n 3" },
+                        { "arguments": "-n 4" },
+                        { "arguments": "-n 5" },
+                    ]
+                },
+                {
+                    "test-id": 203,
+                    "variations": [
+                        { "arguments": "-n 0" },
+                        { "arguments": "-n 1" },
+                        { "arguments": "-n 2" },
+                        { "arguments": "-n 3" },
+                        { "arguments": "-n 4" },
+                        { "arguments": "-n 5" },
+                        { "arguments": "-n 6" },
+                        { "arguments": "-n 7" },
+                        { "arguments": "-n 8" },
+                        { "arguments": "-n 9" },
+                        { "arguments": "-n 10" },
+                        { "arguments": "-n 11" },
+                        { "arguments": "-n 12" },
+                        { "arguments": "-n 13" },
+                        { "arguments": "-n 14" },
+                        { "arguments": "-n 15" },
+                        { "arguments": "-n 16" },
+                        { "arguments": "-n 17" },
+                        { "arguments": "-n 18" },
+                        { "arguments": "-n 19" },
+                        { "arguments": "-n 20" },
+                        { "arguments": "-n 21" },
+                        { "arguments": "-n 22" },
+                        { "arguments": "-n 23" },
+                        { "arguments": "-n 24" },
+                        { "arguments": "-n 25" },
+                        { "arguments": "-n 26" },
+                        { "arguments": "-n 27" },
+                        { "arguments": "-n 28" },
+                        { "arguments": "-n 29" },
+                        { "arguments": "-n 30" },
+                        { "arguments": "-n 31" },
+                        { "arguments": "-n 32" }
+                    ]
+                },
+                {
+                    "test-id": 204,
                     "psamples": 1000
                 },
                 {
-                    "test": 205,
+                    "test-id": 205,
                     "psamples": 1
                 },
                 {
-                    "test": 206,
+                    "test-id": 206,
                     "psamples": 1
                 },
                 {
-                    "test": 207,
+                    "test-id": 207,
                     "psamples": 1
                 },
                 {
-                    "test": 208,
+                    "test-id": 208,
                     "psamples": 1
-                },
+                },                
                 {
-                    "test": 209,
+                    "test-id": 209,
                     "psamples": 1
                 }
             ]
@@ -45,29 +110,29 @@
     
         "nist-sts-settings": {
             "defaults": {
-                "tests": ["1-15"],    
+                "test-ids": ["1-15"],    
                 "stream-size": "1000000",
                 "stream-count": "100"
             },
             "test-specific-settings": [
                 {
-                   "test": 1,
+                   "test-id": 1,
                    "stream-size": "11",
                    "stream-count": "12",
                    "block-size": "13"
                 },
                 {
-                   "test": 2,
+                   "test-id": 2,
                    "stream-count": "22",
                    "block-size": "23"
                 },
                 {
-                   "test": 3,
+                   "test-id": 3,
                    "stream-size": "31",
                    "block-size": "33"
                 },
                 {
-                   "test": 4,
+                   "test-id": 4,
                    "stream-size": "41",
                    "stream-count": "42"
                 }
@@ -77,31 +142,31 @@
         "testu01-settings": {
             "defaults": {
                 "small-crush": {
-                    "tests": ["1-10"],
+                    "test-ids": ["1-10"],
                     "repetitions": 1
                 },
                 "crush": {
-                    "tests": ["1-96"],
+                    "test-ids": ["1-96"],
                     "repetitions": 1
                 },
                 "big-crush": {
-                    "tests": ["1-106"],
+                    "test-ids": ["1-106"],
                     "repetitions": 1
                 },
                 "rabbit": {
-                    "tests": ["1-26"],
+                    "test-ids": ["1-26"],
                     "repetitions": 1,
                     "bit-nb": "8388608000"
                 },
                 "alphabit": {
-                    "tests": ["1-9"],
+                    "test-ids": ["1-9"],
                     "repetitions": 1,
                     "bit-nb": "8388608000",
                     "bit-r": "0",
                     "bit-s": "32"
                 },
                 "block-alphabit": {
-                    "tests": ["1-9"],
+                    "test-ids": ["1-9"],
                     "repetitions": 1,
                     "bit-nb": "8388608000",
                     "bit-r": "0",
@@ -112,7 +177,7 @@
             "test-specific-settings": {
                 "small-crush": [
                     {
-                        "test": 1,
+                        "test-id": 1,
                         "parameters": [
                             ["N","1"],
                             ["n","5000000"],
@@ -123,19 +188,19 @@
                         ]
                     },
                     {
-                        "test": 5,
+                        "test-id": 5,
                         "repetitions": 3
                     }
                 ],
                 "crush": [
                     {
-                        "test": 2,
+                        "test-id": 2,
                         "repetitions": 4
                     } 
                 ],
                 "big-crush": [
                     {
-                        "test": 72,
+                        "test-id": 72,
                         "parameters": [
                             ["N","11"],
                             ["n","12"],
@@ -147,24 +212,24 @@
                 ],
                 "rabbit": [
                     {
-                        "test": 1,
+                        "test-id": 1,
                         "bit-nb": "5000000"
                     }
                 ],
                 "alphabit": [
                     {
-                        "test": 2,
+                        "test-id": 2,
                         "bit-nb": "12"
                     },
                     {
-                        "test": 3,
+                        "test-id": 3,
                         "bit-r": "4",
                         "bit-s": "5" 
                     }
                 ],
                 "block-alphabit": [
                     {
-                        "test": 4,
+                        "test-id": 4,
                         "bit-r": "5",
                         "bit-s": "6",
                         "bit-w": "7"

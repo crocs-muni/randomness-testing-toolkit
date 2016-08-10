@@ -52,7 +52,7 @@ private:
     /* getInstance() */
     tStringVector paramNames;
     tStringVector statisticNames;
-    int repetitions;
+    uint repetitions;
     /* Only used in configuration of crush batteries */
     std::vector<tParam> params;
     /* Used in rabbit/alphabit battery */

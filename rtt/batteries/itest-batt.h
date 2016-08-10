@@ -62,7 +62,6 @@ protected:
     /* Will be set after test execution.
      * It is not extractable before execution. */
     bool executed = false;
-    //std::string testLog;
     BatteryOutput batteryOutput;
     std::vector<tTestPvals> results;
 

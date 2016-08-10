@@ -234,7 +234,7 @@ void Test::processBatteryOutput() {
                                       RE_PVALUE);
     auto end   = std::sregex_iterator();
 
-    int pValCount = std::distance(begin , end);
+    long pValCount = std::distance(begin , end);
     if(pValCount == 0) {
         logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
         return;
@@ -349,7 +349,7 @@ void Test::extractSettingsFromLog(const std::string & testLog) {
                                       "Bit parameter w matching failed.");
             return;
         }
-        for(int i = 0 ; begin != end ; ++begin, ++i) {
+        for(uint i = 0 ; begin != end ; ++begin, ++i) {
             std::smatch match = *begin;
             tParam tmp;
             tmp.first = "w";

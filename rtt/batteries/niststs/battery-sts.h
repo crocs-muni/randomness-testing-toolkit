@@ -22,7 +22,6 @@ private:
     *** Methods ***
     ===============
     */
-    /* So initialization in getInstance can't be avoided */
     Battery(const GlobalContainer & container)
         : IBattery(container) {}
 

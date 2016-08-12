@@ -12,12 +12,12 @@
  * 2. Storing processed results
  *  2.1. Output Interface                       (Ok)
  *  2.2. Into file structure                    (Ok)
- *  2.3. Into database                          (Will be done in next pahse)
+ *  2.3. Into database                          (Will be done in next phase)
  * 3. Miscelaneous
  *  3.1. Better exception handling              (Ok)
  *  3.2. Batteries runtime error handling       (Ok)
  *  3.3. File logger                            (Ok)
- *  3.4. Better config file organization        (Moving on to JSON format)
+ *  3.4. Better config file organization        (Ok)
  *  3.5. Create CMake project                   (Final step)
  *  3.6. Write documentation, refactor          (More final step)
  * 4. ???
@@ -49,6 +49,13 @@ using namespace rtt;
 
 int main (int argc , char * argv[]) try {
 #ifdef TESTING
+    json tst = json::parse(Utils::readFileToString("tst.json"));
+    tst = tst.at("params");
+    for(json::iterator it = tst.begin() ; it != tst.end() ; ++it) {
+        std::cout << it.key() << ": " << it.value() << std::endl;
+        std::string t = it.value();
+    }
+
 #else
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;

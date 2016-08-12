@@ -7,44 +7,30 @@ namespace niststs {
 std::mutex outputFile_mux;
 
 std::unique_ptr<Test> Test::getInstance(int testIndex,
-                                        const GlobalContainer & container) {
-    std::unique_ptr<Test> t (new Test(testIndex , container));
+                                        const GlobalContainer & cont) {
+    std::unique_ptr<Test> t (new Test(testIndex , cont));
 
-    std::tie(t->logicName ,
-             t->resultSubDir,
-             t->subTestCount,
-             t->adjustableBlockLen) =
-            TestConstants::getNistStsTestData(t->battery , t->testIndex);
+    t->logicName = std::get<0>(TestConstants::getNistStsTestData(t->battery , t->testIndex));
+    t->resultSubDir = std::get<1>(TestConstants::getNistStsTestData(t->battery , t->testIndex));
 
-    /* Stream size */
-    t->streamSize = t->batteryConfiguration->getNiststsTestStreamSize(testIndex);
-    if(t->streamSize.empty())
-        t->streamSize = t->batteryConfiguration->getNiststsDefaultStreamSize();
-    if(t->streamSize.empty())
-        throw RTTException(t->objectInfo , Strings::TEST_ERR_STREAM_SIZE_NOT_SET);
-    /* Count of streams */
-    t->streamCount = t->batteryConfiguration->getNiststsTestStreamCount(testIndex);
-    if(t->streamCount.empty())
-        t->streamCount = t->batteryConfiguration->getNiststsDefaultStreamCount();
-    if(t->streamCount.empty())
-        throw RTTException(t->objectInfo , Strings::TEST_ERR_STREAM_COUNT_NOT_SET);
-    /* Block length */
-    t->blockLength = t->batteryConfiguration->getNiststsTestBlockLength(testIndex);
-    /* Setting battery arguments and input */
-    t->batteryArgs = t->createArgs();
-    t->batteryInput = t->createInput();
+    /* Cleaning result directory */
+    Utils::rmDirFiles(t->resultSubDir);
+
+    uint varCount = t->batteryConfiguration->getTestVariationsCount(t->battery , t->testIndex);
+    for(uint i = 0 ; i < varCount ; ++i) {
+        t->variants.push_back(IVariant::getInstance(t->testIndex, i , cont));
+    }
 
     return t;
 }
 
 std::vector<std::string> Test::getTestUserSettings() const {
-    std::stringstream parameters;
-    parameters << "Stream size: " << streamSize << std::endl;
-    parameters << "Stream count: " << streamCount << std::endl;
-    if(!blockLength.empty() && adjustableBlockLen)
-        parameters << "Block length: " << blockLength;
+    raiseBugException("implementation underway");
+    std::vector<std::vector<std::string>> rval;
+    for(const IVariant & var : variants)
+        rval.push_back(var.getUserSettings());
 
-    return Utils::split(parameters.str() , '\n');
+    //return rval;
 }
 
 std::vector<std::vector<std::string> > Test::getTestsParameters() const {
@@ -72,49 +58,11 @@ std::vector<std::string> Test::getStatistics() const {
 */
 
 std::string Test::createArgs() const {
-    std::stringstream arguments;
-    arguments << "assess " << streamSize << " -fast";
-    return arguments.str();
+    raiseBugException("implementation underway");
 }
 
 std::string Test::createInput() const {
-    /* 'Beautiful' creation of input that will be sent to */
-    /* sts over pipe, so that it will have proper settings. */
-    std::stringstream inputSequence;
-    /* Choosing input file generator */
-    inputSequence << "0 ";
-    /* Choosing file */
-    inputSequence << binaryDataPath << " ";
-    /* I don't want to execute all tests */
-    inputSequence << "0 ";
-    /* Specifying which test I want to execute */
-    std::string tmp(15 , '0');
-    tmp[testIndex - 1] = '1';
-    inputSequence << tmp << " ";
-    /* Setting blocksize of a test */
-    /* If it's not possible, this setting is ommited */
-    if(adjustableBlockLen) {
-        if(blockLength.empty()) {
-            /* Not adjusting anything, just entering 0 */
-            /* to continue */
-            inputSequence << "0 ";
-        } else {
-            /* Adjusting the block size */
-            /* Always ruuning just one test, its index is always 1 */
-            inputSequence << "1 ";
-            /* Entering actual value of new block size */
-            inputSequence << blockLength << " ";
-            /* Entering 0 to continue */
-            inputSequence << "0 ";
-        }
-    }
-    /* Specifying stream count */
-    inputSequence << streamCount << " ";
-    /* Setting input file type as binary */
-    inputSequence << "1";
-    /* Confirm input with newline */
-    inputSequence << std::endl;
-    return inputSequence.str();
+    raiseBugException("implementation underway");
 }
 
 void Test::processBatteryOutput() {
@@ -133,16 +81,16 @@ void Test::processBatteryOutput() {
             int pValCount = std::distance(begin , end);
             if(pValCount == 0) {
                 logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
-                streamCount = "0";
+                //streamCount = "0";
                 return;
             }
 
-            if(pValCount % subTestCount != 0) {
+            /*if(pValCount % subTestCount != 0) {
                 logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
                 return;
-            }
-            int strCount = pValCount / subTestCount;
-            streamCount = Utils::itostr(strCount);
+            }*/
+            //int strCount = pValCount / subTestCount;
+            //streamCount = Utils::itostr(strCount);
 
             tTestPvals allResults;
             for( ; begin != end ; ++begin) {
@@ -151,30 +99,30 @@ void Test::processBatteryOutput() {
             }
 
             tTestPvals testResults;
-            for(int test = 0 ; test < subTestCount ; ++test) {
-                for(int i = test ; i < pValCount ; i += subTestCount)
+            for(int test = 0 ; test < /*subTestCount*/0 ; ++test) {
+                for(int i = test ; i < pValCount ; i += /*subTestCount*/0)
                     testResults.push_back(allResults.at(i));
 
                 results.push_back(std::move(testResults));
                 testResults.clear();
             }
         } else {
-            if(subTestCount == 1) {
-                /* Only file results.txt will be processed */
-                tTestPvals pVals = readPvals(resultSubDir + "results.txt");
-                results.push_back(pVals);
-            } else {
-                /* Multiple dataX.txt files will be processed */
-                std::stringstream fName;
-                tTestPvals pVals;
-                for(int i = 1 ; i <= subTestCount ; ++i) {
-                    fName << resultSubDir << "data" << i << ".txt";
-                    pVals = std::move(readPvals(fName.str()));
-                    results.push_back(pVals);
-                    pVals.clear();
-                    fName.str("");fName.clear();
-                }
-            }
+//            if(subTestCount == 1) {
+//                /* Only file results.txt will be processed */
+//                tTestPvals pVals = readPvals(resultSubDir + "results.txt");
+//                results.push_back(pVals);
+//            } else {
+//                /* Multiple dataX.txt files will be processed */
+//                std::stringstream fName;
+//                tTestPvals pVals;
+//                for(int i = 1 ; i <= subTestCount ; ++i) {
+//                    fName << resultSubDir << "data" << i << ".txt";
+//                    pVals = std::move(readPvals(fName.str()));
+//                    results.push_back(pVals);
+//                    pVals.clear();
+//                    fName.str("");fName.clear();
+//                }
+//            }
         }
 
         /* Preppending output from test run to test run */

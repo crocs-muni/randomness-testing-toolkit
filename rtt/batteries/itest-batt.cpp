@@ -107,7 +107,8 @@ ITest::ITest(int testIndex, const GlobalContainer & container) {
                                                     binaryDataPath);
 
     objectInfo =
-            Constants::batteryToString(battery) + " - test " + Utils::itostr(testIndex);
+            Constants::batteryToString(battery) +
+            " - test " + Utils::itostr(testIndex);
 
     if(binaryDataPath.empty())
         raiseBugException(Strings::TEST_ERR_NO_BINARY_DATA);

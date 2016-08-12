@@ -17,10 +17,6 @@ typedef std::pair<int , std::string> tTestInfo;
 
 class Test : public ITest {
 public:
-    /* Test info constants */
-    static const int OPTION_HEADER_FLAG;
-    static const int OPTION_FILE_GENERATOR;
-
     /*
     ======================
     *** Public methods ***
@@ -41,19 +37,12 @@ private:
     *** Variables ***
     =================
     */
-    /* These fields will be set after initialization in */
-    /* getInstance() */
-    std::vector<Setting> settings;
-    int pSampleCount;
-    int subTestsCount;
 
     /*
     ===============
     *** Methods ***
     ===============
     */
-    /* I don't want to allow existence of Test objects */
-    /* without initialization that is in getInstance */
     Test(int testIndex , const GlobalContainer & container)
         : ITest(testIndex , container) {}
 

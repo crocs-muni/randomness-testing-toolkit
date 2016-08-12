@@ -16,11 +16,12 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
             TestConstants::getTu01TestData(t->battery , t->testIndex);
 
     /* Repetitions - mandatory */
-    t->repetitions =
-            t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
-                                                                      t->testIndex);
-    if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
-        t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions(t->battery);
+    //t->repetitions =
+    //        t->batteryConfiguration->getTestU01BatteryTestRepetitions(t->battery ,
+    //                                                                  t->testIndex);
+    //if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
+    //    t->repetitions = t->batteryConfiguration->getTestu01DefaultRepetitions(t->battery);
+    t->repetitions = t->batteryConfiguration->getTestVariationParamInt(t->battery,t->testIndex,10,Configuration::TAGNAME_REPETITIONS);
     if(t->repetitions == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(t->objectInfo , Strings::TEST_ERR_REPS_NOT_SET);
 
@@ -29,53 +30,67 @@ std::unique_ptr<Test> Test::getInstance(int testIndex ,
             t->battery == Constants::Battery::TU01_CRUSH ||
             t->battery == Constants::Battery::TU01_BIGCRUSH) {
         tParam tmp;
-        for(const auto & par : t->paramNames) {
-            tmp.first = par;
-            tmp.second =
-                    t->batteryConfiguration->getTestU01BatteryTestParams(t->battery ,
-                                                                         t->testIndex ,
-                                                                         par);
-            if(!tmp.second.empty())
-                t->params.push_back(tmp);
+        tStringStringMap pars = t->batteryConfiguration->getTestVariantParamMap(t->battery,t->testIndex,10,Configuration::TAGNAME_PARAMS);
+        if(!pars.empty()) {
+            for(const auto & par : t->paramNames) {
+                if(pars.count(par) == 1) {
+                    tmp.first = par;
+                    tmp.second = pars.at(par);
+                } else {
+                    throw RTTException(t->objectInfo , Strings::TEST_ERR_PARAM_INCOMPLETE);
+                }
+
+                /*tmp.first = par;
+                tmp.second =
+                        t->batteryConfiguration->getTestU01BatteryTestParams(t->battery ,
+                                                                             t->testIndex ,
+                                                                             par);
+                if(!tmp.second.empty())
+                    t->params.push_back(tmp);*/
+            }
         }
-        if(!t->params.empty() && t->params.size() != t->paramNames.size())
-            throw RTTException(t->objectInfo , Strings::TEST_ERR_PARAM_INCOMPLETE);
+        //if(!t->params.empty() && t->params.size() != t->paramNames.size())
+        //    throw RTTException(t->objectInfo , Strings::TEST_ERR_PARAM_INCOMPLETE);
     }
 
     /* Getting nb - Rabbit and (Block) Alphabit - mandatory */
     if(t->battery == Constants::Battery::TU01_RABBIT ||
             t->battery == Constants::Battery::TU01_ALPHABIT ||
             t->battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
-        t->bit_nb = t->batteryConfiguration->getTestU01BatteryTestBitNB(t->battery ,
-                                                                        t->testIndex);
-        if(t->bit_nb.empty())
-            t->bit_nb = t->batteryConfiguration->getTestU01DefaultBitNB(t->battery);
+        //t->bit_nb = t->batteryConfiguration->getTestU01BatteryTestBitNB(t->battery ,
+        //                                                                t->testIndex);
+        //if(t->bit_nb.empty())
+        //    t->bit_nb = t->batteryConfiguration->getTestU01DefaultBitNB(t->battery);
+        t->bit_nb = t->batteryConfiguration->getTestVariationParamString(t->battery,t->testIndex,10,Configuration::TAGNAME_BIT_NB);
         if(t->bit_nb.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITNB_NOT_SET);
     }
     /* Getting r s - (Block) Alphabit - mandatory */
     if(t->battery == Constants::Battery::TU01_ALPHABIT ||
             t->battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
-        t->bit_r = t->batteryConfiguration->getTestU01BatteryTestBitR(t->battery ,
-                                                                      t->testIndex);
-        if(t->bit_r.empty())
-            t->bit_r = t->batteryConfiguration->getTestU01DefaultBitR(t->battery);
+//        t->bit_r = t->batteryConfiguration->getTestU01BatteryTestBitR(t->battery ,
+//                                                                      t->testIndex);
+//        if(t->bit_r.empty())
+//            t->bit_r = t->batteryConfiguration->getTestU01DefaultBitR(t->battery);
+        t->bit_r = t->batteryConfiguration->getTestVariationParamString(t->battery,t->testIndex,10,Configuration::TAGNAME_BIT_R);
         if(t->bit_r.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITR_NOT_SET);
 
-        t->bit_s = t->batteryConfiguration->getTestU01BatteryTestBitS(t->battery ,
-                                                                      t->testIndex);
-        if(t->bit_s.empty())
-            t->bit_s = t->batteryConfiguration->getTestU01DefaultBitS(t->battery);
+//        t->bit_s = t->batteryConfiguration->getTestU01BatteryTestBitS(t->battery ,
+//                                                                      t->testIndex);
+//        if(t->bit_s.empty())
+//            t->bit_s = t->batteryConfiguration->getTestU01DefaultBitS(t->battery);
+        t->bit_s = t->batteryConfiguration->getTestVariationParamString(t->battery,t->testIndex,10,Configuration::TAGNAME_BIT_S);
         if(t->bit_s.empty())
             throw RTTException(t->objectInfo , Strings::TEST_ERR_BITS_NOT_SET);
     }
     /* Getting w - Block Alphabit - optional */
     if(t->battery == Constants::Battery::TU01_BLOCK_ALPHABIT) {
-        t->bit_w = t->batteryConfiguration->getTestU01BatteryTestBitW(t->battery ,
-                                                                      t->testIndex);
-        if(t->bit_w.empty())
-            t->bit_w = t->batteryConfiguration->getTestU01DefaultBitW(t->battery);
+//        t->bit_w = t->batteryConfiguration->getTestU01BatteryTestBitW(t->battery ,
+//                                                                      t->testIndex);
+//        if(t->bit_w.empty())
+//            t->bit_w = t->batteryConfiguration->getTestU01DefaultBitW(t->battery);
+        t->bit_w = t->batteryConfiguration->getTestVariationParamString(t->battery,t->testIndex,10,Configuration::TAGNAME_BIT_W);
     }
     /* Setting battery arguments and input */
     t->batteryArgs = t->createArgs();

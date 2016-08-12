@@ -26,10 +26,10 @@ protected:
      * Used by batteries in later stages. */
     /* Objects pointing to global object storage -
      * many classes use these objects */
-    std::shared_ptr<CliOptions> cliOptions;
-    std::shared_ptr<batteries::Configuration> batteryConfiguration;
-    std::shared_ptr<ToolkitSettings> toolkitSettings;
-    std::shared_ptr<Logger> logger;
+    CliOptions * cliOptions;
+    Configuration * batteryConfiguration;
+    ToolkitSettings * toolkitSettings;
+    Logger * logger;
     /* Variables initialized in getInstance() */
     time_t creationTime;
     Constants::Battery battery;

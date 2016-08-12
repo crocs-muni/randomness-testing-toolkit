@@ -57,8 +57,8 @@ private:
     =================
     */
     /* Pointers to global objects */
-    std::shared_ptr<CliOptions> cliOptions;
-    std::shared_ptr<ToolkitSettings> toolkitSettings;
+    CliOptions * cliOptions;
+    ToolkitSettings * toolkitSettings;
 
     time_t creationTime;
     Constants::Battery batteryConstant;

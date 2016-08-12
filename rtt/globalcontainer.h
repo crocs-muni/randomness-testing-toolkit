@@ -1,6 +1,8 @@
 #ifndef RTT_GLOBALCONTAINER_H
 #define RTT_GLOBALCONTAINER_H
 
+#include <memory>
+
 #include "rtt/clioptions.h"
 #include "rtt/toolkitsettings.h"
 #include "rtt/batteries/configuration-batt.h"
@@ -30,22 +32,21 @@ public:
 
     time_t getCreationTime() const;
 
-    std::shared_ptr<CliOptions> getCliOptions() const;
+    CliOptions * getCliOptions() const;
 
-    std::shared_ptr<ToolkitSettings> getToolkitSettings() const;
+    ToolkitSettings * getToolkitSettings() const;
 
-    std::shared_ptr<batteries::Configuration> getBatteryConfiguration() const;
+    batteries::Configuration * getBatteryConfiguration() const;
 
-    std::shared_ptr<Logger> getLogger() const;
+    Logger * getLogger() const;
 
 private:
     /* Application start time, will be used in naming files, etc. */
     time_t creationTime;
-
-    std::shared_ptr<CliOptions> cliOptions;
-    std::shared_ptr<ToolkitSettings> toolkitSettings;
-    std::shared_ptr<batteries::Configuration> batteryConfiguration;
-    std::shared_ptr<Logger> logger;
+    std::unique_ptr<CliOptions> cliOptions;
+    std::unique_ptr<ToolkitSettings> toolkitSettings;
+    std::unique_ptr<batteries::Configuration> batteryConfiguration;
+    std::unique_ptr<Logger> logger;
 };
 
 } // namespace rtt

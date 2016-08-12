@@ -38,7 +38,7 @@ std::mutex              threadState_mux;
 /*************/
 /* Functions */
 /*************/
-void TestRunner::executeTests(std::shared_ptr<Logger> logger,
+void TestRunner::executeTests(Logger * logger,
                               std::vector<std::unique_ptr<ITest> > & tests,
                               int maxThreads) {
     threadCount = maxThreads;
@@ -112,11 +112,11 @@ void TestRunner::executeTests(std::shared_ptr<Logger> logger,
     manager.join();
 }
 
- BatteryOutput TestRunner::executeBinary(std::shared_ptr<Logger> logger,
-                                      const std::string & objectInfo,
-                                      const std::string & binaryPath,
-                                      const std::string & arguments,
-                                      const std::string & input) {
+BatteryOutput TestRunner::executeBinary(Logger * logger,
+                                        const std::string & objectInfo,
+                                        const std::string & binaryPath,
+                                        const std::string & arguments,
+                                        const std::string & input) {
     int stdin_pipe[2];
     int stdout_pipe[2];
     int stderr_pipe[2];

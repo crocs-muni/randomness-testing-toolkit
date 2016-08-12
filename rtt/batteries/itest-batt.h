@@ -44,10 +44,10 @@ protected:
 
     /* These fields will be set in the constructor */
     /* Pointers to global configurations */
-    std::shared_ptr<CliOptions> cliOptions;
-    std::shared_ptr<ToolkitSettings> toolkitSettings;
-    std::shared_ptr<batteries::Configuration> batteryConfiguration;
-    std::shared_ptr<Logger> logger;
+    CliOptions * cliOptions;
+    ToolkitSettings * toolkitSettings;
+    Configuration * batteryConfiguration;
+    Logger * logger;
     /* Test specific fields - will be set in constructor (base class) and
      * getInstance(derived classes) */
     int testIndex;
@@ -55,10 +55,10 @@ protected:
     std::string logicName;
     std::string logFilePath;
     std::string executablePath;
-    std::string binaryDataPath;
+    std::string binaryDataPath;//
     std::string objectInfo;
-    std::string batteryArgs;
-    std::string batteryInput;
+    std::string batteryArgs;//
+    std::string batteryInput;//
     /* Will be set after test execution.
      * It is not extractable before execution. */
     bool executed = false;

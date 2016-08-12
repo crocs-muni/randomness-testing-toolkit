@@ -45,12 +45,12 @@ public:
     /* Called from battery's runTests code. This is main thread,
      * creates one threadManager and receives and hands out IDs of
      * finished child processes of RTT. */
-    static void executeTests(std::shared_ptr<Logger> logger,
+    static void executeTests(Logger * logger,
                              std::vector<std::unique_ptr<ITest> > & tests, int maxThreads);
 
     /* Called from test code in method execute. Thread is not created
      * directly from this method, but from test's execute. */
-    static /*std::string*/ BatteryOutput executeBinary(std::shared_ptr<Logger> logger,
+    static /*std::string*/ BatteryOutput executeBinary(Logger * logger,
                                      const std::string & objectInfo,
                                      const std::string & binaryPath,
                                      const std::string & arguments,

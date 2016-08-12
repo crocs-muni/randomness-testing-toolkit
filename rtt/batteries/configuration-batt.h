@@ -21,120 +21,76 @@ typedef std::map<std::string , std::string> tStringStringMap;
 
 class Configuration {
 public:
+    /* JSON tag name inside config file */
+    static const std::string TAGNAME_ROOT;
+    static const std::string TAGNAME_DIEHARDER_SETT;
+    static const std::string TAGNAME_NISTSTS_SETT;
+    static const std::string TAGNAME_TESTU01_SETT;
+    static const std::string TAGNAME_SCRUSH_BATT;
+    static const std::string TAGNAME_CRUSH_BATT;
+    static const std::string TAGNAME_BCRUSH_BATT;
+    static const std::string TAGNAME_RABBIT_BATT;
+    static const std::string TAGNAME_ALPHABIT_BATT;
+    static const std::string TAGNAME_BLALPHABIT_BATT;
+    static const std::string TAGNAME_DEFAULTS;
+    static const std::string TAGNAME_TEST_SPECIFIC_SETT;
+    static const std::string TAGNAME_DEFAULT_TESTS;
+    static const std::string TAGNAME_TEST_ID;
+    static const std::string TAGNAME_VARIATIONS;
+    static const std::string TAGNAME_ARGUMENTS;
+    static const std::string TAGNAME_PSAMPLES;
+    static const std::string TAGNAME_STREAM_SIZE;
+    static const std::string TAGNAME_STREAM_COUNT;
+    static const std::string TAGNAME_BLOCK_LENGTH;
+    static const std::string TAGNAME_REPETITIONS;
+    static const std::string TAGNAME_BIT_NB;
+    static const std::string TAGNAME_BIT_R;
+    static const std::string TAGNAME_BIT_S;
+    static const std::string TAGNAME_BIT_W;
+    static const std::string TAGNAME_PARAMS;
+
     /* Constant set to integer values that weren't set */
     static const int VALUE_INT_NOT_SET = -1;
 
     static Configuration getInstance(const std::string & configFileName);
 
     /* Getters for variables */
-    /* Universal */
-    std::vector<int> getBatteryDefaultTests(Constants::Battery battery) const;
+    std::vector<int> getBatteryDefaultTests(Constants::Battery battery);
 
-    /* Dieharder */
-    int getDieharderDefaultPSamples() const;
+    uint getTestVariantsCount(Constants::Battery batt , int testId);
 
-    std::string getDieharderDefaultArguments() const;
+    int getTestVariantsParamInt(Constants::Battery batt ,
+                                int testId , uint variantIndex ,
+                                const std::string & paramName);
 
-    int getDieharderTestPSamples(int testIndex) const;
+    std::string getTestVariantParamString(Constants::Battery batt ,
+                                          int testId , uint variantIndex ,
+                                          const std::string & paramName);
 
-    std::string getDieharderTestArguments(int testIndex) const;
-
-    /* NIST STS */
-    std::string getNiststsDefaultStreamSize() const;
-
-    std::string getNiststsDefaultStreamCount() const;
-
-    std::string getNiststsTestStreamSize(int testIndex) const;
-
-    std::string getNiststsTestStreamCount(int testIndex) const;
-
-    std::string getNiststsTestBlockLength(int testIndex) const;
-
-    /* TestU01 */
-    int getTestu01DefaultRepetitions(Constants::Battery battery) const;
-
-    std::string getTestU01DefaultBitNB(Constants::Battery battery) const;
-
-    std::string getTestU01DefaultBitR(Constants::Battery battery) const;
-
-    std::string getTestU01DefaultBitS(Constants::Battery battery) const;
-
-    std::string getTestU01DefaultBitW(Constants::Battery battery) const;
-
-    int getTestU01BatteryTestRepetitions(Constants::Battery battery ,
-                                         int testIndex) const;
-
-    std::string getTestU01BatteryTestParams(Constants::Battery battery ,
-                                            int testIndex ,
-                                            const std::string & parName);
-
-    std::string getTestU01BatteryTestBitNB(Constants::Battery battery,
-                                           int testIndex);
-
-    std::string getTestU01BatteryTestBitR(Constants::Battery battery,
-                                          int testIndex);
-
-    std::string getTestU01BatteryTestBitS(Constants::Battery battery,
-                                          int testIndex);
-
-    std::string getTestU01BatteryTestBitW(Constants::Battery battery,
-                                          int testIndex);
+    tStringStringMap getTestVariantParamMap(Constants::Battery batt ,
+                                            int testId , uint variantIndex ,
+                                            const std::string & paramName);
 
 private:
-    /* JSON tag name inside config file */
-    // TBA!!!!
-
     /* Member variables */
     static const std::string objectInfo;
+    json configRoot;
 
-    /* Variables for Dieharder */
-    std::vector<int>            dhDefaultTests;
-    int                         dhDefaultPSamples = VALUE_INT_NOT_SET;
-    std::string                 dhDefaultArguments;
-    std::map<int , int>         dhTestPSamples;
-    std::map<int , std::string> dhTestArguments;
-
-    /* Variables for NIST STS */
-    std::vector<int>            stsDefaultTests;
-    std::string                 stsDefaultStreamSize;
-    std::string                 stsDefaultStreamCount;
-    std::map<int , std::string> stsTestStreamSize;
-    std::map<int , std::string> stsTestStreamCount;
-    std::map<int , std::string> stsTestBlockSize;
-
-    /* Variables for TestU01 */
-    /* Defaults */
-    std::map<Constants::Battery , int>                  tu01DefaultReps;
-    std::map<Constants::Battery , std::string>          tu01DefaultBitNB;
-    std::map<Constants::Battery , std::string>          tu01DefaultBitR;
-    std::map<Constants::Battery , std::string>          tu01DefaultBitS;
-    std::map<Constants::Battery , std::string>          tu01DefaultBitW;
-    std::map<Constants::Battery , std::vector<int>>     tu01DefaultTests;
-    /* Test specifics */
-    std::map<Constants::Battery , tIntIntMap>                       tu01TestReps;
-    std::map<Constants::Battery , std::map<int , tStringStringMap>> tu01TestParams;
-    std::map<Constants::Battery , tIntStringMap>                    tu01TestBitNB;
-    std::map<Constants::Battery , tIntStringMap>                    tu01TestBitR;
-    std::map<Constants::Battery , tIntStringMap>                    tu01TestBitS;
-    std::map<Constants::Battery , tIntStringMap>                    tu01TestBitW;
-
+    /* Methods */
     Configuration() {}
 
-    void loadDieharderVariables(const json::object_t & dhSettingsNode);
-    void loadNiststsVariables(const json::object_t & stsSettingsNode);
-    void loadTestU01Variables(const json::object_t & tu01SettingsNode);
+    json findBatterySettingsNode(const json & rootNode ,
+                                 Constants::Battery batt);
 
-    template <class K , class V>
-    static void getKeyAndValueToMap(const json::array_t & o ,
-                                    const std::string & key ,
-                                    const std::string & value ,
-                                    std::map<K , V> & map);
+    json findBatteryDefaultSettNode(const json & rootNode ,
+                                    Constants::Battery batt);
 
-    template <class T>
-    static T valueOrDefault(json::object_t o, const std::string & key, T && def);
+    json findBatteryTestSettNode(const json & rootNode ,
+                                 Constants::Battery batt);
 
-    static void getTestParams(const json::array_t & batteryNode,
-                              std::map<int, tStringStringMap> & map);
+    json findTestSpecificNode(const json & batteryNode ,
+                              Constants::Battery batt,
+                              int testId);
 
     std::vector<int> parseTestConstants(json::array_t node);
 };

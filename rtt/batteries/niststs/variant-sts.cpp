@@ -4,7 +4,7 @@ namespace rtt {
 namespace batteries {
 namespace niststs {
 
-std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIndex,
+std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                                               const GlobalContainer & cont) {
     std::unique_ptr<Variant> v (new Variant());
     auto battConf = cont.getBatteryConfiguration();
@@ -15,22 +15,22 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIndex,
     v->objectInfo =
             Constants::batteryToString(v->batt) +
             " - test " + Utils::itostr(v->testId) +
-            " - variant " + Utils::itostr(variantIndex);
+            " - variant " + Utils::itostr(variantIdx);
 
     v->binaryDataPath = cliOpt->getBinFilePath();
 
     v->streamSize = battConf->getTestVariantParamString(
-                        v->batt, testId, variantIndex,
+                        v->batt, testId, variantIdx,
                         Configuration::TAGNAME_STREAM_SIZE);
     if(v->streamSize.empty())
         throw RTTException(v->objectInfo , Strings::TEST_ERR_STREAM_SIZE_NOT_SET);
     v->streamCount = battConf->getTestVariantParamString(
-                         v->batt, testId, variantIndex,
+                         v->batt, testId, variantIdx,
                          Configuration::TAGNAME_STREAM_COUNT);
     if(v->streamCount.empty())
         throw RTTException(v->objectInfo , Strings::TEST_ERR_STREAM_COUNT_NOT_SET);
     v->blockLength = battConf->getTestVariantParamString(
-                         v->batt, testId, variantIndex,
+                         v->batt, testId, variantIdx,
                          Configuration::TAGNAME_BLOCK_LENGTH);
     v->adjustableBlockLength =
             std::get<3>(TestConstants::getNistStsTestData(v->batt, testId));

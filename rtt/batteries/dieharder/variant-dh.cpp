@@ -7,7 +7,7 @@ namespace dieharder {
 const int Test::OPTION_HEADER_FLAG      = 66047;
 const int Test::OPTION_FILE_GENERATOR   = 201;
 
-std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIndex,
+std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                                               const GlobalContainer & cont) {
     std::shared_ptr<Variant> v (new Variant());
     auto battConf = cont.getBatteryConfiguration();
@@ -18,18 +18,18 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIndex,
     v->objectInfo =
             Constants::batteryToString(v->batt) +
             " - test " + Utils::itostr(v->testId) +
-            " - variant " + Utils::itostr(variantIndex);
+            " - variant " + Utils::itostr(variantIdx);
 
     v->binaryDataPath = cliOpt->getBinFilePath();
 
     v->pSampleCount = battConf->getTestVariantsParamInt(
-                          v->batt, v->testId, variantIndex,
+                          v->batt, v->testId, variantIdx,
                           Configuration::TAGNAME_PSAMPLES);
     if(v->pSampleCount == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(v->objectInfo , Strings::TEST_ERR_PSAMPLES_NOT_SET);
 
     std::string arguments = battConf->getTestVariantParamString(
-                                v->batt, v->testId, variantIndex,
+                                v->batt, v->testId, variantIdx,
                                 Configuration::TAGNAME_ARGUMENTS);
     auto vArguments = Utils::split(arguments , ' ');
     if(vArguments.size() % 2 != 0)
@@ -43,6 +43,8 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIndex,
             throw RTTException(t->objectInfo , ex.what());
         }
     }
+
+    return v;
 }
 
 std::string Variant::getStdInput() const {

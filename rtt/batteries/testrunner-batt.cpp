@@ -39,7 +39,7 @@ std::mutex              threadState_mux;
 /* Functions */
 /*************/
 void TestRunner::executeTests(Logger * logger,
-                              std::vector<std::unique_ptr<ITest> > & tests,
+                              std::vector<std::unique_ptr<ITest>> & tests,
                               int maxThreads) {
     threadCount = maxThreads;
 

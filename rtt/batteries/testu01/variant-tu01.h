@@ -1,12 +1,15 @@
-#ifndef RTT_BATTERIES_NISTSTS_VARIANT_H
-#define RTT_BATTERIES_NISTSTS_VARIANT_H
+#ifndef RTT_BATTERIES_TESTU01_VARIANT_H
+#define RTT_BATTERIES_TESTU01_VARIANT_H
 
 #include "rtt/batteries/ivariant-batt.h"
 #include "rtt/batteries/testconstants.h"
 
 namespace rtt {
 namespace batteries {
-namespace niststs {
+namespace testu01 {
+
+/* Typedefs for parameter types */
+typedef std::pair<std::string , std::string> tParam;
 
 class Variant : public IVariant {
 public:
@@ -15,16 +18,13 @@ public:
 
 
 
-    std::string getCliArguments() const;
-
     std::string getStdInput() const;
+
+    std::string getCliArguments() const;
 
     std::vector<std::string> getUserSettings() const;
 
 private:
-    /* Variables */
-
-    // General fields
     std::string objectInfo;
     int testId;
     Constants::Battery batt;
@@ -34,11 +34,17 @@ private:
     std::string cliArguments;
     std::string stdInput;
 
-    // Nist sts specific fields
-    std::string streamSize;
-    std::string streamCount;
-    std::string blockLength;
-    bool adjustableBlockLength;
+    /* TestU01 specific */
+    std::vector<std::string> paramNames;
+    std::vector<std::string> statisticNames;
+    uint repetitions;
+    /* Only used in configuration of crush batteries */
+    std::vector<tParam> params;
+    /* Used in rabbit/alphabit battery */
+    std::string bit_nb;
+    std::string bit_r;
+    std::string bit_s;
+    std::string bit_w;
 
     /* Methods */
     Variant() {}
@@ -46,8 +52,8 @@ private:
     void buildStrings();
 };
 
-} // namespace niststs
+} // namespace testu01
 } // namespace batteries
 } // namespace rtt
 
-#endif // RTT_BATTERIES_NISTSTS_VARIANT_H
+#endif // RTT_BATTERIES_TESTU01_VARIANT_H

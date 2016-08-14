@@ -36,7 +36,7 @@ public:
     static const std::string TAGNAME_TEST_SPECIFIC_SETT;
     static const std::string TAGNAME_DEFAULT_TESTS;
     static const std::string TAGNAME_TEST_ID;
-    static const std::string TAGNAME_VARIATIONS;
+    static const std::string TAGNAME_VARIANTS;
     static const std::string TAGNAME_ARGUMENTS;
     static const std::string TAGNAME_PSAMPLES;
     static const std::string TAGNAME_STREAM_SIZE;
@@ -60,15 +60,15 @@ public:
     uint getTestVariantsCount(Constants::Battery batt , int testId);
 
     int getTestVariantsParamInt(Constants::Battery batt ,
-                                int testId , uint variantIndex ,
+                                int testId , uint variantIdx ,
                                 const std::string & paramName);
 
     std::string getTestVariantParamString(Constants::Battery batt ,
-                                          int testId , uint variantIndex ,
+                                          int testId , uint variantIdx ,
                                           const std::string & paramName);
 
     tStringStringMap getTestVariantParamMap(Constants::Battery batt ,
-                                            int testId , uint variantIndex ,
+                                            int testId , uint variantIdx ,
                                             const std::string & paramName);
 
 private:

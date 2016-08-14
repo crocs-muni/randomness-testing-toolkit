@@ -16,7 +16,8 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
     /* Cleaning result directory */
     Utils::rmDirFiles(t->resultSubDir);
 
-    uint varCount = t->batteryConfiguration->getTestVariationsCount(t->battery , t->testIndex);
+    uint varCount = t->batteryConfiguration->getTestVariationsCount(
+                        t->battery , t->testIndex);
     for(uint i = 0 ; i < varCount ; ++i) {
         t->variants.push_back(IVariant::getInstance(t->testIndex, i , cont));
     }

@@ -10,7 +10,7 @@ namespace dieharder {
 
 class Variant : public IVariant {
 public:
-    static std::unique_ptr<Variant> getInstance(int testId, uint variationIndex,
+    static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
                                                 const GlobalContainer & cont);
 
     std::string getStdInput() const;

@@ -12,6 +12,11 @@ std::unique_ptr<Test> Test::getInstance(int testIndex , const GlobalContainer & 
     t->logicName = std::get<0>(TestConstants::getDieharderTestData(
                                    t->battery , t->testIndex));
 
+    uint varCount = t->batteryConfiguration->getTestVariationsCount(
+                        t->battery, t->testIndex);
+    for(uint i = 0 ; i < varCount; ++i) {
+        t->variants.push_back(IVariant::getInstance(t->testIndex, i, cont));
+    }
 
     return t;
 }

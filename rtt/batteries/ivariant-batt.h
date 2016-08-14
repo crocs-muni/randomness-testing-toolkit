@@ -8,8 +8,7 @@ namespace batteries {
 
 class IVariant {
 public:
-    static std::unique_ptr<IVariant> getInstance(int testId ,
-                                                 uint variantIndex,
+    static std::unique_ptr<IVariant> getInstance(int testId, uint variantIdx,
                                                  const GlobalContainer & cont);
 
     virtual ~IVariant() {}

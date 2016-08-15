@@ -32,7 +32,7 @@ void IBattery::runTests() {
 
     logger->info(objectInfo + ": Test execution started!");
     /* Tests will create output file in output directory */
-    Utils::createDirectory(toolkitSettings->getLoggerBatteryDir(battery));
+    Utils::createDirectory(toolkitSettings->getLoggerBatteryDir(battId));
     TestRunner::executeTests(logger , std::ref(tests) , toolkitSettings->getExecMaximumThreads());
     logger->info(objectInfo + ": Test execution finished!");
     executed = true;
@@ -46,13 +46,13 @@ IBattery::IBattery(const GlobalContainer & container) {
     storage              = storage::IStorage::getInstance(container);
 
     creationTime = container.getCreationTime();
-    battery      = cliOptions->getBattery();
-    objectInfo   = Constants::batteryToString(battery);
+    battId       = cliOptions->getBattery();
+    objectInfo   = Constants::batteryToString(battId);
     logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + cliOptions->getBinFilePath());
 
     std::vector<int> testIndices = cliOptions->getTestConsts();
     if(testIndices.empty())
-        testIndices = batteryConfiguration->getBatteryDefaultTests(battery);
+        testIndices = batteryConfiguration->getBatteryDefaultTests(battId);
     if(testIndices.empty())
         throw RTTException(objectInfo , Strings::BATT_ERR_NO_TESTS);
 

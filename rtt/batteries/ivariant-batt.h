@@ -13,14 +13,24 @@ public:
 
     virtual ~IVariant() {}
 
-    virtual std::string getCliArguments() const = 0;
+    std::string getCliArguments() const;
 
-    virtual std::string getStdInput() const = 0;
+    std::string getStdInput() const;
 
-    virtual std::vector<std::string> getUserSettings() const = 0;
+    std::vector<std::string> getUserSettings() const;
 
 protected:
-    IVariant() {}
+    std::string objectInfo;
+    int testId;
+    uint variantIdx;
+    Constants::Battery battId;
+    std::string binaryDataPath;
+
+    std::vector<std::string> userSettings;
+    std::string cliArguments;
+    std::string stdInput;
+
+    IVariant(int testId, uint variantIdx, const GlobalContainer & cont);
 };
 
 } // namespace batteries

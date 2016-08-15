@@ -33,8 +33,8 @@ std::string Constants::batteryToString(Battery batteryConstant) {
     }
 }
 
-std::string Constants::batteryToStringShort(Battery batteryConstant) {
-    switch(batteryConstant) {
+std::string Constants::batteryToStringShort(Battery battId) {
+    switch(battId) {
     case Battery::DIEHARDER:
         return "dieharder";
     case Battery::NIST_STS:
@@ -56,8 +56,8 @@ std::string Constants::batteryToStringShort(Battery batteryConstant) {
     }
 }
 
-bool Constants::isInTU01CrushFamily(Constants::Battery batteryConstant) {
-    switch(batteryConstant) {
+bool Constants::isInTU01CrushFamily(Constants::Battery battId) {
+    switch(battId) {
         case Battery::DIEHARDER:
         case Battery::NIST_STS:
         case Battery::TU01_RABBIT:
@@ -73,8 +73,8 @@ bool Constants::isInTU01CrushFamily(Constants::Battery batteryConstant) {
     }
 }
 
-bool Constants::isInTU01BitFamily(Constants::Battery batteryConstant) {
-    switch(batteryConstant) {
+bool Constants::isInTU01BitFamily(Constants::Battery battId) {
+    switch(battId) {
         case Battery::DIEHARDER:
         case Battery::NIST_STS:
         case Battery::TU01_SMALLCRUSH:
@@ -90,8 +90,8 @@ bool Constants::isInTU01BitFamily(Constants::Battery batteryConstant) {
     }
 }
 
-bool Constants::isinTU01AlphabitFamily(Constants::Battery batteryConstant) {
-    switch(batteryConstant) {
+bool Constants::isinTU01AlphabitFamily(Constants::Battery battId) {
+    switch(battId) {
         case Battery::DIEHARDER:
         case Battery::NIST_STS:
         case Battery::TU01_SMALLCRUSH:

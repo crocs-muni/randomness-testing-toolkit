@@ -15,25 +15,7 @@ class Variant : public IVariant {
 public:
     static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
                                                 const GlobalContainer & cont);
-
-
-
-    std::string getStdInput() const;
-
-    std::string getCliArguments() const;
-
-    std::vector<std::string> getUserSettings() const;
-
 private:
-    std::string objectInfo;
-    int testId;
-    Constants::Battery batt;
-    std::string binaryDataPath;
-
-    std::vector<std::string> userSettings;
-    std::string cliArguments;
-    std::string stdInput;
-
     /* TestU01 specific */
     std::vector<std::string> paramNames;
     std::vector<std::string> statisticNames;
@@ -47,7 +29,10 @@ private:
     std::string bit_w;
 
     /* Methods */
-    Variant() {}
+    Variant(int testId, uint variantIdx,
+            const GlobalContainer & cont)
+        : IVariant(testId, variantIdx, cont)
+    {}
 
     void buildStrings();
 };

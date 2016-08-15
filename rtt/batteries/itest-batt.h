@@ -3,6 +3,7 @@
 
 #include "rtt/globalcontainer.h"
 #include "rtt/batteries/batteryoutput.h"
+#include "rtt/batteries/ivariant-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -11,8 +12,8 @@ typedef std::vector<double> tTestPvals;
 
 class ITest {
 public:
-    static std::unique_ptr<ITest> getInstance(int testIndex ,
-                                              const GlobalContainer & container);
+    static std::unique_ptr<ITest> getInstance(int testId,
+                                              const GlobalContainer & cont);
 
     virtual ~ITest() {}
 
@@ -40,7 +41,7 @@ public:
     std::vector<std::string> getBatteryWarnings();
 
 protected:
-    ITest(int testIndex , const GlobalContainer & container);
+    ITest(int testId , const GlobalContainer & cont);
 
     /* These fields will be set in the constructor */
     /* Pointers to global configurations */
@@ -48,17 +49,16 @@ protected:
     ToolkitSettings * toolkitSettings;
     Configuration * batteryConfiguration;
     Logger * logger;
+    /* Variations of the test */
+    std::vector<std::unique_ptr<IVariant>> variants;
     /* Test specific fields - will be set in constructor (base class) and
      * getInstance(derived classes) */
-    int testIndex;
-    Constants::Battery battery;
+    int testId;
+    Constants::Battery battId;
     std::string logicName;
     std::string logFilePath;
     std::string executablePath;
-    std::string binaryDataPath;//
     std::string objectInfo;
-    std::string batteryArgs;//
-    std::string batteryInput;//
     /* Will be set after test execution.
      * It is not extractable before execution. */
     bool executed = false;

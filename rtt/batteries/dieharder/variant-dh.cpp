@@ -4,59 +4,39 @@ namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-const int Test::OPTION_HEADER_FLAG      = 66047;
-const int Test::OPTION_FILE_GENERATOR   = 201;
+const int Variant::OPTION_HEADER_FLAG      = 66047;
+const int Variant::OPTION_FILE_GENERATOR   = 201;
 
 std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                                               const GlobalContainer & cont) {
-    std::shared_ptr<Variant> v (new Variant());
+    std::unique_ptr<Variant> v (new Variant(testId, variantIdx, cont));
     auto battConf = cont.getBatteryConfiguration();
-    auto cliOpt = cont.getCliOptions();
-    v->testId = testId;
-    v->batt = cliOpt->getBattery();
-
-    v->objectInfo =
-            Constants::batteryToString(v->batt) +
-            " - test " + Utils::itostr(v->testId) +
-            " - variant " + Utils::itostr(variantIdx);
-
-    v->binaryDataPath = cliOpt->getBinFilePath();
 
     v->pSampleCount = battConf->getTestVariantsParamInt(
-                          v->batt, v->testId, variantIdx,
+                          v->battId, v->testId, variantIdx,
                           Configuration::TAGNAME_PSAMPLES);
     if(v->pSampleCount == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(v->objectInfo , Strings::TEST_ERR_PSAMPLES_NOT_SET);
 
     std::string arguments = battConf->getTestVariantParamString(
-                                v->batt, v->testId, variantIdx,
+                                v->battId, v->testId, variantIdx,
                                 Configuration::TAGNAME_ARGUMENTS);
     auto vArguments = Utils::split(arguments , ' ');
     if(vArguments.size() % 2 != 0)
-        throw RTTException(t->objectInfo ,
+        throw RTTException(v->objectInfo ,
                            Strings::TEST_ERR_ARGS_BAD_FORMAT_OPT_WO_VAL);
     for(size_t i = 0 ; i < vArguments.size() ; i += 2) {
         try {
-            auto sett = Setting::getInstance(vArguments.at(i), vArguments.at(i + 1));
+            auto sett = Setting::getInstance(
+                            vArguments.at(i), vArguments.at(i + 1));
             v->settings.push_back(std::move(sett));
         } catch(std::runtime_error ex) {
-            throw RTTException(t->objectInfo , ex.what());
+            throw RTTException(v->objectInfo , ex.what());
         }
     }
 
+    v->buildStrings();
     return v;
-}
-
-std::string Variant::getStdInput() const {
-    return stdInput;
-}
-
-std::string Variant::getCliArguments() const {
-    return cliArguments;
-}
-
-std::vector<std::string> Variant::getUserSettings() const {
-    return userSettings;
 }
 
 void Variant::buildStrings() {
@@ -75,7 +55,7 @@ void Variant::buildStrings() {
     /* Set psample count */
     arguments << "-p " << pSampleCount << " ";
     /* Specify test */
-    arguments << "-d " << testIndex << " ";
+    arguments << "-d " << testId << " ";
     /* Specify header flag */
     arguments << "-D " << OPTION_HEADER_FLAG << " ";
     /* Specify binary file generator */

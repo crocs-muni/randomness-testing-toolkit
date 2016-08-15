@@ -28,7 +28,7 @@ public:
     *** Public methods ***
     ======================
     */
-    static std::unique_ptr<Test> getInstance(int testIndex ,
+    static std::unique_ptr<Test> getInstance(int testId ,
                                              const GlobalContainer & container);
 
     std::vector<std::string> getTestUserSettings() const;
@@ -66,7 +66,8 @@ private:
     ===============
     */
     Test(int testIndex , const GlobalContainer & container)
-        : ITest(testIndex , container) {}
+        : ITest(testIndex , container)
+    {}
 
     std::string createArgs() const;
 

@@ -23,7 +23,7 @@ public:
     *** Public methods ***
     ======================
     */
-    static std::unique_ptr<Test> getInstance(int testIndex ,
+    static std::unique_ptr<Test> getInstance(int testId ,
                                              const GlobalContainer & container);
 
     std::vector<std::string> getTestUserSettings() const;
@@ -34,21 +34,13 @@ public:
 
 private:
     /*
-    =================
-    *** Variables ***
-    =================
-    */
-    std::vector<std::unique_ptr<IVariant>> variants;
-
-    /*
     ===============
     *** Methods ***
     ===============
     */
     Test(int testIndex , const GlobalContainer & container)
-        : ITest(testIndex , container) {}
-
-    std::string createArgs() const;
+        : ITest(testIndex , container)
+    {}
 
     void processBatteryOutput();
 };

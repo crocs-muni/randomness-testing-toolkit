@@ -26,6 +26,33 @@ std::unique_ptr<IVariant> IVariant::getInstance(int testId, uint variantIdx,
     }
 }
 
+std::string IVariant::getCliArguments() const {
+    return cliArguments;
+}
+
+std::string IVariant::getStdInput() const {
+    return stdInput;
+}
+
+std::vector<std::string> IVariant::getUserSettings() const {
+    return userSettings;
+}
+
+IVariant::IVariant(int testId, uint variantIdx,
+                   const GlobalContainer & cont) {
+    this->testId        = testId;
+    this->variantIdx    = variantIdx;
+    battId              = cont.getCliOptions()->getBattery();
+    binaryDataPath      = cont.getCliOptions()->getBinFilePath();
+    objectInfo          =
+            Constants::batteryToString(battId) +
+            " - test " + Utils::itostr(testId) +
+            " - variant " + Utils::itostr(variantIdx);
+
+    if(binaryDataPath.empty())
+        raiseBugException(Strings::TEST_ERR_NO_BINARY_DATA);
+}
+
 
 
 } // namespace batteries

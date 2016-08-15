@@ -183,8 +183,7 @@ BatteryOutput TestRunner::executeBinary(Logger * logger,
          * Also will be essentially over as soon as the process finishes.
          * With this, pipes won't be filled and won't block underlying process. */
         BatteryOutput output;
-        std::thread reader(readOutput , /*std::ref(output) , std::ref(stderr) ,*/
-                           std::ref(output),
+        std::thread reader(readOutput , std::ref(output),
                            stdout_pipe , stderr_pipe);
 
         /* Incrementing number of threads waiting.

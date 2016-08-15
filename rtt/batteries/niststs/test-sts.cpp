@@ -10,25 +10,21 @@ std::unique_ptr<Test> Test::getInstance(int testIndex,
                                         const GlobalContainer & cont) {
     std::unique_ptr<Test> t (new Test(testIndex , cont));
 
-    t->logicName = std::get<0>(TestConstants::getNistStsTestData(t->battery , t->testIndex));
-    t->resultSubDir = std::get<1>(TestConstants::getNistStsTestData(t->battery , t->testIndex));
+    t->logicName = std::get<0>(TestConstants::getNistStsTestData(
+                                   t->battId , t->testId));
+    t->resultSubDir = std::get<1>(TestConstants::getNistStsTestData(
+                                      t->battId , t->testId));
 
     /* Cleaning result directory */
     Utils::rmDirFiles(t->resultSubDir);
-
-    uint varCount = t->batteryConfiguration->getTestVariationsCount(t->battery , t->testIndex);
-    for(uint i = 0 ; i < varCount ; ++i) {
-        t->variants.push_back(IVariant::getInstance(t->testIndex, i , cont));
-    }
-
     return t;
 }
 
 std::vector<std::string> Test::getTestUserSettings() const {
     raiseBugException("implementation underway");
     std::vector<std::vector<std::string>> rval;
-    for(const IVariant & var : variants)
-        rval.push_back(var.getUserSettings());
+    for(const auto & var : variants)
+        rval.push_back(var->getUserSettings());
 
     //return rval;
 }
@@ -66,47 +62,47 @@ std::string Test::createInput() const {
 }
 
 void Test::processBatteryOutput() {
-    try {
-        auto testLog = Utils::readFileToString(resultSubDir + "stats.txt");
-        batteryOutput.appendStdOut(testLog);
+//    try {
+//        auto testLog = Utils::readFileToString(resultSubDir + "stats.txt");
+//        batteryOutput.appendStdOut(testLog);
 
-        if(testIndex == 12 ||  /* Random excursions */
-           testIndex == 13 ) { /* Random excursions variant */
-            /* Random excursions tests are exceptions (of course they are)
-             * p-values must be read directly from log and their count must
-             * be divisible by subTestCount. Otherwise something happened. */
-            static const std::regex RE_PVALUE {"p[\\-_]value = ([0|1]?\\.[0-9]+?)\\n"};
-            auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
-            auto end = std::sregex_iterator();
-            int pValCount = std::distance(begin , end);
-            if(pValCount == 0) {
-                logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
-                //streamCount = "0";
-                return;
-            }
+//        if(testId == 12 ||  /* Random excursions */
+//           testId == 13 ) { /* Random excursions variant */
+//            /* Random excursions tests are exceptions (of course they are)
+//             * p-values must be read directly from log and their count must
+//             * be divisible by subTestCount. Otherwise something happened. */
+//            static const std::regex RE_PVALUE {"p[\\-_]value = ([0|1]?\\.[0-9]+?)\\n"};
+//            auto begin = std::sregex_iterator(testLog.begin() , testLog.end() , RE_PVALUE);
+//            auto end = std::sregex_iterator();
+//            int pValCount = std::distance(begin , end);
+//            if(pValCount == 0) {
+//                logger->warn(objectInfo + Strings::TEST_ERR_NO_PVALS_EXTRACTED);
+//                //streamCount = "0";
+//                return;
+//            }
 
-            /*if(pValCount % subTestCount != 0) {
-                logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
-                return;
-            }*/
-            //int strCount = pValCount / subTestCount;
-            //streamCount = Utils::itostr(strCount);
+//            if(pValCount % subTestCount != 0) {
+//                logger->warn(objectInfo + Strings::TEST_ERR_PVALS_BAD_COUNT);
+//                return;
+//            }
+//            int strCount = pValCount / subTestCount;
+//            streamCount = Utils::itostr(strCount);
 
-            tTestPvals allResults;
-            for( ; begin != end ; ++begin) {
-                std::smatch match = *begin;
-                allResults.push_back(Utils::strtod(match[1].str()));
-            }
+//            tTestPvals allResults;
+//            for( ; begin != end ; ++begin) {
+//                std::smatch match = *begin;
+//                allResults.push_back(Utils::strtod(match[1].str()));
+//            }
 
-            tTestPvals testResults;
-            for(int test = 0 ; test < /*subTestCount*/0 ; ++test) {
-                for(int i = test ; i < pValCount ; i += /*subTestCount*/0)
-                    testResults.push_back(allResults.at(i));
+//            tTestPvals testResults;
+//            for(int test = 0 ; test < subTestCount ; ++test) {
+//                for(int i = test ; i < pValCount ; i += subTestCount)
+//                    testResults.push_back(allResults.at(i));
 
-                results.push_back(std::move(testResults));
-                testResults.clear();
-            }
-        } else {
+//                results.push_back(std::move(testResults));
+//                testResults.clear();
+//            }
+//        } else {
 //            if(subTestCount == 1) {
 //                /* Only file results.txt will be processed */
 //                tTestPvals pVals = readPvals(resultSubDir + "results.txt");
@@ -123,12 +119,12 @@ void Test::processBatteryOutput() {
 //                    fName.str("");fName.clear();
 //                }
 //            }
-        }
+//        }
 
-        /* Preppending output from test run to test run */
-    } catch (std::runtime_error ex) {
-        logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
-    }
+//        /* Preppending output from test run to test run */
+//    } catch (std::runtime_error ex) {
+//        logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
+//    }
 }
 
 tTestPvals Test::readPvals(const std::string & fileName) {
@@ -148,7 +144,7 @@ tTestPvals Test::readPvals(const std::string & fileName) {
             throw std::runtime_error(Strings::TEST_ERR_PVAL_OUTSIDE_INTERVAL + fileName);
         /* This silly condition is here for random excursions test */
         /* Because when you can't apply test it is feasible to give 0 as answer *rolls eyes* */
-        if(pVal == 0 && (testIndex == 12 || testIndex == 13))
+        if(pVal == 0 && (testId == 12 || testId == 13))
             continue;
 
         vecPval.push_back(pVal);

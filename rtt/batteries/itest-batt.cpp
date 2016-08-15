@@ -9,29 +9,33 @@ namespace batteries {
 
 std::mutex outputFile_mux;
 
-std::unique_ptr<ITest> ITest::getInstance(int testIndex , const GlobalContainer & container) {
-    switch(container.getCliOptions()->getBattery()) {
-    case Constants::Battery::DIEHARDER:
-        return dieharder::Test::getInstance(testIndex , container);
-    case Constants::Battery::NIST_STS:
-        return niststs::Test::getInstance(testIndex , container);
-    case Constants::Battery::TU01_SMALLCRUSH:
-    case Constants::Battery::TU01_CRUSH:
-    case Constants::Battery::TU01_BIGCRUSH:
-    case Constants::Battery::TU01_RABBIT:
-    case Constants::Battery::TU01_ALPHABIT:
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:
-        return testu01::Test::getInstance(testIndex , container);
-    default:
-        raiseBugException(Strings::ERR_INVALID_BATTERY);
+std::unique_ptr<ITest> ITest::getInstance(int testId,
+                                          const GlobalContainer & cont) {
+    switch(cont.getCliOptions()->getBattery()) {
+        case Constants::Battery::DIEHARDER:
+            return dieharder::Test::getInstance(testId , cont);
+        case Constants::Battery::NIST_STS:
+            return niststs::Test::getInstance(testId , cont);
+        case Constants::Battery::TU01_SMALLCRUSH:
+        case Constants::Battery::TU01_CRUSH:
+        case Constants::Battery::TU01_BIGCRUSH:
+        case Constants::Battery::TU01_RABBIT:
+        case Constants::Battery::TU01_ALPHABIT:
+        case Constants::Battery::TU01_BLOCK_ALPHABIT:
+            return testu01::Test::getInstance(testId , cont);
+        default:
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
 }
 
 void ITest::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
-    batteryOutput = TestRunner::executeBinary(logger , objectInfo , executablePath ,
-                                              batteryArgs , batteryInput);
+    //batteryOutput = TestRunner::executeBinary(logger , objectInfo , executablePath ,
+    //                                          batteryArgs , batteryInput);
+    batteryOutput = TestRunner::executeBinary(logger, objectInfo, executablePath,
+                                              variants.at(0)->getCliArguments(),
+                                              variants.at(0)->getStdInput());
 
     /* p-values will be extracted from logs and stored in results */
     processBatteryOutput();
@@ -62,7 +66,7 @@ std::string ITest::getLogicName() const {
 }
 
 int ITest::getTestIndex() const {
-    return testIndex;
+    return testId;
 }
 
 std::vector<tTestPvals> ITest::getResults() const {
@@ -93,28 +97,31 @@ std::vector<std::string> ITest::getBatteryWarnings() {
     return batteryOutput.getWarnings();
 }
 
-ITest::ITest(int testIndex, const GlobalContainer & container) {
-    cliOptions           = container.getCliOptions();
-    toolkitSettings      = container.getToolkitSettings();
-    batteryConfiguration = container.getBatteryConfiguration();
-    logger               = container.getLogger();
-    this->testIndex      = testIndex;
-    battery              = cliOptions->getBattery();
-    binaryDataPath       = cliOptions->getBinFilePath();
-    executablePath       = toolkitSettings->getBinaryBattery(battery);
-    logFilePath          = Utils::createLogFileName(container.getCreationTime(),
-                                                    toolkitSettings->getLoggerBatteryDir(battery),
-                                                    binaryDataPath);
+ITest::ITest(int testId, const GlobalContainer & cont) {
+    cliOptions           = cont.getCliOptions();
+    toolkitSettings      = cont.getToolkitSettings();
+    batteryConfiguration = cont.getBatteryConfiguration();
+    logger               = cont.getLogger();
+    this->testId         = testId;
+    battId               = cliOptions->getBattery();
+    executablePath       = toolkitSettings->getBinaryBattery(battId);
+    logFilePath          =
+            Utils::createLogFileName(
+                cont.getCreationTime(),
+                toolkitSettings->getLoggerBatteryDir(battId),
+                cliOptions->getBinFilePath());
 
     objectInfo =
-            Constants::batteryToString(battery) +
-            " - test " + Utils::itostr(testIndex);
-
-    if(binaryDataPath.empty())
-        raiseBugException(Strings::TEST_ERR_NO_BINARY_DATA);
+            Constants::batteryToString(battId) +
+            " - test " + Utils::itostr(testId);
 
     if(executablePath.empty())
         raiseBugException(Strings::TEST_ERR_NO_EXECUTABLE);
+
+    uint varCount = batteryConfiguration->getTestVariantsCount(battId, testId);
+    for(uint varIdx = 0; varIdx < varCount; ++varIdx) {
+        variants.push_back(IVariant::getInstance(testId, varIdx, cont));
+    }
 }
 
 } // namespace batteries

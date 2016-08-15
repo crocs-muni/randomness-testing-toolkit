@@ -17,7 +17,7 @@ const std::string Configuration::TAGNAME_DEFAULTS           = "defaults";
 const std::string Configuration::TAGNAME_TEST_SPECIFIC_SETT = "test-specific-settings";
 const std::string Configuration::TAGNAME_DEFAULT_TESTS      = "test-ids";
 const std::string Configuration::TAGNAME_TEST_ID            = "test-id";
-const std::string Configuration::TAGNAME_VARIATIONS         = "variants";
+const std::string Configuration::TAGNAME_VARIANTS           = "variants";
 const std::string Configuration::TAGNAME_ARGUMENTS          = "arguments";
 const std::string Configuration::TAGNAME_PSAMPLES           = "psamples";
 const std::string Configuration::TAGNAME_STREAM_SIZE        = "stream-size";
@@ -58,14 +58,14 @@ Configuration Configuration::getInstance(const std::string & configFileName) {
 
 uint Configuration::getTestVariantsCount(Constants::Battery batt, int testId) {
     json testNode = findTestSpecificNode(configRoot , batt , testId);
-    if(testNode.count(TAGNAME_VARIATIONS) == 1)
-        return testNode.at(TAGNAME_VARIATIONS).size();
+    if(testNode.count(TAGNAME_VARIANTS) == 1)
+        return testNode.at(TAGNAME_VARIANTS).size();
 
     return 0;
 }
 
 int Configuration::getTestVariantsParamInt(Constants::Battery batt,
-                                           int testId, uint variantIndex,
+                                           int testId, uint variantIdx,
                                            const std::string & paramName) {
     int rval = VALUE_INT_NOT_SET;
 
@@ -80,11 +80,11 @@ int Configuration::getTestVariantsParamInt(Constants::Battery batt,
         rval = nTest.at(paramName);
 
     /* Variation specific value if any */
-    if(nTest.count(TAGNAME_VARIATIONS) == 1) {
-        const json & nVariations = nTest.at(TAGNAME_VARIATIONS);
-        if(nVariations.size() > variantIndex) {
-            if(nVariations.at(variantIndex).count(paramName) == 1)
-                rval = nVariations.at(variantIndex).at(paramName);
+    if(nTest.count(TAGNAME_VARIANTS) == 1) {
+        const json & nVariations = nTest.at(TAGNAME_VARIANTS);
+        if(nVariations.size() > variantIdx) {
+            if(nVariations.at(variantIdx).count(paramName) == 1)
+                rval = nVariations.at(variantIdx).at(paramName);
         }
     }
 
@@ -92,7 +92,7 @@ int Configuration::getTestVariantsParamInt(Constants::Battery batt,
 }
 
 std::string Configuration::getTestVariantParamString(Constants::Battery batt,
-                                                     int testId, uint variantIndex,
+                                                     int testId, uint variantIdx,
                                                      const std::string & paramName) {
     std::string rval;
 
@@ -107,11 +107,11 @@ std::string Configuration::getTestVariantParamString(Constants::Battery batt,
         rval = nTest.at(paramName);
 
     /* Variation specific value if any */
-    if(nTest.count(TAGNAME_VARIATIONS) == 1) {
-        const json & nVariations = nTest.at(TAGNAME_VARIATIONS);
-        if(nVariations.size() > variantIndex) {
-            if(nVariations.at(variantIndex).count(paramName) == 1)
-                rval = nVariations.at(variantIndex).at(paramName);
+    if(nTest.count(TAGNAME_VARIANTS) == 1) {
+        const json & nVariations = nTest.at(TAGNAME_VARIANTS);
+        if(nVariations.size() > variantIdx) {
+            if(nVariations.at(variantIdx).count(paramName) == 1)
+                rval = nVariations.at(variantIdx).at(paramName);
         }
     }
 
@@ -119,7 +119,7 @@ std::string Configuration::getTestVariantParamString(Constants::Battery batt,
 }
 
 tStringStringMap Configuration::getTestVariantParamMap(Constants::Battery batt,
-                                                       int testId, uint variantIndex,
+                                                       int testId, uint variantIdx,
                                                        const std::string & paramName) {
     json nParams = json::object();
 
@@ -134,11 +134,11 @@ tStringStringMap Configuration::getTestVariantParamMap(Constants::Battery batt,
         nParams = nTest.at(paramName);
 
     /* Variation specific value if any */
-    if(nTest.count(TAGNAME_VARIATIONS) == 1) {
-        const json & nVariations = nTest.at(TAGNAME_VARIATIONS);
-        if(nVariations.size() > variantIndex) {
-            if(nVariations.at(variantIndex).count(paramName) == 1)
-                nParams = nVariations.at(variantIndex).at(paramName);
+    if(nTest.count(TAGNAME_VARIANTS) == 1) {
+        const json & nVariations = nTest.at(TAGNAME_VARIANTS);
+        if(nVariations.size() > variantIdx) {
+            if(nVariations.at(variantIdx).count(paramName) == 1)
+                nParams = nVariations.at(variantIdx).at(paramName);
         }
     }
 

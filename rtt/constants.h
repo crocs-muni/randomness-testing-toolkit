@@ -40,9 +40,16 @@ public:
     ///////////////////////////////////////////////
     /********* Toolkit global methods ************/
     ///////////////////////////////////////////////
+    /* Some battery constants utility methods */
     static std::string batteryToString(Battery batteryConstant);
 
-    static std::string batteryToStringShort(Battery batteryConstant);
+    static std::string batteryToStringShort(Battery battId);
+
+    static bool isInTU01CrushFamily(Battery battId);
+
+    static bool isInTU01BitFamily(Battery battId);
+
+    static bool isinTU01AlphabitFamily(Battery battId);
 
 private:
     Constants () {}

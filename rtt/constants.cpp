@@ -33,8 +33,8 @@ std::string Constants::batteryToString(Battery batteryConstant) {
     }
 }
 
-std::string Constants::batteryToStringShort(Battery batteryConstant) {
-    switch(batteryConstant) {
+std::string Constants::batteryToStringShort(Battery battId) {
+    switch(battId) {
     case Battery::DIEHARDER:
         return "dieharder";
     case Battery::NIST_STS:
@@ -53,6 +53,57 @@ std::string Constants::batteryToStringShort(Battery batteryConstant) {
         return "tu01_blockalphabit";
     default:
         raiseBugException(Strings::ERR_INVALID_BATTERY);
+    }
+}
+
+bool Constants::isInTU01CrushFamily(Constants::Battery battId) {
+    switch(battId) {
+        case Battery::DIEHARDER:
+        case Battery::NIST_STS:
+        case Battery::TU01_RABBIT:
+        case Battery::TU01_ALPHABIT:
+        case Battery::TU01_BLOCK_ALPHABIT:
+            return false;
+        case Battery::TU01_SMALLCRUSH:
+        case Battery::TU01_CRUSH:
+        case Battery::TU01_BIGCRUSH:
+            return true;
+        default:
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
+    }
+}
+
+bool Constants::isInTU01BitFamily(Constants::Battery battId) {
+    switch(battId) {
+        case Battery::DIEHARDER:
+        case Battery::NIST_STS:
+        case Battery::TU01_SMALLCRUSH:
+        case Battery::TU01_CRUSH:
+        case Battery::TU01_BIGCRUSH:
+            return false;
+        case Battery::TU01_RABBIT:
+        case Battery::TU01_ALPHABIT:
+        case Battery::TU01_BLOCK_ALPHABIT:
+            return true;
+        default:
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
+    }
+}
+
+bool Constants::isinTU01AlphabitFamily(Constants::Battery battId) {
+    switch(battId) {
+        case Battery::DIEHARDER:
+        case Battery::NIST_STS:
+        case Battery::TU01_SMALLCRUSH:
+        case Battery::TU01_CRUSH:
+        case Battery::TU01_BIGCRUSH:
+        case Battery::TU01_RABBIT:
+            return false;
+        case Battery::TU01_ALPHABIT:
+        case Battery::TU01_BLOCK_ALPHABIT:
+            return true;
+        default:
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
 }
 

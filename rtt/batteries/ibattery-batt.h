@@ -32,7 +32,7 @@ protected:
     Logger * logger;
     /* Variables initialized in getInstance() */
     time_t creationTime;
-    Constants::Battery battery;
+    Constants::Battery battId;
     std::string objectInfo;
     std::unique_ptr<storage::IStorage> storage;
     /* Battery is keeping track of tests set to execution.

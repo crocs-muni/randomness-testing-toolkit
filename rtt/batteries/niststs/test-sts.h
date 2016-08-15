@@ -26,7 +26,7 @@ public:
     *** Public methods ***
     ======================
     */
-    static std::unique_ptr<Test> getInstance(int testIndex ,
+    static std::unique_ptr<Test> getInstance(int testId ,
                                              const GlobalContainer & cont);
 
     std::vector<std::string> getTestUserSettings() const;

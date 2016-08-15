@@ -8,6 +8,7 @@
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/dieharder/setting-dh.h"
 #include "rtt/batteries/testconstants.h"
+#include "rtt/batteries/ivariant-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -22,7 +23,7 @@ public:
     *** Public methods ***
     ======================
     */
-    static std::unique_ptr<Test> getInstance(int testIndex ,
+    static std::unique_ptr<Test> getInstance(int testId ,
                                              const GlobalContainer & container);
 
     std::vector<std::string> getTestUserSettings() const;
@@ -33,20 +34,13 @@ public:
 
 private:
     /*
-    =================
-    *** Variables ***
-    =================
-    */
-
-    /*
     ===============
     *** Methods ***
     ===============
     */
     Test(int testIndex , const GlobalContainer & container)
-        : ITest(testIndex , container) {}
-
-    std::string createArgs() const;
+        : ITest(testIndex , container)
+    {}
 
     void processBatteryOutput();
 };

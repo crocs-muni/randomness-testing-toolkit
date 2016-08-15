@@ -11,6 +11,7 @@
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/testrunner-batt.h"
 #include "rtt/batteries/testconstants.h"
+#include "rtt/batteries/ivariant-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -27,7 +28,7 @@ public:
     *** Public methods ***
     ======================
     */
-    static std::unique_ptr<Test> getInstance(int testIndex ,
+    static std::unique_ptr<Test> getInstance(int testId ,
                                              const GlobalContainer & container);
 
     std::vector<std::string> getTestUserSettings() const;
@@ -48,18 +49,7 @@ private:
     *** Variables ***
     =================
     */
-    /* These fields will be set after initialization in */
-    /* getInstance() */
-    tStringVector paramNames;
-    tStringVector statisticNames;
-    uint repetitions;
-    /* Only used in configuration of crush batteries */
-    std::vector<tParam> params;
-    /* Used in rabbit/alphabit battery */
-    std::string bit_nb;
-    std::string bit_r;
-    std::string bit_s;
-    std::string bit_w;
+    std::vector<IVariant> variants;
     /* Following vars will be set after test execution */
     /* Number of statistics calculated in each test
      * resulting pval count = reps*statCount*subTestCount */
@@ -76,7 +66,8 @@ private:
     ===============
     */
     Test(int testIndex , const GlobalContainer & container)
-        : ITest(testIndex , container) {}
+        : ITest(testIndex , container)
+    {}
 
     std::string createArgs() const;
 

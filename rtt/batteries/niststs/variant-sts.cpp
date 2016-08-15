@@ -4,36 +4,26 @@ namespace rtt {
 namespace batteries {
 namespace niststs {
 
-std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIndex,
+std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                                               const GlobalContainer & cont) {
-    std::unique_ptr<Variant> v (new Variant());
+    std::unique_ptr<Variant> v (new Variant(testId, variantIdx, cont));
     auto battConf = cont.getBatteryConfiguration();
-    auto cliOpt = cont.getCliOptions();
-    v->testId = testId;
-    v->batt = cliOpt->getBattery();
-
-    v->objectInfo =
-            Constants::batteryToString(v->batt) +
-            " - test " + Utils::itostr(v->testId) +
-            " - variant " + Utils::itostr(variantIndex);
-
-    v->binaryDataPath = cliOpt->getBinFilePath();
 
     v->streamSize = battConf->getTestVariantParamString(
-                        v->batt, testId, variantIndex,
+                        v->battId, testId, variantIdx,
                         Configuration::TAGNAME_STREAM_SIZE);
     if(v->streamSize.empty())
         throw RTTException(v->objectInfo , Strings::TEST_ERR_STREAM_SIZE_NOT_SET);
     v->streamCount = battConf->getTestVariantParamString(
-                         v->batt, testId, variantIndex,
+                         v->battId, testId, variantIdx,
                          Configuration::TAGNAME_STREAM_COUNT);
     if(v->streamCount.empty())
         throw RTTException(v->objectInfo , Strings::TEST_ERR_STREAM_COUNT_NOT_SET);
     v->blockLength = battConf->getTestVariantParamString(
-                         v->batt, testId, variantIndex,
+                         v->battId, testId, variantIdx,
                          Configuration::TAGNAME_BLOCK_LENGTH);
     v->adjustableBlockLength =
-            std::get<3>(TestConstants::getNistStsTestData(v->batt, testId));
+            std::get<3>(TestConstants::getNistStsTestData(v->battId, testId));
 
     v->buildStrings();
     return v;
@@ -89,18 +79,6 @@ void Variant::buildStrings() {
     if(adjustableBlockLength && !blockLength.empty())
         sett << "Block length: " << blockLength;
     userSettings = Utils::split(sett.str() , '\n');
-}
-
-std::vector<std::string> Variant::getUserSettings() const {
-    return userSettings;
-}
-
-std::string Variant::getStdInput() const {
-    return stdInput;
-}
-
-std::string Variant::getCliArguments() const {
-    return cliArguments;
 }
 
 } // namespace niststs

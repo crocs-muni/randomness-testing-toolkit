@@ -15,7 +15,7 @@
 #include <atomic>
 
 #include "rtt/logger.h"
-#include "rtt/batteries/itest-batt.h"
+#include "rtt/batteries/ivariant-batt.h"
 #include "rtt/batteries/batteryoutput.h"
 
 namespace rtt {
@@ -46,19 +46,19 @@ public:
      * creates one threadManager and receives and hands out IDs of
      * finished child processes of RTT. */
     static void executeTests(Logger * logger,
-                             std::vector<std::unique_ptr<ITest> > & tests, int maxThreads);
+                             std::vector<IVariant *> & variants, int maxThreads);
 
     /* Called from test code in method execute. Thread is not created
      * directly from this method, but from test's execute. */
-    static /*std::string*/ BatteryOutput executeBinary(Logger * logger,
-                                     const std::string & objectInfo,
-                                     const std::string & binaryPath,
-                                     const std::string & arguments,
-                                     const std::string & input = "");
+    static BatteryOutput executeBinary(Logger * logger,
+                                       const std::string & objectInfo,
+                                       const std::string & binaryPath,
+                                       const std::string & arguments,
+                                       const std::string & input);
 private:
     /* Manages creation of maximum number of threads. After creation
      * wait for the threads to end and joins them. */
-    static void threadManager(std::vector<std::unique_ptr<ITest>> & tests);
+    static void threadManager(std::vector<IVariant *> & variants);
 
     static void readOutput(BatteryOutput & output,
                            int * stdout_pipe, int * stderr_pipe);

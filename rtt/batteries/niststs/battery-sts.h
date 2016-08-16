@@ -4,7 +4,6 @@
 #include <algorithm>
 
 #include "libs/cephes/cephes.h"
-
 #include "rtt/batteries/ibattery-batt.h"
 
 namespace rtt {

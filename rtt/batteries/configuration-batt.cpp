@@ -81,10 +81,10 @@ int Configuration::getTestVariantsParamInt(Constants::Battery batt,
 
     /* Variation specific value if any */
     if(nTest.count(TAGNAME_VARIANTS) == 1) {
-        const json & nVariations = nTest.at(TAGNAME_VARIANTS);
-        if(nVariations.size() > variantIdx) {
-            if(nVariations.at(variantIdx).count(paramName) == 1)
-                rval = nVariations.at(variantIdx).at(paramName);
+        const json & nVariants = nTest.at(TAGNAME_VARIANTS);
+        if(nVariants.size() > variantIdx) {
+            if(nVariants.at(variantIdx).count(paramName) == 1)
+                rval = nVariants.at(variantIdx).at(paramName);
         }
     }
 
@@ -108,10 +108,10 @@ std::string Configuration::getTestVariantParamString(Constants::Battery batt,
 
     /* Variation specific value if any */
     if(nTest.count(TAGNAME_VARIANTS) == 1) {
-        const json & nVariations = nTest.at(TAGNAME_VARIANTS);
-        if(nVariations.size() > variantIdx) {
-            if(nVariations.at(variantIdx).count(paramName) == 1)
-                rval = nVariations.at(variantIdx).at(paramName);
+        const json & nVariants = nTest.at(TAGNAME_VARIANTS);
+        if(nVariants.size() > variantIdx) {
+            if(nVariants.at(variantIdx).count(paramName) == 1)
+                rval = nVariants.at(variantIdx).at(paramName);
         }
     }
 
@@ -135,10 +135,10 @@ tStringStringMap Configuration::getTestVariantParamMap(Constants::Battery batt,
 
     /* Variation specific value if any */
     if(nTest.count(TAGNAME_VARIANTS) == 1) {
-        const json & nVariations = nTest.at(TAGNAME_VARIANTS);
-        if(nVariations.size() > variantIdx) {
-            if(nVariations.at(variantIdx).count(paramName) == 1)
-                nParams = nVariations.at(variantIdx).at(paramName);
+        const json & nVariants = nTest.at(TAGNAME_VARIANTS);
+        if(nVariants.size() > variantIdx) {
+            if(nVariants.at(variantIdx).count(paramName) == 1)
+                nParams = nVariants.at(variantIdx).at(paramName);
         }
     }
 

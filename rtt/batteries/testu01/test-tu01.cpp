@@ -4,14 +4,13 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-std::mutex outputFile_mux;
-
 std::unique_ptr<Test> Test::getInstance(int testIndex ,
                                         const GlobalContainer & container) {
     std::unique_ptr<Test> t (new Test(testIndex , container));
 
     t->logicName =
             std::get<0>(TestConstants::getTu01TestData(t->battId , t->testId));
+
     return t;
 }
 

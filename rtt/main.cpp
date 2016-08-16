@@ -73,10 +73,12 @@ int main (int argc , char * argv[]) try {
     /* A bit clumsy logger initialization */
     /* I should really change it to something more elegant */
     container.initLogger("Main_Application" ,
-                         Utils::createLogFileName(container.getCreationTime() ,
-                                                  container.getToolkitSettings()->getLoggerRunLogDir() ,
-                                                  container.getCliOptions()->getBinFilePath() ,
-                                                  Constants::batteryToStringShort(container.getCliOptions()->getBattery())),
+                         Utils::createLogFileName(
+                             container.getCreationTime() ,
+                             container.getToolkitSettings()->getLoggerRunLogDir() ,
+                             container.getCliOptions()->getBinFilePath() ,
+                             Constants::batteryToStringShort(
+                                 container.getCliOptions()->getBatteryId())),
                          true);
 
     /* Actual functionality will be here... in time. */

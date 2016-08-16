@@ -61,7 +61,7 @@ private:
     ToolkitSettings * toolkitSettings;
 
     time_t creationTime;
-    Constants::Battery batteryConstant;
+    Constants::Battery battId;
     std::string inFilePath;
     std::string outFilePath;
     std::string mainOutFilePath;

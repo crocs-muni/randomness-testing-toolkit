@@ -1,17 +1,15 @@
 #ifndef RTT_IBATTERY_H
 #define RTT_IBATTERY_H
 
-#include "rtt/globalcontainer.h"
 #include "rtt/storage/istorage.h"
 #include "rtt/batteries/itest-batt.h"
-#include "rtt/batteries/testrunner-batt.h"
 
 namespace rtt {
 namespace batteries {
 
 class IBattery {
 public:
-    static std::unique_ptr<IBattery> getInstance(const GlobalContainer & container);
+    static std::unique_ptr<IBattery> getInstance(const GlobalContainer & cont);
 
     void runTests();
 
@@ -20,7 +18,7 @@ public:
     virtual void processStoredResults() = 0;
 
 protected:
-    IBattery(const GlobalContainer & container);
+    IBattery(const GlobalContainer & cont);
 
     /* Variables common for all batteries. Set in getInstance().
      * Used by batteries in later stages. */

@@ -1,5 +1,4 @@
-#include "battery-tu01.h"
-#include "rtt/batteries/testu01/test-tu01.h"
+#include "rtt/batteries/testu01/battery-tu01.h"
 
 namespace rtt {
 namespace batteries {

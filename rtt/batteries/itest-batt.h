@@ -1,8 +1,6 @@
 #ifndef RTT_BATTERIES_ITEST_H
 #define RTT_BATTERIES_ITEST_H
 
-#include "rtt/globalcontainer.h"
-#include "rtt/batteries/batteryoutput.h"
 #include "rtt/batteries/ivariant-batt.h"
 
 namespace rtt {
@@ -23,8 +21,6 @@ public:
 
     virtual std::vector<std::string> getStatistics() const = 0;
 
-    void execute();
-
     /* Getters for results and some variables */
     bool wasExecuted() const;
 
@@ -39,6 +35,8 @@ public:
     std::vector<std::string> getBatteryErrors();
 
     std::vector<std::string> getBatteryWarnings();
+
+    std::vector<IVariant*> getVariants() const;
 
 protected:
     ITest(int testId , const GlobalContainer & cont);
@@ -57,12 +55,10 @@ protected:
     Constants::Battery battId;
     std::string logicName;
     std::string logFilePath;
-    std::string executablePath;
     std::string objectInfo;
     /* Will be set after test execution.
      * It is not extractable before execution. */
     bool executed = false;
-    BatteryOutput batteryOutput;
     std::vector<tTestPvals> results;
 
 private:

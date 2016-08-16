@@ -2,7 +2,6 @@
 #define RTT_BATTERIES_NISTSTS_VARIANT_H
 
 #include "rtt/batteries/ivariant-batt.h"
-#include "rtt/batteries/testconstants.h"
 
 namespace rtt {
 namespace batteries {

@@ -97,8 +97,6 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     if(options.binFilePath.empty())
         throw RTTException(options.objectInfo ,
                            "option \"-f\" must be set in arguments");
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Commented out only for testing!!
 
     if(!Utils::fileExist(options.binFilePath))
         throw RTTException(options.objectInfo ,
@@ -122,7 +120,7 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     return options;
 }
 
-Constants::Battery CliOptions::getBattery() const {
+Constants::Battery CliOptions::getBatteryId() const {
     return battery;
 }
 

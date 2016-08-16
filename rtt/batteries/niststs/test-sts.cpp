@@ -4,8 +4,6 @@ namespace rtt {
 namespace batteries {
 namespace niststs {
 
-std::mutex outputFile_mux;
-
 std::unique_ptr<Test> Test::getInstance(int testIndex,
                                         const GlobalContainer & cont) {
     std::unique_ptr<Test> t (new Test(testIndex , cont));

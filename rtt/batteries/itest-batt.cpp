@@ -7,11 +7,9 @@
 namespace rtt {
 namespace batteries {
 
-std::mutex outputFile_mux;
-
 std::unique_ptr<ITest> ITest::getInstance(int testId,
                                           const GlobalContainer & cont) {
-    switch(cont.getCliOptions()->getBattery()) {
+    switch(cont.getCliOptions()->getBatteryId()) {
         case Constants::Battery::DIEHARDER:
             return dieharder::Test::getInstance(testId , cont);
         case Constants::Battery::NIST_STS:
@@ -26,35 +24,6 @@ std::unique_ptr<ITest> ITest::getInstance(int testId,
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
-}
-
-void ITest::execute() {
-    /* This method is turned into thread.
-     * Will deadlock if run without main thread. */
-    //batteryOutput = TestRunner::executeBinary(logger , objectInfo , executablePath ,
-    //                                          batteryArgs , batteryInput);
-    batteryOutput = TestRunner::executeBinary(logger, objectInfo, executablePath,
-                                              variants.at(0)->getCliArguments(),
-                                              variants.at(0)->getStdInput());
-
-    /* p-values will be extracted from logs and stored in results */
-    processBatteryOutput();
-
-    batteryOutput.doDetection();
-    if(!batteryOutput.getStdErr().empty())
-        logger->warn(objectInfo + ": execution of test produced error output. Inspect logs.");
-    if(!batteryOutput.getErrors().empty())
-        logger->warn(objectInfo + ": test output contains errors.");
-    if(!batteryOutput.getWarnings().empty())
-        logger->warn(objectInfo + ": test output contains warnings.");
-
-    /* Store test output into file */
-    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdOut());
-    Utils::appendStringToFile(logFilePath , batteryOutput.getStdErr());
-    outputFile_lock.unlock();
-
-    executed = true;
 }
 
 bool ITest::wasExecuted() const {
@@ -80,21 +49,32 @@ std::string ITest::getBatteryStdErr() const {
     if(!executed)
         throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
 
-    return batteryOutput.getStdErr();
+    //return batteryOutput.at(0).getStdErr();
+    return {};
 }
 
 std::vector<std::string> ITest::getBatteryErrors() {
     if(!executed)
         throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
 
-    return batteryOutput.getErrors();
+    //return batteryOutput.at(0).getErrors();
+    return {};
 }
 
 std::vector<std::string> ITest::getBatteryWarnings() {
     if(!executed)
         throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
 
-    return batteryOutput.getWarnings();
+    //return batteryOutput.at(0).getWarnings();
+    return {};
+}
+
+std::vector<IVariant *> ITest::getVariants() const {
+    std::vector<IVariant *> rval;
+    for(const auto & el : variants)
+        rval.push_back(el.get());
+
+    return rval;
 }
 
 ITest::ITest(int testId, const GlobalContainer & cont) {
@@ -103,8 +83,7 @@ ITest::ITest(int testId, const GlobalContainer & cont) {
     batteryConfiguration = cont.getBatteryConfiguration();
     logger               = cont.getLogger();
     this->testId         = testId;
-    battId               = cliOptions->getBattery();
-    executablePath       = toolkitSettings->getBinaryBattery(battId);
+    battId               = cliOptions->getBatteryId();
     logFilePath          =
             Utils::createLogFileName(
                 cont.getCreationTime(),
@@ -115,12 +94,14 @@ ITest::ITest(int testId, const GlobalContainer & cont) {
             Constants::batteryToString(battId) +
             " - test " + Utils::itostr(testId);
 
-    if(executablePath.empty())
-        raiseBugException(Strings::TEST_ERR_NO_EXECUTABLE);
+
 
     uint varCount = batteryConfiguration->getTestVariantsCount(battId, testId);
-    for(uint varIdx = 0; varIdx < varCount; ++varIdx) {
-        variants.push_back(IVariant::getInstance(testId, varIdx, cont));
+    if(varCount == 0) {
+        variants.push_back(IVariant::getInstance(testId, 0, cont));
+    } else {
+        for(uint varIdx = 0; varIdx < varCount; ++varIdx)
+            variants.push_back(IVariant::getInstance(testId, varIdx, cont));
     }
 }
 

@@ -2,7 +2,6 @@
 #define RTT_BATTERIES_TESTU01_VARIANT_H
 
 #include "rtt/batteries/ivariant-batt.h"
-#include "rtt/batteries/testconstants.h"
 
 namespace rtt {
 namespace batteries {
@@ -19,7 +18,7 @@ private:
     /* TestU01 specific */
     std::vector<std::string> paramNames;
     std::vector<std::string> statisticNames;
-    uint repetitions;
+    int repetitions;
     /* Only used in configuration of crush batteries */
     std::vector<tParam> params;
     /* Used in rabbit/alphabit battery */

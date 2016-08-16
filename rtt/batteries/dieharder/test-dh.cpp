@@ -4,8 +4,6 @@ namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-std::mutex outputFile_mux;
-
 std::unique_ptr<Test> Test::getInstance(int testIndex , const GlobalContainer & container) {
     std::unique_ptr<Test> t (new Test(testIndex , container));
 

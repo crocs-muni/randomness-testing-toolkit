@@ -7,15 +7,15 @@ namespace batteries {
 /* Defined variables and corresponding condition variables and mutexes. */
 /************************************************************************/
 /* Sets how many test threads will be run at once. */
-std::atomic_int threadCount{1};
+std::atomic_uint threadCount{1};
 /* Keeps tracks of how many running threads have not yet
  * spawned their child process. */
-int                     withoutChild = 0;
+uint                    withoutChild = 0;
 std::condition_variable withoutChild_cv;
 std::mutex              withoutChild_mux;
 /* Stores info about how many running threads are still waiting
  * for their child process to end. */
-int                     waitingForChild = 0;
+uint                    waitingForChild = 0;
 std::condition_variable waitingForChild_cv;
 std::mutex              waitingForChild_mux;
 /* Stores pid of process that was reaped last. */
@@ -39,11 +39,11 @@ std::mutex              threadState_mux;
 /* Functions */
 /*************/
 void TestRunner::executeTests(Logger * logger,
-                              std::vector<std::unique_ptr<ITest>> & tests,
+                              std::vector<IVariant *> & variants,
                               int maxThreads) {
     threadCount = maxThreads;
 
-    std::thread manager(threadManager , std::ref(tests));
+    std::thread manager(threadManager , std::ref(variants));
     /* String that will be used in logs */
     std::string objectInfo = "Process reaper";
 
@@ -263,14 +263,14 @@ BatteryOutput TestRunner::executeBinary(Logger * logger,
     /* All locks go out of scope, so everything will be unlocked here */
 }
 
-void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
+void TestRunner::threadManager(std::vector<IVariant *> & variants) {
     /* Incrementing variable withoutChild with each new thread */
     std::unique_lock<std::mutex> withoutChild_lock(withoutChild_mux);
     std::unique_lock<std::mutex> threadState_lock(threadState_mux , std::defer_lock);
     std::vector<std::thread> threads;
     /* Initial threads are activated. Only MAX_THREADS are running at a time. */
-    for(size_t i = 0 ; (i < threadCount) && i < tests.size() ; ++i) {
-        threads.push_back(std::thread(&ITest::execute , tests.at(i).get()));
+    for(size_t i = 0 ; (i < threadCount) && i < variants.size() ; ++i) {
+        threads.push_back(std::thread(&IVariant::execute , variants.at(i)));
         ++withoutChild;
     }
     /* Unlock so we won't block anyone */
@@ -283,14 +283,14 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     /* Notify main thread that it can proceed */
     threadState_cv.notify_one();
 
-    for(size_t i = threadCount ; i < tests.size() ; ++i) {
+    for(size_t i = threadCount ; i < variants.size() ; ++i) {
         /* Each thread, after finishing its ITC, will notify this thread that
          * withoutChild has changed. If there are less active threads than MAX_THREADS
          * and there are some unexecuted tests left, this thread will add them. */
         withoutChild_lock.lock();
         withoutChild_cv.wait(withoutChild_lock , []{ return withoutChild < threadCount; });
         threadState_lock.lock();
-        threads.push_back(std::thread(&ITest::execute , tests.at(i).get()));
+        threads.push_back(std::thread(&IVariant::execute , variants.at(i)));
         ++withoutChild;
         /* More threads can be created and one was created.
          * Let's share that with world */
@@ -317,8 +317,7 @@ void TestRunner::threadManager(std::vector<std::unique_ptr<ITest> > & tests) {
     /* Joining complete, end. */
 }
 
-void TestRunner::readOutput(/*std::string & output , std::string & stderr ,*/
-                            BatteryOutput & output ,
+void TestRunner::readOutput(BatteryOutput & output ,
                             int * stdout_pipe, int * stderr_pipe) {
     std::string buffer(1024 , ' ');
     std::string tmpStr;

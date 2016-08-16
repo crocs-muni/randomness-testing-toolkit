@@ -16,7 +16,7 @@ typedef std::tuple<std::string ,    /* Logical test name */
                    bool>            /* Adjustable block length of test */
                    tNistStsData;
 
-typedef std::tuple<std::string>     /* Logical test name*/
+typedef std::tuple<std::string>     /* Logical test name */
                    tDieharderData;
 
 typedef std::tuple<std::string,                 /* Logical test name */
@@ -25,7 +25,7 @@ typedef std::tuple<std::string,                 /* Logical test name */
                    tTestU01Data;
 
 /* Used as key in map for TestU01 test constants.
-   Compares given integer to ranges in map. */
+ * Compares given integer to ranges in map. */
 class IndexRange {
 public:
     IndexRange(int x) : bot(x) , top(x) {}

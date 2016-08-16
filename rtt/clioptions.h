@@ -16,12 +16,17 @@ namespace rtt {
 class CliOptions {
 public:
     static CliOptions getInstance(int argc , char * argv[]);
+
     static std::string getUsage();
 
-    Constants::Battery getBattery() const;
+    Constants::Battery getBatteryId() const;
+
     std::vector<int> getTestConsts() const;
+
     std::string getInputCfgPath() const;
+
     std::string getBinFilePath() const;
+
     std::string getOutFilePath() const;
 
 private:

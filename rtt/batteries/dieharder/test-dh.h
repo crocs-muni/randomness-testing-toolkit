@@ -5,10 +5,6 @@
 #include <vector>
 
 #include "rtt/batteries/itest-batt.h"
-#include "rtt/batteries/testrunner-batt.h"
-#include "rtt/batteries/dieharder/setting-dh.h"
-#include "rtt/batteries/testconstants.h"
-#include "rtt/batteries/ivariant-batt.h"
 
 namespace rtt {
 namespace batteries {

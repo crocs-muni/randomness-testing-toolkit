@@ -31,8 +31,6 @@
  */
 #include <iostream>
 #include <stdexcept>
-#include <cmath>
-#include <functional>
 
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/globalcontainer.h"
@@ -49,13 +47,11 @@ using namespace rtt;
 
 int main (int argc , char * argv[]) try {
 #ifdef TESTING
-    json tst = json::parse(Utils::readFileToString("tst.json"));
-    tst = tst.at("params");
-    for(json::iterator it = tst.begin() ; it != tst.end() ; ++it) {
-        std::cout << it.key() << ": " << it.value() << std::endl;
-        std::string t = it.value();
-    }
+    double exp = (double)1.0/(double)140.0;
+    double res = std::pow(0.99 , exp);
+    std::cout << res << std::endl;
 
+    return 0;
 #else
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;

@@ -25,7 +25,6 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
     v->adjustableBlockLength =
             std::get<3>(TestConstants::getNistStsTestData(v->battId, testId));
 
-    v->buildStrings();
     return v;
 }
 

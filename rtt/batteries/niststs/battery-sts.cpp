@@ -10,51 +10,51 @@ std::unique_ptr<Battery> Battery::getInstance(const GlobalContainer & container)
 }
 
 void Battery::processStoredResults() {
-    if(!executed)
-        throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
+//    if(!executed)
+//        throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
 
-    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
+//    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
 
-    /* Result storage */
-    for(auto & test : tests) {
-        storage->addNewTest(test->getLogicName());
-        storage->setUserSettings(test->getTestUserSettings());
+//    /* Result storage */
+//    for(auto & test : tests) {
+//        storage->addNewTest(test->getLogicName());
+//        storage->setUserSettings(test->getTestUserSettings());
 
-        /* Writing issues */
-        storage->setRuntimeIssues(test->getBatteryStdErr(),
-                                  test->getBatteryErrors(),
-                                  test->getBatteryWarnings());
+//        /* Writing issues */
+//        storage->setRuntimeIssues(test->getBatteryStdErr(),
+//                                  test->getBatteryErrors(),
+//                                  test->getBatteryWarnings());
 
-        std::vector<tTestPvals> results = test->getResults();
-        /* There are always two statistics in NIST STS, namely
-         * Chi-square and Proportion */
-        std::vector<std::string> statistics = test->getStatistics();
-        bool propStatFailed;
-        std::string propStat;
+//        std::vector<tTestPvals> results = test->getResults();
+//        /* There are always two statistics in NIST STS, namely
+//         * Chi-square and Proportion */
+//        std::vector<std::string> statistics = test->getStatistics();
+//        bool propStatFailed;
+//        std::string propStat;
 
-        if(results.size() == 1) { /* Single test */
-            storage->addStatisticResult(statistics.at(0) ,
-                                        chi2_stat(results.at(0)) , 6);
-            propStat = proportionStat(results.at(0) , &propStatFailed);
-            storage->addStatisticResult(statistics.at(1) , propStat ,
-                                        propStatFailed);
-            storage->addPValues(results.at(0) , 6);
-        } else { /* Multiple subtests */
-            for(const auto & result : results) {
-                storage->addSubTest();
-                storage->addStatisticResult(statistics.at(0) ,
-                                            chi2_stat(result) , 6);
-                propStat = proportionStat(result , &propStatFailed);
-                storage->addStatisticResult(statistics.at(1) , propStat ,
-                                            propStatFailed);
-                storage->addPValues(result , 6);
-                storage->finalizeSubTest();
-            }
-        }
-        storage->finalizeTest();
-    }
-    storage->finalizeReport();
-    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_COMPLETE);
+//        if(results.size() == 1) { /* Single test */
+//            storage->addStatisticResult(statistics.at(0) ,
+//                                        chi2_stat(results.at(0)) , 6);
+//            propStat = proportionStat(results.at(0) , &propStatFailed);
+//            storage->addStatisticResult(statistics.at(1) , propStat ,
+//                                        propStatFailed);
+//            storage->addPValues(results.at(0) , 6);
+//        } else { /* Multiple subtests */
+//            for(const auto & result : results) {
+//                storage->addSubTest();
+//                storage->addStatisticResult(statistics.at(0) ,
+//                                            chi2_stat(result) , 6);
+//                propStat = proportionStat(result , &propStatFailed);
+//                storage->addStatisticResult(statistics.at(1) , propStat ,
+//                                            propStatFailed);
+//                storage->addPValues(result , 6);
+//                storage->finalizeSubTest();
+//            }
+//        }
+//        storage->finalizeTest();
+//    }
+//    storage->finalizeReport();
+//    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_COMPLETE);
 }
 
 std::string Battery::proportionStat(tTestPvals pvals , bool * failed) {

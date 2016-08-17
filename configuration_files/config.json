@@ -99,7 +99,11 @@
                 },
                 {
                     "test-id": 208,
-                    "psamples": 1
+                    "psamples": 1,
+                    "variants": [
+                        { "psamples": 2 },
+                        { "psamples": 3 }
+                    ]
                 },                
                 {
                     "test-id": 209,

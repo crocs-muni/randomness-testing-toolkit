@@ -38,6 +38,8 @@ public:
 
     std::vector<IVariant*> getVariants() const;
 
+    Constants::Battery getBattId() const;
+
 protected:
     ITest(int testId , const GlobalContainer & cont);
 

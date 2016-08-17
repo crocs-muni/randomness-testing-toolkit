@@ -21,17 +21,11 @@ std::string BatteryOutput::getStdErr() const {
     return stdErr;
 }
 
-std::vector<std::string> BatteryOutput::getErrors() {
-    if(!detectionDone)
-        detectErrsWarnsInStdOut();
-
+std::vector<std::string> BatteryOutput::getErrors() const {
     return errors;
 }
 
-std::vector<std::string> BatteryOutput::getWarnings() {
-    if(!detectionDone)
-        detectErrsWarnsInStdOut();
-
+std::vector<std::string> BatteryOutput::getWarnings() const {
     return warnings;
 }
 

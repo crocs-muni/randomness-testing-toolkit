@@ -18,8 +18,10 @@ std::unique_ptr<IVariant> IVariant::getInstance(int testId, uint variantIdx,
     switch(cont.getCliOptions()->getBatteryId()) {
         case Constants::Battery::NIST_STS:
             rval = niststs::Variant::getInstance(testId , variantIdx, cont);
+            break;
         case Constants::Battery::DIEHARDER:
             rval = dieharder::Variant::getInstance(testId , variantIdx, cont);
+            break;
         case Constants::Battery::TU01_SMALLCRUSH:
         case Constants::Battery::TU01_CRUSH:
         case Constants::Battery::TU01_BIGCRUSH:
@@ -27,10 +29,12 @@ std::unique_ptr<IVariant> IVariant::getInstance(int testId, uint variantIdx,
         case Constants::Battery::TU01_ALPHABIT:
         case Constants::Battery::TU01_BLOCK_ALPHABIT:
             rval = testu01::Variant::getInstance(testId , variantIdx , cont);
+            break;
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
     rval->buildStrings();
+    return rval;
 }
 
 void IVariant::execute() {

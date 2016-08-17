@@ -14,7 +14,7 @@ public:
     static std::unique_ptr<Result> getInstance(
             const std::vector<ITest *> & tests);
 
-    void writeResults(storage::IStorage * storage) {}
+    void writeResults(storage::IStorage * storage);
 
     std::vector<VariantResult> getResults() const;
 
@@ -23,6 +23,7 @@ public:
 private:
     /* Variables */
     std::string objectInfo;
+    std::string testName;
     std::vector<VariantResult> varRes;
     bool passed = true;
 

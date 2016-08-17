@@ -24,9 +24,9 @@ public:
 
     std::string getStdOut() const;
 
-    std::vector<std::string> getErrors();
+    std::vector<std::string> getErrors() const;
 
-    std::vector<std::string> getWarnings();
+    std::vector<std::string> getWarnings() const;
 
     /* This will force detection. Detection is time heavy
      * operation and should be done inside test threads

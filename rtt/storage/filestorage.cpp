@@ -36,6 +36,49 @@ void FileStorage::addNewTest(const std::string & testName) {
     ++indent;
 }
 
+void FileStorage::finalizeTest() {
+    report << "-----------------------------------------------------------"
+           << std::endl << std::endl;
+    --indent;
+    currentVariant = 0;
+}
+
+void FileStorage::addVariant() {
+    ++currentVariant;
+    report << doIndent() << "Variant " << currentVariant << ":" << std::endl;
+    ++indent;
+}
+
+void FileStorage::finalizeVariant() {
+    --indent;
+    report << doIndent() << "^^^^^^^^^^^^" << std::endl;
+    currentSubtest = 0;
+    report << std::endl;
+}
+
+void FileStorage::addSubTest() {
+    ++currentSubtest;
+    report << doIndent() << "Subtest " << currentSubtest << ":" << std::endl;
+    ++indent;
+}
+
+void FileStorage::finalizeSubTest() {
+    --indent;
+    report << doIndent() << "############" << std::endl;
+    report << std::endl;
+}
+
+void FileStorage::setTestResult(bool passed) {
+    report << doIndent() << "Result: ";
+    ++totalTestsCount;
+    if(passed) {
+        ++passedTestsCount;
+        report << "Passed" << std::endl;
+    }
+    else
+        report << "FAILED" << std::endl;
+}
+
 void FileStorage::setUserSettings(const std::vector<std::string> & options) {
     report << doIndent() << "User settings: " << std::endl;
     ++indent;
@@ -120,45 +163,44 @@ void FileStorage::setRuntimeIssues(const std::string & stdErr,
 
 }
 
-void FileStorage::addSubTest() {
-    ++currentSubtest;
-    report << doIndent() << "Subtest " << currentSubtest << ":" << std::endl;
-    ++indent;
-}
-
 void FileStorage::addStatisticResult(const std::string & statName,
-                                     double value, int precision) {
+                                     double value, int precision, bool passed) {
     std::stringstream tmp;
     tmp << doIndent() << statName <<" statistic p-value: "
         << std::setprecision(precision) << std::fixed << value;
     report << std::setw(58) << std::left << tmp.str();
 
-    ++totalStatisticsCount;
-    /* Comparing equality because double */
-    if(fabs(value - Constants::MATH_ALPHA) < Constants::MATH_EPS || /* value ~= alpha*/
-       fabs(value - (1.0 - Constants::MATH_ALPHA)) < Constants::MATH_EPS || /* value ~= 1-alpha */
-       (value > Constants::MATH_ALPHA && value < (1.0 - Constants::MATH_ALPHA))) { /* alpha < value < 1-alpha*/
-        ++passedStatisticsCount;
+    if(passed)
         report << " Passed" << std::endl;
-    } else {
+    else
         report << " FAILED!!!" << std::endl;
-    }
+
+//    ++totalStatisticsCount;
+//    /* Comparing equality because double */
+//    if(fabs(value - Constants::MATH_ALPHA) < Constants::MATH_EPS || /* value ~= alpha*/
+//       fabs(value - (1.0 - Constants::MATH_ALPHA)) < Constants::MATH_EPS || /* value ~= 1-alpha */
+//       (value > Constants::MATH_ALPHA && value < (1.0 - Constants::MATH_ALPHA))) { /* alpha < value < 1-alpha*/
+//        ++passedStatisticsCount;
+//        report << " Passed" << std::endl;
+//    } else {
+//        report << " FAILED!!!" << std::endl;
+//    }
 }
 
-void FileStorage::addStatisticResult(const std::string & statName ,
-                                 const std::string & value, bool failed) {
-    std::stringstream tmp;
-    tmp << doIndent() << statName << " statistic: " << value;
-    report << std::setw(58) << std::left << tmp.str();
+//void FileStorage::addStatisticResult(const std::string & statName ,
+//                                     const std::string & value, bool failed) {
+//    std::stringstream tmp;
+//    tmp << doIndent() << statName << " statistic: " << value;
+//    report << std::setw(58) << std::left << tmp.str();
 
-    ++totalStatisticsCount;
-    if(!failed) {
-        ++passedStatisticsCount;
-        report << " Passed" << std::endl;
-    } else {
-        report << " FAILED!!!" << std::endl;
-    }
-}
+//    ++totalStatisticsCount;
+//    if(!failed) {
+//        ++passedStatisticsCount;
+//        report << " Passed" << std::endl;
+//    } else {
+//        report << " FAILED!!!" << std::endl;
+//    }
+//}
 
 void FileStorage::addPValues(const std::vector<double> & pvals , int precision) {
     report << doIndent() << "p-values: " << std::endl;
@@ -170,22 +212,9 @@ void FileStorage::addPValues(const std::vector<double> & pvals , int precision) 
     report << doIndent() << "============" << std::endl;
 }
 
-void FileStorage::finalizeSubTest() {
-    --indent;
-    report << doIndent() << "############" << std::endl;
-    report << std::endl;
-}
-
-void FileStorage::finalizeTest() {
-    report << "-----------------------------------------------------------"
-           << std::endl << std::endl;
-    --indent;
-    currentSubtest = 0;
-}
-
 void FileStorage::finalizeReport() {
     /* Add passed tests proportion at the end of report */
-    passedTestProp = { Utils::itostr(passedStatisticsCount) + "/" + Utils::itostr(totalStatisticsCount) };
+    passedTestProp = { Utils::itostr(passedTestsCount) + "/" + Utils::itostr(totalTestsCount) };
     std::string reportStr = report.str();
     size_t pos = reportStr.find(STRING_PASSED_PROP);
     reportStr.insert(pos + STRING_PASSED_PROP.length(), passedTestProp);

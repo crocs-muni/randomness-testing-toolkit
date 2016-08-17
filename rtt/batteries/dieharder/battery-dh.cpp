@@ -17,8 +17,11 @@ void Battery::processStoredResults() {
 
     for(const auto & test : tests) {
         std::vector<ITest *> tsts = { test.get() };
-        auto res = IResult::getInstance(tsts);
+        std::shared_ptr<IResult> res = IResult::getInstance(tsts);
+        res->writeResults(storage.get());
     }
+
+    storage->finalizeReport();
 
 //    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
 

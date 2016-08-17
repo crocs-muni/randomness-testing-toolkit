@@ -20,7 +20,7 @@ protected:
 class PValueSet {
 public:
     static PValueSet getInstance(std::string statName, double statRes,
-                                 std::vector<double> pValues);
+                                 const std::vector<double> & pValues);
 
     std::string getStatName() const;
 
@@ -32,7 +32,7 @@ public:
 
 private:
     PValueSet(std::string statName, double statRes,
-              std::vector<double> pValues)
+              const std::vector<double> & pValues)
         : statName(statName), statRes(statRes), pValues(pValues)
     {}
 
@@ -44,14 +44,14 @@ private:
 
 class SubTestResult {
 public:
-    static SubTestResult getInstance(std::vector<PValueSet> pValSets);
+    static SubTestResult getInstance(const std::vector<PValueSet> & pValSets);
 
     std::vector<double> getStatResults() const;
 
     std::vector<PValueSet> getPValSets() const;
 
 private:
-    SubTestResult(std::vector<PValueSet> pValSets)
+    SubTestResult(const std::vector<PValueSet> & pValSets)
         : pValSets(pValSets)
     {}
 
@@ -60,18 +60,29 @@ private:
 
 class VariantResult {
 public:
-    static VariantResult getInstance(std::vector<SubTestResult> subResults);
+    static VariantResult getInstance(const std::vector<SubTestResult> & subResults,
+                                     const std::vector<std::string> & userSettings,
+                                     const BatteryOutput & battOut);
 
     std::vector<double> getSubTestStatResults() const;
 
     std::vector<SubTestResult> getSubResults() const;
 
+    BatteryOutput getBatteryOutput() const;
+
+    std::vector<std::string> getUserSettings() const;
+
 private:
-    VariantResult(std::vector<SubTestResult> subResults)
-        : subResults(subResults)
+    VariantResult(const std::vector<SubTestResult> & subResults,
+                  const std::vector<std::string> & userSettings,
+                  const BatteryOutput & battOut)
+        : subResults(subResults), userSettings(userSettings),
+          battOut(battOut)
     {}
 
     std::vector<SubTestResult> subResults;
+    std::vector<std::string> userSettings;
+    BatteryOutput battOut;
 };
 
 } // namespace batteries

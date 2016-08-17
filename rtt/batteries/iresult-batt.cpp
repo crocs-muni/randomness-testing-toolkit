@@ -27,7 +27,7 @@ std::unique_ptr<IResult> IResult::getInstance(const std::vector<ITest *> & tests
 }
 
 PValueSet PValueSet::getInstance(std::string statName, double statResult,
-                                 std::vector<double> pValues) {
+                                 const std::vector<double> & pValues) {
     if(statName.empty())
         raiseBugException("empty statName");
     if(statResult < (0 - Constants::MATH_EPS) ||
@@ -37,9 +37,10 @@ PValueSet PValueSet::getInstance(std::string statName, double statResult,
         raiseBugException("empty pValues");
 
     auto rval = PValueSet(statName, statResult, pValues);
+    double alpha = Constants::MATH_ALPHA / 2.0;
 
-    if(statResult > Constants::MATH_ALPHA - Constants::MATH_EPS &&
-       statResult < 1 - Constants::MATH_ALPHA + Constants::MATH_EPS)
+    if(statResult > alpha - Constants::MATH_EPS &&
+       statResult < 1 - alpha + Constants::MATH_EPS)
         rval.statPassed = true;
 
     return rval;
@@ -61,7 +62,7 @@ bool PValueSet::getStatPassed() const {
     return statPassed;
 }
 
-SubTestResult SubTestResult::getInstance(std::vector<PValueSet> pValSets) {
+SubTestResult SubTestResult::getInstance(const std::vector<PValueSet> & pValSets) {
     if(pValSets.empty())
         raiseBugException("empty pValSets");
 
@@ -80,11 +81,13 @@ std::vector<PValueSet> SubTestResult::getPValSets() const {
     return pValSets;
 }
 
-VariantResult VariantResult::getInstance(std::vector<SubTestResult> subResults) {
+VariantResult VariantResult::getInstance(const std::vector<SubTestResult> & subResults,
+                                         const std::vector<std::string> & userSettings,
+                                         const BatteryOutput & battOut) {
     if(subResults.empty())
         raiseBugException("empty subResults");
 
-    return VariantResult(subResults);
+    return VariantResult(subResults, userSettings, battOut);
 }
 
 std::vector<double> VariantResult::getSubTestStatResults() const {
@@ -99,6 +102,14 @@ std::vector<double> VariantResult::getSubTestStatResults() const {
 
 std::vector<SubTestResult> VariantResult::getSubResults() const {
     return subResults;
+}
+
+BatteryOutput VariantResult::getBatteryOutput() const {
+    return battOut;
+}
+
+std::vector<std::string> VariantResult::getUserSettings() const {
+    return userSettings;
 }
 
 } // namespace batteries

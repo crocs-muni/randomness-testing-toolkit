@@ -27,26 +27,32 @@ public:
     static std::unique_ptr<FileStorage> getInstance(const GlobalContainer & container);
 
     void addNewTest(const std::string & testName);
+    void finalizeTest();
+
+    void addVariant();
+    void finalizeVariant();
+
+    void addSubTest();
+    void finalizeSubTest();
+
+    void setTestResult(bool passed);
 
     void setUserSettings(const std::vector<std::string> & options);
 
     void setTestParameters(const std::vector<std::string> & options);
 
-    virtual void setRuntimeIssues(const std::string & stdErr ,
-                                  const std::vector<std::string> & errors ,
-                                  const std::vector<std::string> & warnings);
+    virtual void setRuntimeIssues(
+            const std::string & stdErr ,
+            const std::vector<std::string> & errors ,
+            const std::vector<std::string> & warnings);
 
-    void addSubTest();
+    void addStatisticResult(
+            const std::string & statName ,
+            double value , int precision , bool passed);
 
-    void addStatisticResult(const std::string & statName , double value , int precision = 2);
-
-    void addStatisticResult(const std::string & statName , const std::string & value , bool failed);
-
-    void addPValues(const std::vector<double> & pvals, int precision = 2);
-
-    void finalizeSubTest();
-
-    void finalizeTest();
+    void addPValues(
+            const std::vector<double> & pvals,
+            int precision);
 
     void finalizeReport();
 
@@ -66,11 +72,12 @@ private:
     std::string outFilePath;
     std::string mainOutFilePath;
     std::stringstream report;
-    int passedStatisticsCount = 0;
-    int totalStatisticsCount = 0;
+    int passedTestsCount = 0;
+    int totalTestsCount = 0;
     std::string passedTestProp;
     int indent = 0;
     int currentSubtest = 0;
+    int currentVariant = 0;
 
     /*
     ===============

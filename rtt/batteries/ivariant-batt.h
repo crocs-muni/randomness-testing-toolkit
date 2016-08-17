@@ -44,6 +44,8 @@ protected:
     bool executed = false;
 
     IVariant(int testId, uint variantIdx, const GlobalContainer & cont);
+
+    virtual void buildStrings() = 0;
 };
 
 } // namespace batteries

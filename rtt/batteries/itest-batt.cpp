@@ -105,6 +105,11 @@ ITest::ITest(int testId, const GlobalContainer & cont) {
     }
 }
 
+Constants::Battery ITest::getBattId() const
+{
+    return battId;
+}
+
 } // namespace batteries
 } // namespace rtt
 

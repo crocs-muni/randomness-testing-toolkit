@@ -9,9 +9,9 @@ namespace rtt {
 
 class Constants {
 public:
-    ///////////////////////////////////////////////
+    /*********************************************/
     /******** Toolkit global constants ***********/
-    ///////////////////////////////////////////////
+    /*********************************************/
 
     /* Statistical batteries constants enum */
     /* Values in enum MUST NOT have assigned other than default values
@@ -37,9 +37,9 @@ public:
     static const double MATH_ALPHA;
     static const double MATH_EPS;
 
-    ///////////////////////////////////////////////
+    /*********************************************/
     /********* Toolkit global methods ************/
-    ///////////////////////////////////////////////
+    /*********************************************/
     /* Some battery constants utility methods */
     static std::string batteryToString(Battery batteryConstant);
 

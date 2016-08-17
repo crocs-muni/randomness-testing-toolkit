@@ -68,8 +68,6 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                        Configuration::TAGNAME_BIT_W);
     }
 
-    v->buildStrings();
-
     return v;
 }
 

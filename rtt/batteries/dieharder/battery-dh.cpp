@@ -1,5 +1,7 @@
 #include "rtt/batteries/dieharder/battery-dh.h"
 
+#include "rtt/batteries/iresult-batt.h"
+
 namespace rtt {
 namespace batteries {
 namespace dieharder {
@@ -13,43 +15,48 @@ void Battery::processStoredResults() {
     if(!executed)
         throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
 
-    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
-
-    /* Result storage */
-    for(auto & test : tests) {
-        storage->addNewTest(test->getLogicName());
-        storage->setUserSettings(test->getTestUserSettings());
-
-        /* Writing issues */
-        storage->setRuntimeIssues(test->getBatteryStdErr(),
-                                  test->getBatteryErrors(),
-                                  test->getBatteryWarnings());
-
-        std::vector<tTestPvals> results = test->getResults();
-        /* In Dieharder, there is only one statistic */
-        std::vector<std::string> statistics = test->getStatistics();
-        if(results.size() == 1) { /* Single test */
-            try{
-                storage->addStatisticResult(
-                            statistics.at(0) ,kstest(results.at(0)) , 8);
-            } catch (std::runtime_error ex) {
-                throw RTTException(objectInfo , ex.what());
-            }
-
-            storage->addPValues(results.at(0) , 8);
-        } else { /* Multiple subtests */
-            for(const auto & result : results) {
-                storage->addSubTest();
-                storage->addStatisticResult(statistics.at(0) ,
-                                            kstest(result) , 8);
-                storage->addPValues(result , 8);
-                storage->finalizeSubTest();
-            }
-        }
-        storage->finalizeTest();
+    for(const auto & test : tests) {
+        std::vector<ITest *> tsts = { test.get() };
+        auto res = IResult::getInstance(tsts);
     }
-    storage->finalizeReport();
-    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_COMPLETE);
+
+//    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_STARTED);
+
+//    /* Result storage */
+//    for(auto & test : tests) {
+//        storage->addNewTest(test->getLogicName());
+//        storage->setUserSettings(test->getTestUserSettings());
+
+//        /* Writing issues */
+//        storage->setRuntimeIssues(test->getBatteryStdErr(),
+//                                  test->getBatteryErrors(),
+//                                  test->getBatteryWarnings());
+
+//        std::vector<tTestPvals> results = test->getResults();
+//        /* In Dieharder, there is only one statistic */
+//        std::vector<std::string> statistics = test->getStatistics();
+//        if(results.size() == 1) { /* Single test */
+//            try{
+//                storage->addStatisticResult(
+//                            statistics.at(0) ,kstest(results.at(0)) , 8);
+//            } catch (std::runtime_error ex) {
+//                throw RTTException(objectInfo , ex.what());
+//            }
+
+//            storage->addPValues(results.at(0) , 8);
+//        } else { /* Multiple subtests */
+//            for(const auto & result : results) {
+//                storage->addSubTest();
+//                storage->addStatisticResult(statistics.at(0) ,
+//                                            kstest(result) , 8);
+//                storage->addPValues(result , 8);
+//                storage->finalizeSubTest();
+//            }
+//        }
+//        storage->finalizeTest();
+//    }
+//    storage->finalizeReport();
+//    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_COMPLETE);
 }
 
 /* Following code is taken from DIEHARDER battery. */

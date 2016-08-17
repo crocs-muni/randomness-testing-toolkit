@@ -127,7 +127,7 @@ void FileStorage::addSubTest() {
 }
 
 void FileStorage::addStatisticResult(const std::string & statName,
-                                 double value, int precision) {
+                                     double value, int precision) {
     std::stringstream tmp;
     tmp << doIndent() << statName <<" statistic p-value: "
         << std::setprecision(precision) << std::fixed << value;

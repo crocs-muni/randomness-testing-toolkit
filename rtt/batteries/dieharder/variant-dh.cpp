@@ -35,7 +35,6 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
         }
     }
 
-    v->buildStrings();
     return v;
 }
 

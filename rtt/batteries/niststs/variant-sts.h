@@ -2,6 +2,7 @@
 #define RTT_BATTERIES_NISTSTS_VARIANT_H
 
 #include "rtt/batteries/ivariant-batt.h"
+#include "rtt/batteries/testrunner-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -11,12 +12,24 @@ class Variant : public IVariant {
 public:
     static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
                                                 const GlobalContainer & cont);
+
+    void execute();
+
+    void setTestDir_mux(std::mutex * value);
+
+    std::vector<std::string> getPValueFiles() const;
+
 private:
     /* Variables */
+    std::mutex * testDir_mux;
+    std::string resultSubDir;
     std::string streamSize;
     std::string streamCount;
     std::string blockLength;
     bool adjustableBlockLength;
+
+    /* pvalues will be read into this after execution */
+    std::vector<std::string> pValueFiles;
 
     /* Methods */
     Variant(int testId, uint variantIdx,
@@ -25,6 +38,8 @@ private:
     {}
 
     void buildStrings();
+
+    void readNistStsOutFiles();
 };
 
 } // namespace niststs

@@ -77,14 +77,15 @@ void FileStorage::setTestResult(bool passed) {
     }
     else
         report << "FAILED" << std::endl;
+    report << std::endl;
 }
 
 void FileStorage::setUserSettings(const std::vector<std::string> & options) {
     report << doIndent() << "User settings: " << std::endl;
     ++indent;
-    std::string tabs = doIndent();
+    std::string spaces = doIndent();
     for(const std::string & i : options)
-        report << tabs << i << std::endl;
+        report << spaces << i << std::endl;
     --indent;
     report << doIndent() << "************" << std::endl;
     report << std::endl;
@@ -96,9 +97,9 @@ void FileStorage::setTestParameters(const std::vector<std::string> & options) {
 
     report << doIndent() << "Test parameters: " << std::endl;
     ++indent;
-    std::string tabs = doIndent();
+    std::string spaces = doIndent();
     for(const std::string & i : options)
-        report << tabs << i << std::endl;
+        report << spaces << i << std::endl;
     --indent;
     report << doIndent() << "%%%%%%%%%%" << std::endl;
     report << std::endl;
@@ -119,9 +120,9 @@ void FileStorage::setRuntimeIssues(const std::string & stdErr,
         auto stdErrStrings = Utils::split(stdErr , '\n');
         report << doIndent() << "Standard error output: " << std::endl;
         ++indent;
-        auto tabs = doIndent();
+        auto spaces = doIndent();
         for(const auto & i : stdErrStrings)
-            report << tabs << i << std::endl;
+            report << spaces << i << std::endl;
         --indent;
         report << doIndent() << "!!!!!!!!!!!!" << std::endl;
     }
@@ -135,9 +136,9 @@ void FileStorage::setRuntimeIssues(const std::string & stdErr,
 
         report << doIndent() << "Errors in log: " << std::endl;
         ++indent;
-        auto tabs = doIndent();
+        auto spaces = doIndent();
         for(const auto & i : errors)
-            report << tabs << i << std::endl;
+            report << spaces << i << std::endl;
         --indent;
         report << doIndent() << "!!!!!!!!!!!!" << std::endl;
     }
@@ -151,9 +152,9 @@ void FileStorage::setRuntimeIssues(const std::string & stdErr,
 
         report << doIndent() << "Warnings in log: " << std::endl;
         ++indent;
-        auto tabs = doIndent();
+        auto spaces = doIndent();
         for(const auto & i : warnings)
-            report << tabs << i << std::endl;
+            report << spaces << i << std::endl;
         --indent;
         report << doIndent() << "!!!!!!!!!!!!" << std::endl;
     }
@@ -174,40 +175,24 @@ void FileStorage::addStatisticResult(const std::string & statName,
         report << " Passed" << std::endl;
     else
         report << " FAILED!!!" << std::endl;
-
-//    ++totalStatisticsCount;
-//    /* Comparing equality because double */
-//    if(fabs(value - Constants::MATH_ALPHA) < Constants::MATH_EPS || /* value ~= alpha*/
-//       fabs(value - (1.0 - Constants::MATH_ALPHA)) < Constants::MATH_EPS || /* value ~= 1-alpha */
-//       (value > Constants::MATH_ALPHA && value < (1.0 - Constants::MATH_ALPHA))) { /* alpha < value < 1-alpha*/
-//        ++passedStatisticsCount;
-//        report << " Passed" << std::endl;
-//    } else {
-//        report << " FAILED!!!" << std::endl;
-//    }
 }
-
-//void FileStorage::addStatisticResult(const std::string & statName ,
-//                                     const std::string & value, bool failed) {
-//    std::stringstream tmp;
-//    tmp << doIndent() << statName << " statistic: " << value;
-//    report << std::setw(58) << std::left << tmp.str();
-
-//    ++totalStatisticsCount;
-//    if(!failed) {
-//        ++passedStatisticsCount;
-//        report << " Passed" << std::endl;
-//    } else {
-//        report << " FAILED!!!" << std::endl;
-//    }
-//}
 
 void FileStorage::addPValues(const std::vector<double> & pvals , int precision) {
     report << doIndent() << "p-values: " << std::endl;
     ++indent;
-    std::string tabs = doIndent();
-    for(const double & i : pvals)
-        report << tabs << std::setprecision(precision) << std::fixed << i << std::endl;
+    std::string spaces = doIndent();
+
+    size_t pvalPerRow = 5;
+    for(size_t ctr = 0 ; ctr < pvals.size() ; ) {
+        report << spaces;
+        for(size_t col = 0 ; col < std::min(pvalPerRow , pvals.size() - ctr) ; ++col) {
+            report << std::setprecision(precision)
+                   << std::fixed << pvals.at(ctr + col) << " ";
+        }
+        report << std::endl;
+        ctr += pvalPerRow;
+    }
+
     --indent;
     report << doIndent() << "============" << std::endl;
 }

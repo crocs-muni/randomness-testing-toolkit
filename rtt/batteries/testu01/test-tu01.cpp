@@ -147,8 +147,8 @@ void Test::extractSettingsFromLog(const std::string & testLog) {
 //     * since sometimes another test is executed and only its statistics are
 //     * processed by main test. Logic test names then doesn't match
 //     * and regex with specific test name would detect nothing. */
-//    std::regex RE_TEST_HEADER { logicName + " test:" };
-//    //const static std::regex RE_TEST_HEADER { "\\w+? test:" };
+//    //std::regex RE_TEST_HEADER { logicName + " test:" };
+//    const static std::regex RE_TEST_HEADER { "\\w+? test:" };
 //    subTestCount = std::distance(
 //            std::sregex_iterator(testLog.begin() , testLog.end() , RE_TEST_HEADER),
 //            std::sregex_iterator()

@@ -12,7 +12,6 @@ namespace batteries {
 
 typedef std::tuple<std::string ,    /* Logical test name */
                    std::string ,    /* Path to result directory */
-                   int ,            /* Number of subtests */
                    bool>            /* Adjustable block length of test */
                    tNistStsData;
 

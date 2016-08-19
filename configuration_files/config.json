@@ -117,43 +117,7 @@
                 "test-ids": ["1-15"],    
                 "stream-size": "1000000",
                 "stream-count": "100"
-            },
-            "test-specific-settings": [
-                {
-                   "test-id": 1,
-                   "stream-size": "01",
-                   "variants": [
-                        {
-                            "stream-size": "11",
-                            "stream-count": "12",
-                            "block-length": "13"
-                        },
-                        {
-                            "stream-size": "21",
-                            "stream-count": "22",
-                            "block-length": "23"
-                        },
-                        {
-                            "block-length": "31"
-                        }
-                    ]
-                },
-                {
-                   "test-id": 2,
-                   "stream-count": "22",
-                   "block-length": "23"
-                },
-                {
-                   "test-id": 3,
-                   "stream-size": "31",
-                   "block-length": "33"
-                },
-                {
-                   "test-id": 4,
-                   "stream-size": "41",
-                   "stream-length": "42"
-                }
-            ]  
+            }
         },
     
         "testu01-settings": {
@@ -193,64 +157,16 @@
             
             "test-specific-settings": {
                 "small-crush": [
-                    {
-                        "test-id": 1,
-                        "parameters": {
-                            "N": "1",
-                            "n": "5000000",
-                            "r": "0",
-                            "d": "1073741824",
-                            "t": "2",
-                            "p": "1"
-                        }
-                    },
-                    {
-                        "test-id": 5,
-                        "repetitions": 3
-                    }
                 ],
-                "crush": [
-                    {
-                        "test-id": 2,
-                        "repetitions": 4
-                    } 
+                "crush": [ 
                 ],
                 "big-crush": [
-                    {
-                        "test-id": 72,
-                        "parameters": {
-                            "N": "11",
-                            "n": "12",
-                            "r": "13",
-                            "m": "14",
-                            "t": "15"
-                        }
-                    }
                 ],
                 "rabbit": [
-                    {
-                        "test-id": 1,
-                        "bit-nb": "5000000"
-                    }
                 ],
                 "alphabit": [
-                    {
-                        "test-id": 2,
-                        "bit-nb": "12"
-                    },
-                    {
-                        "test-id": 3,
-                        "bit-r": "4",
-                        "bit-s": "5" 
-                    }
                 ],
                 "block-alphabit": [
-                    {
-                        "test-id": 4,
-                        "bit-r": "5",
-                        "bit-s": "6",
-                        "bit-w": "7"
-                    }
                 ]
             }
         }

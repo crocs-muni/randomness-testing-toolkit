@@ -14,6 +14,11 @@ class Variant : public IVariant {
 public:
     static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
                                                 const GlobalContainer & cont);
+
+    std::vector<std::string> getParamNames() const;
+
+    std::vector<std::string> getStatisticNames() const;
+
 private:
     /* TestU01 specific */
     std::vector<std::string> paramNames;

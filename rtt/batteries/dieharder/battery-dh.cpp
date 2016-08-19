@@ -17,8 +17,8 @@ void Battery::processStoredResults() {
 
     for(const auto & test : tests) {
         std::vector<ITest *> tsts = { test.get() };
-        std::shared_ptr<IResult> res = IResult::getInstance(tsts);
-        res->writeResults(storage.get());
+        std::unique_ptr<IResult> res = IResult::getInstance(tsts);
+        res->writeResults(storage.get(), 8);
     }
 
     storage->finalizeReport();

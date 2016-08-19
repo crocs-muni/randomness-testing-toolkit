@@ -15,7 +15,7 @@ public:
 
     virtual ~IVariant() {}
 
-    void execute();
+    virtual void execute();
 
     std::string getCliArguments() const;
 
@@ -24,6 +24,10 @@ public:
     std::vector<std::string> getUserSettings() const;
 
     BatteryOutput getBatteryOutput() const;
+
+    int getTestId() const;
+
+    std::string getObjectInfo() const;
 
 protected:
     /* Set in constructor */

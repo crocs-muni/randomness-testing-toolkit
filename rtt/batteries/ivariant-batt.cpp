@@ -83,6 +83,11 @@ int IVariant::getTestId() const {
     return testId;
 }
 
+std::string IVariant::getObjectInfo() const
+{
+    return objectInfo;
+}
+
 IVariant::IVariant(int testId, uint variantIdx,
                    const GlobalContainer & cont) {
     this->testId        = testId;

@@ -77,6 +77,7 @@ void FileStorage::setTestResult(bool passed) {
     }
     else
         report << "FAILED" << std::endl;
+    report << std::endl;
 }
 
 void FileStorage::setUserSettings(const std::vector<std::string> & options) {

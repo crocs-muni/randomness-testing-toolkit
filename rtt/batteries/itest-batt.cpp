@@ -105,6 +105,11 @@ ITest::ITest(int testId, const GlobalContainer & cont) {
     }
 }
 
+Logger * ITest::getLogger() const
+{
+    return logger;
+}
+
 Constants::Battery ITest::getBattId() const {
     return battId;
 }

@@ -1,7 +1,6 @@
 #ifndef RTT_BATTERIES_NISTSTS_RESULT_H
 #define RTT_BATTERIES_NISTSTS_RESULT_H
 
-#include "libs/cephes/cephes.h"
 #include "rtt/batteries/iresult-batt.h"
 
 #include "rtt/batteries/niststs/variant-sts.h"
@@ -15,7 +14,9 @@ public:
     static std::unique_ptr<Result> getInstance(
             const std::vector<ITest *> & tests);
 private:
-    Result() {}
+    Result(Logger * logger , std::string testName)
+        : IResult(logger , testName)
+    {}
 
     static std::vector<std::vector<double>> getVariantPValues(
             Variant * variant);

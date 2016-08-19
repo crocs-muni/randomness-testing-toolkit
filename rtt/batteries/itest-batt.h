@@ -36,9 +36,11 @@ public:
 
     std::vector<std::string> getBatteryWarnings();
 
-    std::vector<IVariant*> getVariants() const;
+    std::vector<IVariant *> getVariants() const;
 
     Constants::Battery getBattId() const;
+
+    Logger * getLogger() const;
 
 protected:
     ITest(int testId , const GlobalContainer & cont);

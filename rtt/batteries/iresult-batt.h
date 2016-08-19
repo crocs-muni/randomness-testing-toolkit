@@ -21,15 +21,18 @@ public:
 
 protected:
     /* Variables */
+    Logger * logger;
     std::string objectInfo;
     std::string testName;
     std::vector<result::VariantResult> varRes;
     bool passed = true;
 
     /* Methods */
-    void evaluateSetPassed();
+    IResult(Logger * logger , std::string testName)
+        : logger(logger) , testName(testName)
+    {}
 
-    IResult() {}
+    void evaluateSetPassed();
 };
 
 

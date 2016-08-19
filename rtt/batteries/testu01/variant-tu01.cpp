@@ -71,6 +71,14 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
     return v;
 }
 
+std::vector<std::string> Variant::getParamNames() const {
+    return paramNames;
+}
+
+std::vector<std::string> Variant::getStatisticNames() const {
+    return statisticNames;
+}
+
 void Variant::buildStrings() {
     /* Building CLI arguments */
     std::stringstream arguments;

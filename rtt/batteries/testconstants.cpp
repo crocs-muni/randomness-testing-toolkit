@@ -58,7 +58,7 @@ const tTestU01Data TestConstants::TESTU01_SMARSA_BIRTHDAYSPACINGS      {"smarsa_
 const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS            {"snpair_ClosePairs" ,           {"N","n","r","t","p","m","Torus"} , {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)"}};
 const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS_BIGT       {"snpair_ClosePairs" ,           {"N","n","r","t","p","m","Torus"} , {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)" ,"AD (mNP2-S)"}};
 const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRSBITMATCH    {"snpair_ClosePairsBitMatch" ,   {"N","n","r","t"} ,                 {"Bit distance"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_COLLISION             {"sknuth_Collision" ,            {"N","n","r","d","t"} ,             {"Collision"}};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_COLLISION             {"sknuth_Collision" ,            {"N","n","r","d","t","Sparse"} ,    {"Collision"}};
 const tTestU01Data TestConstants::TESTU01_SKNUTH_SIMPPOKER             {"sknuth_SimpPoker" ,            {"N","n","r","d","k"} ,             {"Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SKNUTH_COUPONCOLLECTOR       {"sknuth_CouponCollector" ,      {"N","n","r","d"} ,                 {"Chi-square"}};
 const tTestU01Data TestConstants::TESTU01_SKNUTH_GAP                   {"sknuth_Gap" ,                  {"N","n","r","Alpha","Beta"} ,      {"Chi-square"}};

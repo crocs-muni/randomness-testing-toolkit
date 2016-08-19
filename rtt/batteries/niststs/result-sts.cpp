@@ -1,15 +1,19 @@
 #include "result-sts.h"
 
+#include "libs/cephes/cephes.h"
+
 namespace rtt {
 namespace batteries {
 namespace niststs {
 
 std::unique_ptr<Result> Result::getInstance(
         const std::vector<ITest *> & tests) {
-    std::unique_ptr<Result> r (new Result());
+    if(tests.empty())
+        raiseBugException("empty tests");
 
-    r->objectInfo = "NIST STS result processor";
-    r->testName = tests.at(0)->getLogicName();
+    std::unique_ptr<Result> r (new Result(
+                                   tests.at(0)->getLogger(),
+                                   tests.at(0)->getLogicName()));
 
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::PValueSet> tmpPValueSets;
@@ -22,6 +26,8 @@ std::unique_ptr<Result> Result::getInstance(
         for(IVariant * variant : test->getVariants()) {
             Variant * stsVar =
                     dynamic_cast<Variant *>(variant);
+            r->objectInfo = stsVar->getObjectInfo() +
+                            " (results)";
             auto variantPVals = getVariantPValues(stsVar);
 
             /* Single subtest processing */

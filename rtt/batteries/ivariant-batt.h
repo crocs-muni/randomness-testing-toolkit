@@ -27,6 +27,8 @@ public:
 
     int getTestId() const;
 
+    std::string getObjectInfo() const;
+
 protected:
     /* Set in constructor */
     Logger * logger;

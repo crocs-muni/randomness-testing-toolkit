@@ -6,10 +6,12 @@ namespace dieharder {
 
 std::unique_ptr<Result> Result::getInstance(
         const std::vector<ITest *> & tests) {
-    std::unique_ptr<Result> r (new Result());
+    if(tests.empty())
+        raiseBugException("empty tests");
 
-    r->objectInfo = "Dieharder result processor";
-    r->testName = tests.at(0)->getLogicName();
+    std::unique_ptr<Result> r (new Result(
+                                   tests.at(0)->getLogger(),
+                                   tests.at(0)->getLogicName()));
 
     static const std::regex RE_SUBTEST_SPLIT
     {
@@ -30,6 +32,8 @@ std::unique_ptr<Result> Result::getInstance(
 
         /* Single variant processing */
         for(const IVariant * variant : test->getVariants()) {
+            r->objectInfo = variant->getObjectInfo() +
+                            " (results)";
             auto variantOutput =
                     variant->getBatteryOutput().getStdOut();
             auto subTestIt = std::sregex_iterator(

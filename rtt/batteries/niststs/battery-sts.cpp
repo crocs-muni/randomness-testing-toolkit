@@ -16,8 +16,8 @@ void Battery::processStoredResults() {
         throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
 
     for(const auto & test : tests) {
-        std::vector<ITest *> tsts = { test.get() };
-        std::shared_ptr<IResult> res = IResult::getInstance(tsts);
+        std::vector<ITest *> tests = { test.get() };
+        std::unique_ptr<IResult> res = IResult::getInstance(tests);
         res->writeResults(storage.get(), 6);
     }
     storage->finalizeReport();

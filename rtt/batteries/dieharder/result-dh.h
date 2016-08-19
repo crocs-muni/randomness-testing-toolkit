@@ -16,9 +16,9 @@ public:
             const std::vector<ITest *> & tests);
 
 private:
-
-    /* Methods */
-    Result() {}
+    Result(Logger * logger , std::string testName)
+        : IResult(logger , testName)
+    {}
 
     /* Math functions used to calculate resulting KS statistic */
     double kstest(const std::vector<double> & pvalue);

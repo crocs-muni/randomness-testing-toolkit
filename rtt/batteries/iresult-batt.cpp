@@ -2,6 +2,7 @@
 
 #include "rtt/batteries/dieharder/result-dh.h"
 #include "rtt/batteries/niststs/result-sts.h"
+#include "rtt/batteries/testu01/result-tu01.h"
 
 namespace rtt {
 namespace batteries {
@@ -26,7 +27,8 @@ std::unique_ptr<IResult> IResult::getInstance(
         case Constants::Battery::TU01_RABBIT:
         case Constants::Battery::TU01_ALPHABIT:
         case Constants::Battery::TU01_BLOCK_ALPHABIT:
-            raiseBugException("not implemented yet");
+            rval = testu01::Result::getInstance(tests);
+            break;
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
@@ -72,6 +74,7 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
         if(varRes.size() > 1)
             storage->finalizeVariant();
     }
+    storage->finalizeSubTest();
 }
 
 std::vector<result::VariantResult> IResult::getResults() const {

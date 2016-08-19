@@ -22,15 +22,6 @@ private:
     /* So initialization in getInstance can't be avoided */
     Battery(const GlobalContainer & container)
         : IBattery(container) {}
-
-    /* Math functions used to calculate resulting KS statistic */
-    double kstest(const std::vector<double> & pvalue);
-
-    double p_ks_new(int n , double d);
-
-    void mMultiply(double *A,double *B,double *C,int m);
-
-    void mPower(double *A,int eA,double *V,int *eV,int m,int n);
 };
 
 } // namespace dieharder

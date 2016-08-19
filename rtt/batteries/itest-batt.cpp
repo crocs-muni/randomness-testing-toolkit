@@ -26,47 +26,12 @@ std::unique_ptr<ITest> ITest::getInstance(int testId,
     }
 }
 
-bool ITest::wasExecuted() const {
-    return executed;
-}
-
 std::string ITest::getLogicName() const {
     return logicName;
 }
 
 int ITest::getTestId() const {
     return testId;
-}
-
-std::vector<tTestPvals> ITest::getResults() const {
-    if(!executed)
-        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
-
-    return results;
-}
-
-std::string ITest::getBatteryStdErr() const {
-    if(!executed)
-        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
-
-    //return batteryOutput.at(0).getStdErr();
-    return {};
-}
-
-std::vector<std::string> ITest::getBatteryErrors() {
-    if(!executed)
-        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
-
-    //return batteryOutput.at(0).getErrors();
-    return {};
-}
-
-std::vector<std::string> ITest::getBatteryWarnings() {
-    if(!executed)
-        throw RTTException(objectInfo , Strings::TEST_ERR_NO_EXEC_RES);
-
-    //return batteryOutput.at(0).getWarnings();
-    return {};
 }
 
 std::vector<IVariant *> ITest::getVariants() const {

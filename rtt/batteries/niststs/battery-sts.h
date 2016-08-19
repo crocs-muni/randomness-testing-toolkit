@@ -23,10 +23,6 @@ private:
     */
     Battery(const GlobalContainer & container)
         : IBattery(container) {}
-
-    static double chi2_stat(tTestPvals pvals);
-
-    static std::string proportionStat(tTestPvals pvals, bool * failed);
 };
 
 } // namespace niststs

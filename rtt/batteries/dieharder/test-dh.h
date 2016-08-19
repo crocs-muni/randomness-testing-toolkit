@@ -14,31 +14,13 @@ typedef std::pair<int , std::string> tTestInfo;
 
 class Test : public ITest {
 public:
-    /*
-    ======================
-    *** Public methods ***
-    ======================
-    */
     static std::unique_ptr<Test> getInstance(int testId ,
                                              const GlobalContainer & container);
-
-    std::vector<std::string> getTestUserSettings() const;
-
-    std::vector<std::vector<std::string>> getTestsParameters() const;
-
-    std::vector<std::string> getStatistics() const;
-
 private:
-    /*
-    ===============
-    *** Methods ***
-    ===============
-    */
+    /* Methods */
     Test(int testIndex , const GlobalContainer & container)
         : ITest(testIndex , container)
     {}
-
-    void processBatteryOutput();
 };
 
 } // namespace dieharder

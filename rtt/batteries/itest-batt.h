@@ -15,26 +15,12 @@ public:
 
     virtual ~ITest() {}
 
-    virtual std::vector<std::string> getTestUserSettings() const = 0;
-
-    virtual std::vector<std::vector<std::string>> getTestsParameters() const = 0;
-
-    virtual std::vector<std::string> getStatistics() const = 0;
-
     /* Getters for results and some variables */
     bool wasExecuted() const;
 
     int getTestId() const;
 
     std::string getLogicName() const;
-
-    std::vector<tTestPvals> getResults() const;
-
-    std::string getBatteryStdErr() const;
-
-    std::vector<std::string> getBatteryErrors();
-
-    std::vector<std::string> getBatteryWarnings();
 
     std::vector<IVariant *> getVariants() const;
 
@@ -60,13 +46,6 @@ protected:
     std::string logicName;
     std::string logFilePath;
     std::string objectInfo;
-    /* Will be set after test execution.
-     * It is not extractable before execution. */
-    bool executed = false;
-    std::vector<tTestPvals> results;
-
-private:
-    virtual void processBatteryOutput() = 0;
 };
 
 } // namespace batteries

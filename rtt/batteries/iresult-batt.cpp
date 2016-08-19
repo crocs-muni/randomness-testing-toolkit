@@ -1,19 +1,25 @@
 #include "iresult-batt.h"
 
 #include "rtt/batteries/dieharder/result-dh.h"
+#include "rtt/batteries/niststs/result-sts.h"
 
 namespace rtt {
 namespace batteries {
 
-std::unique_ptr<IResult> IResult::getInstance(const std::vector<ITest *> & tests) {
+std::unique_ptr<IResult> IResult::getInstance(
+        const std::vector<ITest *> & tests) {
     if(tests.empty())
         raiseBugException("empty tests");
 
+    std::unique_ptr<IResult> rval;
+
     switch(tests.at(0)->getBattId()) {
         case Constants::Battery::NIST_STS:
-            raiseBugException("not implemented yet");
+            rval = niststs::Result::getInstance(tests);
+            break;
         case Constants::Battery::DIEHARDER:
-            return dieharder::Result::getInstance(tests);
+            rval = dieharder::Result::getInstance(tests);
+            break;
         case Constants::Battery::TU01_SMALLCRUSH:
         case Constants::Battery::TU01_CRUSH:
         case Constants::Battery::TU01_BIGCRUSH:
@@ -24,92 +30,76 @@ std::unique_ptr<IResult> IResult::getInstance(const std::vector<ITest *> & tests
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);
     }
-}
-
-PValueSet PValueSet::getInstance(std::string statName, double statResult,
-                                 const std::vector<double> & pValues) {
-    if(statName.empty())
-        raiseBugException("empty statName");
-    if(statResult < (0 - Constants::MATH_EPS) ||
-       statResult > (1 + Constants::MATH_EPS))
-        raiseBugException("p-value outside of <0,1>");
-    if(pValues.empty())
-        raiseBugException("empty pValues");
-
-    auto rval = PValueSet(statName, statResult, pValues);
-    double alpha = Constants::MATH_ALPHA / 2.0;
-
-    if(statResult > alpha - Constants::MATH_EPS &&
-       statResult < 1 - alpha + Constants::MATH_EPS)
-        rval.statPassed = true;
-
+    rval->evaluateSetPassed();
     return rval;
 }
 
-std::string PValueSet::getStatName() const {
-    return statName;
-}
+void IResult::writeResults(storage::IStorage * storage, int precision) {
+    storage->addNewTest(testName);
+    storage->setTestResult(passed);
 
-double PValueSet::getStatRes() const {
-    return statRes;
-}
+    for(const result::VariantResult & var : varRes) {
+        if(varRes.size() > 1)
+            storage->addVariant();
 
-std::vector<double> PValueSet::getPValues() const {
-    return pValues;
-}
+        storage->setUserSettings(var.getUserSettings());
+        storage->setRuntimeIssues(var.getBatteryOutput().getStdErr(),
+                                  var.getBatteryOutput().getErrors(),
+                                  var.getBatteryOutput().getWarnings());
 
-bool PValueSet::getStatPassed() const {
-    return statPassed;
-}
+        const auto & subResults = var.getSubResults();
+        for(const result::SubTestResult & subtest : subResults) {
+            if(subResults.size() > 1)
+                storage->addSubTest();
 
-SubTestResult SubTestResult::getInstance(const std::vector<PValueSet> & pValSets) {
-    if(pValSets.empty())
-        raiseBugException("empty pValSets");
+            if(subtest.getTestParameters().size() > 0)
+                storage->setTestParameters(subtest.getTestParameters());
 
-    return SubTestResult(pValSets);
-}
+            for(const result::PValueSet & pvalSet : subtest.getPValSets()) {
+                storage->addStatisticResult(pvalSet.getStatName(),
+                                            pvalSet.getStatRes(),
+                                            precision,
+                                            pvalSet.getStatPassed());
+                if(pvalSet.getPValues().size() > 1)
+                    storage->addPValues(pvalSet.getPValues());
+            }
 
-std::vector<double> SubTestResult::getStatResults() const{
-    std::vector<double> rval;
-    for(const PValueSet & set : pValSets)
-        rval.push_back(set.getStatRes());
+            if(subResults.size() >1)
+                storage->finalizeSubTest();
+        }
 
-    return rval;
-}
 
-std::vector<PValueSet> SubTestResult::getPValSets() const {
-    return pValSets;
-}
-
-VariantResult VariantResult::getInstance(const std::vector<SubTestResult> & subResults,
-                                         const std::vector<std::string> & userSettings,
-                                         const BatteryOutput & battOut) {
-    if(subResults.empty())
-        raiseBugException("empty subResults");
-
-    return VariantResult(subResults, userSettings, battOut);
-}
-
-std::vector<double> VariantResult::getSubTestStatResults() const {
-    std::vector<double> rval;
-    std::vector<double> tmp;
-    for(const SubTestResult & subRes : subResults) {
-        tmp = subRes.getStatResults();
-        rval.insert(rval.end(), tmp.begin(), tmp.end());
+        if(varRes.size() > 1)
+            storage->finalizeVariant();
     }
-    return rval;
 }
 
-std::vector<SubTestResult> VariantResult::getSubResults() const {
-    return subResults;
+std::vector<result::VariantResult> IResult::getResults() const {
+    return varRes;
 }
 
-BatteryOutput VariantResult::getBatteryOutput() const {
-    return battOut;
+bool IResult::getPassed() const {
+    return passed;
 }
 
-std::vector<std::string> VariantResult::getUserSettings() const {
-    return userSettings;
+void IResult::evaluateSetPassed() {
+    std::vector<double> allPValues;
+    for(const result::VariantResult & var : varRes) {
+        std::vector<double> tmp = var.getSubTestStatResults();
+        allPValues.insert(allPValues.end(), tmp.begin(), tmp.end());
+    }
+
+    double exp = 1.0/(double)allPValues.size();
+    double alpha = 1.0 - (std::pow(1.0 - Constants::MATH_ALPHA, exp));
+    alpha /= 2.0;
+
+    for(const double & pval : allPValues) {
+        if(pval < alpha - Constants::MATH_EPS ||
+           pval > 1.0 - alpha + Constants::MATH_EPS) {
+            passed = false;
+            break;
+        }
+    }
 }
 
 } // namespace batteries

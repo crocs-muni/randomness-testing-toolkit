@@ -34,7 +34,7 @@ std::string ITest::getLogicName() const {
     return logicName;
 }
 
-int ITest::getTestIndex() const {
+int ITest::getTestId() const {
     return testId;
 }
 
@@ -105,8 +105,7 @@ ITest::ITest(int testId, const GlobalContainer & cont) {
     }
 }
 
-Constants::Battery ITest::getBattId() const
-{
+Constants::Battery ITest::getBattId() const {
     return battId;
 }
 

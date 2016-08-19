@@ -21,8 +21,8 @@ std::unique_ptr<Result> Result::getInstance(
     };
     auto endIt = std::sregex_iterator();
 
-    std::vector<SubTestResult> tmpSubTestResults;
-    std::vector<PValueSet> tmpPValueSets;
+    std::vector<result::SubTestResult> tmpSubTestResults;
+    std::vector<result::PValueSet> tmpPValueSets;
     std::vector<double> tmpPVals;
 
     /* Single test object processing */
@@ -49,126 +49,26 @@ std::unique_ptr<Result> Result::getInstance(
                     std::smatch pvalMatch = *pValIt;
                     tmpPVals.push_back(Utils::strtod(pvalMatch[1].str()));
                 }
-                double statResult = r->kstest(tmpPVals);
                 tmpPValueSets.push_back(
-                            PValueSet::getInstance(
+                            result::PValueSet::getInstance(
                                 "Kolmogorov-Smirnov",
-                                statResult,
-                                std::move(tmpPVals)));
+                                r->kstest(tmpPVals),
+                                tmpPVals));
                 tmpSubTestResults.push_back(
-                            SubTestResult::getInstance(
-                                std::move(tmpPValueSets)));
+                            result::SubTestResult::getInstance(
+                                tmpPValueSets));
                 tmpPVals.clear();
                 tmpPValueSets.clear();
             }
-            r->varRes.push_back(VariantResult::getInstance(
-                                    std::move(tmpSubTestResults),
+            r->varRes.push_back(result::VariantResult::getInstance(
+                                    tmpSubTestResults,
                                     variant->getUserSettings(),
                                     variant->getBatteryOutput()));
             tmpSubTestResults.clear();
         }
     }
 
-    r->evaluateSetPassed();
     return r;
-}
-
-void Result::writeResults(storage::IStorage * storage) {
-    storage->addNewTest(testName);
-    storage->setTestResult(passed);
-
-    if(varRes.size() == 1) {
-        /* Only one variant */
-        VariantResult var = varRes.at(0);
-        storage->setUserSettings(var.getUserSettings());
-        storage->setRuntimeIssues(var.getBatteryOutput().getStdErr(),
-                                  var.getBatteryOutput().getErrors(),
-                                  var.getBatteryOutput().getWarnings());
-        if(var.getSubResults().size() == 0) {
-            /* Single subtest */
-            SubTestResult sub = var.getSubResults().at(0);
-            for(const PValueSet & pvals : sub.getPValSets()) {
-                storage->addStatisticResult(pvals.getStatName(),
-                                            pvals.getStatRes(),6,
-                                            pvals.getStatPassed());
-                storage->addPValues(pvals.getPValues(), 6);
-            }
-        } else {
-            /* Multiple subtests */
-            for(const SubTestResult & sub : var.getSubResults()) {
-                storage->addSubTest();
-                for(const PValueSet & pvals : sub.getPValSets()) {
-                    storage->addStatisticResult(pvals.getStatName(),
-                                                pvals.getStatRes(),6,
-                                                pvals.getStatPassed());
-                    storage->addPValues(pvals.getPValues(), 6);
-                }
-                storage->finalizeSubTest();
-            }
-        }
-    } else {
-        /* Multiple variants */
-        for(const VariantResult & var : varRes) {
-            storage->addVariant();
-
-            storage->setUserSettings(var.getUserSettings());
-            storage->setRuntimeIssues(var.getBatteryOutput().getStdErr(),
-                                      var.getBatteryOutput().getErrors(),
-                                      var.getBatteryOutput().getWarnings());
-            if(var.getSubResults().size() == 0) {
-                /* Single subtest */
-                SubTestResult sub = var.getSubResults().at(0);
-                for(const PValueSet & pvals : sub.getPValSets()) {
-                    storage->addStatisticResult(pvals.getStatName(),
-                                                pvals.getStatRes(),6,
-                                                pvals.getStatPassed());
-                    storage->addPValues(pvals.getPValues(), 6);
-                }
-            } else {
-                /* Multiple subtests */
-                for(const SubTestResult & sub : var.getSubResults()) {
-                    storage->addSubTest();
-                    for(const PValueSet & pvals : sub.getPValSets()) {
-                        storage->addStatisticResult(pvals.getStatName(),
-                                                    pvals.getStatRes(),6,
-                                                    pvals.getStatPassed());
-                        storage->addPValues(pvals.getPValues(), 6);
-                    }
-                    storage->finalizeSubTest();
-                }
-            }
-
-            storage->finalizeVariant();
-        }
-    }
-}
-
-std::vector<VariantResult> Result::getResults() const {
-    return varRes;
-}
-
-bool Result::getPassed() const {
-    return passed;
-}
-
-void Result::evaluateSetPassed() {
-    std::vector<double> allPValues;
-    for(const VariantResult & var : varRes) {
-        std::vector<double> tmp = var.getSubTestStatResults();
-        allPValues.insert(allPValues.end(), tmp.begin(), tmp.end());
-    }
-
-    double exp = 1.0/(double)allPValues.size();
-    double alpha = 1.0 - (std::pow(1.0 - Constants::MATH_ALPHA, exp));
-    alpha /= 2.0;
-
-    for(const double & pval : allPValues) {
-        if(pval < alpha - Constants::MATH_EPS ||
-           pval > 1.0 - alpha + Constants::MATH_EPS) {
-            passed = false;
-            break;
-        }
-    }
 }
 
 /* Following code is taken from DIEHARDER battery. */

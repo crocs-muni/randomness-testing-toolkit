@@ -24,7 +24,7 @@ public:
     /* Getters for results and some variables */
     bool wasExecuted() const;
 
-    int getTestIndex() const;
+    int getTestId() const;
 
     std::string getLogicName() const;
 

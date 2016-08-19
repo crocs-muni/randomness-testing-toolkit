@@ -4,6 +4,9 @@ namespace rtt {
 namespace batteries {
 namespace niststs {
 
+/* For writing output into logfile continuosly. */
+std::mutex outputFile_mux;
+
 std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                                               const GlobalContainer & cont) {
     std::unique_ptr<Variant> v (new Variant(testId, variantIdx, cont));
@@ -22,10 +25,50 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
     v->blockLength = battConf->getTestVariantParamString(
                          v->battId, testId, variantIdx,
                          Configuration::TAGNAME_BLOCK_LENGTH);
-    v->adjustableBlockLength =
-            std::get<3>(TestConstants::getNistStsTestData(v->battId, testId));
+    v->resultSubDir = std::get<1>(
+                          TestConstants::getNistStsTestData(
+                              v->battId , v->testId));
+    v->adjustableBlockLength = std::get<2>(
+                                   TestConstants::getNistStsTestData(
+                                       v->battId, testId));
 
     return v;
+}
+
+void Variant::execute() {
+    /* This method is turned into thread.
+     * Will deadlock if run without main thread. */
+    testDir_mux->lock();
+    /* Cleaning result directory */
+    Utils::rmDirFiles(resultSubDir);
+    batteryOutput = TestRunner::executeBinary(
+                        logger,objectInfo,executablePath,
+                        cliArguments, stdInput);
+    readNistStsOutFiles();
+    testDir_mux->unlock();
+
+    batteryOutput.doDetection();
+    if(!batteryOutput.getStdErr().empty())
+        logger->warn(objectInfo + ": execution of test produced error output.");
+    if(!batteryOutput.getErrors().empty())
+        logger->warn(objectInfo + ": test output contains errors.");
+    if(!batteryOutput.getWarnings().empty())
+        logger->warn(objectInfo + ": test output contains warnings.");
+
+    outputFile_mux.lock();
+    Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
+    Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
+    outputFile_mux.unlock();
+
+    executed = true;
+}
+
+void Variant::setTestDir_mux(std::mutex * value) {
+    testDir_mux = value;
+}
+
+std::vector<std::string> Variant::getPValueFiles() const {
+    return pValueFiles;
 }
 
 void Variant::buildStrings() {
@@ -78,6 +121,39 @@ void Variant::buildStrings() {
     if(adjustableBlockLength && !blockLength.empty())
         sett << "Block length: " << blockLength;
     userSettings = Utils::split(sett.str() , '\n');
+}
+
+void Variant::readNistStsOutFiles() {
+    try {
+        auto testLog = Utils::readFileToString(resultSubDir + "stats.txt");
+        batteryOutput.appendStdOut(testLog);
+
+        if(Utils::fileExist(resultSubDir + "data1.txt")) {
+            /* Multiple data<n>.txt files with p values */
+            std::string dataFileName;
+            for(uint i = 1 ; ; ++i) {
+                dataFileName = resultSubDir + "data";
+                dataFileName.append(Utils::itostr(i));
+                dataFileName.append(".txt");
+                if(Utils::fileExist(dataFileName)) {
+                    /* Okay read it. */
+                    pValueFiles.push_back(
+                                Utils::readFileToString(
+                                    dataFileName));
+                } else {
+                    /* No more files to read */
+                    break;
+                }
+            }
+        } else {
+            /* Only one result file with p values */
+            pValueFiles.push_back(
+                        Utils::readFileToString(
+                            resultSubDir + "results.txt"));
+        }
+    } catch (std::runtime_error ex) {
+        logger->warn(objectInfo + Strings::TEST_ERR_EXCEPTION_DURING_THREAD + ex.what());
+    }
 }
 
 } // namespace niststs

@@ -117,43 +117,7 @@
                 "test-ids": ["1-15"],    
                 "stream-size": "1000000",
                 "stream-count": "100"
-            },
-            "test-specific-settings": [
-                {
-                   "test-id": 1,
-                   "stream-size": "01",
-                   "variants": [
-                        {
-                            "stream-size": "11",
-                            "stream-count": "12",
-                            "block-length": "13"
-                        },
-                        {
-                            "stream-size": "21",
-                            "stream-count": "22",
-                            "block-length": "23"
-                        },
-                        {
-                            "block-length": "31"
-                        }
-                    ]
-                },
-                {
-                   "test-id": 2,
-                   "stream-count": "22",
-                   "block-length": "23"
-                },
-                {
-                   "test-id": 3,
-                   "stream-size": "31",
-                   "block-length": "33"
-                },
-                {
-                   "test-id": 4,
-                   "stream-size": "41",
-                   "stream-length": "42"
-                }
-            ]  
+            }
         },
     
         "testu01-settings": {

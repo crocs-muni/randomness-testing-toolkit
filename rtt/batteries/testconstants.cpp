@@ -4,21 +4,21 @@ namespace rtt {
 namespace batteries {
 
 const std::string TestConstants::NISTSTS_MAIN_RESULT_DIR       = "experiments/AlgorithmTesting/";
-const tNistStsData TestConstants::NISTSTS_FREQ                 {"Frequency (monobits) test" ,                             TestConstants::NISTSTS_MAIN_RESULT_DIR + "Frequency/",                  1,      false};
-const tNistStsData TestConstants::NISTSTS_BLOCKFREQ            {"Test For Frequency Within A Block" ,                     TestConstants::NISTSTS_MAIN_RESULT_DIR + "BlockFrequency/",             1,      true};
-const tNistStsData TestConstants::NISTSTS_CUSUMS               {"Cumulative Sum (Cusum) Test" ,                           TestConstants::NISTSTS_MAIN_RESULT_DIR + "CumulativeSums/",             2,      false};
-const tNistStsData TestConstants::NISTSTS_RUNS                 {"Runs Test" ,                                             TestConstants::NISTSTS_MAIN_RESULT_DIR + "Runs/",                       1,      false};
-const tNistStsData TestConstants::NISTSTS_LONGESTRUN           {"Test for the Longest Run of Ones in a Block" ,           TestConstants::NISTSTS_MAIN_RESULT_DIR + "LongestRun/",                 1,      false};
-const tNistStsData TestConstants::NISTSTS_RANK                 {"Random Binary Matrix Rank Test" ,                        TestConstants::NISTSTS_MAIN_RESULT_DIR + "Rank/",                       1,      false};
-const tNistStsData TestConstants::NISTSTS_FFT                  {"Discrete Fourier Transform (Spectral) Test" ,            TestConstants::NISTSTS_MAIN_RESULT_DIR + "FFT/",                        1,      false};
-const tNistStsData TestConstants::NISTSTS_NONOVERTEMP          {"Non-overlapping (Aperiodic) Template Matching Test" ,    TestConstants::NISTSTS_MAIN_RESULT_DIR + "NonOverlappingTemplate/",     148,    true};
-const tNistStsData TestConstants::NISTSTS_OVERTEMP             {"Overlapping (Periodic) Template Matching Test" ,         TestConstants::NISTSTS_MAIN_RESULT_DIR + "OverlappingTemplate/",        1,      true};
-const tNistStsData TestConstants::NISTSTS_UNIVERSAL            {"Maurer's Universal Statistical Test" ,                   TestConstants::NISTSTS_MAIN_RESULT_DIR + "Universal/",                  1,      false};
-const tNistStsData TestConstants::NISTSTS_APPROXENT            {"Approximate Entropy Test" ,                              TestConstants::NISTSTS_MAIN_RESULT_DIR + "ApproximateEntropy/",         1,      true};
-const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONS        {"Random Excursions Test" ,                                TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursions/",           8,      false};
-const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONSVAR     {"Random Excursions Variant Test" ,                        TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursionsVariant/",    18,     false};
-const tNistStsData TestConstants::NISTSTS_SERIAL               {"Serial Test" ,                                           TestConstants::NISTSTS_MAIN_RESULT_DIR + "Serial/",                     2,      true};
-const tNistStsData TestConstants::NISTSTS_LINEARCOMPLEXITY     {"Linear Complexity Test" ,                                TestConstants::NISTSTS_MAIN_RESULT_DIR + "LinearComplexity/",           1,      true};
+const tNistStsData TestConstants::NISTSTS_FREQ                 {"Frequency (monobits) test" ,                             TestConstants::NISTSTS_MAIN_RESULT_DIR + "Frequency/",               false};
+const tNistStsData TestConstants::NISTSTS_BLOCKFREQ            {"Test For Frequency Within A Block" ,                     TestConstants::NISTSTS_MAIN_RESULT_DIR + "BlockFrequency/",          true};
+const tNistStsData TestConstants::NISTSTS_CUSUMS               {"Cumulative Sum (Cusum) Test" ,                           TestConstants::NISTSTS_MAIN_RESULT_DIR + "CumulativeSums/",          false};
+const tNistStsData TestConstants::NISTSTS_RUNS                 {"Runs Test" ,                                             TestConstants::NISTSTS_MAIN_RESULT_DIR + "Runs/",                    false};
+const tNistStsData TestConstants::NISTSTS_LONGESTRUN           {"Test for the Longest Run of Ones in a Block" ,           TestConstants::NISTSTS_MAIN_RESULT_DIR + "LongestRun/",              false};
+const tNistStsData TestConstants::NISTSTS_RANK                 {"Random Binary Matrix Rank Test" ,                        TestConstants::NISTSTS_MAIN_RESULT_DIR + "Rank/",                    false};
+const tNistStsData TestConstants::NISTSTS_FFT                  {"Discrete Fourier Transform (Spectral) Test" ,            TestConstants::NISTSTS_MAIN_RESULT_DIR + "FFT/",                     false};
+const tNistStsData TestConstants::NISTSTS_NONOVERTEMP          {"Non-overlapping (Aperiodic) Template Matching Test" ,    TestConstants::NISTSTS_MAIN_RESULT_DIR + "NonOverlappingTemplate/",  true};
+const tNistStsData TestConstants::NISTSTS_OVERTEMP             {"Overlapping (Periodic) Template Matching Test" ,         TestConstants::NISTSTS_MAIN_RESULT_DIR + "OverlappingTemplate/",     true};
+const tNistStsData TestConstants::NISTSTS_UNIVERSAL            {"Maurer's Universal Statistical Test" ,                   TestConstants::NISTSTS_MAIN_RESULT_DIR + "Universal/",               false};
+const tNistStsData TestConstants::NISTSTS_APPROXENT            {"Approximate Entropy Test" ,                              TestConstants::NISTSTS_MAIN_RESULT_DIR + "ApproximateEntropy/",      true};
+const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONS        {"Random Excursions Test" ,                                TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursions/",        false};
+const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONSVAR     {"Random Excursions Variant Test" ,                        TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursionsVariant/", false};
+const tNistStsData TestConstants::NISTSTS_SERIAL               {"Serial Test" ,                                           TestConstants::NISTSTS_MAIN_RESULT_DIR + "Serial/",                  true};
+const tNistStsData TestConstants::NISTSTS_LINEARCOMPLEXITY     {"Linear Complexity Test" ,                                TestConstants::NISTSTS_MAIN_RESULT_DIR + "LinearComplexity/",        true};
 
 const tDieharderData TestConstants::DIEHARDER_BIRTHDAYS            {"Diehard Birthdays Test"};
 const tDieharderData TestConstants::DIEHARDER_OPERM5               {"Diehard OPERM5 Test"};

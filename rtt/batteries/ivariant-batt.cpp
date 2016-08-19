@@ -73,7 +73,14 @@ std::vector<std::string> IVariant::getUserSettings() const {
 }
 
 BatteryOutput IVariant::getBatteryOutput() const {
-    return batteryOutput;
+    if(executed)
+        return batteryOutput;
+
+    throw RTTException(objectInfo, Strings::TEST_ERR_NO_EXEC_RES);
+}
+
+int IVariant::getTestId() const {
+    return testId;
 }
 
 IVariant::IVariant(int testId, uint variantIdx,

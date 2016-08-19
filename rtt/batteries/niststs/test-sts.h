@@ -37,8 +37,7 @@ private:
     *** Variables ***
     =================
     */
-    std::string resultSubDir;
-    std::vector<std::unique_ptr<IVariant>> variants;
+    std::unique_ptr<std::mutex> testDir_mux;
 
     /*
     ===============

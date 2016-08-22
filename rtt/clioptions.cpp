@@ -145,7 +145,8 @@ std::string CliOptions::getUsage() {
     ss << "\n[USAGE] Randomness Testing Toolkit accepts following options.\n";
     ss << "    -b  Followed with battery that will be used. Following batteries\n";
     ss << "        are accepted: \"dieharder\", \"nist_sts\", \"tu01_smallcrush\",\n";
-    ss << "        \"tu01_crush\", \"tu01_bigcrush\", \"tu01_rabbit\", \"tu01_alphabit\"\n";
+    ss << "        \"tu01_crush\", \"tu01_bigcrush\", \"tu01_rabbit\",\n";
+    ss << "        \"tu01_alphabit\" and \"tu01_blockalphabit\".\n";
     ss << "    -f  Followed with path to input binary file that will be analysed by battery.\n";
     ss << "    -o  Followed with path of output file for battery results. If left empty,\n";
     ss << "        default value from config file will be used.\n";

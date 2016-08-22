@@ -87,26 +87,26 @@ int main (int argc , char * argv[]) try {
         /* Processing and storing of results of the run */
         battery->processStoredResults();
 
-    } catch(RTTException ex) {
+    } catch(RTTException & ex) {
         container.getLogger()->error(ex.what());
-    } catch(BugException ex) {
+    } catch(BugException & ex) {
         container.getLogger()->error(ex.what());
-    } catch(std::runtime_error ex) {
+    } catch(std::runtime_error & ex) {
         container.getLogger()->error(ex.what());
-    } catch(std::exception ex) {
+    } catch(std::exception & ex) {
         container.getLogger()->error(ex.what());
     }
 #endif
-} catch(RTTException ex) {
+} catch(RTTException & ex) {
     std::cout << "[RTT Exception] " << ex.what() << std::endl << std::endl;
     return -1;
-} catch (BugException ex) {
+} catch (BugException & ex) {
     std::cout << "[Bug Exception] " << ex.what() << std::endl << std::endl;
     return -1;
-} catch(std::runtime_error ex) {
+} catch(std::runtime_error & ex) {
     std::cout << "[Runtime Error] " << ex.what() << std::endl << std::endl;
     return -1;
-} catch(std::exception ex) {
+} catch(std::exception & ex) {
     std::cout << "[General Exception] " << ex.what() << std::endl << std::endl;
     return -1;
 }

@@ -4,21 +4,81 @@ namespace rtt {
 namespace batteries {
 
 const std::string TestConstants::NISTSTS_MAIN_RESULT_DIR       = "experiments/AlgorithmTesting/";
-const tNistStsData TestConstants::NISTSTS_FREQ                 {"Frequency (monobits) test" ,                             TestConstants::NISTSTS_MAIN_RESULT_DIR + "Frequency/",               false};
-const tNistStsData TestConstants::NISTSTS_BLOCKFREQ            {"Test For Frequency Within A Block" ,                     TestConstants::NISTSTS_MAIN_RESULT_DIR + "BlockFrequency/",          true};
-const tNistStsData TestConstants::NISTSTS_CUSUMS               {"Cumulative Sum (Cusum) Test" ,                           TestConstants::NISTSTS_MAIN_RESULT_DIR + "CumulativeSums/",          false};
-const tNistStsData TestConstants::NISTSTS_RUNS                 {"Runs Test" ,                                             TestConstants::NISTSTS_MAIN_RESULT_DIR + "Runs/",                    false};
-const tNistStsData TestConstants::NISTSTS_LONGESTRUN           {"Test for the Longest Run of Ones in a Block" ,           TestConstants::NISTSTS_MAIN_RESULT_DIR + "LongestRun/",              false};
-const tNistStsData TestConstants::NISTSTS_RANK                 {"Random Binary Matrix Rank Test" ,                        TestConstants::NISTSTS_MAIN_RESULT_DIR + "Rank/",                    false};
-const tNistStsData TestConstants::NISTSTS_FFT                  {"Discrete Fourier Transform (Spectral) Test" ,            TestConstants::NISTSTS_MAIN_RESULT_DIR + "FFT/",                     false};
-const tNistStsData TestConstants::NISTSTS_NONOVERTEMP          {"Non-overlapping (Aperiodic) Template Matching Test" ,    TestConstants::NISTSTS_MAIN_RESULT_DIR + "NonOverlappingTemplate/",  true};
-const tNistStsData TestConstants::NISTSTS_OVERTEMP             {"Overlapping (Periodic) Template Matching Test" ,         TestConstants::NISTSTS_MAIN_RESULT_DIR + "OverlappingTemplate/",     true};
-const tNistStsData TestConstants::NISTSTS_UNIVERSAL            {"Maurer's Universal Statistical Test" ,                   TestConstants::NISTSTS_MAIN_RESULT_DIR + "Universal/",               false};
-const tNistStsData TestConstants::NISTSTS_APPROXENT            {"Approximate Entropy Test" ,                              TestConstants::NISTSTS_MAIN_RESULT_DIR + "ApproximateEntropy/",      true};
-const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONS        {"Random Excursions Test" ,                                TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursions/",        false};
-const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONSVAR     {"Random Excursions Variant Test" ,                        TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursionsVariant/", false};
-const tNistStsData TestConstants::NISTSTS_SERIAL               {"Serial Test" ,                                           TestConstants::NISTSTS_MAIN_RESULT_DIR + "Serial/",                  true};
-const tNistStsData TestConstants::NISTSTS_LINEARCOMPLEXITY     {"Linear Complexity Test" ,                                TestConstants::NISTSTS_MAIN_RESULT_DIR + "LinearComplexity/",        true};
+const tNistStsData TestConstants::NISTSTS_FREQ {
+    "Frequency (monobits) test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "Frequency/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_BLOCKFREQ {
+    "Test For Frequency Within A Block" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "BlockFrequency/",
+    true
+};
+const tNistStsData TestConstants::NISTSTS_CUSUMS {
+    "Cumulative Sum (Cusum) Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "CumulativeSums/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_RUNS {
+    "Runs Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "Runs/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_LONGESTRUN {
+    "Test for the Longest Run of Ones in a Block" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "LongestRun/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_RANK {
+    "Random Binary Matrix Rank Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "Rank/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_FFT {
+    "Discrete Fourier Transform (Spectral) Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "FFT/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_NONOVERTEMP {
+    "Non-overlapping (Aperiodic) Template Matching Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "NonOverlappingTemplate/",
+    true
+};
+const tNistStsData TestConstants::NISTSTS_OVERTEMP {
+    "Overlapping (Periodic) Template Matching Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "OverlappingTemplate/",
+    true
+};
+const tNistStsData TestConstants::NISTSTS_UNIVERSAL            {
+    "Maurer's Universal Statistical Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "Universal/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_APPROXENT            {
+    "Approximate Entropy Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "ApproximateEntropy/",
+    true
+};
+const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONS        {
+    "Random Excursions Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursions/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_RNDEXCURSIONSVAR     {
+    "Random Excursions Variant Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "RandomExcursionsVariant/",
+    false
+};
+const tNistStsData TestConstants::NISTSTS_SERIAL               {
+    "Serial Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "Serial/",
+    true
+};
+const tNistStsData TestConstants::NISTSTS_LINEARCOMPLEXITY     {
+    "Linear Complexity Test" ,
+    TestConstants::NISTSTS_MAIN_RESULT_DIR + "LinearComplexity/",
+    true
+};
 
 const tDieharderData TestConstants::DIEHARDER_BIRTHDAYS            {"Diehard Birthdays Test"};
 const tDieharderData TestConstants::DIEHARDER_OPERM5               {"Diehard OPERM5 Test"};
@@ -52,48 +112,390 @@ const tDieharderData TestConstants::DIEHARDER_DABFILLTREE          {"DAB Fill Tr
 const tDieharderData TestConstants::DIEHARDER_DABFILLTREE2         {"DAB Fill Tree Test 2"};
 const tDieharderData TestConstants::DIEHARDER_DABMONOBIT           {"DAB Monobit 2 Test"};
 
-const tTestU01Data TestConstants::TESTU01_SMARSA_SERIALOVER            {"smarsa_SerialOver" ,           {"N","n","r","d","t"} ,             {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SMARSA_COLLISIONOVER         {"smarsa_CollisionOver" ,        {"N","n","r","d","t"} ,             {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SMARSA_BIRTHDAYSPACINGS      {"smarsa_BirthdaySpacings" ,     {"N","n","r","d","t","p"} ,         {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS            {"snpair_ClosePairs" ,           {"N","n","r","t","p","m","Torus"} , {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)"}};
-const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS_BIGT       {"snpair_ClosePairs" ,           {"N","n","r","t","p","m","Torus"} , {"AD (NP)" , "A2 (m-NP)" , "A2 (mNP1)" , "Jumps Y (mN)" , "AD (mNP2)" ,"AD (mNP2-S)"}};
-const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRSBITMATCH    {"snpair_ClosePairsBitMatch" ,   {"N","n","r","t"} ,                 {"Bit distance"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_COLLISION             {"sknuth_Collision" ,            {"N","n","r","d","t","Sparse"} ,    {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_SIMPPOKER             {"sknuth_SimpPoker" ,            {"N","n","r","d","k"} ,             {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_COUPONCOLLECTOR       {"sknuth_CouponCollector" ,      {"N","n","r","d"} ,                 {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_GAP                   {"sknuth_Gap" ,                  {"N","n","r","Alpha","Beta"} ,      {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_RUN                   {"sknuth_Run" ,                  {"N","n","r","Up"} ,                {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_PERMUTATION           {"sknuth_Permutation" ,          {"N","n","r","t"} ,                 {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_COLLISIONPERMUT       {"sknuth_CollisionPermut" ,      {"N","n","r","t"} ,                 {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_MAXOFT                {"sknuth_MaxOft" ,               {"N","n","r","d","t"} ,             {"Chi-square" , "Anderson-Darling"}};
-const tTestU01Data TestConstants::TESTU01_SKNUTH_MAXOFT_BIGN           {"sknuth_MaxOft" ,               {"N","n","r","d","t"} ,             {"Chi-square - KS (D+)" , "Chi-square - KS (D-)" , "Chi-square - AD (A2)" , "Observations sums" , "Anderson-Darling - KS (D+)" , "Anderson-Darling - KS (D-)", "Anderson-Darling - AD (A2)"}};
-const tTestU01Data TestConstants::TESTU01_SVARIA_SAMPLEPROD            {"svaria_SampleProd" ,           {"N","n","r","t"} ,                 {"Anderson-Darling"}};
-const tTestU01Data TestConstants::TESTU01_SVARIA_SAMPLEMEAN            {"svaria_SampleMean" ,           {"N","n","r"} ,                     {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
-const tTestU01Data TestConstants::TESTU01_SVARIA_SAMPLECORR            {"svaria_SampleCorr" ,           {"N","n","r","k"} ,                 {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SVARIA_APPEARANCESPACINGS    {"svaria_AppearanceSpacings" ,   {"N","Q","K","r","s","L"} ,         {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SVARIA_WEIGHTDISTRIB         {"svaria_WeightDistrib" ,        {"N","n","r","k","Alpha","Beta"} ,  {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SVARIA_SUMCOLLECTOR          {"svaria_SumCollector" ,         {"N","n","r","g"} ,                 {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SMARSA_MATRIXRANK            {"smarsa_MatrixRank" ,           {"N","n","r","s","L","k"} ,         {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SMARSA_SAVIR2                {"smarsa_Savir2" ,               {"N","n","r","m","t"} ,             {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SMARSA_GDC                   {"smarsa_GCD" ,                  {"N","n","r","s"} ,                 {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SWALK_RANDOMWALK1            {"swalk_RandomWalk1" ,           {"N","n","r","s","L0","L1"} ,       {"Chi-square(H)" , "Chi-square(M)" ,"Chi-square(J)" , "Chi-square(R)" , "Chi-square(C)"}};
-const tTestU01Data TestConstants::TESTU01_SCOMP_LINEARCOMP             {"scomp_LinearComp" ,            {"N","n","r","s"} ,                 {"Chi-square" , "Normal"}};
-const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV              {"scomp_LempelZiv" ,             {"N","n","r","s","k"} ,             {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV_BIGN         {"scomp_LempelZiv" ,             {"N","n","r","s","k"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Normal" , "Sample variance"}};
-const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER1           {"sspectral_Fourier1" ,          {"N","n","r","s","k"} ,             {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER3           {"sspectral_Fourier3" ,          {"N","n","r","s","k"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_LONGESTHEADRUN       {"sstring_LongestHeadRun" ,      {"N","n","r","s","L"} ,             {"Chi-square" , "Global longest run of 1"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_PERIODSINSTRINGS     {"sstring_PeriodsInStrings" ,    {"N","n","r","s"} ,                 {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT        {"sstring_HammingWeight" ,       {"N","n","r","s","L"} ,             {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT2       {"sstring_HammingWeight2" ,      {"N","n","r","s","L"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGCORR          {"sstring_HammingCorr" ,         {"N","n","r","s","L"} ,             {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGINDEP         {"sstring_HammingIndep" ,        {"N","n","r","s","L","d"} ,         {"Chi-square"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_RUN                  {"sstring_Run" ,                 {"N","n","r","s"} ,                 {"Chi-square" , "Normal"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_RUN_RABBIT           {"sstring_Run" ,                 {"N","n","r","s"} ,                 {"Kolmogorov-Smirnov (D+) (runs)" , "Kolmogorov-Smirnov (D-) (runs)" , "Anderson-Darling (A2) (runs)" , "Chi-square (runs)" , "Kolmogorov-Smirnov (D+) (bits)" , "Kolmogorov-Smirnov (D-) (bits)" , "Anderson-Darling (A2) (bits)" , "Normal (bits)" , "Sample variance (bits)"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR              {"sstring_AutoCor" ,             {} ,                                {"Normal"}};
-const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN         {"sstring_AutoCor" ,             {"N","n","r","s","d"} ,             {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling" , "Normal" , "Sample variance"}};
-const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER  {"smultin_MultinomialBitsOver" , {"N","n","r","s","L","Sparse"} ,    {"Collision"}};
-const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN    {"smultin_MultinomialBitsOver" , {"N","n","r","s","L","Sparse"} ,    {"Kolmogorov-Smirnov (D+)" , "Kolmogorov-Smirnov (D-)" , "Anderson-Darling (A2)" ,"Std empirical mean" , "Std empirical corr"}};
+const tTestU01Data TestConstants::TESTU01_SMARSA_SERIALOVER {
+    "smarsa_SerialOver" ,
+    {"N","n","r","d","t"} ,
+    {"N","n","r","d","t","Sparse"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SMARSA_COLLISIONOVER {
+    "smarsa_CollisionOver" ,
+    {"N","n","r","d","t"} ,
+    {"N","n","r","d","t","Sparse"} ,
+    {
+        "Collision"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SMARSA_BIRTHDAYSPACINGS {
+    "smarsa_BirthdaySpacings" ,
+    {"N","n","r","d","t","p"} ,
+    {"N","n","r","d","t","p"} ,
+    {
+        "Collision"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS {
+    "snpair_ClosePairs" ,
+    {"N","n","r","t","p","m"} ,
+    {"N","n","r","t","p","m","Torus"} ,
+    {
+        "AD (NP)" ,
+        "A2 (m-NP)" ,
+        "A2 (mNP1)" ,
+        "Jumps Y (mN)" ,
+        "AD (mNP2)"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRS_BIGT {
+    "snpair_ClosePairs" ,
+    {"N","n","r","t","p","m"} ,
+    {"N","n","r","t","p","m","Torus"} ,
+    {
+        "AD (NP)" ,
+        "A2 (m-NP)" ,
+        "A2 (mNP1)" ,
+        "Jumps Y (mN)" ,
+        "AD (mNP2)" ,
+        "AD (mNP2-S)"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SNPAIR_CLOSEPAIRSBITMATCH {
+    "snpair_ClosePairsBitMatch" ,
+    {"N","n","r","t"} ,
+    {"N","n","r","t"} ,
+    {
+        "Bit distance"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_COLLISION {
+    "sknuth_Collision" ,
+    {"N","n","r","d","t"} ,
+    {"N","n","r","d","t","Sparse"} ,
+    {
+        "Collision"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_SIMPPOKER {
+    "sknuth_SimpPoker" ,
+    {"N","n","r","d","k"} ,
+    {"N","n","r","d","k"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_COUPONCOLLECTOR {
+    "sknuth_CouponCollector" ,
+    {"N","n","r","d"} ,
+    {"N","n","r","d"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_GAP {
+    "sknuth_Gap" ,
+    {"N","n","r","Alpha","Beta"} ,
+    {"N","n","r","Alpha","Beta"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_RUN {
+    "sknuth_Run" ,
+    {"N","n","r","Up"} ,
+    {"N","n","r","Up"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_PERMUTATION {
+    "sknuth_Permutation" ,
+    {"N","n","r","t"} ,
+    {"N","n","r","t","Sparse"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_COLLISIONPERMUT {
+    "sknuth_CollisionPermut" ,
+    {"N","n","r","t"} ,
+    {"N","n","r","t","Sparse"} ,
+    {
+        "Collision"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_MAXOFT {
+    "sknuth_MaxOft" ,
+    {"N","n","r","d","t"} ,
+    {"N","n","r","d","t"} ,
+    {
+        "Chi-square" ,
+        "Anderson-Darling"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SKNUTH_MAXOFT_BIGN {
+    "sknuth_MaxOft" ,
+    {"N","n","r","d","t"} ,
+    {"N","n","r","d","t"} ,
+    {
+        "Chi-square - KS (D+)" ,
+        "Chi-square - KS (D-)" ,
+        "Chi-square - AD (A2)" ,
+        "Observations sums" ,
+        "Anderson-Darling - KS (D+)" ,
+        "Anderson-Darling - KS (D-)",
+        "Anderson-Darling - AD (A2)"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SVARIA_SAMPLEPROD {
+    "svaria_SampleProd" ,
+    {"N","n","r","t"} ,
+    {"N","n","r","t"} ,
+    {
+        "Anderson-Darling"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SVARIA_SAMPLEMEAN {
+    "svaria_SampleMean" ,
+    {"N","n","r"} ,
+    {"N","n","r"} ,
+    {
+        "Kolmogorov-Smirnov (D+)" ,
+        "Kolmogorov-Smirnov (D-)" ,
+        "Anderson-Darling"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SVARIA_SAMPLECORR {
+    "svaria_SampleCorr" ,
+    {"N","n","r","k"} ,
+    {"N","n","r","k"} ,
+    {
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SVARIA_APPEARANCESPACINGS {
+    "svaria_AppearanceSpacings" ,
+    {"N","Q","K","r","s","L"} ,
+    {"N","Q","K","r","s","L"} ,
+    {
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SVARIA_WEIGHTDISTRIB {
+    "svaria_WeightDistrib" ,
+    {"N","n","r","k","Alpha","Beta"} ,
+    {"N","n","r","k","Alpha","Beta"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SVARIA_SUMCOLLECTOR {
+    "svaria_SumCollector" ,
+    {"N","n","r","g"} ,
+    {"N","n","r","g"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SMARSA_MATRIXRANK {
+    "smarsa_MatrixRank" ,
+    {"N","n","r","s","L","k"} ,
+    {"N","n","r","s","L","k"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SMARSA_SAVIR2 {
+    "smarsa_Savir2" ,
+    {"N","n","r","m","t"} ,
+    {"N","n","r","m","t"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SMARSA_GDC {
+    "smarsa_GCD" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SWALK_RANDOMWALK1 {
+    "swalk_RandomWalk1" ,
+    {"N","n","r","s","L0","L1"} ,
+    {"N","n","r","s","L0","L1"} ,
+    {
+        "Chi-square(H)" ,
+        "Chi-square(M)" ,
+        "Chi-square(J)" ,
+        "Chi-square(R)" ,
+        "Chi-square(C)"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SCOMP_LINEARCOMP {
+    "scomp_LinearComp" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s"} ,
+    {
+        "Chi-square" ,
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV {
+    "scomp_LempelZiv" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s","k"} ,
+    {
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV_BIGN {
+    "scomp_LempelZiv" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s","k"} ,
+    {
+        "Kolmogorov-Smirnov (D+)" ,
+        "Kolmogorov-Smirnov (D-)" ,
+        "Anderson-Darling" ,
+        "Normal" ,
+        "Sample variance"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER1 {
+    "sspectral_Fourier1" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s","k"} ,
+    {
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER3 {
+    "sspectral_Fourier3" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s","k"} ,
+    {
+        "Kolmogorov-Smirnov (D+)" ,
+        "Kolmogorov-Smirnov (D-)" ,
+        "Anderson-Darling"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_LONGESTHEADRUN {
+    "sstring_LongestHeadRun" ,
+    {"N","n","r","s","L"} ,
+    {"N","n","r","s","L"} ,
+    {
+        "Chi-square" ,
+        "Global longest run of 1"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_PERIODSINSTRINGS {
+    "sstring_PeriodsInStrings" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT {
+    "sstring_HammingWeight" ,
+    {"N","n","r","s","L"} ,
+    {"N","n","r","s","L"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT2 {
+    "sstring_HammingWeight2" ,
+    {"N","n","r","s","L"} ,
+    {"N","n","r","s","L"} ,
+    {
+        "Kolmogorov-Smirnov (D+)" ,
+        "Kolmogorov-Smirnov (D-)" ,
+        "Anderson-Darling" , "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGCORR {
+    "sstring_HammingCorr" ,
+    {"N","n","r","s","L"} ,
+    {"N","n","r","s","L"} ,
+    {
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_HAMMINGINDEP {
+    "sstring_HammingIndep" ,
+    {"N","n","r","s","L","d"} ,
+    {"N","n","r","s","L","d"} ,
+    {
+        "Chi-square"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_RUN {
+    "sstring_Run" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s"} ,
+    {
+        "Chi-square" ,
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_RUN_RABBIT {
+    "sstring_Run" ,
+    {"N","n","r","s"} ,
+    {"N","n","r","s"} ,
+    {
+        "Kolmogorov-Smirnov (D+) (runs)" ,
+        "Kolmogorov-Smirnov (D-) (runs)" ,
+        "Anderson-Darling (A2) (runs)" ,
+        "Chi-square (runs)" ,
+        "Kolmogorov-Smirnov (D+) (bits)" ,
+        "Kolmogorov-Smirnov (D-) (bits)" ,
+        "Anderson-Darling (A2) (bits)" ,
+        "Normal (bits)" ,
+        "Sample variance (bits)"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR {
+    "sstring_AutoCor" ,
+    {"N","n","r","s","d"} ,
+    {"N","n","r","s","d"} ,
+    {
+        "Normal"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN {
+    "sstring_AutoCor" ,
+    {"N","n","r","s","d"} ,
+    {"N","n","r","s","d"} ,
+    {
+        "Kolmogorov-Smirnov (D+)" ,
+        "Kolmogorov-Smirnov (D-)" ,
+        "Anderson-Darling" ,
+        "Normal" ,
+        "Sample variance"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER {
+    "smultin_MultinomialBitsOver" ,
+    {"N","n","r","s","L","Sparse"} ,
+    {"N","n","r","s","L","Sparse"} ,
+    {
+        "Collision"
+    }
+};
+const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN {
+    "smultin_MultinomialBitsOver" ,
+    {"N","n","r","s","L","Sparse"} ,
+    {"N","n","r","s","L","Sparse"} ,
+    {"Kolmogorov-Smirnov (D+)" ,
+        "Kolmogorov-Smirnov (D-)" ,
+        "Anderson-Darling (A2)" ,
+        "Std empirical mean" ,
+        "Std empirical corr"
+    }
+};
 
 const std::map<int , tNistStsData> TestConstants::nistStsTests {
     { 1, TestConstants::NISTSTS_FREQ},

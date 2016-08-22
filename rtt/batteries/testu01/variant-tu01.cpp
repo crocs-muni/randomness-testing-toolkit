@@ -9,10 +9,15 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
     std::unique_ptr<Variant> v (new Variant(testId, variantIdx, cont));
     auto battConf = cont.getBatteryConfiguration();
 
-    v->paramNames =
-            std::get<1>(TestConstants::getTu01TestData(v->battId , v->testId));
+    v->settableParamNames =
+            std::get<1>(TestConstants::getTu01TestData(
+                            v->battId , v->testId));
+    v->extractableParamNames =
+            std::get<2>(TestConstants::getTu01TestData(
+                            v->battId , v->testId));
     v->statisticNames =
-            std::get<2>(TestConstants::getTu01TestData(v->battId , v->testId));
+            std::get<3>(TestConstants::getTu01TestData(
+                            v->battId , v->testId));
 
    /* Repetitions - mandatory */
     v->repetitions = battConf->getTestVariantsParamInt(
@@ -28,7 +33,7 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                 battConf->getTestVariantParamMap(v->battId, v->testId, variantIdx,
                                                  Configuration::TAGNAME_PARAMS);
         if(!actualParams.empty()) {
-            for(const auto & paramName : v->paramNames) {
+            for(const auto & paramName : v->settableParamNames) {
                 if(actualParams.count(paramName) == 1) {
                     tmp.first = paramName;
                     tmp.second = actualParams.at(paramName);
@@ -71,12 +76,12 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
     return v;
 }
 
-std::vector<std::string> Variant::getParamNames() const {
-    return paramNames;
-}
-
 std::vector<std::string> Variant::getStatisticNames() const {
     return statisticNames;
+}
+
+std::vector<std::string> Variant::getExtractableParamNames() const {
+    return extractableParamNames;
 }
 
 void Variant::buildStrings() {

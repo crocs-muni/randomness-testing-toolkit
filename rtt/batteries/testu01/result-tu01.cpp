@@ -51,7 +51,7 @@ std::unique_ptr<Result> Result::getInstance(
                 /* Test settings extraction */
                 tmpParamVec = r->extractTestParameters(
                                   subTestLog,
-                                  tu01Var->getParamNames());
+                                  tu01Var->getExtractableParamNames());
 
                 auto tmpSubTestRes = result::SubTestResult::getInstance(
                                          tmpPValueSets);

@@ -19,7 +19,8 @@ typedef std::tuple<std::string>     /* Logical test name */
                    tDieharderData;
 
 typedef std::tuple<std::string,                 /* Logical test name */
-                   std::vector<std::string>,    /* Test parameters list */
+                   std::vector<std::string>,    /* Test parameters (settable) */
+                   std::vector<std::string>,    /* Test parameters (extractable from log) */
                    std::vector<std::string>>    /* Output statistics names list */
                    tTestU01Data;
 

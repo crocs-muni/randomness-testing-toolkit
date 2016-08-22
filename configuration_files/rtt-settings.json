@@ -43,7 +43,7 @@
         },
         
         "execution": {
-            "max-parallel-tests": 8
+            "max-parallel-tests": 16
         }
     }
 }

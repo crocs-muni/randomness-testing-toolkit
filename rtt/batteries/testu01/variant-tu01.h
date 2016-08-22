@@ -15,13 +15,15 @@ public:
     static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
                                                 const GlobalContainer & cont);
 
-    std::vector<std::string> getParamNames() const;
 
     std::vector<std::string> getStatisticNames() const;
 
+    std::vector<std::string> getExtractableParamNames() const;
+
 private:
     /* TestU01 specific */
-    std::vector<std::string> paramNames;
+    std::vector<std::string> settableParamNames;
+    std::vector<std::string> extractableParamNames;
     std::vector<std::string> statisticNames;
     int repetitions;
     /* Only used in configuration of crush batteries */

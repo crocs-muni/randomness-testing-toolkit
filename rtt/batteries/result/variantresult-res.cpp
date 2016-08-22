@@ -8,9 +8,6 @@ VariantResult VariantResult::getInstance(
         const std::vector<SubTestResult> & subResults,
         const std::vector<std::string> & userSettings,
         const BatteryOutput & battOut) {
-    if(subResults.empty())
-        raiseBugException("empty subResults");
-
     return VariantResult(subResults, userSettings, battOut);
 }
 

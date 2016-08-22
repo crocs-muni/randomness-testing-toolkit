@@ -663,10 +663,10 @@ tNistStsData TestConstants::getNistStsTestData(Constants::Battery battery,
                                                int testIndex) {
     try {
         switch(battery) {
-        case Constants::Battery::NIST_STS :
-            return nistStsTests.at(testIndex);
-        default:
-            raiseBugException(Strings::ERR_INVALID_BATTERY);
+            case Constants::Battery::NIST_STS :
+                return nistStsTests.at(testIndex);
+            default:
+                raiseBugException(Strings::ERR_INVALID_BATTERY);
         }
     } catch (std::out_of_range) {
         throw RTTException(Constants::batteryToString(battery) ,
@@ -678,10 +678,10 @@ tDieharderData TestConstants::getDieharderTestData(Constants::Battery battery,
                                                    int testIndex) {
     try {
         switch(battery) {
-        case Constants::Battery::DIEHARDER :
-            return dieharderTests.at(testIndex);
-        default:
-            raiseBugException(Strings::ERR_INVALID_BATTERY);
+            case Constants::Battery::DIEHARDER :
+                return dieharderTests.at(testIndex);
+            default:
+                raiseBugException(Strings::ERR_INVALID_BATTERY);
         }
     } catch (std::out_of_range) {
         throw RTTException(Constants::batteryToString(battery) ,
@@ -693,21 +693,21 @@ tTestU01Data TestConstants::getTu01TestData(Constants::Battery battery,
                                             int testIndex) {
     try {
         switch(battery) {
-        case Constants::Battery::TU01_SMALLCRUSH:
-            return tu01testsSmallCrush.at(testIndex);
-        case Constants::Battery::TU01_CRUSH:
-            return tu01testsCrush.at(testIndex);
-        case Constants::Battery::TU01_BIGCRUSH:
-            return tu01testsBigCrush.at(testIndex);
-        case Constants::Battery::TU01_RABBIT:
-            return tu01testsRabbit.at(testIndex);
-        case Constants::Battery::TU01_ALPHABIT:
-            return tu01testsAlphabit.at(testIndex);
-        case Constants::Battery::TU01_BLOCK_ALPHABIT:
-            /* Block Alphabit has same tests as Alphabit. */
-            return tu01testsAlphabit.at(testIndex);
-        default:
-            raiseBugException(Strings::ERR_INVALID_BATTERY);
+            case Constants::Battery::TU01_SMALLCRUSH:
+                return tu01testsSmallCrush.at(testIndex);
+            case Constants::Battery::TU01_CRUSH:
+                return tu01testsCrush.at(testIndex);
+            case Constants::Battery::TU01_BIGCRUSH:
+                return tu01testsBigCrush.at(testIndex);
+            case Constants::Battery::TU01_RABBIT:
+                return tu01testsRabbit.at(testIndex);
+            case Constants::Battery::TU01_ALPHABIT:
+                return tu01testsAlphabit.at(testIndex);
+            case Constants::Battery::TU01_BLOCK_ALPHABIT:
+                /* Block Alphabit has same tests as Alphabit. */
+                return tu01testsAlphabit.at(testIndex);
+            default:
+                raiseBugException(Strings::ERR_INVALID_BATTERY);
         }
     } catch (std::out_of_range) {
         throw RTTException(Constants::batteryToString(battery) ,

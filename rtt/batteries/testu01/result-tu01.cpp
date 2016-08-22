@@ -28,8 +28,7 @@ std::unique_ptr<Result> Result::getInstance(
         for(IVariant * variant : test->getVariants()) {
             testu01::Variant * tu01Var =
                     dynamic_cast<Variant *>(variant);
-            r->objectInfo = tu01Var->getObjectInfo() +
-                            " (results)";
+            r->objectInfo = tu01Var->getObjectInfo();
 
             /* Split log into subtests */
             auto variantLog = tu01Var->getBatteryOutput().getStdOut();

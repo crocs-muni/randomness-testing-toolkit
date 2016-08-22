@@ -19,13 +19,15 @@ public:
 
     bool getPassed() const;
 
+    std::pair<bool, bool> getOptionalPassed() const;
+
 protected:
     /* Variables */
     Logger * logger;
     std::string objectInfo;
     std::string testName;
     std::vector<result::VariantResult> varRes;
-    bool passed = true;
+    std::pair<bool, bool> optionalPassed = { true, false };
 
     /* Methods */
     IResult(Logger * logger , std::string testName)

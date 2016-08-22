@@ -47,9 +47,17 @@ using namespace rtt;
 
 int main (int argc , char * argv[]) try {
 #ifdef TESTING
-    double exp = (double)1.0/(double)140.0;
-    double res = std::pow(0.99 , exp);
-    std::cout << res << std::endl;
+    std::regex rgx {"no"};
+    std::string tst {"no, nothing for you"};
+    auto begin = std::sregex_iterator(tst.begin(),
+                                      tst.end(),
+                                      rgx);
+    auto end = std::sregex_iterator();
+    auto dst = std::distance(begin,end);
+    for(; begin != end ; ++begin) {
+        std::smatch match = *begin;
+        std::cout << match[0].str() << std::endl;
+    }
 
     return 0;
 #else

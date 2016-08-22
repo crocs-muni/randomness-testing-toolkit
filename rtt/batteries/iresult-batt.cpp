@@ -37,8 +37,12 @@ std::unique_ptr<IResult> IResult::getInstance(
 }
 
 void IResult::writeResults(storage::IStorage * storage, int precision) {
+    if(varRes.empty())
+        return; // user was notified about error sooner
+
     storage->addNewTest(testName);
-    storage->setTestResult(passed);
+    if(optionalPassed.second)
+        storage->setTestResult(optionalPassed.first);
 
     for(const result::VariantResult & var : varRes) {
         if(varRes.size() > 1)
@@ -81,8 +85,8 @@ std::vector<result::VariantResult> IResult::getResults() const {
     return varRes;
 }
 
-bool IResult::getPassed() const {
-    return passed;
+std::pair<bool, bool> IResult::getOptionalPassed() const {
+    return optionalPassed;
 }
 
 void IResult::evaluateSetPassed() {
@@ -92,6 +96,11 @@ void IResult::evaluateSetPassed() {
         allPValues.insert(allPValues.end(), tmp.begin(), tmp.end());
     }
 
+    if(allPValues.empty())
+        optionalPassed.second = false;
+
+    optionalPassed.second = true;
+
     double exp = 1.0/(double)allPValues.size();
     double alpha = 1.0 - (std::pow(1.0 - Constants::MATH_ALPHA, exp));
     alpha /= 2.0;
@@ -99,7 +108,7 @@ void IResult::evaluateSetPassed() {
     for(const double & pval : allPValues) {
         if(pval < alpha - Constants::MATH_EPS ||
            pval > 1.0 - alpha + Constants::MATH_EPS) {
-            passed = false;
+            optionalPassed.first = false;
             break;
         }
     }

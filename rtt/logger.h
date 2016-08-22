@@ -13,9 +13,6 @@
     #define ELPP_FORCE_USE_STD_THREAD
 #endif
 
-#include "rtt/bugexception.h"
-#include "rtt/utils.h"
-#include "rtt/version.h"
 #include "libs/easylogging/easylogging++.h"
 
 namespace rtt {

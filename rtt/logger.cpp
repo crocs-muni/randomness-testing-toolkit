@@ -1,5 +1,9 @@
 #include "logger.h"
 
+#include "rtt/bugexception.h"
+#include "rtt/utils.h"
+#include "rtt/version.h"
+
 namespace rtt {
 
 Logger::Logger(const std::string &logId, const std::string &logFile, bool toCout) {

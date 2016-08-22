@@ -32,13 +32,19 @@ std::unique_ptr<Result> Result::getInstance(
 
         /* Single variant processing */
         for(const IVariant * variant : test->getVariants()) {
-            r->objectInfo = variant->getObjectInfo() +
-                            " (results)";
+            r->objectInfo = variant->getObjectInfo();
             auto variantOutput =
                     variant->getBatteryOutput().getStdOut();
+
+            if(variantOutput.empty())
+                r->logger->warn(r->objectInfo + ": standard output empty");
+
             auto subTestIt = std::sregex_iterator(
                                  variantOutput.begin(), variantOutput.end(),
                                  RE_SUBTEST_SPLIT);
+
+            if(std::distance(subTestIt , endIt) == 0)
+                r->logger->warn(r->objectInfo + ": no subtests extracted");
 
             /* Single subtest processing! */
             for(; subTestIt != endIt ; ++subTestIt) {
@@ -47,6 +53,11 @@ std::unique_ptr<Result> Result::getInstance(
                 auto pValIt = std::sregex_iterator(
                                   subTestPVals.begin(), subTestPVals.end(),
                                   RE_PVALUE);
+                if(std::distance(pValIt, endIt) == 0) {
+                    r->logger->warn(r->objectInfo +
+                                    ": no p-values extracted in subtests");
+                    continue;
+                }
 
                 /* Single pvalue processing */
                 for( ; pValIt != endIt ; ++pValIt) {

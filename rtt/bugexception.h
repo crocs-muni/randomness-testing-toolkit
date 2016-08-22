@@ -16,8 +16,9 @@ class BugException : public std::logic_error {
 public:
     BugException(const std::string & file ,
                  const std::string & line ,
-                 const std::string & message) :
-        std::logic_error(file + ":" + line + " - " + message) {}
+                 const std::string & message)
+        : std::logic_error(file + ":" + line + " - " + message)
+    {}
 };
 
 } // namespace rtt

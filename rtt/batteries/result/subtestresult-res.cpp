@@ -6,8 +6,6 @@ namespace result {
 
 SubTestResult SubTestResult::getInstance(
         const std::vector<PValueSet> & pValSets) {
-    if(pValSets.empty())
-        raiseBugException("empty pValSets");
 
     return SubTestResult(pValSets);
 }

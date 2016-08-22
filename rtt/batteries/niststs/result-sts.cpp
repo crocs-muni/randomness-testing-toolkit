@@ -26,8 +26,7 @@ std::unique_ptr<Result> Result::getInstance(
         for(IVariant * variant : test->getVariants()) {
             Variant * stsVar =
                     dynamic_cast<Variant *>(variant);
-            r->objectInfo = stsVar->getObjectInfo() +
-                            " (results)";
+            r->objectInfo = stsVar->getObjectInfo();
             auto variantPVals = getVariantPValues(stsVar);
 
             /* Single subtest processing */

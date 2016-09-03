@@ -3,7 +3,7 @@
 namespace rtt {
 namespace storage {
 
-const std::string FileStorage::STRING_PASSED_PROP   = "Passed/Total test statistics: ";
+const std::string FileStorage::STRING_PASSED_PROP   = "Passed/Total tests: ";
 
 const size_t FileStorage::MISC_TAB_SIZE     = 4;
 const size_t FileStorage::MISC_COL_WIDTH    = 30;
@@ -41,6 +41,7 @@ void FileStorage::finalizeTest() {
            << std::endl << std::endl;
     --indent;
     currentVariant = 0;
+    currentSubtest = 0;
 }
 
 void FileStorage::addVariant() {

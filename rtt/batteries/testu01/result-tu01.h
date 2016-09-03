@@ -15,6 +15,8 @@ public:
             const std::vector<ITest *> & tests);
 
 private:
+    Constants::Battery battId;
+
     Result(Logger * logger , std::string testName)
         : IResult(logger , testName)
     {}

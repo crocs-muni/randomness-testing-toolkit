@@ -47,19 +47,6 @@ using namespace rtt;
 
 int main (int argc , char * argv[]) try {
 #ifdef TESTING
-    std::regex rgx {"no"};
-    std::string tst {"no, nothing for you"};
-    auto begin = std::sregex_iterator(tst.begin(),
-                                      tst.end(),
-                                      rgx);
-    auto end = std::sregex_iterator();
-    auto dst = std::distance(begin,end);
-    for(; begin != end ; ++begin) {
-        std::smatch match = *begin;
-        std::cout << match[0].str() << std::endl;
-    }
-
-    return 0;
 #else
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;

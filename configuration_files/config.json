@@ -3,8 +3,7 @@
         "dieharder-settings": {
             "defaults": {
                 "test-ids": ["0-4","8-13","15-17","100-102","200-209"],
-                "psamples": 100,
-                "arguments": "-W 0.01 -X 0.01"
+                "psamples": 100
             },
             "test-specific-settings": [
                 {
@@ -66,19 +65,58 @@
                         { "arguments": "-n 17" },
                         { "arguments": "-n 18" },
                         { "arguments": "-n 19" },
-                        { "arguments": "-n 20" },
-                        { "arguments": "-n 21" },
-                        { "arguments": "-n 22" },
-                        { "arguments": "-n 23" },
-                        { "arguments": "-n 24" },
-                        { "arguments": "-n 25" },
-                        { "arguments": "-n 26" },
-                        { "arguments": "-n 27" },
-                        { "arguments": "-n 28" },
-                        { "arguments": "-n 29" },
-                        { "arguments": "-n 30" },
-                        { "arguments": "-n 31" },
-                        { "arguments": "-n 32" }
+                        { 
+                            "arguments": "-n 20",
+                            "psamples": 99
+                        },
+                        { 
+                            "arguments": "-n 21",
+                            "psamples": 95
+                        },
+                        { 
+                            "arguments": "-n 22",
+                            "psamples": 91
+                        },
+                        { 
+                            "arguments": "-n 23",
+                            "psamples": 87
+                        },
+                        { 
+                            "arguments": "-n 24",
+                            "psamples": 83 
+                        },
+                        { 
+                            "arguments": "-n 25",
+                            "psamples": 80 
+                        },
+                        { 
+                            "arguments": "-n 26",
+                            "psamples": 77 
+                        },
+                        { 
+                            "arguments": "-n 27",
+                            "psamples": 74 
+                        },
+                        { 
+                            "arguments": "-n 28",
+                            "psamples": 72 
+                        },
+                        { 
+                            "arguments": "-n 29",
+                            "psamples": 69 
+                        },
+                        { 
+                            "arguments": "-n 30",
+                            "psamples": 67 
+                        },
+                        { 
+                            "arguments": "-n 31",
+                            "psamples": 65 
+                        },
+                        {
+                            "arguments": "-n 32",
+                            "psamples": 63
+                        }
                     ]
                 },
                 {
@@ -99,11 +137,7 @@
                 },
                 {
                     "test-id": 208,
-                    "psamples": 1,
-                    "variants": [
-                        { "psamples": 2 },
-                        { "psamples": 3 }
-                    ]
+                    "psamples": 1
                 },                
                 {
                     "test-id": 209,
@@ -116,8 +150,9 @@
             "defaults": {
                 "test-ids": ["1-15"],    
                 "stream-size": "1000000",
-                "stream-count": "100"
-            }
+                "stream-count": "1000"
+            },
+            "test-specific-settings": []
         },
     
         "testu01-settings": {
@@ -151,23 +186,17 @@
                     "repetitions": 1,
                     "bit-nb": "8388608000",
                     "bit-r": "0",
-                    "bit-s": "32",
-                    "bit-w": "1"                }
+                    "bit-s": "32"                
+                }
             }, 
             
             "test-specific-settings": {
-                "small-crush": [
-                ],
-                "crush": [ 
-                ],
-                "big-crush": [
-                ],
-                "rabbit": [
-                ],
-                "alphabit": [
-                ],
-                "block-alphabit": [
-                ]
+                "small-crush": [],
+                "crush": [],
+                "big-crush": [],
+                "rabbit": [],
+                "alphabit": [],
+                "block-alphabit": []
             }
         }
     }

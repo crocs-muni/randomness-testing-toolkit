@@ -15,7 +15,7 @@ PValueSet PValueSet::getInstance(std::string statName, double statResult,
         raiseBugException("empty pValues");
 
     auto rval = PValueSet(statName, statResult, pValues);
-    double alpha = Constants::MATH_ALPHA / 2.0;
+    double alpha = Constants::MATH_ALPHA /*/ 2.0*/; // Ask Syso about this.
 
     if(statResult > alpha - Constants::MATH_EPS &&
        statResult < 1 - alpha + Constants::MATH_EPS)

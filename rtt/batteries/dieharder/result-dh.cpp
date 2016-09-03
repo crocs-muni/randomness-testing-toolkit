@@ -13,11 +13,6 @@ std::unique_ptr<Result> Result::getInstance(
                                    tests.at(0)->getLogger(),
                                    tests.at(0)->getLogicName()));
 
-    static const std::regex RE_SUBTEST_SPLIT
-    {
-        "#={77}#([+0-9\\.\\n]*?)#={77}#"
-    };
-
     static const std::regex RE_PVALUE {
         "\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"
     };
@@ -33,25 +28,21 @@ std::unique_ptr<Result> Result::getInstance(
         /* Single variant processing */
         for(const IVariant * variant : test->getVariants()) {
             r->objectInfo = variant->getObjectInfo();
-            auto variantOutput =
+            std::string variantOutput =
                     variant->getBatteryOutput().getStdOut();
 
             if(variantOutput.empty())
                 r->logger->warn(r->objectInfo + ": standard output empty");
 
-            auto subTestIt = std::sregex_iterator(
-                                 variantOutput.begin(), variantOutput.end(),
-                                 RE_SUBTEST_SPLIT);
+            auto subTests = splitIntoSubTests(variantOutput);
 
-            if(std::distance(subTestIt , endIt) == 0)
+            if(subTests.empty())
                 r->logger->warn(r->objectInfo + ": no subtests extracted");
 
             /* Single subtest processing! */
-            for(; subTestIt != endIt ; ++subTestIt) {
-                std::smatch subTestMatch = *subTestIt;
-                std::string subTestPVals = subTestMatch[1].str();
+            for(const std::string & subTest : subTests) {
                 auto pValIt = std::sregex_iterator(
-                                  subTestPVals.begin(), subTestPVals.end(),
+                                  subTest.begin(), subTest.end(),
                                   RE_PVALUE);
                 if(std::distance(pValIt, endIt) == 0) {
                     r->logger->warn(r->objectInfo +
@@ -84,6 +75,24 @@ std::unique_ptr<Result> Result::getInstance(
     }
 
     return r;
+}
+
+std::vector<std::string> Result::splitIntoSubTests(const std::string & str) {
+    std::vector<std::string> rval;
+    static const std::string separator {
+        "#                          Values of test p-values                            #"
+    };
+    size_t start = 0;
+    size_t end = 0;
+    for( ; end != std::string::npos ; ) {
+        start = str.find(separator, end);
+        end = str.find(separator, start + 1);
+        if(start == std::string::npos)
+            return rval;
+
+        rval.push_back(str.substr(start, end - start));
+    }
+    return rval;
 }
 
 /* Following code is taken from DIEHARDER battery. */

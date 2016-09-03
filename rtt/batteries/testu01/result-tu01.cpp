@@ -14,13 +14,15 @@ std::unique_ptr<Result> Result::getInstance(
                                    tests.at(0)->getLogicName()));
 
     const static std::regex RE_SUBTEST {
-        "\\w+? test:([^]*?)"
+        "Generator providing data from binary file.([^]*?)"
         "========= State of the binary file stream generator ========="
     };
     auto endIt = std::sregex_iterator();
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::PValueSet> tmpPValueSets;
     std::vector<std::string> tmpParamVec;
+
+    r->battId = tests.at(0)->getBattId();
 
     /* Single test processing */
     for(const ITest * test : tests) {
@@ -85,7 +87,7 @@ std::vector<result::PValueSet> Result::extractPValueSets(
                       testLog.end(),
                       RE_PVALUES);
     auto endIt = std::sregex_iterator();
-    if(std::distance(pValIt, endIt) != statNames.size()) {
+    if(static_cast<size_t>(std::distance(pValIt, endIt)) != statNames.size()) {
         statNames.clear();
         for(uint i = 0 ; i < std::distance(pValIt , endIt) ; ++i)
             statNames.push_back("Unknown " + Utils::itostr(i));
@@ -144,6 +146,23 @@ std::vector<std::string> Result::extractTestParameters(
         rval.push_back(paramNames.at(i) + " = " +
                        paramMatch[i + 1].str());
     }
+    /* Extracting w in Block Alphabit */
+    if(battId == Constants::Battery::TU01_BLOCK_ALPHABIT) {
+        static const std::regex RE_W_PARAM {
+            "\\sw = +?([1-9]+?)\\s"
+        };
+        auto wParamIt = std::sregex_iterator(
+                            testLog.begin(),
+                            testLog.end(),
+                            RE_W_PARAM);
+        if(std::distance(wParamIt, endIt) != 1) {
+            throw RTTException(objectInfo,
+                               "extraction of parameter \"w\" failed");
+        }
+        std::smatch wMatch = *wParamIt;
+        rval.push_back("w = " + wMatch[1].str());
+    }
+
     return rval;
 }
 

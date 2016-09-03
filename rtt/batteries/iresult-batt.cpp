@@ -67,10 +67,10 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
                                             precision,
                                             pvalSet.getStatPassed());
                 if(pvalSet.getPValues().size() > 1)
-                    storage->addPValues(pvalSet.getPValues());
+                    storage->addPValues(pvalSet.getPValues(), precision);
             }
 
-            if(subResults.size() >1)
+            if(subResults.size() > 1)
                 storage->finalizeSubTest();
         }
 
@@ -78,7 +78,7 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
         if(varRes.size() > 1)
             storage->finalizeVariant();
     }
-    storage->finalizeSubTest();
+    storage->finalizeTest();
 }
 
 std::vector<result::VariantResult> IResult::getResults() const {
@@ -96,14 +96,16 @@ void IResult::evaluateSetPassed() {
         allPValues.insert(allPValues.end(), tmp.begin(), tmp.end());
     }
 
-    if(allPValues.empty())
+    if(allPValues.empty()) {
         optionalPassed.second = false;
+        return;
+    }
 
     optionalPassed.second = true;
 
     double exp = 1.0/(double)allPValues.size();
     double alpha = 1.0 - (std::pow(1.0 - Constants::MATH_ALPHA, exp));
-    alpha /= 2.0;
+    //alpha /= 2.0; // Ask Syso about this.
 
     for(const double & pval : allPValues) {
         if(pval < alpha - Constants::MATH_EPS ||

@@ -20,6 +20,8 @@ private:
         : IResult(logger , testName)
     {}
 
+    static std::vector<std::string> splitIntoSubTests(const std::string & str);
+
     /* Math functions used to calculate resulting KS statistic */
     double kstest(const std::vector<double> & pvalue);
 

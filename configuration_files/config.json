@@ -196,7 +196,107 @@
                 "big-crush": [],
                 "rabbit": [],
                 "alphabit": [],
-                "block-alphabit": []
+                "block-alphabit": [
+                    {
+                        "test-id": 1,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 2,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 3,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 4,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 5,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 6,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 7,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 8,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    },
+                    {
+                        "test-id": 9,
+                        "variants": [
+                            { "bit-w": "1" },
+                            { "bit-w": "2" },
+                            { "bit-w": "4" },
+                            { "bit-w": "8" },
+                            { "bit-w": "16" },
+                            { "bit-w": "32" }
+                        ]
+                    }
+                ]
             }
         }
     }

@@ -300,8 +300,8 @@ json Configuration::findBatteryTestSettNode(const json & rootNode,
             break;
         case Constants::Battery::TU01_BLOCK_ALPHABIT:
             if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1 &&
-               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count("block_alphabit") == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at("block_alphabit");
+               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count(TAGNAME_BLALPHABIT_BATT) == 1)
+                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at(TAGNAME_BLALPHABIT_BATT);
             break;
         default:
             raiseBugException("invalid battery");

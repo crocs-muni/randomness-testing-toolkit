@@ -41,8 +41,10 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
         return; // user was notified about error sooner
 
     storage->addNewTest(testName);
-    if(optionalPassed.second)
+    if(optionalPassed.second) {
         storage->setTestResult(optionalPassed.first);
+        storage->setTestPartialAlpha(partialAlpha);
+    }
 
     for(const result::VariantResult & var : varRes) {
         if(varRes.size() > 1)
@@ -65,7 +67,7 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
                 storage->addStatisticResult(pvalSet.getStatName(),
                                             pvalSet.getStatRes(),
                                             precision,
-                                            pvalSet.getStatPassed());
+                                            isPValuePassing(pvalSet.getStatRes()));
                 if(pvalSet.getPValues().size() > 1)
                     storage->addPValues(pvalSet.getPValues(), precision);
             }
@@ -104,16 +106,21 @@ void IResult::evaluateSetPassed() {
     optionalPassed.second = true;
 
     double exp = 1.0/(double)allPValues.size();
-    double alpha = 1.0 - (std::pow(1.0 - Constants::MATH_ALPHA, exp));
-    //alpha /= 2.0; // Ask Syso about this.
+    partialAlpha = 1.0 - (std::pow(1.0 - Constants::MATH_ALPHA, exp));
 
     for(const double & pval : allPValues) {
-        if(pval < alpha - Constants::MATH_EPS ||
-           pval > 1.0 - alpha + Constants::MATH_EPS) {
+        if(!isPValuePassing(pval)) {
             optionalPassed.first = false;
             break;
         }
     }
+}
+
+bool IResult::isPValuePassing(double pvalue) {
+    if(pvalue < partialAlpha - Constants::MATH_EPS)
+        return false;
+
+    return true;
 }
 
 } // namespace batteries

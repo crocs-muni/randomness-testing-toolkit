@@ -28,6 +28,7 @@ protected:
     std::string testName;
     std::vector<result::VariantResult> varRes;
     std::pair<bool, bool> optionalPassed = { true, false };
+    double partialAlpha = 0;
 
     /* Methods */
     IResult(Logger * logger , std::string testName)
@@ -35,6 +36,8 @@ protected:
     {}
 
     void evaluateSetPassed();
+
+    bool isPValuePassing(double pvalue);
 };
 
 

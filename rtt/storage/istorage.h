@@ -26,6 +26,8 @@ public:
 
     virtual void setTestResult(bool passed) = 0;
 
+    virtual void setTestPartialAlpha(double alpha) = 0;
+
     virtual void setUserSettings(const std::vector<std::string> & options) = 0;
 
     virtual void setTestParameters(const std::vector<std::string> & parameters) = 0;

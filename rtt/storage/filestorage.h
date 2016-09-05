@@ -37,6 +37,8 @@ public:
 
     void setTestResult(bool passed);
 
+    void setTestPartialAlpha(double alpha);
+
     void setUserSettings(const std::vector<std::string> & options);
 
     void setTestParameters(const std::vector<std::string> & options);

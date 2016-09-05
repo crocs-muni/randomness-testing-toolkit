@@ -18,8 +18,6 @@ public:
 
     std::vector<double> getPValues() const;
 
-    bool getStatPassed() const;
-
 private:
     PValueSet(std::string statName, double statRes,
               const std::vector<double> & pValues)
@@ -28,7 +26,6 @@ private:
 
     std::string statName;
     double statRes;
-    bool statPassed = false;
     std::vector<double> pValues;
 };
 

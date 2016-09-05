@@ -15,11 +15,6 @@ PValueSet PValueSet::getInstance(std::string statName, double statResult,
         raiseBugException("empty pValues");
 
     auto rval = PValueSet(statName, statResult, pValues);
-    double alpha = Constants::MATH_ALPHA /*/ 2.0*/; // Ask Syso about this.
-
-    if(statResult > alpha - Constants::MATH_EPS &&
-       statResult < 1 - alpha + Constants::MATH_EPS)
-        rval.statPassed = true;
 
     return rval;
 }
@@ -34,10 +29,6 @@ double PValueSet::getStatRes() const {
 
 std::vector<double> PValueSet::getPValues() const {
     return pValues;
-}
-
-bool PValueSet::getStatPassed() const {
-    return statPassed;
 }
 
 } // namespace result

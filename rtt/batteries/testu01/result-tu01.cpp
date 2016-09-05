@@ -14,7 +14,8 @@ std::unique_ptr<Result> Result::getInstance(
                                    tests.at(0)->getLogicName()));
 
     const static std::regex RE_SUBTEST {
-        "Generator providing data from binary file.([^]*?)"
+        "Generator providing data from binary file."
+        "([^]*?)"  /* This will capture output of one subtest */
         "========= State of the binary file stream generator ========="
     };
     auto endIt = std::sregex_iterator();

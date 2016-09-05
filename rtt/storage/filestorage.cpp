@@ -78,6 +78,10 @@ void FileStorage::setTestResult(bool passed) {
     }
     else
         report << "FAILED" << std::endl;
+}
+
+void FileStorage::setTestPartialAlpha(double alpha) {
+    report << doIndent() << "Test partial alpha: " << alpha << std::endl;
     report << std::endl;
 }
 

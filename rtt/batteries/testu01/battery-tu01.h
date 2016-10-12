@@ -11,7 +11,7 @@ class Battery : public IBattery {
 public:
     static std::unique_ptr<Battery> getInstance(const GlobalContainer & container);
 
-    void processStoredResults();
+    void storeResults();
 
 private:
     /*

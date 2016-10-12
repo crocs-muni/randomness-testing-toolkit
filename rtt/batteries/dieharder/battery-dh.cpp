@@ -11,7 +11,7 @@ std::unique_ptr<Battery> Battery::getInstance(const GlobalContainer & container)
     return b;
 }
 
-void Battery::processStoredResults() {
+void Battery::storeResults() {
     if(!executed)
         throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
 

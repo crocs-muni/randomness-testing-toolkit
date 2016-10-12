@@ -80,7 +80,7 @@ int main (int argc , char * argv[]) try {
         /* Executing tests as set in settings */
         battery->runTests();
         /* Processing and storing of results of the run */
-        battery->processStoredResults();
+        battery->storeResults();
 
     } catch(RTTException & ex) {
         container.getLogger()->error(ex.what());

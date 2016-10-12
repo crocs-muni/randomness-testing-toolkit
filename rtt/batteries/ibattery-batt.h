@@ -15,7 +15,7 @@ public:
 
     virtual ~IBattery() {}
 
-    virtual void processStoredResults() = 0;
+    virtual void storeResults() = 0;
 
 protected:
     IBattery(const GlobalContainer & cont);

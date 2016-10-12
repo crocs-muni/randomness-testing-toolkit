@@ -31,6 +31,11 @@ std::unique_ptr<Result> Result::getInstance(
 
             /* Single subtest processing */
             for(const std::vector<double> & subTestPVals : variantPVals) {
+                if(subTestPVals.empty()) {
+                    r->logger->warn(r->objectInfo + 
+                                    ": no p-values extracted in subtest");
+                    continue;
+                }
                 tmpPValueSets.push_back(
                             result::PValueSet::getInstance(
                                 "Chi-Square",

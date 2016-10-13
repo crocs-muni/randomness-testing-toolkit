@@ -33,7 +33,8 @@
         "binaries": {
             "nist-sts": "/home/xobrati1/Desktop/statistical-testing-utils/nist-sts-exe",
             "dieharder": "/home/xobrati1/Desktop/statistical-testing-utils/dieharder-exe",
-            "testu01": "/home/xobrati1/Desktop/statistical-testing-utils/testu01-exe"
+            "testu01": "/home/xobrati1/Desktop/statistical-testing-utils/testu01-exe",
+            "testu01-err": "/home/xobrati1/Desktop/projects/error-output-producer/build/Debug/error-output-producer"
         },
         
         "miscelaneous": {

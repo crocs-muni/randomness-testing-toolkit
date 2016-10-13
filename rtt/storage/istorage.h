@@ -32,10 +32,11 @@ public:
 
     virtual void setTestParameters(const std::vector<std::string> & parameters) = 0;
 
-    virtual void setRuntimeIssues(
-            const std::string & stdErr ,
-            const std::vector<std::string> & errors ,
-            const std::vector<std::string> & warnings) = 0;
+    virtual void setWarningMessages(const std::vector<std::string> & warnings) = 0;
+
+    virtual void setErrorMessages(const std::vector<std::string> & errors) = 0;
+
+    virtual void setStdErrMessages(const std::vector<std::string> & stderr) = 0;
 
     virtual void addStatisticResult(
             const std::string & statName ,

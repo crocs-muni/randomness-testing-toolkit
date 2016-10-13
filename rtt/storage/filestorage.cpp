@@ -110,63 +110,34 @@ void FileStorage::setTestParameters(const std::vector<std::string> & options) {
     report << std::endl;
 }
 
-void FileStorage::setRuntimeIssues(const std::string & stdErr,
-                               const std::vector<std::string> & errors,
-                               const std::vector<std::string> & warnings) {
-    if(stdErr.empty() && errors.empty() && warnings.empty())
-        return;
-
-    bool first = true;
-    report << doIndent() << "Test runtime issues: " << std::endl;
+void FileStorage::setWarningMessages(const std::vector<std::string> & warnings) {
+    report << doIndent() << "Warnings in log: " << std::endl;
     ++indent;
-    /* Reporting error output */
-    if(!stdErr.empty()) {
-        first = false;
-        auto stdErrStrings = Utils::split(stdErr , '\n');
-        report << doIndent() << "Standard error output: " << std::endl;
-        ++indent;
-        auto spaces = doIndent();
-        for(const auto & i : stdErrStrings)
-            report << spaces << i << std::endl;
-        --indent;
-        report << doIndent() << "!!!!!!!!!!!!" << std::endl;
-    }
-
-    /* Reporting strings containing error */
-    if(!errors.empty()) {
-        if(!first)
-            report << std::endl;
-        else
-            first = false;
-
-        report << doIndent() << "Errors in log: " << std::endl;
-        ++indent;
-        auto spaces = doIndent();
-        for(const auto & i : errors)
-            report << spaces << i << std::endl;
-        --indent;
-        report << doIndent() << "!!!!!!!!!!!!" << std::endl;
-    }
-
-    /* Reporting strings containing warning */
-    if(!warnings.empty()) {
-        if(!first)
-            report << std::endl;
-        else
-            first = false;
-
-        report << doIndent() << "Warnings in log: " << std::endl;
-        ++indent;
-        auto spaces = doIndent();
-        for(const auto & i : warnings)
-            report << spaces << i << std::endl;
-        --indent;
-        report << doIndent() << "!!!!!!!!!!!!" << std::endl;
-    }
-
+    auto spaces = doIndent();
+    for(const auto & i : warnings)
+        report << spaces << i << std::endl;
     --indent;
     report << doIndent() << "!!!!!!!!!!!!" << std::endl << std::endl;
+}
 
+void FileStorage::setErrorMessages(const std::vector<std::string> & errors) {
+    report << doIndent() << "Error messages: " << std::endl;
+    ++indent;
+    auto spaces = doIndent();
+    for(const auto & i : errors)
+        report << spaces << i << std::endl;
+    --indent;
+    report << doIndent() << "!!!!!!!!!!!!" << std::endl << std::endl;
+}
+
+void FileStorage::setStdErrMessages(const std::vector<std::string> & stderr) {
+    report << doIndent() << "Standard error output: " << std::endl;
+    ++indent;
+    auto spaces = doIndent();
+    for(const auto & i : stderr)
+        report << spaces << i << std::endl;
+    --indent;
+    report << doIndent() << "!!!!!!!!!!!!" << std::endl << std::endl;
 }
 
 void FileStorage::addStatisticResult(const std::string & statName,

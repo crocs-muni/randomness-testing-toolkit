@@ -43,10 +43,11 @@ public:
 
     void setTestParameters(const std::vector<std::string> & options);
 
-    virtual void setRuntimeIssues(
-            const std::string & stdErr ,
-            const std::vector<std::string> & errors ,
-            const std::vector<std::string> & warnings);
+    void setWarningMessages(const std::vector<std::string> & warnings);
+
+    void setErrorMessages(const std::vector<std::string> & errors);
+
+    void setStdErrMessages(const std::vector<std::string> & stderr);
 
     void addStatisticResult(
             const std::string & statName ,

@@ -47,18 +47,29 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
     }
 
     for(const result::VariantResult & var : varRes) {
-        if(varRes.size() > 1)
-            storage->addVariant();
+        //if(varRes.size() > 1)
+        //    storage->addVariant();
+        storage->addVariant();
 
         storage->setUserSettings(var.getUserSettings());
-        storage->setRuntimeIssues(var.getBatteryOutput().getStdErr(),
-                                  var.getBatteryOutput().getErrors(),
-                                  var.getBatteryOutput().getWarnings());
+
+        if(!var.getBatteryOutput().getWarnings().empty()) {
+            storage->setWarningMessages(var.getBatteryOutput().getWarnings());
+        }
+        if(!var.getBatteryOutput().getErrors().empty()) {
+            storage->setErrorMessages(var.getBatteryOutput().getErrors());
+        }
+        if(!var.getBatteryOutput().getStdErr().empty()) {
+            storage->setStdErrMessages(
+                        Utils::split(var.getBatteryOutput().getStdErr(),'\n')
+                    );
+        }
 
         const auto & subResults = var.getSubResults();
         for(const result::SubTestResult & subtest : subResults) {
-            if(subResults.size() > 1)
-                storage->addSubTest();
+            //if(subResults.size() > 1)
+            //    storage->addSubTest();
+            storage->addSubTest();
 
             if(subtest.getTestParameters().size() > 0)
                 storage->setTestParameters(subtest.getTestParameters());
@@ -72,13 +83,15 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
                     storage->addPValues(pvalSet.getPValues(), precision);
             }
 
-            if(subResults.size() > 1)
-                storage->finalizeSubTest();
+            //if(subResults.size() > 1)
+            //    storage->finalizeSubTest();
+            storage->finalizeSubTest();
         }
 
 
-        if(varRes.size() > 1)
-            storage->finalizeVariant();
+        //if(varRes.size() > 1)
+        //    storage->finalizeVariant();
+        storage->finalizeVariant();
     }
     storage->finalizeTest();
 }

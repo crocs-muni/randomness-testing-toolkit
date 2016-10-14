@@ -79,8 +79,9 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
                                             pvalSet.getStatRes(),
                                             precision,
                                             isPValuePassing(pvalSet.getStatRes()));
-                if(pvalSet.getPValues().size() > 1)
-                    storage->addPValues(pvalSet.getPValues(), precision);
+                //if(pvalSet.getPValues().size() > 1)
+                //    storage->addPValues(pvalSet.getPValues(), precision);
+                storage->addPValues(pvalSet.getPValues(), precision);
             }
 
             //if(subResults.size() > 1)

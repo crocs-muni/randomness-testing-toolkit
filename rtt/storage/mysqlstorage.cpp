@@ -15,8 +15,10 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     try {
         s->driver = get_driver_instance();
         s->conn   = std::unique_ptr<sql::Connection>(
-                        s->driver->connect("localhost", "test", "test"));
-        s->conn->setSchema("rtt");
+                        s->driver->connect(s->toolkitSettings->getRsMysqlAddress(),
+                                           s->toolkitSettings->getRsMysqlUserName(),
+                                           s->toolkitSettings->getRsMysqlPwd()));
+        s->conn->setSchema(s->toolkitSettings->getRsMysqlDbName());
         /* Commit in finalizeReport, rollback on any error. */
         s->conn->setAutoCommit(false);
 
@@ -34,7 +36,8 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
         s->dbBatteryId = s->getLastInsertedId();
 
     } catch (sql::SQLException &ex) {
-        s->conn->rollback();
+        if(s->conn)
+            s->conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 
@@ -62,7 +65,8 @@ void MySQLStorage::addNewTest(const std::string & testName) {
 
         currDbTestId = getLastInsertedId();
     } catch (sql::SQLException &ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -96,7 +100,8 @@ void MySQLStorage::addVariant() {
 
         currDbVariantId = getLastInsertedId();
     } catch (sql::SQLException &ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -128,7 +133,8 @@ void MySQLStorage::addSubTest() {
 
         currDbSubtestId = getLastInsertedId();
     } catch (sql::SQLException &ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -160,7 +166,8 @@ void MySQLStorage::setTestResult(bool passed) {
         updTestResStmt->execute();
 
     } catch (sql::SQLException &ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -178,7 +185,8 @@ void MySQLStorage::setTestPartialAlpha(double alpha) {
         updTestPartAlpStmt->execute();
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -203,7 +211,8 @@ void MySQLStorage::setUserSettings(const std::vector<std::string> & options) {
         }
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -228,7 +237,8 @@ void MySQLStorage::setTestParameters(const std::vector<std::string> & options) {
         }
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -250,7 +260,8 @@ void MySQLStorage::setWarningMessages(const std::vector<std::string> & warnings)
         }
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -272,7 +283,8 @@ void MySQLStorage::setErrorMessages(const std::vector<std::string> & errors) {
         }
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -294,7 +306,8 @@ void MySQLStorage::setStdErrMessages(const std::vector<std::string> & stderr) {
         }
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -320,7 +333,8 @@ void MySQLStorage::addStatisticResult(const std::string & statName,
         insStatStmt->execute();
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -341,7 +355,8 @@ void MySQLStorage::addPValues(const std::vector<double> & pvals, int precision) 
             insPValsStmt->execute();
         }
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -374,7 +389,8 @@ void MySQLStorage::finalizeReport() {
         conn->commit();
 
     } catch(sql::SQLException & ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }
@@ -390,7 +406,8 @@ uint64_t MySQLStorage::getLastInsertedId() {
 
         throw RTTException(objectInfo, "error when getting last inserted id");
     } catch (sql::SQLException &ex) {
-        conn->rollback();
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
 }

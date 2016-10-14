@@ -56,7 +56,15 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
         }
 
         /** Database storage **/
-        // Nothing yet...
+        if(nResultStorage.count("mysql-db") != 1)
+            throw RTTException(objectInfo , "missing node with mysql db storage settings");
+        {
+            json nMysql         = nResultStorage.at("mysql-db");
+            ts.rsMysqlAddress   = parseStringValue(nMysql, "address");
+            ts.rsMysqlUserName  = parseStringValue(nMysql, "user-name");
+            ts.rsMysqlPwd       = parseStringValue(nMysql, "password");
+            ts.rsMysqlDbName    = parseStringValue(nMysql, "db-name");
+        }
     }
 
 
@@ -134,6 +142,22 @@ std::string ToolkitSettings::getMiscNiststsMainResDir() const {
 
 int ToolkitSettings::getExecMaximumThreads() const {
     return execMaximumThreads;
+}
+
+std::string ToolkitSettings::getRsMysqlAddress() const {
+    return rsMysqlAddress;
+}
+
+std::string ToolkitSettings::getRsMysqlUserName() const {
+    return rsMysqlUserName;
+}
+
+std::string ToolkitSettings::getRsMysqlPwd() const {
+    return rsMysqlPwd;
+}
+
+std::string ToolkitSettings::getRsMysqlDbName() const {
+    return rsMysqlDbName;
 }
 
 

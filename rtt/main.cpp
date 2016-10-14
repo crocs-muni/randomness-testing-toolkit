@@ -12,7 +12,7 @@
  * 2. Storing processed results
  *  2.1. Output Interface                       (Ok)
  *  2.2. Into file structure                    (Ok)
- *  2.3. Into database                          (Will be done in next phase)
+ *  2.3. Into database                          (Ok - kinda prototype-y)
  * 3. Miscelaneous
  *  3.1. Better exception handling              (Ok)
  *  3.2. Batteries runtime error handling       (Ok)

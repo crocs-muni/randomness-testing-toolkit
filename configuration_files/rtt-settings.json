@@ -27,7 +27,12 @@
                 "tu01-blockalphabit-dir": "testu01/blockalphabit"
             },
             
-            "database": {}
+            "mysql-db": {
+                "address": "localhost",
+                "user-name": "test",
+                "password": "test",
+                "db-name": "rtt"
+            }
         },
         
         "binaries": {

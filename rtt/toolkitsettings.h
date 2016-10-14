@@ -33,6 +33,14 @@ public:
 
     int getExecMaximumThreads() const;
 
+    std::string getRsMysqlAddress() const;
+
+    std::string getRsMysqlUserName() const;
+
+    std::string getRsMysqlPwd() const;
+
+    std::string getRsMysqlDbName() const;
+
 private:
     /* Variable types for getters. Should a new variable be added,
      * add it here too. */
@@ -64,6 +72,11 @@ private:
     std::string rsFileRabbitDir;
     std::string rsFileAlphabitDir;
     std::string rsFileBlAlphabitDir;
+
+    std::string rsMysqlAddress;
+    std::string rsMysqlUserName;
+    std::string rsMysqlPwd;
+    std::string rsMysqlDbName;
 
     std::string binaryDieharder;
     std::string binaryNiststs;

@@ -29,6 +29,8 @@ public:
 
     std::string getOutFilePath() const;
 
+    std::uint64_t getMysqlEid() const;
+
 private:
     Constants::Battery battery;
     std::vector<int> testConsts;
@@ -36,6 +38,7 @@ private:
     std::string inputCfgPath;
     std::string binFilePath;
     std::string outFilePath;
+    std::uint64_t mysqlEid = 0;
 
     /* Constructor is private => no unitialized instances around */
     CliOptions() {}

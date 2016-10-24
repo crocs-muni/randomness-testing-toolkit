@@ -128,15 +128,15 @@ public:
 
     static bool fileExist(const std::string & name);
 
-    /** Simple insert sort algorithm, sorts vector of integer in ascending order,
-      * after sorting kills duplicities.
-      * @param a                   vector to be sorted
-      * @param begin               denotes from which index should start sorting.
-      *                            0 sorts whole vector, 1 leaves first element unmoved, etc...
-      */
-    static void sort(std::vector<int> & a , unsigned begin = 0);
+//    /** Simple insert sort algorithm, sorts vector of integer in ascending order,
+//      * after sorting kills duplicities.
+//      * @param a                   vector to be sorted
+//      * @param begin               denotes from which index should start sorting.
+//      *                            0 sorts whole vector, 1 leaves first element unmoved, etc...
+//      */
+//    static void sort(std::vector<int> & a , unsigned begin = 0);
 
-    static void sort2D(std::vector<std::pair<int , int>> & a );
+//    static void sort2D(std::vector<std::pair<int , int>> & a );
 
     static void rmDirFiles(const std::string & n);
 

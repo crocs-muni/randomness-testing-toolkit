@@ -7,8 +7,11 @@ namespace rtt {
 namespace storage {
 
 std::unique_ptr<IStorage> IStorage::getInstance(const GlobalContainer & container) {
-    //return FileStorage::getInstance(container);
-    return MySQLStorage::getInstance(container);
+    if(container.getCliOptions()->getMysqlEid() != 0) {
+        return MySQLStorage::getInstance(container);
+    } else {
+        return FileStorage::getInstance(container);
+    }
 }
 
 } // namespace storage

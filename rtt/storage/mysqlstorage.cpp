@@ -29,8 +29,7 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
         insBattStmt->setString(1, Constants::batteryToString(s->battId));
         insBattStmt->setString(2, "0/0");
         insBattStmt->setDouble(3, Constants::MATH_ALPHA);
-        /* 1 is here only for testing!!! */
-        insBattStmt->setUInt64(4, 1);
+        insBattStmt->setUInt64(4, s->cliOptions->getMysqlEid());
         insBattStmt->execute();
 
         s->dbBatteryId = s->getLastInsertedId();
@@ -411,7 +410,6 @@ uint64_t MySQLStorage::getLastInsertedId() {
         throw RTTException(objectInfo, ex.what());
     }
 }
-
 
 } // namespace storage
 } // namespace rtt

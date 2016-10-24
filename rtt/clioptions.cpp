@@ -6,8 +6,6 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     CliOptions options;
     bool batterySet = false;
     int test = -1;
-    int testsBot = -1;
-    int testsTop = -1;
 
     for(int i = 1; i < argc; i += 2) {
         if(i == (argc - 1))
@@ -70,19 +68,12 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
                                    "can't set \"-t\" option multiple times or without any value");
             test = Utils::strtoi(argv[i + 1]);
         }
-        /* Bottom limit test option */ /* Both top and bottom limit test options should be removed - useless, multiple tests can be set in config */
-        else if(strcmp(argv[i] , "-tbot") == 0) {
-            if(testsBot != -1 || argv[i + 1][0] == '-')
+        /* MySql option (temporary) - sets that db output storage is used and sets experiment id. */
+        else if(strcmp(argv[i] , "--mysql") == 0) {
+            if(options.mysqlEid != 0 || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
-                                   "can't set \"-tbot\" option multiple times or without any value");
-            testsBot = Utils::strtoi(argv[i + 1]);
-        }
-        /* Top limit test option */
-        else if(strcmp(argv[i] , "-ttop") == 0) {
-            if(testsTop != -1 || argv[i + 1][0] == '-')
-                throw RTTException(options.objectInfo ,
-                                   "can't set \"-tbot\" option multiple times or without any value");
-            testsTop = Utils::strtoi(argv[i + 1]);
+                                   "can't set \"--mysql\" option multiple times or without any value");
+            options.mysqlEid = Utils::strtoi(argv[i + 1]);
         }
         /* None of the above, error */
         else {
@@ -102,17 +93,9 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
         throw RTTException(options.objectInfo ,
                            Strings::ERR_FILE_OPEN_FAIL + options.binFilePath);
 
-
-    /* If test options were entered set them! */
-    if((testsBot != -1 && testsTop == -1) || (testsBot == -1 && testsTop != -1))
-        throw RTTException(options.objectInfo , "can't set only one of options \"-tbot\" and \"ttop\"");
     if(test >= 0)
         options.testConsts.push_back(test);
-    if(testsBot >= 0 && testsTop >= 0){
-        for(int i = testsBot; i <= testsTop; i++)
-            options.testConsts.push_back(i);
-    }
-    Utils::sort(options.testConsts);
+    std::sort(options.testConsts.begin(), options.testConsts.end());
     /* Setting config path */
     if(options.inputCfgPath.empty())
         options.inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
@@ -140,6 +123,11 @@ std::string CliOptions::getOutFilePath() const {
     return outFilePath;
 }
 
+std::uint64_t CliOptions::getMysqlEid() const
+{
+    return mysqlEid;
+}
+
 std::string CliOptions::getUsage() {
     std::stringstream ss;
     ss << "\n[USAGE] Randomness Testing Toolkit accepts following options.\n";
@@ -153,10 +141,6 @@ std::string CliOptions::getUsage() {
     ss << "    -c  Followed with path to custom config file that will be used instead of\n";
     ss << "        default one. Argument is optional, default path is " << Constants::FILE_DEFAULT_CFG_PATH << "\n";
     ss << "    -t  Followed with constant of test in battery that will be used in testing.\n";
-    ss << " -tbot  Bottom border for tests. All tests between \"-tbot\" and \"-ttop\n";
-    ss << "        will be used. Can't be used without setting \"-ttop\"\n";
-    ss << " -ttop  Top border for tests. All tests between \"-tbot\" and \"-ttop\"\n";
-    ss << "        will be used. Can't be used without setting \"-tbot\"\n\n";
     ss << "    -h  Or no arguments will bring up this message.\n\n";
     return ss.str();
 }

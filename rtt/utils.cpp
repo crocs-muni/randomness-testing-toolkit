@@ -160,7 +160,8 @@ std::vector<int> Utils::parseStringWithIntRanges(const std::string &str) {
     }
 
     /* Sorting ensures correct order and eliminates duplicities */
-    Utils::sort(rval);
+    //Utils::sort(rval);
+    std::sort(rval.begin(), rval.end());
     return rval;
 }
 
@@ -187,46 +188,46 @@ bool Utils::fileExist(const std::string & name) {
     return file.good();
 }
 
-void Utils::sort(std::vector<int> & a , unsigned begin) {
-    for(unsigned i = begin ; i < a.size() ; i++) {
-        for(unsigned k = i ; k > begin ; k--) {
-            if(a[k] < a[k - 1]) {
-                std::iter_swap(a.begin() + k, a.begin() + k - 1);
-            } else {
-                break;
-            }
-        }
-    }
-    for(unsigned i = begin ; ; i++) {
-        if(i >= a.size() - 1 || a.size() == 0) break;
-        if(a[i] == a[i + 1]) {
-            a.erase(a.begin() + i);
-            i--;
-        }
-    }
-}
+//void Utils::sort(std::vector<int> & a , unsigned begin) {
+//    for(unsigned i = begin ; i < a.size() ; i++) {
+//        for(unsigned k = i ; k > begin ; k--) {
+//            if(a[k] < a[k - 1]) {
+//                std::iter_swap(a.begin() + k, a.begin() + k - 1);
+//            } else {
+//                break;
+//            }
+//        }
+//    }
+//    for(unsigned i = begin ; ; i++) {
+//        if(i >= a.size() - 1 || a.size() == 0) break;
+//        if(a[i] == a[i + 1]) {
+//            a.erase(a.begin() + i);
+//            i--;
+//        }
+//    }
+//}
 
-void Utils::sort2D(std::vector<std::pair<int, int> > & a) {
-    // Insert sort
-    for(unsigned i = 0 ; i < a.size() ; i++) {
-        for(unsigned k = i ; k > 0 ; k--) {
-            if(a[k].first < a[k - 1].first) {
-                std::iter_swap(a.begin() + k, a.begin() + k - 1);
-            } else {
-                break;
-            }
-        }
-    }
-    // Eliminate duplicities (the latter one survives)
-    for(unsigned i = 0 ; ; i++) {
-        if(i >= a.size() - 1 || a.size() == 0) break;
+//void Utils::sort2D(std::vector<std::pair<int, int> > & a) {
+//    // Insert sort
+//    for(unsigned i = 0 ; i < a.size() ; i++) {
+//        for(unsigned k = i ; k > 0 ; k--) {
+//            if(a[k].first < a[k - 1].first) {
+//                std::iter_swap(a.begin() + k, a.begin() + k - 1);
+//            } else {
+//                break;
+//            }
+//        }
+//    }
+//    // Eliminate duplicities (the latter one survives)
+//    for(unsigned i = 0 ; ; i++) {
+//        if(i >= a.size() - 1 || a.size() == 0) break;
 
-        if(a[i].first == a[i + 1].first) {
-            a.erase(a.begin() + i);
-            i--;
-        }
-    }
-}
+//        if(a[i].first == a[i + 1].first) {
+//            a.erase(a.begin() + i);
+//            i--;
+//        }
+//    }
+//}
 
 void Utils::rmDirFiles(const std::string & n) {
     std::string name = n;

@@ -171,6 +171,8 @@ void Utils::createDirectory(const std::string & path , int access) {
         return;
 
     std::string current;
+    if(path.front() == '/')
+        current.push_back('/');
 
     for(const std::string & dir : dirs) {
         current.append(dir + "/");

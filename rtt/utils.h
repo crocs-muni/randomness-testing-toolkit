@@ -122,7 +122,7 @@ public:
      *                          If some dirs already exist doesn't report.
      *                          Any other failure is reported. Only for Linux
      * @param path              Path to final directory, separator is '/'
-     * @param access            Access rights for new dirs, default is 0755
+     * @param access            Access rights for new dirs, default is 0775
      */
     static void createDirectory(const std::string & path, int access = 0775);
 

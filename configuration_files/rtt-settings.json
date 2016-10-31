@@ -1,7 +1,7 @@
 {
     "toolkit-settings": {
         "logger": {
-            "dir-prefix": "devel-results/logs",
+            "dir-prefix": "logs",
             "run-log-dir": "run-logs",
             "dieharder-dir": "dieharder",
             "nist-sts-dir": "niststs",
@@ -16,7 +16,7 @@
         "result-storage": {
             "file": {
                 "main-file": "devel-results/testbed-table.txt",
-                "dir-prefix": "devel-results/reports",
+                "dir-prefix": "reports",
                 "dieharder-dir": "dieharder",
                 "nist-sts-dir": "niststs",
                 "tu01-smallcrush-dir": "testu01/smallcrush",

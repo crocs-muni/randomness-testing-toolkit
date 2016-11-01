@@ -21,10 +21,11 @@ std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & co
     s->mainOutFilePath = s->toolkitSettings->getRsFileOutFile();
 
     /* Creating file name for test report file */
-    std::string binFileName = Utils::getLastItemInPath(s->inFilePath);
-    std::string datetime = Utils::formatRawTime(s->creationTime , "%Y%m%d%H%M%S");
+    auto binFileName = Utils::getLastItemInPath(s->inFilePath);
+    std::replace(binFileName.begin(), binFileName.end(), '.', '_');
+    auto datetime = Utils::formatRawTime(s->creationTime , "%Y%m%d%H%M%S");
     s->outFilePath = s->toolkitSettings->getRsFileBatteryDir(s->battId);
-    s->outFilePath.append(datetime + "-" + binFileName + ".report");
+    s->outFilePath.append(datetime + "-" + binFileName + "-report.txt");
 
     s->makeReportHeader();
 

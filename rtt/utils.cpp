@@ -224,8 +224,10 @@ std::string Utils::createLogFileName(time_t creationTime,
         rval.append(batteryShort);
     }
     rval.append("-");
-    rval.append(Utils::getLastItemInPath(inputFile));
-    rval.append(".log");
+    auto inFName = Utils::getLastItemInPath(inputFile);
+    std::replace(inFName.begin(), inFName.end(), '.', '_');
+    rval.append(inFName);
+    rval.append("-log.txt");
     return rval;
 }
 

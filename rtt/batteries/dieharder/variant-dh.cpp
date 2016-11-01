@@ -12,7 +12,7 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
     std::unique_ptr<Variant> v (new Variant(testId, variantIdx, cont));
     auto battConf = cont.getBatteryConfiguration();
 
-    v->pSampleCount = battConf->getTestVariantsParamInt(
+    v->pSampleCount = battConf->getTestVariantParamInt(
                           v->battId, v->testId, variantIdx,
                           Configuration::TAGNAME_PSAMPLES);
     if(v->pSampleCount == Configuration::VALUE_INT_NOT_SET)
@@ -67,12 +67,9 @@ void Variant::buildStrings() {
     //no input
 
     /* Building variation user settings */
-    std::stringstream parameters;
-    parameters << "p-sample count: " << pSampleCount << std::endl;
-    for(const Setting & setting : settings)
-        parameters << setting.getLogicName() << ": "
-                   << setting.getArgumentValue() << std::endl;
-    userSettings = Utils::split(parameters.str() , '\n');
+    userSettings.push_back({"P-sample count", Utils::itostr(pSampleCount)});
+    for(const auto & setting : settings)
+        userSettings.push_back({setting.getLogicName(), setting.getArgumentValue()});
 }
 
 

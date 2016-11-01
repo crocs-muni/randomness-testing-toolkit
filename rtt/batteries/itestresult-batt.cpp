@@ -36,67 +36,6 @@ std::unique_ptr<ITestResult> ITestResult::getInstance(
     return rval;
 }
 
-/*void ITestResult::writeResults(storage::IStorage * storage, int precision) {
-    if(varRes.empty())
-        return; // user was notified about error sooner
-
-    storage->addNewTest(testName);
-    if(optionalPassed.second) {
-        storage->setTestResult(optionalPassed.first);
-        storage->setTestPartialAlpha(partialAlpha);
-    }
-
-    for(const result::VariantResult & var : varRes) {
-        //if(varRes.size() > 1)
-        //    storage->addVariant();
-        storage->addVariant();
-
-        storage->setUserSettings(var.getUserSettings());
-
-        if(!var.getBatteryOutput().getWarnings().empty()) {
-            storage->setWarningMessages(var.getBatteryOutput().getWarnings());
-        }
-        if(!var.getBatteryOutput().getErrors().empty()) {
-            storage->setErrorMessages(var.getBatteryOutput().getErrors());
-        }
-        if(!var.getBatteryOutput().getStdErr().empty()) {
-            storage->setStdErrMessages(
-                        Utils::split(var.getBatteryOutput().getStdErr(),'\n')
-                    );
-        }
-
-        const auto & subResults = var.getSubResults();
-        for(const result::SubTestResult & subtest : subResults) {
-            //if(subResults.size() > 1)
-            //    storage->addSubTest();
-            storage->addSubTest();
-
-            if(subtest.getTestParameters().size() > 0)
-                storage->setTestParameters(subtest.getTestParameters());
-
-            for(const result::PValueSet & pvalSet : subtest.getPValSets()) {
-                storage->addStatisticResult(pvalSet.getStatName(),
-                                            pvalSet.getStatRes(),
-                                            precision,
-                                            isPValuePassing(pvalSet.getStatRes()));
-                //if(pvalSet.getPValues().size() > 1)
-                //    storage->addPValues(pvalSet.getPValues(), precision);
-                storage->addPValues(pvalSet.getPValues(), precision);
-            }
-
-            //if(subResults.size() > 1)
-            //    storage->finalizeSubTest();
-            storage->finalizeSubTest();
-        }
-
-
-        //if(varRes.size() > 1)
-        //    storage->finalizeVariant();
-        storage->finalizeVariant();
-    }
-    storage->finalizeTest();
-}*/
-
 std::vector<result::VariantResult> ITestResult::getVariantResults() const {
     return varRes;
 }

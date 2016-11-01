@@ -4,9 +4,8 @@ namespace rtt {
 namespace batteries {
 namespace result {
 
-VariantResult VariantResult::getInstance(
-        const std::vector<SubTestResult> & subResults,
-        const std::vector<std::string> & userSettings,
+VariantResult VariantResult::getInstance(const std::vector<SubTestResult> & subResults,
+        const std::vector<std::pair<std::string, std::string>> & userSettings,
         const BatteryOutput & battOut) {
     return VariantResult(subResults, userSettings, battOut);
 }
@@ -29,7 +28,7 @@ BatteryOutput VariantResult::getBatteryOutput() const {
     return battOut;
 }
 
-std::vector<std::string> VariantResult::getUserSettings() const {
+std::vector<std::pair<std::string, std::string>> VariantResult::getUserSettings() const {
     return userSettings;
 }
 

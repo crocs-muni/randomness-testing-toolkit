@@ -87,6 +87,20 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
     finalizeReport();
 }
 
+/*
+                     __                       __
+                    |  \                     |  \
+  ______    ______   \$$ __     __  ______  _| $$_     ______
+ /      \  /      \ |  \|  \   /  \|      \|   $$ \   /      \
+|  $$$$$$\|  $$$$$$\| $$ \$$\ /  $$ \$$$$$$\\$$$$$$  |  $$$$$$\
+| $$  | $$| $$   \$$| $$  \$$\  $$ /      $$ | $$ __ | $$    $$
+| $$__/ $$| $$      | $$   \$$ $$ |  $$$$$$$ | $$|  \| $$$$$$$$
+| $$    $$| $$      | $$    \$$$   \$$    $$  \$$  $$ \$$     \
+| $$$$$$$  \$$       \$$     \$     \$$$$$$$   \$$$$   \$$$$$$$
+| $$
+| $$
+ \$$
+*/
 void MySQLStorage::addNewTest(const std::string & testName) {
     if(dbBatteryId <= 0)
         raiseBugException("battery id not set");
@@ -234,7 +248,8 @@ void MySQLStorage::setTestPartialAlpha(double alpha) {
     }
 }
 
-void MySQLStorage::setUserSettings(const std::vector<std::string> & options) {
+void MySQLStorage::setUserSettings(
+        const std::vector<std::pair<std::string, std::string>> & options) {
     if(currDbVariantId <= 0)
         raiseBugException("variant id not set");
 
@@ -245,11 +260,9 @@ void MySQLStorage::setUserSettings(const std::vector<std::string> & options) {
         ));
         insUserSettStmt->setUInt64(3, currDbVariantId);
 
-        for(const std::string & sett : options) {
-            /* Only temporarily, till new interface is implemented :) */
-            auto settPair = Utils::split(sett, ':');
-            insUserSettStmt->setString(1, settPair.at(0));
-            insUserSettStmt->setString(2, settPair.at(1));
+        for(const auto & sett : options) {
+            insUserSettStmt->setString(1, sett.first);
+            insUserSettStmt->setString(2, sett.second);
             insUserSettStmt->execute();
         }
 
@@ -260,7 +273,8 @@ void MySQLStorage::setUserSettings(const std::vector<std::string> & options) {
     }
 }
 
-void MySQLStorage::setTestParameters(const std::vector<std::string> & options) {
+void MySQLStorage::setTestParameters(
+        const std::vector<std::pair<std::string, std::string> > & options) {
     if(currDbSubtestId <= 0)
         raiseBugException("subtest id not set");
 
@@ -271,11 +285,9 @@ void MySQLStorage::setTestParameters(const std::vector<std::string> & options) {
         ));
         insTestParamsStmt->setUInt64(3, currDbSubtestId);
 
-        for(const std::string & param : options) {
-            /* Only temporarily, till new interface is implemented :) */
-            auto paramPair = Utils::split(param, '=');
-            insTestParamsStmt->setString(1, paramPair.at(0));
-            insTestParamsStmt->setString(2, paramPair.at(1));
+        for(const auto & param : options) {
+            insTestParamsStmt->setString(1, param.first);
+            insTestParamsStmt->setString(2, param.second);
             insTestParamsStmt->execute();
         }
 

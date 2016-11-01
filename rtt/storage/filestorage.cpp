@@ -82,6 +82,20 @@ void FileStorage::writeResults(const std::vector<batteries::ITestResult *> & tes
     finalizeReport();
 }
 
+/*
+                     __                       __
+                    |  \                     |  \
+  ______    ______   \$$ __     __  ______  _| $$_     ______
+ /      \  /      \ |  \|  \   /  \|      \|   $$ \   /      \
+|  $$$$$$\|  $$$$$$\| $$ \$$\ /  $$ \$$$$$$\\$$$$$$  |  $$$$$$\
+| $$  | $$| $$   \$$| $$  \$$\  $$ /      $$ | $$ __ | $$    $$
+| $$__/ $$| $$      | $$   \$$ $$ |  $$$$$$$ | $$|  \| $$$$$$$$
+| $$    $$| $$      | $$    \$$$   \$$    $$  \$$  $$ \$$     \
+| $$$$$$$  \$$       \$$     \$     \$$$$$$$   \$$$$   \$$$$$$$
+| $$
+| $$
+ \$$
+*/
 void FileStorage::addNewTest(const std::string & testName) {
     report << "-----------------------------------------------------------" << std::endl;
     report << testName << " test results:" << std::endl;
@@ -137,26 +151,28 @@ void FileStorage::setTestPartialAlpha(double alpha) {
     report << std::endl;
 }
 
-void FileStorage::setUserSettings(const std::vector<std::string> & options) {
+void FileStorage::setUserSettings(
+        const std::vector<std::pair<std::string, std::string> > & options) {
     report << doIndent() << "User settings: " << std::endl;
     ++indent;
     std::string spaces = doIndent();
-    for(const std::string & i : options)
-        report << spaces << i << std::endl;
+    for(const auto & i : options)
+        report << spaces << i.first << ": " << i.second << std::endl;
     --indent;
     report << doIndent() << "************" << std::endl;
     report << std::endl;
 }
 
-void FileStorage::setTestParameters(const std::vector<std::string> & options) {
+void FileStorage::setTestParameters(
+        const std::vector<std::pair<std::string, std::string>> & options) {
     if(options.empty())
         return;
 
     report << doIndent() << "Test parameters: " << std::endl;
     ++indent;
     std::string spaces = doIndent();
-    for(const std::string & i : options)
-        report << spaces << i << std::endl;
+    for(const auto & i : options)
+        report << spaces << i.first << " = " << i.second << std::endl;
     --indent;
     report << doIndent() << "%%%%%%%%%%" << std::endl;
     report << std::endl;

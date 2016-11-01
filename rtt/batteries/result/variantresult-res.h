@@ -12,7 +12,7 @@ class VariantResult {
 public:
     static VariantResult getInstance(
             const std::vector<SubTestResult> & subResults,
-            const std::vector<std::string> & userSettings,
+            const std::vector<std::pair<std::string, std::string>> & userSettings,
             const BatteryOutput & battOut);
 
     std::vector<double> getSubTestStatResults() const;
@@ -21,18 +21,19 @@ public:
 
     BatteryOutput getBatteryOutput() const;
 
-    std::vector<std::string> getUserSettings() const;
+
+    std::vector<std::pair<std::string, std::string> > getUserSettings() const;
 
 private:
     VariantResult(const std::vector<SubTestResult> & subResults,
-                  const std::vector<std::string> & userSettings,
+                  const std::vector<std::pair<std::string, std::string>> & userSettings,
                   const BatteryOutput & battOut)
         : subResults(subResults), userSettings(userSettings),
           battOut(battOut)
     {}
 
     std::vector<SubTestResult> subResults;
-    std::vector<std::string> userSettings;
+    std::vector<std::pair<std::string, std::string>> userSettings;
     BatteryOutput battOut;
 };
 

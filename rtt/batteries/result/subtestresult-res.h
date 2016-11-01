@@ -15,9 +15,9 @@ public:
 
     std::vector<PValueSet> getPValSets() const;
 
-    std::vector<std::string> getTestParameters() const;
+    std::vector<std::pair<std::string, std::string> > getTestParameters() const;
 
-    void setTestParameters(const std::vector<std::string> & value);
+    void setTestParameters(const std::vector<std::pair<std::string, std::string> > & value);
 
 private:
     SubTestResult(const std::vector<PValueSet> & pValSets)
@@ -26,7 +26,7 @@ private:
 
     std::vector<PValueSet> pValSets;
 
-    std::vector<std::string> testParameters;
+    std::vector<std::pair<std::string, std::string>> testParameters;
 };
 
 } // namespace result

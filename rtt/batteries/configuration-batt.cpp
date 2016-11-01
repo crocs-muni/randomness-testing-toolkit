@@ -64,7 +64,7 @@ uint Configuration::getTestVariantsCount(Constants::Battery batt, int testId) {
     return 0;
 }
 
-int Configuration::getTestVariantsParamInt(Constants::Battery batt,
+int Configuration::getTestVariantParamInt(Constants::Battery batt,
                                            int testId, uint variantIdx,
                                            const std::string & paramName) {
     int rval = VALUE_INT_NOT_SET;

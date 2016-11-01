@@ -31,7 +31,7 @@ private:
             const std::string & testLog,
             std::vector<std::string> statNames);
 
-    std::vector<std::string> extractTestParameters(
+    std::vector<std::pair<std::string, std::string> > extractTestParameters(
             const std::string & testLog,
             std::vector<std::string> paramNames);
 };

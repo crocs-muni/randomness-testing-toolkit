@@ -21,7 +21,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
     auto endIt = std::sregex_iterator();
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::PValueSet> tmpPValueSets;
-    std::vector<std::string> tmpParamVec;
+    std::vector<std::pair<std::string, std::string>> tmpParamVec;
 
     r->battId = tests.at(0)->getBattId();
 
@@ -130,10 +130,10 @@ double TestResult::convertStringToDouble(const std::string & num,
     }
 }
 
-std::vector<std::string> TestResult::extractTestParameters(
+std::vector<std::pair<std::string, std::string>> TestResult::extractTestParameters(
         const std::string & testLog,
         std::vector<std::string> paramNames) {
-    std::vector<std::string> rval;
+    std::vector<std::pair<std::string, std::string>> rval;
     std::regex RE_PARAM = buildParamRegex(paramNames);
     auto paramIt = std::sregex_iterator(testLog.begin(),
                                         testLog.end(),
@@ -144,8 +144,7 @@ std::vector<std::string> TestResult::extractTestParameters(
                            "parameter extraction failed");
     std::smatch paramMatch = *paramIt;
     for(uint i = 0 ; i < paramNames.size() ; ++i) {
-        rval.push_back(paramNames.at(i) + " = " +
-                       paramMatch[i + 1].str());
+        rval.push_back({paramNames.at(i), paramMatch[i + 1].str()});
     }
     /* Extracting w in Block Alphabit */
     if(battId == Constants::Battery::TU01_BLOCK_ALPHABIT) {
@@ -161,7 +160,8 @@ std::vector<std::string> TestResult::extractTestParameters(
                                "extraction of parameter \"w\" failed");
         }
         std::smatch wMatch = *wParamIt;
-        rval.push_back("w = " + wMatch[1].str());
+        //rval.push_back("w = " + wMatch[1].str());
+        rval.push_back({"w", wMatch[1].str()});
     }
 
     return rval;

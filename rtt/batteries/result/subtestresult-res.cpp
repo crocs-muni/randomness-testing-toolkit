@@ -22,14 +22,14 @@ std::vector<PValueSet> SubTestResult::getPValSets() const {
     return pValSets;
 }
 
-std::vector<std::string> SubTestResult::getTestParameters() const {
+std::vector<std::pair<std::string, std::string> > SubTestResult::getTestParameters() const {
     return testParameters;
 }
 
-void SubTestResult::setTestParameters(
-        const std::vector<std::string> & value) {
+void SubTestResult::setTestParameters(const std::vector<std::pair<std::string, std::string> > & value) {
     testParameters = value;
 }
+
 
 
 } // namespace result

@@ -59,7 +59,7 @@ public:
 
     uint getTestVariantsCount(Constants::Battery batt , int testId);
 
-    int getTestVariantsParamInt(Constants::Battery batt ,
+    int getTestVariantParamInt(Constants::Battery batt ,
                                 int testId , uint variantIdx ,
                                 const std::string & paramName);
 

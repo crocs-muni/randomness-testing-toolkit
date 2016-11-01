@@ -68,9 +68,6 @@ std::string IVariant::getStdInput() const {
     return stdInput;
 }
 
-std::vector<std::string> IVariant::getUserSettings() const {
-    return userSettings;
-}
 
 BatteryOutput IVariant::getBatteryOutput() const {
     if(executed)
@@ -83,9 +80,12 @@ int IVariant::getTestId() const {
     return testId;
 }
 
-std::string IVariant::getObjectInfo() const
-{
+std::string IVariant::getObjectInfo() const {
     return objectInfo;
+}
+
+std::vector<std::pair<std::string, std::string> > IVariant::getUserSettings() const {
+    return userSettings;
 }
 
 IVariant::IVariant(int testId, uint variantIdx,

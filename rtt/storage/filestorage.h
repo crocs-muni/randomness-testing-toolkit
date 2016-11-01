@@ -80,9 +80,11 @@ private:
 
     void setTestPartialAlpha(double alpha);
 
-    void setUserSettings(const std::vector<std::string> & options);
+    void setUserSettings(
+            const std::vector<std::pair<std::string, std::string>> & options);
 
-    void setTestParameters(const std::vector<std::string> & options);
+    void setTestParameters(
+            const std::vector<std::pair<std::string, std::string> > & options);
 
     void setWarningMessages(const std::vector<std::string> & warnings);
 

@@ -115,12 +115,10 @@ void Variant::buildStrings() {
     stdInput = stdIn.str();
 
     /* Building variation user settings */
-    std::stringstream sett;
-    sett << "Stream size: " << streamSize << std::endl;
-    sett << "Stream count: " << streamCount << std::endl;
+    userSettings.push_back({"Stream size", streamSize});
+    userSettings.push_back({"Stream count", streamCount});
     if(adjustableBlockLength && !blockLength.empty())
-        sett << "Block length: " << blockLength;
-    userSettings = Utils::split(sett.str() , '\n');
+        userSettings.push_back({"Block length", blockLength});
 }
 
 void Variant::readNistStsOutFiles() {

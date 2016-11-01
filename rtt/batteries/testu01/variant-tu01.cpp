@@ -20,7 +20,7 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
                             v->battId , v->testId));
 
    /* Repetitions - mandatory */
-    v->repetitions = battConf->getTestVariantsParamInt(
+    v->repetitions = battConf->getTestVariantParamInt(
                          v->battId, v->testId, variantIdx,
                          Configuration::TAGNAME_REPETITIONS);
     if(v->repetitions == Configuration::VALUE_INT_NOT_SET)
@@ -136,24 +136,23 @@ void Variant::buildStrings() {
     //no input
 
     /* Building variation user settings */
-    std::stringstream userSett;
-    userSett << "Repetitions: " << repetitions << std::endl;
+    userSettings.push_back({"Repetitions", Utils::itostr(repetitions)});
     if(Constants::isInTU01BitFamily(battId)) {
-        userSett << "Bit NB: " << bit_nb << std::endl;
+        userSettings.push_back({"Bit NB", bit_nb});
     }
     if(Constants::isinTU01AlphabitFamily(battId)) {
-        userSett << "Bit R: " << bit_r << std::endl;
-        userSett << "Bit S: " << bit_s << std::endl;
+        userSettings.push_back({"Bit R", bit_r});
+        userSettings.push_back({"Bit S", bit_s});
     }
     if(!bit_w.empty() && battId == Constants::Battery::TU01_BLOCK_ALPHABIT) {
-        userSett << "Bit W: " << bit_w << std::endl;
+        userSettings.push_back({"Bit W", bit_w});
     }
     if(!params.empty() && Constants::isInTU01CrushFamily(battId)) {
         for(const tParam & param : params) {
-            userSett << param.first << " = " << param.second << std::endl;
+            userSettings.push_back({param.first, param.second});
         }
     }
-    userSettings = Utils::split(userSett.str() , '\n');
+    //userSettings = Utils::split(userSett.str() , '\n');
 }
 
 } // namespace testu01

@@ -35,11 +35,7 @@ int ITest::getTestId() const {
 }
 
 std::vector<IVariant *> ITest::getVariants() const {
-    std::vector<IVariant *> rval;
-    for(const auto & el : variants)
-        rval.push_back(el.get());
-
-    return rval;
+    return Utils::getRawPtrs(variants);
 }
 
 ITest::ITest(int testId, const GlobalContainer & cont) {
@@ -70,8 +66,7 @@ ITest::ITest(int testId, const GlobalContainer & cont) {
     }
 }
 
-Logger * ITest::getLogger() const
-{
+Logger * ITest::getLogger() const {
     return logger;
 }
 

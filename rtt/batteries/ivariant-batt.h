@@ -21,13 +21,13 @@ public:
 
     std::string getStdInput() const;
 
-    std::vector<std::string> getUserSettings() const;
-
     BatteryOutput getBatteryOutput() const;
 
     int getTestId() const;
 
     std::string getObjectInfo() const;
+
+    std::vector<std::pair<std::string, std::string> > getUserSettings() const;
 
 protected:
     /* Set in constructor */
@@ -39,9 +39,9 @@ protected:
     std::string binaryDataPath;
     std::string logFilePath;
     std::string executablePath;
-    std::vector<std::string> userSettings;
     std::string cliArguments;
     std::string stdInput;
+    std::vector<std::pair<std::string, std::string>> userSettings;
 
     /* Set after execution */
     BatteryOutput batteryOutput;

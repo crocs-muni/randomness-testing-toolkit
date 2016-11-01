@@ -1,6 +1,6 @@
 #include "rtt/batteries/testu01/battery-tu01.h"
 
-#include "rtt/batteries/iresult-batt.h"
+#include "rtt/batteries/itestresult-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -11,32 +11,35 @@ std::unique_ptr<Battery> Battery::getInstance(const GlobalContainer & container)
     return b;
 }
 
-void Battery::storeResults() {
+std::vector<std::unique_ptr<ITestResult>> Battery::getTestResults() const {
     if(!executed)
-        throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
+        throw RTTException(objectInfo, Strings::BATT_ERR_NO_EXEC_PROC);
 
+    /* Tests with same name are considered variants of the
+     * same test and are therefore bundled together. */
+    std::vector<std::unique_ptr<ITestResult>> results;
     std::vector<ITest *> testBatch;
-    std::string currentTestName;
-    for(uint i = 0 ; i < tests.size() ; ++i) {
-        if(currentTestName.empty())
-            currentTestName = tests.at(i)->getLogicName();
+    std::string currTestName;
 
-        if(currentTestName == tests.at(i)->getLogicName()) {
+    for(uint i = 0; i < tests.size(); ++i) {
+        if(currTestName.empty())
+            currTestName = tests.at(i)->getLogicName();
+
+        if(currTestName == tests.at(i)->getLogicName()) {
             testBatch.push_back(tests.at(i).get());
         } else {
-            auto res = IResult::getInstance(testBatch);
-            res->writeResults(storage.get(), 4);
+            results.push_back(ITestResult::getInstance(testBatch));
             testBatch.clear();
-            currentTestName = tests.at(i)->getLogicName();
+            currTestName = tests.at(i)->getLogicName();
             testBatch.push_back(tests.at(i).get());
         }
 
         if(i + 1 == tests.size()) {
-            auto res = IResult::getInstance(testBatch);
-            res->writeResults(storage.get(), 4);
+            results.push_back(ITestResult::getInstance(testBatch));
         }
     }
-    storage->finalizeReport();
+
+    return results;
 }
 
 } // namespace testu01

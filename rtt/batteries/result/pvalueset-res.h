@@ -1,7 +1,11 @@
 #ifndef RTT_BATTERIES_RESULT_PVALUESET_H
 #define RTT_BATTERIES_RESULT_PVALUESET_H
 
-#include "rtt/storage/istorage.h"
+#include <vector>
+#include <string>
+
+#include "rtt/constants.h"
+#include "rtt/rttexception.h"
 
 namespace rtt {
 namespace batteries {

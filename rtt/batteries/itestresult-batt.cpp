@@ -1,25 +1,25 @@
-#include "iresult-batt.h"
+#include "itestresult-batt.h"
 
-#include "rtt/batteries/dieharder/result-dh.h"
-#include "rtt/batteries/niststs/result-sts.h"
-#include "rtt/batteries/testu01/result-tu01.h"
+#include "rtt/batteries/dieharder/testresult-dh.h"
+#include "rtt/batteries/niststs/testresult-sts.h"
+#include "rtt/batteries/testu01/testresult-tu01.h"
 
 namespace rtt {
 namespace batteries {
 
-std::unique_ptr<IResult> IResult::getInstance(
+std::unique_ptr<ITestResult> ITestResult::getInstance(
         const std::vector<ITest *> & tests) {
     if(tests.empty())
         raiseBugException("empty tests");
 
-    std::unique_ptr<IResult> rval;
+    std::unique_ptr<ITestResult> rval;
 
     switch(tests.at(0)->getBattId()) {
         case Constants::Battery::NIST_STS:
-            rval = niststs::Result::getInstance(tests);
+            rval = niststs::TestResult::getInstance(tests);
             break;
         case Constants::Battery::DIEHARDER:
-            rval = dieharder::Result::getInstance(tests);
+            rval = dieharder::TestResult::getInstance(tests);
             break;
         case Constants::Battery::TU01_SMALLCRUSH:
         case Constants::Battery::TU01_CRUSH:
@@ -27,7 +27,7 @@ std::unique_ptr<IResult> IResult::getInstance(
         case Constants::Battery::TU01_RABBIT:
         case Constants::Battery::TU01_ALPHABIT:
         case Constants::Battery::TU01_BLOCK_ALPHABIT:
-            rval = testu01::Result::getInstance(tests);
+            rval = testu01::TestResult::getInstance(tests);
             break;
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);
@@ -36,7 +36,7 @@ std::unique_ptr<IResult> IResult::getInstance(
     return rval;
 }
 
-void IResult::writeResults(storage::IStorage * storage, int precision) {
+/*void ITestResult::writeResults(storage::IStorage * storage, int precision) {
     if(varRes.empty())
         return; // user was notified about error sooner
 
@@ -95,17 +95,25 @@ void IResult::writeResults(storage::IStorage * storage, int precision) {
         storage->finalizeVariant();
     }
     storage->finalizeTest();
-}
+}*/
 
-std::vector<result::VariantResult> IResult::getResults() const {
+std::vector<result::VariantResult> ITestResult::getVariantResults() const {
     return varRes;
 }
 
-std::pair<bool, bool> IResult::getOptionalPassed() const {
+std::pair<bool, bool> ITestResult::getOptionalPassed() const {
     return optionalPassed;
 }
 
-void IResult::evaluateSetPassed() {
+std::string ITestResult::getTestName() const {
+    return testName;
+}
+
+double ITestResult::getPartialAlpha() const {
+    return partialAlpha;
+}
+
+void ITestResult::evaluateSetPassed() {
     std::vector<double> allPValues;
     for(const result::VariantResult & var : varRes) {
         std::vector<double> tmp = var.getSubTestStatResults();
@@ -130,7 +138,7 @@ void IResult::evaluateSetPassed() {
     }
 }
 
-bool IResult::isPValuePassing(double pvalue) {
+bool ITestResult::isPValuePassing(double pvalue) {
     if(pvalue < partialAlpha - Constants::MATH_EPS)
         return false;
 

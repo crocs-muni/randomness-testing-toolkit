@@ -7,6 +7,7 @@ const std::string FileStorage::STRING_PASSED_PROP   = "Passed/Total tests: ";
 
 const size_t FileStorage::MISC_TAB_SIZE     = 4;
 const size_t FileStorage::MISC_COL_WIDTH    = 30;
+const uint FileStorage::FLOAT_PRECISION     = 8;
 
 std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & container) {
     std::unique_ptr<FileStorage> s (new FileStorage());
@@ -28,6 +29,56 @@ std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & co
     s->makeReportHeader();
 
     return s;
+}
+
+void FileStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
+    if(testResults.empty())
+        raiseBugException("empty results");
+
+    for(const auto & testRes : testResults) {
+        addNewTest(testRes->getTestName());
+        if(testRes->getOptionalPassed().second) {
+            setTestResult(testRes->getOptionalPassed().first);
+            setTestPartialAlpha(testRes->getPartialAlpha());
+        }
+
+        const auto & variantResults = testRes->getVariantResults();
+        for(const auto & varRes : variantResults) {
+            if(variantResults.size() > 1)
+                addVariant();
+
+            setUserSettings(varRes.getUserSettings());
+            setWarningMessages(varRes.getBatteryOutput().getWarnings());
+            setErrorMessages(varRes.getBatteryOutput().getErrors());
+            setStdErrMessages(Utils::split(varRes.getBatteryOutput().getStdErr(), '\n'));
+
+            const auto & subResults = varRes.getSubResults();
+
+            for(const auto & subRes : subResults) {
+                if(subResults.size() > 1)
+                    addSubTest();
+
+                setTestParameters(subRes.getTestParameters());
+                for(const auto & pValSet : subRes.getPValSets()) {
+                    addStatisticResult(pValSet.getStatName(),
+                                       pValSet.getStatRes(),
+                                       FLOAT_PRECISION,
+                                       testRes->isPValuePassing(pValSet.getStatRes()));
+
+                    if(pValSet.getPValues().size() > 1)
+                        addPValues(pValSet.getPValues(), FLOAT_PRECISION);
+                }
+
+                if(subResults.size() > 1)
+                    finalizeSubTest();
+            }
+
+            if(variantResults.size() > 1)
+                finalizeVariant();
+        }
+        finalizeTest();
+    }
+    finalizeReport();
 }
 
 void FileStorage::addNewTest(const std::string & testName) {
@@ -111,6 +162,9 @@ void FileStorage::setTestParameters(const std::vector<std::string> & options) {
 }
 
 void FileStorage::setWarningMessages(const std::vector<std::string> & warnings) {
+    if(warnings.empty())
+        return;
+
     report << doIndent() << "Warnings in log: " << std::endl;
     ++indent;
     auto spaces = doIndent();
@@ -121,6 +175,9 @@ void FileStorage::setWarningMessages(const std::vector<std::string> & warnings) 
 }
 
 void FileStorage::setErrorMessages(const std::vector<std::string> & errors) {
+    if(errors.empty())
+        return;
+
     report << doIndent() << "Error messages: " << std::endl;
     ++indent;
     auto spaces = doIndent();
@@ -131,6 +188,9 @@ void FileStorage::setErrorMessages(const std::vector<std::string> & errors) {
 }
 
 void FileStorage::setStdErrMessages(const std::vector<std::string> & stderr) {
+    if(stderr.empty())
+        return;
+
     report << doIndent() << "Standard error output: " << std::endl;
     ++indent;
     auto spaces = doIndent();

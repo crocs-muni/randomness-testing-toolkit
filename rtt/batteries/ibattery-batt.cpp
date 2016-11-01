@@ -54,7 +54,6 @@ IBattery::IBattery(const GlobalContainer & cont) {
     batteryConfiguration = cont.getBatteryConfiguration();
     toolkitSettings      = cont.getToolkitSettings();
     logger               = cont.getLogger();
-    storage              = storage::IStorage::getInstance(cont);
 
     creationTime = cont.getCreationTime();
     battId       = cliOptions->getBatteryId();

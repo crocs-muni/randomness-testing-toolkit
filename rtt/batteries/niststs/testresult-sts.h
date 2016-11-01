@@ -1,7 +1,7 @@
-#ifndef RTT_BATTERIES_NISTSTS_RESULT_H
-#define RTT_BATTERIES_NISTSTS_RESULT_H
+#ifndef RTT_BATTERIES_NISTSTS_TESTRESULT_H
+#define RTT_BATTERIES_NISTSTS_TESTRESULT_H
 
-#include "rtt/batteries/iresult-batt.h"
+#include "rtt/batteries/itestresult-batt.h"
 
 #include "rtt/batteries/niststs/variant-sts.h"
 
@@ -9,13 +9,13 @@ namespace rtt {
 namespace batteries {
 namespace niststs {
 
-class Result : public IResult {
+class TestResult : public ITestResult {
 public:
-    static std::unique_ptr<Result> getInstance(
+    static std::unique_ptr<TestResult> getInstance(
             const std::vector<ITest *> & tests);
 private:
-    Result(Logger * logger , std::string testName)
-        : IResult(logger , testName)
+    TestResult(Logger * logger , std::string testName)
+        : ITestResult(logger , testName)
     {}
 
     static std::vector<std::vector<double>> getVariantPValues(
@@ -28,4 +28,4 @@ private:
 } // namespace batteries
 } // namespace rtt
 
-#endif // RTT_BATTERIES_NISTSTS_RESULT_H
+#endif // RTT_BATTERIES_NISTSTS_TESTRESULT_H

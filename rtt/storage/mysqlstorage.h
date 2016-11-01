@@ -17,38 +17,7 @@ class MySQLStorage : public IStorage {
 public:
     static std::unique_ptr<MySQLStorage> getInstance(const GlobalContainer & container);
 
-    void addNewTest(const std::string & testName);
-    void finalizeTest();
-
-    void addVariant();
-    void finalizeVariant();
-
-    void addSubTest();
-    void finalizeSubTest();
-
-    void setTestResult(bool passed);
-
-    void setTestPartialAlpha(double alpha);
-
-    void setUserSettings(const std::vector<std::string> & options);
-
-    void setTestParameters(const std::vector<std::string> & options);
-
-    void setWarningMessages(const std::vector<std::string> & warnings);
-
-    void setErrorMessages(const std::vector<std::string> & errors);
-
-    void setStdErrMessages(const std::vector<std::string> & stderr);
-
-    void addStatisticResult(
-            const std::string & statName ,
-            double value , int precision , bool passed);
-
-    void addPValues(
-            const std::vector<double> & pvals,
-            int precision);
-
-    void finalizeReport();
+    void writeResults(const std::vector<batteries::ITestResult *> & testResults);
 
 private:
     /*
@@ -82,6 +51,37 @@ private:
     ===============
     */
     MySQLStorage() {}
+
+    void addNewTest(const std::string & testName);
+    void finalizeTest();
+
+    void addVariant();
+    void finalizeVariant();
+
+    void addSubTest();
+    void finalizeSubTest();
+
+    void setTestResult(bool passed);
+
+    void setTestPartialAlpha(double alpha);
+
+    void setUserSettings(const std::vector<std::string> & options);
+
+    void setTestParameters(const std::vector<std::string> & options);
+
+    void setWarningMessages(const std::vector<std::string> & warnings);
+
+    void setErrorMessages(const std::vector<std::string> & errors);
+
+    void setStdErrMessages(const std::vector<std::string> & stderr);
+
+    void addStatisticResult(
+            const std::string & statName ,
+            double value, bool passed);
+
+    void addPValues(const std::vector<double> & pvals);
+
+    void finalizeReport();
 
     std::uint64_t getLastInsertedId();
 };

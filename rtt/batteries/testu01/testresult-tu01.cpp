@@ -1,15 +1,15 @@
-#include "result-tu01.h"
+#include "testresult-tu01.h"
 
 namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-std::unique_ptr<Result> Result::getInstance(
+std::unique_ptr<TestResult> TestResult::getInstance(
         const std::vector<ITest *> & tests) {
     if(tests.empty())
         raiseBugException("empty tests");
 
-    std::unique_ptr<Result> r (new Result(
+    std::unique_ptr<TestResult> r (new TestResult(
                                    tests.at(0)->getLogger(),
                                    tests.at(0)->getLogicName()));
 
@@ -72,7 +72,7 @@ std::unique_ptr<Result> Result::getInstance(
     return r;
 }
 
-std::vector<result::PValueSet> Result::extractPValueSets(
+std::vector<result::PValueSet> TestResult::extractPValueSets(
         const std::string & testLog, std::vector<std::string> statNames) {
     std::vector<result::PValueSet> rval;
     const static std::regex RE_PVALUES {
@@ -106,7 +106,7 @@ std::vector<result::PValueSet> Result::extractPValueSets(
     return rval;
 }
 
-double Result::convertStringToDouble(const std::string & num,
+double TestResult::convertStringToDouble(const std::string & num,
                                      const std::string & oneMinus) {
     if(num == "eps") {
         return 1.0E-300;
@@ -130,7 +130,7 @@ double Result::convertStringToDouble(const std::string & num,
     }
 }
 
-std::vector<std::string> Result::extractTestParameters(
+std::vector<std::string> TestResult::extractTestParameters(
         const std::string & testLog,
         std::vector<std::string> paramNames) {
     std::vector<std::string> rval;
@@ -167,7 +167,7 @@ std::vector<std::string> Result::extractTestParameters(
     return rval;
 }
 
-std::regex Result::buildParamRegex(
+std::regex TestResult::buildParamRegex(
         std::vector<std::string> paramNames) {
     std::stringstream rval;
     for(uint i = 0 ; i < paramNames.size() ; ++i) {

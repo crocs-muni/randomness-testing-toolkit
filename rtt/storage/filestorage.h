@@ -17,49 +17,24 @@ typedef std::vector<std::string> tStringVector;
 
 class FileStorage : public IStorage {
 public:
+    static std::unique_ptr<FileStorage> getInstance(const GlobalContainer & container);
+
+    void writeResults(const std::vector<batteries::ITestResult *> & testResults);
+
+private:
+    /*
+    =================
+    *** Constants ***
+    =================
+    */
     /* Strings in report */
     static const std::string STRING_PASSED_PROP;
 
     /* Other constants */
     static const size_t MISC_TAB_SIZE;
     static const size_t MISC_COL_WIDTH;
+    static const uint FLOAT_PRECISION;
 
-    static std::unique_ptr<FileStorage> getInstance(const GlobalContainer & container);
-
-    void addNewTest(const std::string & testName);
-    void finalizeTest();
-
-    void addVariant();
-    void finalizeVariant();
-
-    void addSubTest();
-    void finalizeSubTest();
-
-    void setTestResult(bool passed);
-
-    void setTestPartialAlpha(double alpha);
-
-    void setUserSettings(const std::vector<std::string> & options);
-
-    void setTestParameters(const std::vector<std::string> & options);
-
-    void setWarningMessages(const std::vector<std::string> & warnings);
-
-    void setErrorMessages(const std::vector<std::string> & errors);
-
-    void setStdErrMessages(const std::vector<std::string> & stderr);
-
-    void addStatisticResult(
-            const std::string & statName ,
-            double value , int precision , bool passed);
-
-    void addPValues(
-            const std::vector<double> & pvals,
-            int precision);
-
-    void finalizeReport();
-
-private:
     /*
     =================
     *** Variables ***
@@ -88,6 +63,42 @@ private:
     ===============
     */
     FileStorage() {}
+
+    void addNewTest(const std::string & testName);
+
+    void finalizeTest();
+
+    void addVariant();
+
+    void finalizeVariant();
+
+    void addSubTest();
+
+    void finalizeSubTest();
+
+    void setTestResult(bool passed);
+
+    void setTestPartialAlpha(double alpha);
+
+    void setUserSettings(const std::vector<std::string> & options);
+
+    void setTestParameters(const std::vector<std::string> & options);
+
+    void setWarningMessages(const std::vector<std::string> & warnings);
+
+    void setErrorMessages(const std::vector<std::string> & errors);
+
+    void setStdErrMessages(const std::vector<std::string> & stderr);
+
+    void addStatisticResult(
+            const std::string & statName ,
+            double value , int precision , bool passed);
+
+    void addPValues(
+            const std::vector<double> & pvals,
+            int precision);
+
+    void finalizeReport();
 
     void makeReportHeader();
 

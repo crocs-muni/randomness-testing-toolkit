@@ -1,23 +1,23 @@
-#ifndef RTT_BATTERIES_DIEHARDER_RESULT_H
-#define RTT_BATTERIES_DIEHARDER_RESULT_H
+#ifndef RTT_BATTERIES_DIEHARDER_TESTRESULT_H
+#define RTT_BATTERIES_DIEHARDER_TESTRESULT_H
 
 #include <cmath>
 
-#include "rtt/batteries/iresult-batt.h"
+#include "rtt/batteries/itestresult-batt.h"
 
 
 namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-class Result : public IResult {
+class TestResult : public ITestResult {
 public:
-    static std::unique_ptr<Result> getInstance(
+    static std::unique_ptr<TestResult> getInstance(
             const std::vector<ITest *> & tests);
 
 private:
-    Result(Logger * logger , std::string testName)
-        : IResult(logger , testName)
+    TestResult(Logger * logger , std::string testName)
+        : ITestResult(logger , testName)
     {}
 
     static std::vector<std::string> splitIntoSubTests(const std::string & str);
@@ -36,4 +36,4 @@ private:
 } // namespace batteries
 } // namespace rtt
 
-#endif // RTT_BATTERIES_DIEHARDER_RESULT_H
+#endif // RTT_BATTERIES_DIEHARDER_TESTRESULT_H

@@ -1,15 +1,15 @@
-#include "result-dh.h"
+#include "testresult-dh.h"
 
 namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-std::unique_ptr<Result> Result::getInstance(
+std::unique_ptr<TestResult> TestResult::getInstance(
         const std::vector<ITest *> & tests) {
     if(tests.empty())
         raiseBugException("empty tests");
 
-    std::unique_ptr<Result> r (new Result(
+    std::unique_ptr<TestResult> r (new TestResult(
                                    tests.at(0)->getLogger(),
                                    tests.at(0)->getLogicName()));
 
@@ -77,7 +77,7 @@ std::unique_ptr<Result> Result::getInstance(
     return r;
 }
 
-std::vector<std::string> Result::splitIntoSubTests(const std::string & str) {
+std::vector<std::string> TestResult::splitIntoSubTests(const std::string & str) {
     std::vector<std::string> rval;
     static const std::string separator {
         "#                          Values of test p-values                            #"
@@ -97,7 +97,7 @@ std::vector<std::string> Result::splitIntoSubTests(const std::string & str) {
 
 /* Following code is taken from DIEHARDER battery. */
 /* Used for calculation of final pvalue of test. */
-double Result::kstest(const std::vector<double> & pvalue) {
+double TestResult::kstest(const std::vector<double> & pvalue) {
     int i;
     double y/*,d*/,d1/*,d2*/,dmax;
     double p;
@@ -121,7 +121,7 @@ double Result::kstest(const std::vector<double> & pvalue) {
     return p;
 }
 
-double Result::p_ks_new(int n, double d) {
+double TestResult::p_ks_new(int n, double d) {
     int k,m,i,j,g,eH,eQ;
     double h,s,*H,*Q;
     /*
@@ -197,7 +197,7 @@ double Result::p_ks_new(int n, double d) {
     return s;
 }
 
-void Result::mMultiply(double *A, double *B, double *C, int m) {
+void TestResult::mMultiply(double *A, double *B, double *C, int m) {
     int i,j,k;
     double s;
     for(i=0; i<m; i++){
@@ -211,7 +211,7 @@ void Result::mMultiply(double *A, double *B, double *C, int m) {
     }
 }
 
-void Result::mPower(double *A, int eA, double *V, int *eV, int m, int n) {
+void TestResult::mPower(double *A, int eA, double *V, int *eV, int m, int n) {
     double *B;
     int eB,i,j;
 

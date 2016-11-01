@@ -1,4 +1,4 @@
-#include "result-sts.h"
+#include "testresult-sts.h"
 
 #include "libs/cephes/cephes.h"
 
@@ -6,12 +6,12 @@ namespace rtt {
 namespace batteries {
 namespace niststs {
 
-std::unique_ptr<Result> Result::getInstance(
+std::unique_ptr<TestResult> TestResult::getInstance(
         const std::vector<ITest *> & tests) {
     if(tests.empty())
         raiseBugException("empty tests");
 
-    std::unique_ptr<Result> r (new Result(
+    std::unique_ptr<TestResult> r (new TestResult(
                                    tests.at(0)->getLogger(),
                                    tests.at(0)->getLogicName()));
 
@@ -58,7 +58,7 @@ std::unique_ptr<Result> Result::getInstance(
     return r;
 }
 
-std::vector<std::vector<double>> Result::getVariantPValues(
+std::vector<std::vector<double>> TestResult::getVariantPValues(
         Variant * variant) {
     if(variant->getTestId() == 12) {
         /* Random excursion test */
@@ -146,7 +146,7 @@ std::vector<std::vector<double>> Result::getVariantPValues(
 
 /* Following code is taken from NIST STS source code */
 /* Used for calculation of Chi2 statistic */
-double Result::chi2_stat(std::vector<double> pvals) {
+double TestResult::chi2_stat(std::vector<double> pvals) {
     int streamCount = pvals.size();
     int j, pos , expCount;
     double chi2 , uniformity;

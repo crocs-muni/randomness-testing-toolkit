@@ -1,8 +1,8 @@
 #ifndef RTT_IBATTERY_H
 #define RTT_IBATTERY_H
 
-#include "rtt/storage/istorage.h"
 #include "rtt/batteries/itest-batt.h"
+#include "rtt/batteries/itestresult-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -15,7 +15,7 @@ public:
 
     virtual ~IBattery() {}
 
-    virtual void storeResults() = 0;
+    virtual std::vector<std::unique_ptr<ITestResult>> getTestResults() const = 0;
 
 protected:
     IBattery(const GlobalContainer & cont);
@@ -32,7 +32,6 @@ protected:
     time_t creationTime;
     Constants::Battery battId;
     std::string objectInfo;
-    std::unique_ptr<storage::IStorage> storage;
     /* Battery is keeping track of tests set to execution.
      * Test objects keep track of their settings and execution results. */
     std::vector<std::unique_ptr<ITest>> tests;

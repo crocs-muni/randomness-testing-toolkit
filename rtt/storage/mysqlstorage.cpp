@@ -43,6 +43,50 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     return s;
 }
 
+void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
+    if(testResults.empty())
+        raiseBugException("empty results");
+
+    for(const auto & testRes : testResults) {
+        addNewTest(testRes->getTestName());
+
+        if(testRes->getOptionalPassed().second) {
+            setTestResult(testRes->getOptionalPassed().first);
+            setTestPartialAlpha(testRes->getPartialAlpha());
+        }
+
+        const auto & variantResults = testRes->getVariantResults();
+        for(const auto & varRes : variantResults) {
+            addVariant();
+
+            setUserSettings(varRes.getUserSettings());
+            setWarningMessages(varRes.getBatteryOutput().getWarnings());
+            setErrorMessages(varRes.getBatteryOutput().getErrors());
+            setStdErrMessages(Utils::split(varRes.getBatteryOutput().getStdErr(), '\n'));
+
+            const auto & subResults = varRes.getSubResults();
+
+            for(const auto & subRes : subResults) {
+                addSubTest();
+
+                setTestParameters(subRes.getTestParameters());
+                for(const auto & pValSet : subRes.getPValSets()) {
+                    addStatisticResult(pValSet.getStatName(),
+                                       pValSet.getStatRes(),
+                                       testRes->isPValuePassing(pValSet.getStatRes()));
+
+                    if(pValSet.getPValues().size() > 1)
+                        addPValues(pValSet.getPValues());
+                }
+                finalizeSubTest();
+            }
+            finalizeVariant();
+        }
+        finalizeTest();
+    }
+    finalizeReport();
+}
+
 void MySQLStorage::addNewTest(const std::string & testName) {
     if(dbBatteryId <= 0)
         raiseBugException("battery id not set");
@@ -312,7 +356,7 @@ void MySQLStorage::setStdErrMessages(const std::vector<std::string> & stderr) {
 }
 
 void MySQLStorage::addStatisticResult(const std::string & statName,
-                                      double value, int precision, bool passed){
+                                      double value, bool passed){
     if(currDbSubtestId <= 0)
         raiseBugException("subtest id not set");
 
@@ -338,7 +382,7 @@ void MySQLStorage::addStatisticResult(const std::string & statName,
     }
 }
 
-void MySQLStorage::addPValues(const std::vector<double> & pvals, int precision) {
+void MySQLStorage::addPValues(const std::vector<double> & pvals) {
     if(currDbSubtestId <= 0)
         raiseBugException("subtest id not set");
 

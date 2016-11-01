@@ -32,11 +32,10 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "rtt/storage/istorage.h"
 #include "rtt/batteries/ibattery-batt.h"
 #include "rtt/globalcontainer.h"
 #include "rtt/version.h"
-#include "rtt/batteries/dieharder/battery-dh.h"
-#include "libs/moderncppjson/json.hpp"
 
 /* This line must stay in main! */
 INITIALIZE_EASYLOGGINGPP
@@ -73,15 +72,18 @@ int main (int argc , char * argv[]) try {
                          true);
 
     /* Actual functionality will be here... in time. */
-    /* EDIT: In fact there already is some functionality. */
+    /* EDIT: In fact there already is some functionality :) */
     try {
-        /* Creation and execution of battery */
+        /* Creation of battery object */
         auto battery = batteries::IBattery::getInstance(container);
-        /* Executing tests as set in settings */
+        /* Creation of storage object */
+        auto storage = storage::IStorage::getInstance(container);
+        /* Executing battery */
         battery->runTests();
-        /* Processing and storing of results of the run */
-        battery->storeResults();
-
+        /* Getting and writing results */
+        auto results = battery->getTestResults();;
+        storage->writeResults(Utils::getRawPtrs(results));
+        /* And we are done. */
     } catch(RTTException & ex) {
         container.getLogger()->error(ex.what());
     } catch(BugException & ex) {

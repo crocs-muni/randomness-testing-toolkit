@@ -1,25 +1,28 @@
-#ifndef RTT_BATTERIES_IRESULT_H
-#define RTT_BATTERIES_IRESULT_H
+#ifndef RTT_BATTERIES_ITESTRESULT_H
+#define RTT_BATTERIES_ITESTRESULT_H
 
 #include "rtt/batteries/itest-batt.h"
 #include "rtt/batteries/result/variantresult-res.h"
-#include "rtt/storage/istorage.h"
 
 namespace rtt {
 namespace batteries {
 
-class IResult {
+class ITestResult {
 public:
-    static std::unique_ptr<IResult> getInstance(
+    static std::unique_ptr<ITestResult> getInstance(
             const std::vector<ITest *> & tests);
 
-    void writeResults(storage::IStorage * storage, int precision);
-
-    std::vector<result::VariantResult> getResults() const;
+    std::vector<result::VariantResult> getVariantResults() const;
 
     bool getPassed() const;
 
     std::pair<bool, bool> getOptionalPassed() const;
+
+    std::string getTestName() const;
+
+    double getPartialAlpha() const;
+
+    bool isPValuePassing(double pvalue);
 
 protected:
     /* Variables */
@@ -31,13 +34,11 @@ protected:
     double partialAlpha = 0;
 
     /* Methods */
-    IResult(Logger * logger , std::string testName)
+    ITestResult(Logger * logger , std::string testName)
         : logger(logger) , testName(testName)
     {}
 
     void evaluateSetPassed();
-
-    bool isPValuePassing(double pvalue);
 };
 
 
@@ -49,4 +50,4 @@ protected:
 } // namespace batteries
 } // namespace rtt
 
-#endif // RTT_BATTERIES_IRESULT_H
+#endif // RTT_BATTERIES_ITESTRESULT_H

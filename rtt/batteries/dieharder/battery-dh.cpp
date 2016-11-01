@@ -1,6 +1,6 @@
 #include "rtt/batteries/dieharder/battery-dh.h"
 
-#include "rtt/batteries/iresult-batt.h"
+#include "rtt/batteries/itestresult-batt.h"
 
 namespace rtt {
 namespace batteries {
@@ -11,20 +11,19 @@ std::unique_ptr<Battery> Battery::getInstance(const GlobalContainer & container)
     return b;
 }
 
-void Battery::storeResults() {
+std::vector<std::unique_ptr<ITestResult>> Battery::getTestResults() const {
     if(!executed)
         throw RTTException(objectInfo , Strings::BATT_ERR_NO_EXEC_PROC);
 
+    std::vector<std::unique_ptr<ITestResult>> results;
     for(const auto & test : tests) {
-        std::vector<ITest *> tsts = { test.get() };
-        std::unique_ptr<IResult> res = IResult::getInstance(tsts);
-        res->writeResults(storage.get(), 8);
+        results.push_back(ITestResult::getInstance({test.get()}));
     }
 
-    storage->finalizeReport();
+    return results;
 }
+
 
 } // namespace dieharder
 } // namespace batteries
 } // namespace rtt
-

@@ -23,13 +23,14 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
         s->conn->setAutoCommit(false);
 
         std::unique_ptr<sql::PreparedStatement> insBattStmt(s->conn->prepareStatement(
-            "INSERT INTO batteries(name, passed_proportion, alpha, experiment_id) "
-            "VALUES (?,?,?,?)"
+            "INSERT INTO batteries(name, passed_tests, total_tests, alpha, experiment_id) "
+            "VALUES (?,?,?,?,?)"
         ));
         insBattStmt->setString(1, Constants::batteryToString(s->battId));
-        insBattStmt->setString(2, "0/0");
-        insBattStmt->setDouble(3, Constants::MATH_ALPHA);
-        insBattStmt->setUInt64(4, s->cliOptions->getMysqlEid());
+        insBattStmt->setUInt64(2, 0);
+        insBattStmt->setUInt64(3, 0);
+        insBattStmt->setDouble(4, Constants::MATH_ALPHA);
+        insBattStmt->setUInt64(5, s->cliOptions->getMysqlEid());
         insBattStmt->execute();
 
         s->dbBatteryId = s->getLastInsertedId();
@@ -429,13 +430,12 @@ void MySQLStorage::finalizeReport() {
     currSubtestIdx = 0;
 
     try {
-        std::string passedTestProp = { Utils::itostr(passedTestCount) + "/" + Utils::itostr(totalTestCount) };
-
         std::unique_ptr<sql::PreparedStatement> updBattPassProp(conn->prepareStatement(
-            "UPDATE batteries SET passed_proportion=? WHERE id=?"
+            "UPDATE batteries SET passed_tests=?, total_tests=? WHERE id=?"
         ));
-        updBattPassProp->setString(1, passedTestProp);
-        updBattPassProp->setUInt64(2, dbBatteryId);
+        updBattPassProp->setUInt64(1, passedTestCount);
+        updBattPassProp->setUInt64(2, totalTestCount);
+        updBattPassProp->setUInt64(3, dbBatteryId);
         updBattPassProp->execute();
 
         dbBatteryId = 0;

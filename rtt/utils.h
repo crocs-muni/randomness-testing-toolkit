@@ -138,10 +138,9 @@ public:
 
     template<typename T>
     static std::vector<T *> getRawPtrs(const std::vector<std::unique_ptr<T>> & source) {
-        std::vector<T *> rval;
-        for(const std::unique_ptr<T> & el : source)
-            rval.push_back(el.get());
-
+        std::vector<T *> rval(source.size());
+        std::transform(source.begin(), source.end(), rval.begin(),
+                       [](const auto & el){ return el.get(); });
         return rval;
     }
 };

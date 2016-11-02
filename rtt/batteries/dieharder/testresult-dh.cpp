@@ -19,7 +19,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
     auto endIt = std::sregex_iterator();
 
     std::vector<result::SubTestResult> tmpSubTestResults;
-    std::vector<result::PValueSet> tmpPValueSets;
+    std::vector<result::Statistic> tmpStatistics;
     std::vector<double> tmpPVals;
 
     /* Single test object processing */
@@ -55,16 +55,13 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                     std::smatch pvalMatch = *pValIt;
                     tmpPVals.push_back(Utils::strtod(pvalMatch[1].str()));
                 }
-                tmpPValueSets.push_back(
-                            result::PValueSet::getInstance(
-                                "Kolmogorov-Smirnov",
-                                r->kstest(tmpPVals),
-                                tmpPVals));
-                tmpSubTestResults.push_back(
-                            result::SubTestResult::getInstance(
-                                tmpPValueSets));
+                tmpStatistics.push_back(result::Statistic::getInstance(
+                                            "Kolmogorov-Smirnov",
+                                            r->kstest(tmpPVals)));
+                tmpSubTestResults.push_back(result::SubTestResult::getInstance(
+                                                tmpStatistics, tmpPVals));
                 tmpPVals.clear();
-                tmpPValueSets.clear();
+                tmpStatistics.clear();
             }
             r->varRes.push_back(result::VariantResult::getInstance(
                                     tmpSubTestResults,

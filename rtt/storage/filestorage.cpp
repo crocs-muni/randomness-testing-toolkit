@@ -54,21 +54,19 @@ void FileStorage::writeResults(const std::vector<batteries::ITestResult *> & tes
             setStdErrMessages(Utils::split(varRes.getBatteryOutput().getStdErr(), '\n'));
 
             const auto & subResults = varRes.getSubResults();
-
-            for(const auto & subRes : subResults) {
+            for(const batteries::result::SubTestResult & subRes : subResults) {
                 if(subResults.size() > 1)
                     addSubTest();
 
                 setTestParameters(subRes.getTestParameters());
-                for(const auto & pValSet : subRes.getPValSets()) {
-                    addStatisticResult(pValSet.getStatName(),
-                                       pValSet.getStatRes(),
-                                       FLOAT_PRECISION,
-                                       testRes->isPValuePassing(pValSet.getStatRes()));
 
-                    if(pValSet.getPValues().size() > 1)
-                        addPValues(pValSet.getPValues(), FLOAT_PRECISION);
+                for(const batteries::result::Statistic & stat : subRes.getStatistics()) {
+                    addStatisticResult(stat.getName(), stat.getValue(), FLOAT_PRECISION,
+                                       testRes->isPValuePassing(stat.getValue()));
                 }
+
+                if(subRes.getPvalues().size() > 0)
+                    addPValues(subRes.getPvalues(), FLOAT_PRECISION);
 
                 if(subResults.size() > 1)
                     finalizeSubTest();

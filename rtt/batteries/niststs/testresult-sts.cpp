@@ -16,8 +16,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                    tests.at(0)->getLogicName()));
 
     std::vector<result::SubTestResult> tmpSubTestResults;
-    std::vector<result::PValueSet> tmpPValueSets;
-    std::vector<double> tmpPVals;
+    std::vector<result::Statistic> tmpStatistics;
 
 
     /* Single test processing */
@@ -36,16 +35,12 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                     ": no p-values extracted in subtest");
                     continue;
                 }
-                tmpPValueSets.push_back(
-                            result::PValueSet::getInstance(
-                                "Chi-Square",
-                                chi2_stat(subTestPVals),
-                                subTestPVals));
-                tmpSubTestResults.push_back(
-                            result::SubTestResult::getInstance(
-                                tmpPValueSets));
-                tmpPVals.clear();
-                tmpPValueSets.clear();
+                tmpStatistics.push_back(result::Statistic::getInstance(
+                                            "Chi-Square",
+                                            chi2_stat(subTestPVals)));
+                tmpSubTestResults.push_back(result::SubTestResult::getInstance(
+                                                tmpStatistics, subTestPVals));
+                tmpStatistics.clear();
             }
             r->varRes.push_back(result::VariantResult::getInstance(
                                     tmpSubTestResults,

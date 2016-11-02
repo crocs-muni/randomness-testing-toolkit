@@ -20,7 +20,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
     };
     auto endIt = std::sregex_iterator();
     std::vector<result::SubTestResult> tmpSubTestResults;
-    std::vector<result::PValueSet> tmpPValueSets;
+    std::vector<result::Statistic> tmpStatistics;
     std::vector<std::pair<std::string, std::string>> tmpParamVec;
 
     r->battId = tests.at(0)->getBattId();
@@ -46,9 +46,9 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                 std::smatch match = *subTestIt;
                 std::string subTestLog = match[1].str();
 
-                tmpPValueSets = r->extractPValueSets(
-                                    subTestLog,
-                                    tu01Var->getStatisticNames());
+                tmpStatistics = r->extractStatistics(
+                                   subTestLog,
+                                   tu01Var->getStatisticNames());
 
                 /* Test settings extraction */
                 tmpParamVec = r->extractTestParameters(
@@ -56,10 +56,10 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                   tu01Var->getExtractableParamNames());
 
                 auto tmpSubTestRes = result::SubTestResult::getInstance(
-                                         tmpPValueSets);
+                                         tmpStatistics);
                 tmpSubTestRes.setTestParameters(tmpParamVec);
                 tmpSubTestResults.push_back(std::move(tmpSubTestRes));
-                tmpPValueSets.clear();
+                tmpStatistics.clear();
                 tmpParamVec.clear();
             }
             r->varRes.push_back(result::VariantResult::getInstance(
@@ -72,9 +72,9 @@ std::unique_ptr<TestResult> TestResult::getInstance(
     return r;
 }
 
-std::vector<result::PValueSet> TestResult::extractPValueSets(
+std::vector<result::Statistic> TestResult::extractStatistics(
         const std::string & testLog, std::vector<std::string> statNames) {
-    std::vector<result::PValueSet> rval;
+    std::vector<result::Statistic> rval;
     const static std::regex RE_PVALUES {
         "p-value of test {23}: *?("
         "eps|"                            /* Just "eps" */
@@ -99,9 +99,7 @@ std::vector<result::PValueSet> TestResult::extractPValueSets(
         std::smatch match = *pValIt;
         double pVal = convertStringToDouble(match[1].str(),
                                             match[2].str());
-        rval.push_back(result::PValueSet::getInstance(
-                       statNames.at(i),
-                       pVal, { pVal }));
+        rval.push_back(result::Statistic::getInstance(statNames.at(i), pVal));
     }
     return rval;
 }

@@ -1,7 +1,7 @@
 #ifndef RTT_BATTERIES_RESULT_SUBTESTRESULT_H
 #define RTT_BATTERIES_RESULT_SUBTESTRESULT_H
 
-#include "rtt/batteries/result/pvalueset-res.h"
+#include "rtt/batteries/result/statistic-res.h"
 
 namespace rtt {
 namespace batteries {
@@ -9,22 +9,34 @@ namespace result {
 
 class SubTestResult {
 public:
-    static SubTestResult getInstance(const std::vector<PValueSet> & pValSets);
+    static SubTestResult getInstance(
+            const std::vector<Statistic> & statistics);
+
+    static SubTestResult getInstance(
+            const std::vector<Statistic> & statistics,
+            const std::vector<double> & pvalues);
+
+
+    std::vector<std::pair<std::string, std::string>> getTestParameters() const;
+
+    void setTestParameters(
+            const std::vector<std::pair<std::string, std::string> > & value);
 
     std::vector<double> getStatResults() const;
 
-    std::vector<PValueSet> getPValSets() const;
+    std::vector<double> getPvalues() const;
 
-    std::vector<std::pair<std::string, std::string> > getTestParameters() const;
-
-    void setTestParameters(const std::vector<std::pair<std::string, std::string> > & value);
+    std::vector<Statistic> getStatistics() const;
 
 private:
-    SubTestResult(const std::vector<PValueSet> & pValSets)
-        : pValSets(pValSets)
+    SubTestResult(const std::vector<Statistic> & statistics,
+                  const std::vector<double> & pvalues)
+        : statistics(statistics), pvalues(pvalues)
     {}
 
-    std::vector<PValueSet> pValSets;
+    std::vector<Statistic> statistics;
+
+    std::vector<double> pvalues;
 
     std::vector<std::pair<std::string, std::string>> testParameters;
 };

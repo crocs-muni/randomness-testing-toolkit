@@ -66,19 +66,19 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
             setStdErrMessages(Utils::split(varRes.getBatteryOutput().getStdErr(), '\n'));
 
             const auto & subResults = varRes.getSubResults();
-
-            for(const auto & subRes : subResults) {
+            for(const batteries::result::SubTestResult & subRes : subResults) {
                 addSubTest();
 
                 setTestParameters(subRes.getTestParameters());
-                for(const auto & pValSet : subRes.getPValSets()) {
-                    addStatisticResult(pValSet.getStatName(),
-                                       pValSet.getStatRes(),
-                                       testRes->isPValuePassing(pValSet.getStatRes()));
 
-                    if(pValSet.getPValues().size() > 1)
-                        addPValues(pValSet.getPValues());
+                for(const batteries::result::Statistic & stat : subRes.getStatistics()) {
+                    addStatisticResult(stat.getName(), stat.getValue(),
+                                       testRes->isPValuePassing(stat.getValue()));
                 }
+
+                if(subRes.getPvalues().size() > 0)
+                    addPValues(subRes.getPvalues());
+
                 finalizeSubTest();
             }
             finalizeVariant();

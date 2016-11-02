@@ -4,22 +4,22 @@ namespace rtt {
 namespace batteries {
 namespace result {
 
-SubTestResult SubTestResult::getInstance(
-        const std::vector<PValueSet> & pValSets) {
 
-    return SubTestResult(pValSets);
+SubTestResult SubTestResult::getInstance(const std::vector<Statistic> & statistics) {
+    if(statistics.empty())
+        raiseBugException("empty statistics");
+
+    return SubTestResult(statistics, {});
 }
 
-std::vector<double> SubTestResult::getStatResults() const{
-    std::vector<double> rval;
-    for(const PValueSet & set : pValSets)
-        rval.push_back(set.getStatRes());
+SubTestResult SubTestResult::getInstance(const std::vector<Statistic> & statistics,
+                                         const std::vector<double> & pvalues) {
+    if(statistics.empty())
+        raiseBugException("empty statistics");
+    if(pvalues.empty())
+        raiseBugException("empty p-values");
 
-    return rval;
-}
-
-std::vector<PValueSet> SubTestResult::getPValSets() const {
-    return pValSets;
+    return SubTestResult(statistics, pvalues);
 }
 
 std::vector<std::pair<std::string, std::string> > SubTestResult::getTestParameters() const {
@@ -30,7 +30,26 @@ void SubTestResult::setTestParameters(const std::vector<std::pair<std::string, s
     testParameters = value;
 }
 
+std::vector<double> SubTestResult::getPvalues() const {
+    return pvalues;
+}
 
+std::vector<Statistic> SubTestResult::getStatistics() const {
+    return statistics;
+}
+
+std::vector<double> SubTestResult::getStatResults() const {
+    //std::vector<double> rval;
+    //for(const PValueSet & set : pValSets)
+    //    rval.push_back(set.getStatRes());
+
+    //return rval;
+    std::vector<double> rval(statistics.size());
+    std::transform(statistics.begin(), statistics.end(), rval.begin(),
+                   [](const auto & el){ return el.getValue(); });
+
+    return rval;
+}
 
 } // namespace result
 } // namespace batteries

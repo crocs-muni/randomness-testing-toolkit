@@ -27,7 +27,7 @@ private:
     static double convertStringToDouble(const std::string & num,
                                         const std::string & oneMinus);
 
-    std::vector<result::PValueSet> extractPValueSets(
+    std::vector<result::Statistic> extractStatistics(
             const std::string & testLog,
             std::vector<std::string> statNames);
 

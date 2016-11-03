@@ -7,7 +7,7 @@ const std::string ToolkitSettings::objectInfo = "Toolkit Settings";
 ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     json nRoot = json::parse(Utils::readFileToString(cfgFileName));
     if(nRoot.count("toolkit-settings") != 1)
-        throw RTTException(objectInfo , "missing root tag");
+        throw RTTException(objectInfo , "missing root tag \"toolkit-settings\"");
     nRoot = nRoot.at("toolkit-settings");
 
     ToolkitSettings ts;
@@ -59,11 +59,10 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
         if(nResultStorage.count("mysql-db") != 1)
             throw RTTException(objectInfo , "missing node with mysql db storage settings");
         {
-            json nMysql         = nResultStorage.at("mysql-db");
-            ts.rsMysqlAddress   = parseStringValue(nMysql, "address");
-            ts.rsMysqlUserName  = parseStringValue(nMysql, "user-name");
-            ts.rsMysqlPwd       = parseStringValue(nMysql, "password");
-            ts.rsMysqlDbName    = parseStringValue(nMysql, "db-name");
+            json nMysql                 = nResultStorage.at("mysql-db");
+            ts.rsMysqlAddress           = parseStringValue(nMysql, "address");
+            ts.rsMysqlDbName            = parseStringValue(nMysql, "db-name");
+            ts.rsMysqlCredentialsFile   = parseStringValue(nMysql, "credentials-file");
         }
     }
 
@@ -148,16 +147,26 @@ std::string ToolkitSettings::getRsMysqlAddress() const {
     return rsMysqlAddress;
 }
 
+std::string ToolkitSettings::getRsMysqlDbName() const {
+    return rsMysqlDbName;
+}
+
 std::string ToolkitSettings::getRsMysqlUserName() const {
-    return rsMysqlUserName;
+    json nCred = json::parse(Utils::readFileToString(rsMysqlCredentialsFile));
+    if(nCred.count("credentials") != 1)
+        throw RTTException(objectInfo, "missing tag \"credentials\" in credentials file");
+    nCred = nCred.at("credentials");
+
+    return parseStringValue(nCred, "username");
 }
 
 std::string ToolkitSettings::getRsMysqlPwd() const {
-    return rsMysqlPwd;
-}
+    json nCred = json::parse(Utils::readFileToString(rsMysqlCredentialsFile));
+    if(nCred.count("credentials") != 1)
+        throw RTTException(objectInfo, "missing tag \"credentials\" in credentials file");
+    nCred = nCred.at("credentials");
 
-std::string ToolkitSettings::getRsMysqlDbName() const {
-    return rsMysqlDbName;
+    return parseStringValue(nCred, "password");
 }
 
 

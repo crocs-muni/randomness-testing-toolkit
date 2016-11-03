@@ -74,9 +74,8 @@ private:
     std::string rsFileBlAlphabitDir;
 
     std::string rsMysqlAddress;
-    std::string rsMysqlUserName;
-    std::string rsMysqlPwd;
     std::string rsMysqlDbName;
+    std::string rsMysqlCredentialsFile;
 
     std::string binaryDieharder;
     std::string binaryNiststs;

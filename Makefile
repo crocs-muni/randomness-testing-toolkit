@@ -1,9 +1,10 @@
 CC=gcc
 CXX=g++
-CFLAGS = \
-	-std=c++14 \
-	-L/usr/lib -lmysqlcppconn \
-	-lpthread -I. -O3
+CXXFLAGS = \
+	-std=c++14 -I. \
+	-L/usr/lib \
+	-lmysqlcppconn \
+	-lpthread -O3
 
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===
@@ -40,14 +41,15 @@ DEPS = \
 	rtt/batteries/niststs/variant-sts.h \
 	rtt/batteries/dieharder/variant-dh.h \
 	rtt/batteries/testu01/variant-tu01.h \
-	rtt/batteries/iresult-batt.h \
-	rtt/batteries/dieharder/result-dh.h \
-	rtt/batteries/niststs/result-sts.h \
 	rtt/batteries/result/pvalueset-res.h \
 	rtt/batteries/result/subtestresult-res.h \
 	rtt/batteries/result/variantresult-res.h \
-	rtt/batteries/testu01/result-tu01.h \
-	rtt/storage/mysqlstorage.h
+	rtt/storage/mysqlstorage.h \
+	rtt/batteries/itestresult-batt.h \
+	rtt/batteries/testu01/testresult-tu01.h \
+	rtt/batteries/niststs/testresult-sts.h \
+	rtt/batteries/dieharder/testresult-dh.h \
+	rtt/batteries/result/statistic-res.h
 
 # === Target object files ===
 OBJ = \
@@ -79,35 +81,35 @@ OBJ = \
 	variant-sts.o \
 	variant-dh.o \
 	variant-tu01.o \
-	iresult-batt.o \
-	result-dh.o \
-	result-sts.o \
-	pvalueset-res.o \
 	subtestresult-res.o \
 	variantresult-res.o \
-	result-tu01.o \
-	mysqlstorage.o
+	mysqlstorage.o \
+	itestresult-batt.o \
+	testresult-dh.o \
+	testresult-sts.o \
+	testresult-tu01.o \
+	statistic-res.o
 
 # === All paths inside project directory ===
 # === Ugly but works ===
 VPATH = \
-	libs:\
-	libs/cephes:\
-	libs/easylogging:\
-	libs/moderncppjson:\
 	rtt:\
 	rtt/batteries:\
 	rtt/batteries/dieharder:\
 	rtt/batteries/niststs:\
 	rtt/batteries/testu01:\
 	rtt/batteries/result:\
-	rtt/storage
+	rtt/storage:\
+	libs:\
+	libs/cephes:\
+	libs/easylogging:\
+	libs/moderncppjson
 
 %.o: %.cpp $(DEPS)
-	$(CXX) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 	
 randomness-testing-toolkit: $(OBJ)
-	$(CXX) -o $@ $^ $(CFLAGS)
+	$(CXX) -o $@ $^ $(CXXFLAGS)
 	
 .PHONY: clean
 

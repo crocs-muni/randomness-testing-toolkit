@@ -29,17 +29,15 @@
             
             "mysql-db": {
                 "address": "localhost",
-                "user-name": "test",
-                "password": "test",
-                "db-name": "rtt"
+                "db-name": "rtt",
+                "credentials-file": "credentials/rtt-binary-mysql.json"
             }
         },
         
         "binaries": {
-            "nist-sts": "/home/xobrati1/Desktop/statistical-testing-utils/nist-sts-exe",
-            "dieharder": "/home/xobrati1/Desktop/statistical-testing-utils/dieharder-exe",
-            "testu01": "/home/xobrati1/Desktop/statistical-testing-utils/testu01-exe",
-            "testu01-err": "/home/xobrati1/Desktop/projects/error-output-producer/build/Debug/error-output-producer"
+            "nist-sts": "/home/statistical-testing-utils/nist-sts-exe",
+            "dieharder": "/home/statistical-testing-utils/dieharder-exe",
+            "testu01": "/home/statistical-testing-utils/testu01-exe",
         },
         
         "miscelaneous": {

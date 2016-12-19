@@ -37,7 +37,7 @@
         "binaries": {
             "nist-sts": "/home/statistical-testing-utils/nist-sts-exe",
             "dieharder": "/home/statistical-testing-utils/dieharder-exe",
-            "testu01": "/home/statistical-testing-utils/testu01-exe",
+            "testu01": "/home/statistical-testing-utils/testu01-exe"
         },
         
         "miscelaneous": {

@@ -1,7 +1,7 @@
 {
     "toolkit-settings": {
         "logger": {
-            "dir-prefix": "devel-results/logs",
+            "dir-prefix": "results/logs",
             "run-log-dir": "run-logs",
             "dieharder-dir": "dieharder",
             "nist-sts-dir": "niststs",
@@ -15,8 +15,8 @@
         
         "result-storage": {
             "file": {
-                "main-file": "devel-results/testbed-table.txt",
-                "dir-prefix": "devel-results/reports",
+                "main-file": "results/testbed-table.txt",
+                "dir-prefix": "results/reports",
                 "dieharder-dir": "dieharder",
                 "nist-sts-dir": "niststs",
                 "tu01-smallcrush-dir": "testu01/smallcrush",
@@ -28,16 +28,16 @@
             },
             
             "mysql-db": {
-                "address": "localhost",
-                "db-name": "rtt",
-                "credentials-file": "credentials/rtt-binary-mysql.json"
+                "address": "",
+                "db-name": "",
+                "credentials-file": ""
             }
         },
         
         "binaries": {
-            "nist-sts": "/home/statistical-testing-utils/nist-sts-exe",
-            "dieharder": "/home/statistical-testing-utils/dieharder-exe",
-            "testu01": "/home/statistical-testing-utils/testu01-exe"
+            "nist-sts": "",
+            "dieharder": "",
+            "testu01": ""
         },
         
         "miscelaneous": {

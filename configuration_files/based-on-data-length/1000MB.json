@@ -131,11 +131,11 @@
                     "repetitions": 1
                 },
                 "crush": {
-                    "test-ids": ["1-96"],
+                    "test-ids": ["3-11","18-22","43","45","47","49-50","56","58","60","63-75","90-91"],
                     "repetitions": 1
                 },
                 "big-crush": {
-                    "test-ids": ["1-106"],
+                    "test-ids": [],
                     "repetitions": 1
                 },
                 "rabbit": {

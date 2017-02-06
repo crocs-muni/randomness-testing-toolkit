@@ -6,6 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <tuple>
+#include <mutex>
 
 #include "rtt/batteries/itest-batt.h"
 

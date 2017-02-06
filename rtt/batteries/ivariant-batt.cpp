@@ -53,8 +53,21 @@ void IVariant::execute() {
 
     /* Store test output into file. */
     std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
+    std::stringstream stdoutStr;
+    std::stringstream stderrStr;
+    auto filler = "=================================================\n";
+    stdoutStr << "=== Standard output of thread " << std::this_thread::get_id() << " ===" << std::endl;
+    stderrStr << "=== Error output of thread " << std::this_thread::get_id() << " ===" << std::endl;
+
+    Utils::appendStringToFile(logFilePath, filler);
+    Utils::appendStringToFile(logFilePath, stdoutStr.str());
     Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
-    Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
+
+    if(!batteryOutput.getStdErr().empty()) {
+        Utils::appendStringToFile(logFilePath, filler);
+        Utils::appendStringToFile(logFilePath, stderrStr.str());
+        Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
+    }
     outputFile_lock.unlock();
 
     executed = true;

@@ -59,9 +59,13 @@ void IVariant::execute() {
     stdoutStr << "=== Standard output of thread " << std::this_thread::get_id() << " ===" << std::endl;
     stderrStr << "=== Error output of thread " << std::this_thread::get_id() << " ===" << std::endl;
 
-    Utils::appendStringToFile(logFilePath, filler);
-    Utils::appendStringToFile(logFilePath, stdoutStr.str());
-    Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
+    if(!batteryOutput.getStdOut().empty()) {
+        Utils::appendStringToFile(logFilePath, filler);
+        Utils::appendStringToFile(logFilePath, stdoutStr.str());
+        Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
+    } else {
+        logger->warn(objectInfo + ": standard output of test is empty.");
+    }
 
     if(!batteryOutput.getStdErr().empty()) {
         Utils::appendStringToFile(logFilePath, filler);

@@ -43,7 +43,7 @@ public:
     /* Some battery constants utility methods */
     static std::string batteryToString(Battery batteryConstant);
 
-    static std::string batteryToStringShort(Battery battId);
+    static std::string batteryToShortString(Battery battId);
 
     static bool isInTU01Family(Battery battId);
 

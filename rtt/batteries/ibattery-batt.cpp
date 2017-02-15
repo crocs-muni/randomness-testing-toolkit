@@ -58,7 +58,7 @@ IBattery::IBattery(const GlobalContainer & cont) {
     creationTime = cont.getCreationTime();
     battId       = cliOptions->getBatteryId();
     objectInfo   = Constants::batteryToString(battId);
-    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + cliOptions->getBinFilePath());
+    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + cliOptions->getInputDataPath());
 
     std::vector<int> testIndices = cliOptions->getTestConsts();
     if(testIndices.empty())

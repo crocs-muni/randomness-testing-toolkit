@@ -19,9 +19,20 @@ void GlobalContainer::initBatteriesConfiguration(const std::string & filename) {
             std::make_unique<Configuration>(Configuration::getInstance(filename));
 }
 
-void GlobalContainer::initLogger(const std::string & logId,
-                                 const std::string & logFile, bool toCout) {
-    logger = std::unique_ptr<Logger>(new Logger(logId , logFile , toCout));
+void GlobalContainer::initLogger(const std::string & logId, bool toCout) {
+    if(cliOptions == nullptr)
+        raiseBugException("can't initialize logger before command line options are init'd");
+    if(toolkitSettings == nullptr)
+        raiseBugException("can't initialize logger before toolkit settings are init'd");
+
+    auto logFilePath = Utils::getLogFilePath(creationTime,
+                                             toolkitSettings->getLoggerRunLogDir(),
+                                             cliOptions->getInputDataPath(),
+                                             Constants::batteryToShortString(
+                                                 cliOptions->getBatteryId())
+                                             );
+
+    logger = std::unique_ptr<Logger>(new Logger(logId , logFilePath , toCout));
 }
 
 CliOptions * GlobalContainer::getCliOptions() const {

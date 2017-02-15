@@ -45,11 +45,6 @@ ITest::ITest(int testId, const GlobalContainer & cont) {
     logger               = cont.getLogger();
     this->testId         = testId;
     battId               = cliOptions->getBatteryId();
-    logFilePath          =
-            Utils::createLogFileName(
-                cont.getCreationTime(),
-                toolkitSettings->getLoggerBatteryDir(battId),
-                cliOptions->getBinFilePath());
 
     objectInfo =
             Constants::batteryToString(battId) +

@@ -15,7 +15,7 @@ std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & co
     s->toolkitSettings = container.getToolkitSettings();
     s->creationTime    = container.getCreationTime();
     s->battId          = s->cliOptions->getBatteryId();
-    s->inFilePath      = s->cliOptions->getBinFilePath();
+    s->inFilePath      = s->cliOptions->getInputDataPath();
 
     /* Getting file name for main output file */
     s->mainOutFilePath = s->toolkitSettings->getRsFileOutFile();

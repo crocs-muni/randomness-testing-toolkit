@@ -131,10 +131,10 @@ public:
 
     static void rmDirFiles(const std::string & n);
 
-    static std::string createLogFileName(time_t creationTime ,
-                                         const std::string & logDir ,
-                                         const std::string & inputFile ,
-                                         std::string batteryShort = "");
+    static std::string getLogFilePath(time_t creationTime ,
+                                      const std::string & logDir ,
+                                      const std::string & inputFilePath ,
+                                      std::string batteryShort = "");
 
     template<typename T>
     static std::vector<T *> getRawPtrs(const std::vector<std::unique_ptr<T>> & source) {

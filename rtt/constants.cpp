@@ -32,7 +32,7 @@ std::string Constants::batteryToString(Battery batteryConstant) {
     }
 }
 
-std::string Constants::batteryToStringShort(Battery battId) {
+std::string Constants::batteryToShortString(Battery battId) {
     switch(battId) {
         case Battery::DIEHARDER:
             return "dieharder";

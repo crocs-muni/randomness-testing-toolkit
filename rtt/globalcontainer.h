@@ -27,8 +27,7 @@ public:
 
     void initBatteriesConfiguration(const std::string & filename);
 
-    void initLogger(const std::string & logId ,
-                    const std::string & logFile , bool toCout);
+    void initLogger(const std::string & logId , bool toCout);
 
     time_t getCreationTime() const;
 

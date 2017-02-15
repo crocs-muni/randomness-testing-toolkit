@@ -160,7 +160,6 @@ std::vector<int> Utils::parseStringWithIntRanges(const std::string &str) {
     }
 
     /* Sorting ensures correct order and eliminates duplicities */
-    //Utils::sort(rval);
     std::sort(rval.begin(), rval.end());
     return rval;
 }
@@ -171,6 +170,7 @@ void Utils::createDirectory(const std::string & path , int access) {
         return;
 
     std::string current;
+    /* Handles absolute paths */
     if(path.front() == '/')
         current.push_back('/');
 
@@ -212,10 +212,10 @@ void Utils::rmDirFiles(const std::string & n) {
     closedir(d);
 }
 
-std::string Utils::createLogFileName(time_t creationTime,
-                                     const std::string & logDir,
-                                     const std::string & inputFile,
-                                     std::string batteryShort) {
+std::string Utils::getLogFilePath(time_t creationTime,
+                                  const std::string & logDir,
+                                  const std::string & inputFilePath,
+                                  std::string batteryShort) {
     std::string rval;
     rval.append(logDir);
     rval.append(Utils::formatRawTime(creationTime , "%Y%m%d%H%M%S"));
@@ -224,16 +224,17 @@ std::string Utils::createLogFileName(time_t creationTime,
         rval.append(batteryShort);
     }
     rval.append("-");
-    auto inFName = Utils::getLastItemInPath(inputFile);
-    std::replace(inFName.begin(), inFName.end(), '.', '_');
-    rval.append(inFName);
+    auto inputFileName = Utils::getLastItemInPath(inputFilePath);
+    std::replace(inputFileName.begin(), inputFileName.end(), '.', '_');
+    rval.append(inputFileName);
     rval.append("-log.txt");
     return rval;
 }
 
 std::string Utils::readFileToString(const std::string & path) {
     std::ifstream file(path , std::ios::in);
-    if(!file.is_open()) throw std::runtime_error("can't open input file: " + path);
+    if(!file.is_open())
+        throw std::runtime_error("can't open input file: " + path);
     std::stringstream buffer;
     buffer << file.rdbuf();
     file.close();
@@ -242,14 +243,16 @@ std::string Utils::readFileToString(const std::string & path) {
 
 void Utils::saveStringToFile(const std::string & path , const std::string & source) {
     std::ofstream file(path , std::ios::out);
-    if(!file.is_open()) throw std::runtime_error("can't open output file: " + path);
+    if(!file.is_open())
+        throw std::runtime_error("can't open output file: " + path);
     file << source;
     file.close();
 }
 
 void Utils::appendStringToFile(const std::string & path, const std::string & source) {
     std::ofstream file(path , std::ios::out | std::ios::app);
-    if(!file.is_open()) throw std::runtime_error("can't open output file: " + path);
+    if(!file.is_open())
+        throw std::runtime_error("can't open output file: " + path);
     file << source;
     file.close();
 }

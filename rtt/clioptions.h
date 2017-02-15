@@ -25,9 +25,7 @@ public:
 
     std::string getInputCfgPath() const;
 
-    std::string getBinFilePath() const;
-
-    std::string getOutFilePath() const;
+    std::string getInputDataPath() const;
 
     std::uint64_t getMysqlEid() const;
 
@@ -36,8 +34,7 @@ private:
     std::vector<int> testConsts;
     std::string objectInfo = "CLI options";
     std::string inputCfgPath;
-    std::string binFilePath;
-    std::string outFilePath;
+    std::string inputDataPath;
     std::uint64_t mysqlEid = 0;
 
     /* Constructor is private => no unitialized instances around */

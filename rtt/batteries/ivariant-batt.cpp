@@ -111,10 +111,10 @@ IVariant::IVariant(int testId, uint variantIdx,
     this->variantIdx    = variantIdx;
     logger              = cont.getLogger();
     battId              = cont.getCliOptions()->getBatteryId();
-    binaryDataPath      = cont.getCliOptions()->getBinFilePath();
+    binaryDataPath      = cont.getCliOptions()->getInputDataPath();
     executablePath      = cont.getToolkitSettings()->getBinaryBattery(battId);
     logFilePath         =
-            Utils::createLogFileName(
+            Utils::getLogFilePath(
                 cont.getCreationTime(),
                 cont.getToolkitSettings()->getLoggerBatteryDir(battId),
                 binaryDataPath);

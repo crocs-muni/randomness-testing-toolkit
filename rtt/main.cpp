@@ -12,7 +12,7 @@
  * 2. Storing processed results
  *  2.1. Output Interface                       (Ok)
  *  2.2. Into file structure                    (Ok)
- *  2.3. Into database                          (Ok - kinda prototype-y)
+ *  2.3. Into database                          (Ok)
  * 3. Miscelaneous
  *  3.1. Better exception handling              (Ok)
  *  3.2. Batteries runtime error handling       (Ok)
@@ -42,11 +42,7 @@ INITIALIZE_EASYLOGGINGPP
 
 using namespace rtt;
 
-//#define TESTING
-
 int main (int argc , char * argv[]) try {
-#ifdef TESTING
-#else
     if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
         std::cout << CliOptions::getUsage() << std::endl;
         return -1;
@@ -60,19 +56,11 @@ int main (int argc , char * argv[]) try {
     container.initCliOptions(argc , argv);
     container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
     container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
-    /* A bit clumsy logger initialization */
-    /* I should really change it to something more elegant */
-    container.initLogger("Main_Application" ,
-                         Utils::createLogFileName(
-                             container.getCreationTime() ,
-                             container.getToolkitSettings()->getLoggerRunLogDir() ,
-                             container.getCliOptions()->getBinFilePath() ,
-                             Constants::batteryToStringShort(
-                                 container.getCliOptions()->getBatteryId())),
-                         true);
 
-    /* Actual functionality will be here... in time. */
-    /* EDIT: In fact there already is some functionality :) */
+    /* Logger must be initialized last as it uses settings from main configuration file
+     * and command line options. Otherwise exception is raised. */
+    container.initLogger("Randomness_Testing_Toolkit", true);
+
     try {
         /* Creation of battery object */
         auto battery = batteries::IBattery::getInstance(container);
@@ -84,16 +72,21 @@ int main (int argc , char * argv[]) try {
         auto results = battery->getTestResults();;
         storage->writeResults(Utils::getRawPtrs(results));
         /* And we are done. */
+
     } catch(RTTException & ex) {
         container.getLogger()->error(ex.what());
+        return -1;
     } catch(BugException & ex) {
         container.getLogger()->error(ex.what());
+        return -1;
     } catch(std::runtime_error & ex) {
         container.getLogger()->error(ex.what());
+        return -1;
     } catch(std::exception & ex) {
         container.getLogger()->error(ex.what());
+        return -1;
     }
-#endif
+
 } catch(RTTException & ex) {
     std::cout << "[RTT Exception] " << ex.what() << std::endl << std::endl;
     return -1;

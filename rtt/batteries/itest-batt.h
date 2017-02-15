@@ -44,7 +44,6 @@ protected:
     int testId;
     Constants::Battery battId;
     std::string logicName;
-    std::string logFilePath;
     std::string objectInfo;
 };
 

@@ -40,19 +40,12 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
             batterySet = true;
 
         }
-        /* Input binary file option */
+        /* Input binary data option */
         else if(strcmp(argv[i] , "-f") == 0) {
-            if(!options.binFilePath.empty() || argv[i + 1][0] == '-')
+            if(!options.inputDataPath.empty() || argv[i + 1][0] == '-')
                 throw RTTException(options.objectInfo ,
                                    "can't set \"-b\" option multiple times or without any value");
-            options.binFilePath = argv[i + 1];
-        }
-        /* Custom output file option */
-        else if(strcmp(argv[i] , "-o") == 0) {
-            if(!options.binFilePath.empty() || argv[i + 1][0] == '-')
-                throw RTTException(options.objectInfo ,
-                                   "can't set \"-o\" option multiple times or without any value");
-            options.outFilePath = argv[i + 1];
+            options.inputDataPath = argv[i + 1];
         }
         /* Custom input config option */
         else if(strcmp(argv[i] , "-c") == 0) {
@@ -85,13 +78,13 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     if(!batterySet)
         throw RTTException(options.objectInfo ,
                            "option \"-b\" must be correctly set in arguments");
-    if(options.binFilePath.empty())
+    if(options.inputDataPath.empty())
         throw RTTException(options.objectInfo ,
                            "option \"-f\" must be set in arguments");
 
-    if(!Utils::fileExist(options.binFilePath))
+    if(!Utils::fileExist(options.inputDataPath))
         throw RTTException(options.objectInfo ,
-                           Strings::ERR_FILE_OPEN_FAIL + options.binFilePath);
+                           Strings::ERR_FILE_OPEN_FAIL + options.inputDataPath);
 
     if(test >= 0)
         options.testConsts.push_back(test);
@@ -115,12 +108,8 @@ std::vector<int> CliOptions::getTestConsts() const {
     return testConsts;
 }
 
-std::string CliOptions::getBinFilePath() const {
-    return binFilePath;
-}
-
-std::string CliOptions::getOutFilePath() const {
-    return outFilePath;
+std::string CliOptions::getInputDataPath() const {
+    return inputDataPath;
 }
 
 std::uint64_t CliOptions::getMysqlEid() const
@@ -135,9 +124,7 @@ std::string CliOptions::getUsage() {
     ss << "        are accepted: \"dieharder\", \"nist_sts\", \"tu01_smallcrush\",\n";
     ss << "        \"tu01_crush\", \"tu01_bigcrush\", \"tu01_rabbit\",\n";
     ss << "        \"tu01_alphabit\" and \"tu01_blockalphabit\".\n";
-    ss << "    -f  Followed with path to input binary file that will be analysed by battery.\n";
-    ss << "    -o  Followed with path of output file for battery results. If left empty,\n";
-    ss << "        default value from config file will be used.\n";
+    ss << "    -f  Followed with path to input binary data that will be analysed by battery.\n";
     ss << "    -c  Followed with path to custom config file that will be used instead of\n";
     ss << "        default one. Argument is optional, default path is " << Constants::FILE_DEFAULT_CFG_PATH << "\n";
     ss << "    -t  Followed with constant of test in battery that will be used in testing.\n";

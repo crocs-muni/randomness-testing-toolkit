@@ -135,15 +135,22 @@ private:
 
     static std::string parseDirectoryPath(const json::object_t & parentNode,
                                           const std::string & childTagName,
+                                          const std::string & cfgFile,
                                           bool mandatory = true);
 
     static std::string parseStringValue(const json::object_t & parentNode,
                                         const std::string & childTagName,
+                                        const std::string & cfgFile,
                                         bool mandatory = true);
 
     static int parseIntegerValue(const json::object_t & parentNode,
                                  const std::string & childTagName,
+                                 const std::string & cfgFile,
                                  bool mandatory = true);
+
+    static std::string getParsingErrorMessage(const std::string & mess,
+                                              const std::string & cfgFile,
+                                              const std::string & tagPath = "");
 };
 
 } // namespace rtt

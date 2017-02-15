@@ -49,54 +49,56 @@ int main (int argc , char * argv[]) try {
     }
 
     /* Initialization of global container.
-     * Since I can't be sure if logger was initialized,
+     * Since we can't be sure if logger was initialized,
      * errors are written to cout and no log is created. */
     GlobalContainer container;
+    try {
+        container.initCliOptions(argc , argv);
+        container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+        container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
 
-    container.initCliOptions(argc , argv);
-    container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
-    container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
+    } catch (std::exception & ex) {
+        std::cout << "[Invalid configuration] " << ex.what() << std::endl;
+        return -1;
+    }
 
     /* Logger must be initialized last as it uses settings from main configuration file
      * and command line options. Otherwise exception is raised. */
     container.initLogger("Randomness_Testing_Toolkit", true);
 
+    /* Logger is now created and all subsequent errors are logged. */
     try {
-        /* Creation of battery object */
-        auto battery = batteries::IBattery::getInstance(container);
-        /* Creation of storage object */
+        /* Initializing storage */
         auto storage = storage::IStorage::getInstance(container);
-        /* Executing battery */
-        battery->runTests();
-        /* Getting and writing results */
-        auto results = battery->getTestResults();;
-        storage->writeResults(Utils::getRawPtrs(results));
-        /* And we are done. */
 
-    } catch(RTTException & ex) {
-        container.getLogger()->error(ex.what());
-        return -1;
-    } catch(BugException & ex) {
-        container.getLogger()->error(ex.what());
-        return -1;
-    } catch(std::runtime_error & ex) {
-        container.getLogger()->error(ex.what());
-        return -1;
+        try {
+            /* Initialization of battery */
+            auto battery = batteries::IBattery::getInstance(container);
+            /* Executing analysis */
+            battery->runTests();
+            /* Obtaining and storing results */
+            auto results = battery->getTestResults();;
+            storage->writeResults(Utils::getRawPtrs(results));
+            /* Store warnings and errors into storage */
+            // TODO: store errs/warns.
+            /* And we are done. */
+
+
+        } catch(std::exception & ex) {
+            /* Something happened during battery initialization/execution */
+            /* Storage is still active, error can be stored. */
+            // TODO: store error to storage here!!!
+            container.getLogger()->error(ex.what());
+            return -1;
+        }
+
     } catch(std::exception & ex) {
+        /* Storage creation failed. */
         container.getLogger()->error(ex.what());
         return -1;
     }
 
-} catch(RTTException & ex) {
-    std::cout << "[RTT Exception] " << ex.what() << std::endl << std::endl;
-    return -1;
-} catch (BugException & ex) {
-    std::cout << "[Bug Exception] " << ex.what() << std::endl << std::endl;
-    return -1;
-} catch(std::runtime_error & ex) {
-    std::cout << "[Runtime Error] " << ex.what() << std::endl << std::endl;
-    return -1;
 } catch(std::exception & ex) {
-    std::cout << "[General Exception] " << ex.what() << std::endl << std::endl;
+    std::cout << "[Error] " << ex.what() << std::endl << std::endl;
     return -1;
 }

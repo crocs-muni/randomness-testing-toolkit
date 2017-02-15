@@ -54,8 +54,8 @@ int main (int argc , char * argv[]) try {
     GlobalContainer container;
 
     container.initCliOptions(argc , argv);
-    container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
     container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+    container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
 
     /* Logger must be initialized last as it uses settings from main configuration file
      * and command line options. Otherwise exception is raised. */

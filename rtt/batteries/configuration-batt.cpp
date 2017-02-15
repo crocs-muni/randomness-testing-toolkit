@@ -33,23 +33,23 @@ const std::string Configuration::TAGNAME_PARAMS             = "parameters";
 const std::string Configuration::objectInfo = "Battery Configuration";
 
 Configuration Configuration::getInstance(const std::string & configFileName) {
-    json root = json::parse(Utils::readFileToString(configFileName));
-
+    json root;
     Configuration conf;
 
     try {
-        root = root.at(TAGNAME_ROOT);
-        conf.configRoot = root;
-    } catch (std::runtime_error ex) {
+        root = json::parse(Utils::readFileToString(configFileName));
+    } catch (std::exception & ex) {
         throw RTTException(objectInfo,
-                           "error during JSON processing - " + (std::string)ex.what());
-    } catch (std::out_of_range ex) {
-        throw RTTException(objectInfo,
-                           "missing tag in JSON - " + (std::string)ex.what());
-    } catch (std::domain_error ex) {
-        throw RTTException(objectInfo,
-                           "conversion error in JSON - " + (std::string)ex.what());
+                           "error during JSON parsing (" + configFileName +
+                           ") - " + (std::string)ex.what());
     }
+
+    if(root.count(TAGNAME_ROOT) != 1)
+        throw RTTException(objectInfo,
+                           "root tag is missing in file - " + TAGNAME_ROOT);
+
+    root = root.at(TAGNAME_ROOT);
+    conf.configRoot = root;
 
     return conf;
 }

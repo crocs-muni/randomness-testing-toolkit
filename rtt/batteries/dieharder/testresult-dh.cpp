@@ -10,8 +10,8 @@ std::unique_ptr<TestResult> TestResult::getInstance(
         raiseBugException("empty tests");
 
     std::unique_ptr<TestResult> r (new TestResult(
-                                   tests.at(0)->getLogger(),
-                                   tests.at(0)->getLogicName()));
+                                       tests.at(0)->getLogger(),
+                                       tests.at(0)->getLogicName()));
 
     static const std::regex RE_PVALUE {
         "\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"

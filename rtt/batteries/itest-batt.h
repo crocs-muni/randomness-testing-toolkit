@@ -10,7 +10,7 @@ typedef std::vector<double> tTestPvals;
 
 class ITest {
 public:
-    static std::unique_ptr<ITest> getInstance(int testId,
+    static std::unique_ptr<ITest> getInstance(std::string battObjInf, int testId,
                                               const GlobalContainer & cont);
 
     virtual ~ITest() {}
@@ -29,7 +29,7 @@ public:
     Logger * getLogger() const;
 
 protected:
-    ITest(int testId , const GlobalContainer & cont);
+    ITest(std::string battObjInf, int testId , const GlobalContainer & cont);
 
     /* These fields will be set in the constructor */
     /* Pointers to global configurations */

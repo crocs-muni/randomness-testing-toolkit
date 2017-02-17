@@ -6,12 +6,12 @@ namespace rtt {
 namespace batteries {
 namespace niststs {
 
-std::unique_ptr<Test> Test::getInstance(int testIndex,
+std::unique_ptr<Test> Test::getInstance(std::string battObjInf, int testIndex,
                                         const GlobalContainer & cont) {
-    std::unique_ptr<Test> t (new Test(testIndex , cont));
+    std::unique_ptr<Test> t (new Test(battObjInf, testIndex , cont));
 
-    t->logicName = std::get<0>(TestConstants::getNistStsTestData(
-                                   t->battId , t->testId));
+    /* Battery specific code goes here */
+
     t->testDir_mux = std::make_unique<std::mutex>();
 
     for(const std::unique_ptr<IVariant> & var : t->variants) {

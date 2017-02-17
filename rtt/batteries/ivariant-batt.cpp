@@ -11,16 +11,16 @@ std::mutex outputFile_mux;
 namespace rtt {
 namespace batteries {
 
-std::unique_ptr<IVariant> IVariant::getInstance(int testId, uint variantIdx,
-                                                const GlobalContainer & cont) {
+std::unique_ptr<IVariant> IVariant::getInstance(int testId, std::string testObjInf,
+                                                uint variantIdx, const rtt::GlobalContainer &cont) {
     std::unique_ptr<IVariant> rval;
 
     switch(cont.getCliOptions()->getBatteryId()) {
         case Constants::Battery::NIST_STS:
-            rval = niststs::Variant::getInstance(testId , variantIdx, cont);
+            rval = niststs::Variant::getInstance(testId , testObjInf , variantIdx, cont);
             break;
         case Constants::Battery::DIEHARDER:
-            rval = dieharder::Variant::getInstance(testId , variantIdx, cont);
+            rval = dieharder::Variant::getInstance(testId , testObjInf , variantIdx, cont);
             break;
         case Constants::Battery::TU01_SMALLCRUSH:
         case Constants::Battery::TU01_CRUSH:
@@ -28,7 +28,7 @@ std::unique_ptr<IVariant> IVariant::getInstance(int testId, uint variantIdx,
         case Constants::Battery::TU01_RABBIT:
         case Constants::Battery::TU01_ALPHABIT:
         case Constants::Battery::TU01_BLOCK_ALPHABIT:
-            rval = testu01::Variant::getInstance(testId , variantIdx , cont);
+            rval = testu01::Variant::getInstance(testId , testObjInf , variantIdx , cont);
             break;
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);
@@ -105,7 +105,7 @@ std::vector<std::pair<std::string, std::string> > IVariant::getUserSettings() co
     return userSettings;
 }
 
-IVariant::IVariant(int testId, uint variantIdx,
+IVariant::IVariant(int testId, std::string testObjInf, uint variantIdx,
                    const GlobalContainer & cont) {
     this->testId        = testId;
     this->variantIdx    = variantIdx;
@@ -119,8 +119,7 @@ IVariant::IVariant(int testId, uint variantIdx,
                 cont.getToolkitSettings()->getLoggerBatteryDir(battId),
                 binaryDataPath);
     objectInfo          =
-            Constants::batteryToString(battId) +
-            " - test " + Utils::itostr(testId) +
+            testObjInf +
             " - variant " + Utils::itostr(variantIdx);
 
     if(binaryDataPath.empty())

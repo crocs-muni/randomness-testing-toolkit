@@ -10,8 +10,8 @@ namespace batteries {
 
 class IVariant {
 public:
-    static std::unique_ptr<IVariant> getInstance(int testId, uint variantIdx,
-                                                 const GlobalContainer & cont);
+    static std::unique_ptr<IVariant> getInstance(int testId, std::string testObjInf,
+                                                 uint variantIdx, const GlobalContainer & cont);
 
     virtual ~IVariant() {}
 
@@ -47,7 +47,8 @@ protected:
     BatteryOutput batteryOutput;
     bool executed = false;
 
-    IVariant(int testId, uint variantIdx, const GlobalContainer & cont);
+    IVariant(int testId, std::string testObjInf,
+             uint variantIdx, const GlobalContainer & cont);
 
     virtual void buildStrings() = 0;
 };

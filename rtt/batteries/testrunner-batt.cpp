@@ -215,14 +215,12 @@ BatteryOutput TestRunner::executeBinary(Logger * logger,
          * so main thread will be notified */
         std::lock(withoutChild_lock , waitingForChild_lock , childReceived_lock);
         logger->info(objectInfo + ": child process with pid " + Utils::itostr(pid) + " finished");
-        childReceived = true;
         --waitingForChild;
         --withoutChild;
         /* Unlock mutexes, this thread no longer needs them */
         finishedPid_lock.unlock();
         waitingForChild_lock.unlock();
         withoutChild_lock.unlock();
-        childReceived_lock.unlock();
         /* Notify threadCreator that number of active threads changed.
          * He will spawn new threads if there is a need to. */
         withoutChild_cv.notify_one();
@@ -242,6 +240,8 @@ BatteryOutput TestRunner::executeBinary(Logger * logger,
         threadsReady_lock.unlock();
 
         /* Notify main thread that it can continue in reaping processes */
+        childReceived = true;
+        childReceived_lock.unlock();
         childReceived_cv.notify_one();
         /* This thread now completed all communication with other threads.
          *  DO YOUR WORK SLAVE!!! */
@@ -250,8 +250,7 @@ BatteryOutput TestRunner::executeBinary(Logger * logger,
         return output;
     } else {
         /* Some nasty error happened at execution. Report and end thread */
-        logger->warn(objectInfo + ": can't execute child process. "
-                     "This never happened during development.");
+        logger->warn(objectInfo + ": can't execute child process.");
         {
             /* Remove thread from list of threads without child, notify and end */
             std::lock_guard<std::mutex> l (withoutChild_mux);

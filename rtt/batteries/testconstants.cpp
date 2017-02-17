@@ -659,6 +659,36 @@ const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsAlphabit = {
     { IndexRange(8,9) , TestConstants::TESTU01_SWALK_RANDOMWALK1}
 };
 
+std::string TestConstants::getTestLogicName(Constants::Battery battery,
+                                            int testIndex) {
+    try {
+        switch (battery) {
+            case Constants::Battery::NIST_STS:
+                return std::get<0>(nistStsTests.at(testIndex));
+            case Constants::Battery::DIEHARDER:
+                return std::get<0>(dieharderTests.at(testIndex));
+            case Constants::Battery::TU01_SMALLCRUSH:
+                return std::get<0>(tu01testsSmallCrush.at(testIndex));
+            case Constants::Battery::TU01_CRUSH:
+                return std::get<0>(tu01testsCrush.at(testIndex));
+            case Constants::Battery::TU01_BIGCRUSH:
+                return std::get<0>(tu01testsBigCrush.at(testIndex));
+            case Constants::Battery::TU01_RABBIT:
+                return std::get<0>(tu01testsRabbit.at(testIndex));
+            case Constants::Battery::TU01_ALPHABIT:
+                return std::get<0>(tu01testsAlphabit.at(testIndex));
+            case Constants::Battery::TU01_BLOCK_ALPHABIT:
+                /* Block Alphabit has same tests as Alphabit. */
+                return std::get<0>(tu01testsAlphabit.at(testIndex));
+        default:
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
+        }
+    } catch (std::out_of_range) {
+        throw RTTException(Constants::batteryToString(battery) ,
+                           Strings::ERR_INVALID_TEST_CONST + Utils::itostr(testIndex));
+    }
+}
+
 tNistStsData TestConstants::getNistStsTestData(Constants::Battery battery,
                                                int testIndex) {
     try {

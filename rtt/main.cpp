@@ -51,33 +51,36 @@ int main (int argc , char * argv[]) try {
     /* Initialization of global container.
      * Since we can't be sure if logger was initialized,
      * errors are written to cout and no log is created. */
-    GlobalContainer container;
+    GlobalContainer gc;
     try {
-        container.initCliOptions(argc , argv);
-        container.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
-        container.initBatteriesConfiguration(container.getCliOptions()->getInputCfgPath());
+        gc.initCliOptions(argc , argv);
+        gc.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+        //gc.initBatteriesConfiguration(gc.getCliOptions()->getInputCfgPath());
 
     } catch (std::exception & ex) {
-        std::cout << "[Invalid configuration] " << ex.what() << std::endl;
+        std::cout << "[Invalid toolkit configuration] " << ex.what() << std::endl;
         return -1;
     }
 
     /* Logger must be initialized last as it uses settings from main configuration file
      * and command line options. Otherwise exception is raised. */
-    container.initLogger("Randomness_Testing_Toolkit", true);
+    gc.initLogger("Randomness_Testing_Toolkit", true);
 
     /* Logger is now created and all subsequent errors are logged. */
+
     try {
         /* Initializing storage */
-        auto storage = storage::IStorage::getInstance(container);
+        auto storage = storage::IStorage::getInstance(gc);
 
         try {
+            /* Initialization of battery configuration in container */
+            gc.initBatteriesConfiguration(gc.getCliOptions()->getInputCfgPath());
             /* Initialization of battery */
-            auto battery = batteries::IBattery::getInstance(container);
+            auto battery = batteries::IBattery::getInstance(gc);
             /* Executing analysis */
             battery->runTests();
             /* Obtaining and storing results */
-            auto results = battery->getTestResults();;
+            const auto & results = battery->getTestResults();;
             storage->writeResults(Utils::getRawPtrs(results));
             /* Store warnings and errors into storage */
             // TODO: store errs/warns.
@@ -88,13 +91,13 @@ int main (int argc , char * argv[]) try {
             /* Something happened during battery initialization/execution */
             /* Storage is still active, error can be stored. */
             // TODO: store error to storage here!!!
-            container.getLogger()->error(ex.what());
+            gc.getLogger()->error(ex.what());
             return -1;
         }
 
     } catch(std::exception & ex) {
         /* Storage creation failed. */
-        container.getLogger()->error(ex.what());
+        gc.getLogger()->error(ex.what());
         return -1;
     }
 

@@ -12,8 +12,8 @@ std::unique_ptr<TestResult> TestResult::getInstance(
         raiseBugException("empty tests");
 
     std::unique_ptr<TestResult> r (new TestResult(
-                                   tests.at(0)->getLogger(),
-                                   tests.at(0)->getLogicName()));
+                                       tests.at(0)->getLogger(),
+                                       tests.at(0)->getLogicName()));
 
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::Statistic> tmpStatistics;

@@ -4,9 +4,9 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-std::unique_ptr<Variant> Variant::getInstance(int testId, uint variantIdx,
-                                              const GlobalContainer & cont) {
-    std::unique_ptr<Variant> v (new Variant(testId, variantIdx, cont));
+std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf,
+                                              uint variantIdx, const GlobalContainer & cont) {
+    std::unique_ptr<Variant> v (new Variant(testId, testObjInf, variantIdx, cont));
     auto battConf = cont.getBatteryConfiguration();
 
     v->settableParamNames =

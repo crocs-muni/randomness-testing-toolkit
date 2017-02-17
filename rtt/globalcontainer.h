@@ -15,7 +15,7 @@ namespace rtt {
  * as constant reference, only holds pointers to other objects. Before
  * calling getter on desired object, it must be first initialized using
  * init methods. Init only calls class's constructor or getInstance
- * method and creates a shared pointer. */
+ * method and creates an unique pointer. */
 class GlobalContainer {
 public:
     GlobalContainer()

@@ -10,8 +10,8 @@ namespace niststs {
 
 class Variant : public IVariant {
 public:
-    static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
-                                                const GlobalContainer & cont);
+    static std::unique_ptr<Variant> getInstance(int testId, std::string testObjInf,
+                                                uint variantIdx, const GlobalContainer & cont);
 
     void execute();
 
@@ -32,9 +32,9 @@ private:
     std::vector<std::string> pValueFiles;
 
     /* Methods */
-    Variant(int testId, uint variantIdx,
-            const GlobalContainer & cont)
-        : IVariant(testId, variantIdx, cont)
+    Variant(int testId, std::string testObjInf,
+            uint variantIdx, const GlobalContainer & cont)
+        : IVariant(testId, testObjInf, variantIdx, cont)
     {}
 
     void buildStrings();

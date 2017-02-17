@@ -4,12 +4,11 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-std::unique_ptr<Test> Test::getInstance(int testIndex ,
+std::unique_ptr<Test> Test::getInstance(std::string battObjInf, int testIndex ,
                                         const GlobalContainer & container) {
-    std::unique_ptr<Test> t (new Test(testIndex , container));
+    std::unique_ptr<Test> t (new Test(battObjInf, testIndex , container));
 
-    t->logicName =
-            std::get<0>(TestConstants::getTu01TestData(t->battId , t->testId));
+    /* Battery specific code goes here */
 
     return t;
 }

@@ -133,17 +133,17 @@ private:
     std::string getBatteryVariable(VariableType variableType ,
                                    Constants::Battery battery) const;
 
-    static std::string parseDirectoryPath(const json::object_t & parentNode,
+    static std::string parseDirectoryPath(const json & parentNode,
                                           const std::string & childTagName,
                                           const std::string & cfgFile,
                                           bool mandatory = true);
 
-    static std::string parseStringValue(const json::object_t & parentNode,
+    static std::string parseStringValue(const json & parentNode,
                                         const std::string & childTagName,
                                         const std::string & cfgFile,
                                         bool mandatory = true);
 
-    static int parseIntegerValue(const json::object_t & parentNode,
+    static int parseIntegerValue(const json & parentNode,
                                  const std::string & childTagName,
                                  const std::string & cfgFile,
                                  bool mandatory = true);

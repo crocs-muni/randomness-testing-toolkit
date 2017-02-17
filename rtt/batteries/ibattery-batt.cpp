@@ -67,7 +67,7 @@ IBattery::IBattery(const GlobalContainer & cont) {
         throw RTTException(objectInfo , Strings::BATT_ERR_NO_TESTS);
 
     for(const int & i : testIndices) {
-        tests.push_back(ITest::getInstance(i , cont));
+        tests.push_back(ITest::getInstance(objectInfo, i, cont));
     }
 }
 

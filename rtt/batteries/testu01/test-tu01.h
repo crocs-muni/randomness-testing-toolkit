@@ -19,13 +19,14 @@ typedef std::vector<std::string> tStringVector;
 
 class Test : public ITest {
 public:
-    static std::unique_ptr<Test> getInstance(int testId ,
+    static std::unique_ptr<Test> getInstance(std::string battObjInf, int testId ,
                                              const GlobalContainer & container);
 private:
 
     /* Methods */
-    Test(int testIndex , const GlobalContainer & container)
-        : ITest(testIndex , container)
+    Test(std::string battObjInf, int testIndex,
+         const GlobalContainer & container)
+        : ITest(battObjInf, testIndex , container)
     {}
 };
 

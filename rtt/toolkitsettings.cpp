@@ -346,7 +346,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
     }
 }
 
-std::string ToolkitSettings::parseDirectoryPath(const json::object_t & parenttag,
+std::string ToolkitSettings::parseDirectoryPath(const json & parenttag,
                                                 const std::string & childTagPath,
                                                 const std::string & cfgFile,
                                                 bool mandatory) {
@@ -357,7 +357,7 @@ std::string ToolkitSettings::parseDirectoryPath(const json::object_t & parenttag
     return rval;
 }
 
-std::string ToolkitSettings::parseStringValue(const json::object_t & parenttag,
+std::string ToolkitSettings::parseStringValue(const json & parenttag,
                                               const std::string & childTagPath,
                                               const std::string & cfgFile,
                                               bool mandatory) {
@@ -379,7 +379,7 @@ std::string ToolkitSettings::parseStringValue(const json::object_t & parenttag,
     }
 }
 
-int ToolkitSettings::parseIntegerValue(const json::object_t & parenttag,
+int ToolkitSettings::parseIntegerValue(const json & parenttag,
                                        const std::string & childTagPath,
                                        const std::string & cfgFile,
                                        bool mandatory) {

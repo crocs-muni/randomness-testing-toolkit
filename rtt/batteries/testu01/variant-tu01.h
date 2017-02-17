@@ -12,8 +12,8 @@ typedef std::pair<std::string , std::string> tParam;
 
 class Variant : public IVariant {
 public:
-    static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
-                                                const GlobalContainer & cont);
+    static std::unique_ptr<Variant> getInstance(int testId, std::string testObjInf,
+                                                uint variantIdx, const GlobalContainer & cont);
 
 
     std::vector<std::string> getStatisticNames() const;
@@ -35,9 +35,9 @@ private:
     std::string bit_w;
 
     /* Methods */
-    Variant(int testId, uint variantIdx,
-            const GlobalContainer & cont)
-        : IVariant(testId, variantIdx, cont)
+    Variant(int testId, std::string testObjInf,
+            uint variantIdx, const GlobalContainer & cont)
+        : IVariant(testId, testObjInf, variantIdx, cont)
     {}
 
     void buildStrings();

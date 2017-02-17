@@ -10,8 +10,8 @@ namespace dieharder {
 
 class Variant : public IVariant {
 public:
-    static std::unique_ptr<Variant> getInstance(int testId, uint variantIdx,
-                                                const GlobalContainer & cont);
+    static std::unique_ptr<Variant> getInstance(int testId, std::string testObjInf,
+                                                uint variantIdx, const GlobalContainer & cont);
 private:
     /* Test info constants */
     static const int OPTION_HEADER_FLAG;
@@ -22,9 +22,9 @@ private:
     int pSampleCount;
 
     /* Methods */
-    Variant(int testId, uint variantIdx,
-            const GlobalContainer & cont)
-        : IVariant(testId, variantIdx, cont)
+    Variant(int testId, std::string testObjInf,
+            uint variantIdx, const GlobalContainer & cont)
+        : IVariant(testId, testObjInf, variantIdx, cont)
     {}
 
     void buildStrings();

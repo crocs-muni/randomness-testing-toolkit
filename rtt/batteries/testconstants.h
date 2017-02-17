@@ -10,15 +10,15 @@
 namespace rtt {
 namespace batteries {
 
-typedef std::tuple<std::string ,    /* Logical test name */
+typedef std::tuple<std::string ,    /* Logic test name */
                    std::string ,    /* Path to result directory */
                    bool>            /* Adjustable block length of test */
                    tNistStsData;
 
-typedef std::tuple<std::string>     /* Logical test name */
+typedef std::tuple<std::string>     /* Logic test name */
                    tDieharderData;
 
-typedef std::tuple<std::string,                 /* Logical test name */
+typedef std::tuple<std::string,                 /* Logic test name */
                    std::vector<std::string>,    /* Test parameters (settable) */
                    std::vector<std::string>,    /* Test parameters (extractable from log) */
                    std::vector<std::string>>    /* Output statistics names list */
@@ -50,14 +50,17 @@ private:
 class TestConstants {
 public:
 
+    static std::string getTestLogicName(Constants::Battery battery,
+                                        int testIndex);
+
     static tNistStsData getNistStsTestData(Constants::Battery battery ,
-                                           int testIndex );
+                                           int testIndex);
 
     static tDieharderData getDieharderTestData(Constants::Battery battery ,
-                                               int testIndex );
+                                               int testIndex);
 
     static tTestU01Data getTu01TestData(Constants::Battery battery ,
-                                        int testIndex );
+                                        int testIndex);
 
 private:
     /* Maps with test indices assigned to test data */

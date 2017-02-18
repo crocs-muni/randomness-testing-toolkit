@@ -38,27 +38,17 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf
 void Variant::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
+    uint expExitCode = Constants::getBatteryExpExitCode(battId);
+
     testDir_mux->lock();
     /* Cleaning result directory */
     Utils::rmDirFiles(resultSubDir);
-    batteryOutput = TestRunner::executeBinary(
-                        logger,objectInfo,executablePath,
-                        cliArguments, stdInput);
+    batteryOutput = TestRunner::executeBinary(logger, objectInfo, executablePath,
+                                              expExitCode, cliArguments, stdInput);
     readNistStsOutFiles();
     testDir_mux->unlock();
 
-    batteryOutput.doDetection();
-    if(!batteryOutput.getStdErr().empty())
-        logger->warn(objectInfo + ": execution of test produced error output.");
-    if(!batteryOutput.getErrors().empty())
-        logger->warn(objectInfo + ": test output contains errors.");
-    if(!batteryOutput.getWarnings().empty())
-        logger->warn(objectInfo + ": test output contains warnings.");
-
-    outputFile_mux.lock();
-    Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
-    Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
-    outputFile_mux.unlock();
+    analyzeAndStoreBattOut();
 
     executed = true;
 }

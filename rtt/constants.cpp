@@ -55,6 +55,24 @@ std::string Constants::batteryToShortString(Battery battId) {
     }
 }
 
+uint Constants::getBatteryExpExitCode(Battery battId) {
+    switch(battId) {
+        case Battery::DIEHARDER:
+            return 0;
+        case Battery::NIST_STS:
+            return 256;
+        case Battery::TU01_SMALLCRUSH:
+        case Battery::TU01_CRUSH:
+        case Battery::TU01_BIGCRUSH:
+        case Battery::TU01_RABBIT:
+        case Battery::TU01_ALPHABIT:
+        case Battery::TU01_BLOCK_ALPHABIT:
+            return 0;
+        default:
+            raiseBugException(Strings::ERR_INVALID_BATTERY);
+    }
+}
+
 bool Constants::isInTU01Family(Constants::Battery battId) {
     switch(battId) {
         case Battery::NIST_STS:

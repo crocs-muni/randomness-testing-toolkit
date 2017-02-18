@@ -51,6 +51,8 @@ protected:
              uint variantIdx, const GlobalContainer & cont);
 
     virtual void buildStrings() = 0;
+
+    void analyzeAndStoreBattOut();
 };
 
 } // namespace batteries

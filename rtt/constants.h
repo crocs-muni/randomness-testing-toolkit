@@ -45,6 +45,8 @@ public:
 
     static std::string batteryToShortString(Battery battId);
 
+    static uint getBatteryExpExitCode(Battery battId);
+
     static bool isInTU01Family(Battery battId);
 
     static bool isInTU01CrushFamily(Battery battId);

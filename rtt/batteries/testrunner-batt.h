@@ -26,7 +26,7 @@ namespace batteries {
 class TestRunner {
 public:
 
-    /* At all times, two threads are running.
+    /* Threads overview
      * Main thread -    Handles incoming signals about
      *                  finished processes, announces finished PIDs.
      * Thread manager - Handles starting and joining of process threads.
@@ -53,6 +53,7 @@ public:
     static BatteryOutput executeBinary(Logger * logger,
                                        const std::string & objectInfo,
                                        const std::string & binaryPath,
+                                       uint expExitCode,
                                        const std::string & arguments,
                                        const std::string & input);
 private:

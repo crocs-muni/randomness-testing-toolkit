@@ -55,7 +55,6 @@ int main (int argc , char * argv[]) try {
     try {
         gc.initCliOptions(argc , argv);
         gc.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
-        //gc.initBatteriesConfiguration(gc.getCliOptions()->getInputCfgPath());
 
     } catch (std::exception & ex) {
         std::cout << "[Invalid toolkit configuration] " << ex.what() << std::endl;

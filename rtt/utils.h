@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <algorithm>
+#include <iomanip>
 
 /* File with global methods declared */
 
@@ -135,6 +136,8 @@ public:
                                       const std::string & logDir ,
                                       const std::string & inputFilePath ,
                                       std::string batteryShort = "");
+
+    static std::string intToHex(int num, uint width = 0);
 
     template<typename T>
     static std::vector<T *> getRawPtrs(const std::vector<std::unique_ptr<T>> & source) {

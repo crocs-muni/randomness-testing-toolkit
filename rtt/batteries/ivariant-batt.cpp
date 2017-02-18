@@ -40,39 +40,11 @@ std::unique_ptr<IVariant> IVariant::getInstance(int testId, std::string testObjI
 void IVariant::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
-    batteryOutput = TestRunner::executeBinary(
-                        logger, objectInfo, executablePath,
-                        cliArguments, stdInput);
-    batteryOutput.doDetection();
-    if(!batteryOutput.getStdErr().empty())
-        logger->warn(objectInfo + ": execution of test produced error output.");
-    if(!batteryOutput.getErrors().empty())
-        logger->warn(objectInfo + ": test output contains errors.");
-    if(!batteryOutput.getWarnings().empty())
-        logger->warn(objectInfo + ": test output contains warnings.");
+    uint expExitCode = Constants::getBatteryExpExitCode(battId);
 
-    /* Store test output into file. */
-    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    std::stringstream stdoutStr;
-    std::stringstream stderrStr;
-    auto filler = "=================================================\n";
-    stdoutStr << "=== Standard output of thread " << std::this_thread::get_id() << " ===" << std::endl;
-    stderrStr << "=== Error output of thread " << std::this_thread::get_id() << " ===" << std::endl;
-
-    if(!batteryOutput.getStdOut().empty()) {
-        Utils::appendStringToFile(logFilePath, filler);
-        Utils::appendStringToFile(logFilePath, stdoutStr.str());
-        Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
-    } else {
-        logger->warn(objectInfo + ": standard output of test is empty.");
-    }
-
-    if(!batteryOutput.getStdErr().empty()) {
-        Utils::appendStringToFile(logFilePath, filler);
-        Utils::appendStringToFile(logFilePath, stderrStr.str());
-        Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
-    }
-    outputFile_lock.unlock();
+    batteryOutput = TestRunner::executeBinary(logger, objectInfo, executablePath,
+                                              expExitCode, cliArguments, stdInput);
+    analyzeAndStoreBattOut();
 
     executed = true;
 }
@@ -128,6 +100,42 @@ IVariant::IVariant(int testId, std::string testObjInf, uint variantIdx,
     if(executablePath.empty())
         raiseBugException(Strings::TEST_ERR_NO_EXECUTABLE);
 }
+
+void IVariant::analyzeAndStoreBattOut() {
+    /* Detect errors and warnings in output */
+    batteryOutput.doDetection();
+    if(!batteryOutput.getStdErr().empty())
+        logger->warn(objectInfo + ": execution of test produced error output.");
+    if(!batteryOutput.getErrors().empty())
+        logger->warn(objectInfo + ": test output contains errors.");
+    if(!batteryOutput.getWarnings().empty())
+        logger->warn(objectInfo + ": test output contains warnings.");
+
+    /* Store test output into file */
+    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
+    std::stringstream stdoutStr;
+    std::stringstream stderrStr;
+    auto filler = "=================================================\n";
+    stdoutStr << "=== Standard output of thread " << std::this_thread::get_id() << " ===" << std::endl;
+    stderrStr << "=== Error output of thread " << std::this_thread::get_id() << " ===" << std::endl;
+
+    if(!batteryOutput.getStdOut().empty()) {
+        Utils::appendStringToFile(logFilePath, filler);
+        Utils::appendStringToFile(logFilePath, stdoutStr.str());
+        Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
+    } else {
+        logger->warn(objectInfo + ": standard output of test is empty.");
+    }
+
+    if(!batteryOutput.getStdErr().empty()) {
+        Utils::appendStringToFile(logFilePath, filler);
+        Utils::appendStringToFile(logFilePath, stderrStr.str());
+        Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
+    }
+    outputFile_lock.unlock();
+}
+
+
 
 
 

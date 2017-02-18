@@ -31,9 +31,6 @@ std::unique_ptr<TestResult> TestResult::getInstance(
             std::string variantOutput =
                     variant->getBatteryOutput().getStdOut();
 
-            if(variantOutput.empty())
-                r->logger->warn(r->objectInfo + ": standard output empty");
-
             auto subTests = splitIntoSubTests(variantOutput);
 
             if(subTests.empty())

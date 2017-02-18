@@ -231,6 +231,13 @@ std::string Utils::getLogFilePath(time_t creationTime,
     return rval;
 }
 
+std::string Utils::intToHex(int num, uint width) {
+    std::stringstream rval;
+    rval << "0x" << std::setfill('0') << std::setw(width)
+         << std::hex << std::uppercase << num;
+    return rval.str();
+}
+
 std::string Utils::readFileToString(const std::string & path) {
     std::ifstream file(path , std::ios::in);
     if(!file.is_open())

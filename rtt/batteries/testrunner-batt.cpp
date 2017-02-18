@@ -18,7 +18,9 @@ std::mutex              withoutChild_mux;
 uint                    waitingForChild = 0;
 std::condition_variable waitingForChild_cv;
 std::mutex              waitingForChild_mux;
-/* Stores pid of process that was reaped last. */
+/* Stores pid of process that was reaped last.
+ * Stores its exit code as well. */
+uint                    finishedPExitCode = 0;
 std::atomic<pid_t>      finishedPid;
 std::condition_variable finishedPid_cv;
 std::mutex              finishedPid_mux;
@@ -72,8 +74,8 @@ void TestRunner::executeTests(Logger * logger,
                                 []{ return waitingForChild == withoutChild; });
         /* I can reap finished process now and annouce his PID. */
         /* finishedPid is atomic variable, I can do this w/o mutex */
-        int status;
-        finishedPid = wait(&status);
+        //int status;
+        finishedPid = wait(&finishedPExitCode);
         /* I can unlock mutexes now, newly created threads
          * can begin to wait for their process */
         withoutChild_lock.unlock();
@@ -81,8 +83,6 @@ void TestRunner::executeTests(Logger * logger,
         if(finishedPid > 0) {
             /* Some child process finished, hand it out to corresponding
              * thread for processing */
-            logger->info(objectInfo + ": finished test with pid " + Utils::itostr(finishedPid) +
-                         ". Exit code " + Utils::itostr(status));
             /* Notifying all waiting threads that there is new finished process. */
             finishedPid_cv.notify_all();
             /* Thread that owns annouced pid will set childReceived to true.
@@ -115,6 +115,7 @@ void TestRunner::executeTests(Logger * logger,
 BatteryOutput TestRunner::executeBinary(Logger * logger,
                                         const std::string & objectInfo,
                                         const std::string & binaryPath,
+                                        uint expExitCode,
                                         const std::string & arguments,
                                         const std::string & input) {
     int stdin_pipe[2];
@@ -214,7 +215,17 @@ BatteryOutput TestRunner::executeBinary(Logger * logger,
          * track waiting and active threads, setting childReceived to true
          * so main thread will be notified */
         std::lock(withoutChild_lock , waitingForChild_lock , childReceived_lock);
-        logger->info(objectInfo + ": child process with pid " + Utils::itostr(pid) + " finished");
+        logger->info(objectInfo + ": child process with pid " + Utils::itostr(pid) +
+                     " finished. Exit code "
+                     + Utils::intToHex(finishedPExitCode, 4) +
+                     " (" + Utils::itostr(finishedPExitCode) + ")");
+        if(finishedPExitCode != expExitCode) {
+            logger->warn(objectInfo + ": received exit code (" +
+                         Utils::intToHex(finishedPExitCode, 4) + ") "
+                         "differs from the expected exit code (" +
+                         Utils::intToHex(expExitCode, 4) +
+                         ") of the test process");
+        }
         --waitingForChild;
         --withoutChild;
         /* Unlock mutexes, this thread no longer needs them */

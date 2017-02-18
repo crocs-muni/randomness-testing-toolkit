@@ -57,23 +57,21 @@ Logger::~Logger() {
     /* Writing ending info */
     rawLogger->info("\n\nLogging end        " +
                     Utils::formatRawTime(Utils::getRawTime() , "%d-%m-%Y %H:%M:%S"));
-    rawLogger->info("Error count        " + Utils::itostr(errorCount));
-    rawLogger->info("Warning count      " + Utils::itostr(warningCount));
+    rawLogger->info("Error count        " + Utils::itostr(errorMessages.size()));
+    rawLogger->info("Warning count      " + Utils::itostr(warningMessages.size()));
     rawLogger->info("");
 }
 
 void Logger::log(LogLevel level, const std::string & msg) {
     switch(level) {
     case LogLevel::INFO:
-        rawLogger->info(msg);
+        info(msg);
         break;
     case LogLevel::WARN:
-        rawLogger->warn(msg);
-        ++warningCount;
+        warn(msg);
         break;
     case LogLevel::ERROR:
-        rawLogger->error(msg);
-        ++errorCount;
+        error(msg);
         break;
     default:
         raiseBugException("unknown log level");
@@ -85,13 +83,31 @@ void Logger::info(const std::string & msg) {
 }
 
 void Logger::warn(const std::string & msg) {
+    /* Raw logger is thread-safe. It is the rest I am worried about. */
     rawLogger->warn(msg);
-    ++warningCount;
+    {
+        std::lock_guard<std::mutex> l (warningMessages_mux);
+        warningMessages.push_back(msg);
+    }
 }
 
 void Logger::error(const std::string & msg) {
+    /* Raw logger is thread-safe. It is the rest I am worried about. */
     rawLogger->error(msg);
-    ++errorCount;
+    {
+        std::lock_guard<std::mutex> l (errorMessages_mux);
+        errorMessages.push_back(msg);
+    }
+}
+
+std::vector<std::string> Logger::getWarningMessages() {
+    std::lock_guard<std::mutex> l (warningMessages_mux);
+    return warningMessages;
+}
+
+std::vector<std::string> Logger::getErrorMessages() {
+    std::lock_guard<std::mutex> l (errorMessages_mux);
+    return errorMessages;
 }
 
 } // namespace rtt

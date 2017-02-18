@@ -111,28 +111,29 @@ void IVariant::analyzeAndStoreBattOut() {
     if(!batteryOutput.getWarnings().empty())
         logger->warn(objectInfo + ": test output contains warnings.");
 
-    /* Store test output into file */
-    std::unique_lock<std::mutex> outputFile_lock(outputFile_mux);
-    std::stringstream stdoutStr;
-    std::stringstream stderrStr;
-    auto filler = "=================================================\n";
-    stdoutStr << "=== Standard output of thread " << std::this_thread::get_id() << " ===" << std::endl;
-    stderrStr << "=== Error output of thread " << std::this_thread::get_id() << " ===" << std::endl;
+    {
+        /* Store test output into file */
+        std::lock_guard<std::mutex> l (outputFile_mux);
+        std::stringstream stdoutStr;
+        std::stringstream stderrStr;
+        auto filler = "=================================================\n";
+        stdoutStr << "=== Standard output of thread " << std::this_thread::get_id() << " ===" << std::endl;
+        stderrStr << "=== Error output of thread " << std::this_thread::get_id() << " ===" << std::endl;
 
-    if(!batteryOutput.getStdOut().empty()) {
-        Utils::appendStringToFile(logFilePath, filler);
-        Utils::appendStringToFile(logFilePath, stdoutStr.str());
-        Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
-    } else {
-        logger->warn(objectInfo + ": standard output of test is empty.");
-    }
+        if(!batteryOutput.getStdOut().empty()) {
+            Utils::appendStringToFile(logFilePath, filler);
+            Utils::appendStringToFile(logFilePath, stdoutStr.str());
+            Utils::appendStringToFile(logFilePath, batteryOutput.getStdOut());
+        } else {
+            logger->warn(objectInfo + ": standard output of test is empty.");
+        }
 
-    if(!batteryOutput.getStdErr().empty()) {
-        Utils::appendStringToFile(logFilePath, filler);
-        Utils::appendStringToFile(logFilePath, stderrStr.str());
-        Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
+        if(!batteryOutput.getStdErr().empty()) {
+            Utils::appendStringToFile(logFilePath, filler);
+            Utils::appendStringToFile(logFilePath, stderrStr.str());
+            Utils::appendStringToFile(logFilePath, batteryOutput.getStdErr());
+        }
     }
-    outputFile_lock.unlock();
 }
 
 

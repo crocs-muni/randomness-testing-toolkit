@@ -40,13 +40,14 @@ void Variant::execute() {
      * Will deadlock if run without main thread. */
     uint expExitCode = Constants::getBatteryExpExitCode(battId);
 
-    testDir_mux->lock();
-    /* Cleaning result directory */
-    Utils::rmDirFiles(resultSubDir);
-    batteryOutput = TestRunner::executeBinary(logger, objectInfo, executablePath,
-                                              expExitCode, cliArguments, stdInput);
-    readNistStsOutFiles();
-    testDir_mux->unlock();
+    {
+        std::lock_guard<std::mutex> l (*testDir_mux);
+        /* Cleaning result directory */
+        Utils::rmDirFiles(resultSubDir);
+        batteryOutput = TestRunner::executeBinary(logger, objectInfo, executablePath,
+                                                  expExitCode, cliArguments, stdInput);
+        readNistStsOutFiles();
+    }
 
     analyzeAndStoreBattOut();
 

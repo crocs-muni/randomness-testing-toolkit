@@ -40,12 +40,21 @@ public:
 
     void error(const std::string & msg);
 
+    std::vector<std::string> getWarningMessages();
+
+    std::vector<std::string> getErrorMessages();
+
 private:
     el::Logger * rawLogger = NULL;
     el::Configurations rawLoggerConf;
 
-    int warningCount = 0;
-    int errorCount   = 0;
+    /* Mutex for operations with warning messages */
+    std::mutex warningMessages_mux;
+    std::vector<std::string> warningMessages;
+
+    /* Mutex for operations with error messages */
+    std::mutex errorMessages_mux;
+    std::vector<std::string> errorMessages;
 };
 
 } // namespace rtt

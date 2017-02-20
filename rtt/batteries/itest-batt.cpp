@@ -52,9 +52,9 @@ ITest::ITest(std::string battObjInf, int testId, const GlobalContainer & cont) {
 
     uint varCount = batteryConfiguration->getTestVariantsCount(battId, testId);
     if(varCount == 0) {
-        variants.push_back(IVariant::getInstance(testId, objectInfo, 1, cont));
+        variants.push_back(IVariant::getInstance(testId, objectInfo, 0, cont));
     } else {
-        for(uint varIdx = 1; varIdx <= varCount; ++varIdx)
+        for(uint varIdx = 0; varIdx < varCount; ++varIdx)
             variants.push_back(IVariant::getInstance(testId, objectInfo, varIdx, cont));
     }
 }

@@ -92,7 +92,7 @@ IVariant::IVariant(int testId, std::string testObjInf, uint variantIdx,
                 binaryDataPath);
     objectInfo          =
             testObjInf +
-            " - variant " + Utils::itostr(variantIdx);
+            " - variant " + Utils::itostr(variantIdx + 1);
 
     if(binaryDataPath.empty())
         raiseBugException(Strings::TEST_ERR_NO_BINARY_DATA);

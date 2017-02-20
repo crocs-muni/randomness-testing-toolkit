@@ -22,19 +22,6 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
         /* Commit in finalizeReport, rollback on any error. */
         s->conn->setAutoCommit(false);
 
-        std::unique_ptr<sql::PreparedStatement> insBattStmt(s->conn->prepareStatement(
-            "INSERT INTO batteries(name, passed_tests, total_tests, alpha, experiment_id) "
-            "VALUES (?,?,?,?,?)"
-        ));
-        insBattStmt->setString(1, Constants::batteryToString(s->battId));
-        insBattStmt->setUInt64(2, 0);
-        insBattStmt->setUInt64(3, 0);
-        insBattStmt->setDouble(4, Constants::MATH_ALPHA);
-        insBattStmt->setUInt64(5, s->cliOptions->getMysqlEid());
-        insBattStmt->execute();
-
-        s->dbBatteryId = s->getLastInsertedId();
-
     } catch (sql::SQLException &ex) {
         if(s->conn)
             s->conn->rollback();
@@ -48,6 +35,32 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
     if(testResults.empty())
         raiseBugException("empty results");
 
+    /* Reseting state of the storage - any previously written results are discarded. */
+    conn->rollback();
+    dbBatteryId = 0;
+    currDbTestId = 0;
+    currDbVariantId = 0;
+    currDbSubtestId = 0;
+    currTestIdx = 0;
+    currSubtestIdx = 0;
+    currVariantIdx = 0;
+    totalTestCount = 0;
+    passedTestCount = 0;
+
+    std::unique_ptr<sql::PreparedStatement> insBattStmt(conn->prepareStatement(
+        "INSERT INTO batteries(name, passed_tests, total_tests, alpha, experiment_id) "
+        "VALUES (?,?,?,?,?)"
+    ));
+    insBattStmt->setString(1, Constants::batteryToString(battId));
+    insBattStmt->setUInt64(2, 0);
+    insBattStmt->setUInt64(3, 0);
+    insBattStmt->setDouble(4, Constants::MATH_ALPHA);
+    insBattStmt->setUInt64(5, cliOptions->getMysqlEid());
+    insBattStmt->execute();
+
+    dbBatteryId = getLastInsertedId();
+
+    /* Storing actual results */
     for(const auto & testRes : testResults) {
         addNewTest(testRes->getTestName());
 
@@ -89,7 +102,14 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
 }
 
 void MySQLStorage::close() {
-    raiseBugException("not implemented yet");
+    try {
+        /* Final commit, will confirm whole transaction */
+        conn->commit();
+    } catch(sql::SQLException & ex) {
+        if(conn)
+            conn->rollback();
+        throw RTTException(objectInfo, ex.what());
+    }
 }
 
 void MySQLStorage::addBatteryError(const std::string & error) {
@@ -97,7 +117,26 @@ void MySQLStorage::addBatteryError(const std::string & error) {
 }
 
 void MySQLStorage::addBatteryErrors(const std::vector<std::string> & errors) {
-    raiseBugException("not implemented yet.");
+    if(dbBatteryId <= 0)
+        raiseBugException("battery id not set");
+
+    try {
+        std::unique_ptr<sql::PreparedStatement> insBattError(conn->prepareStatement(
+            "INSERT INTO battery_errors(message, battery_id) "
+            "VALUES(?,?)"
+        ));
+        insBattError->setUInt64(2, dbBatteryId);
+
+        for(const std::string & e : errors) {
+            insBattError->setString(1, e);
+            insBattError->execute();
+        }
+
+    } catch(sql::SQLException & ex) {
+        if(conn)
+            conn->rollback();
+        throw RTTException(objectInfo, ex.what());
+    }
 }
 
 void MySQLStorage::addBatteryWarning(const std::string & warning) {
@@ -105,7 +144,26 @@ void MySQLStorage::addBatteryWarning(const std::string & warning) {
 }
 
 void MySQLStorage::addBatteryWarnings(const std::vector<std::string> & warnings) {
-    raiseBugException("not implemented yet.");
+    if(dbBatteryId <= 0)
+        raiseBugException("battery id not set");
+
+    try {
+        std::unique_ptr<sql::PreparedStatement> insBattWarning(conn->prepareStatement(
+            "INSERT INTO battery_warnings(message, battery_id) "
+            "VALUES(?,?)"
+        ));
+        insBattWarning->setUInt64(2, dbBatteryId);
+
+        for(const std::string & w : warnings) {
+            insBattWarning->setString(1, w);
+            insBattWarning->execute();
+        }
+
+    } catch(sql::SQLException & ex) {
+        if(conn)
+            conn->rollback();
+        throw RTTException(objectInfo, ex.what());
+    }
 }
 
 /*
@@ -441,8 +499,6 @@ void MySQLStorage::finalizeReport() {
     if(dbBatteryId <= 0)
         raiseBugException("battery id not set");
 
-    /* Finishing call. It is possible to call writeResults again (new results will be created)
-     * or to call addWarning(s)/Error(s) */
     currDbSubtestId = 0;
     currDbVariantId = 0;
     currDbTestId = 0;
@@ -458,9 +514,6 @@ void MySQLStorage::finalizeReport() {
         updBattPassProp->setUInt64(2, totalTestCount);
         updBattPassProp->setUInt64(3, dbBatteryId);
         updBattPassProp->execute();
-
-        /* Final commit, will confirm whole transaction */
-        conn->commit();
 
     } catch(sql::SQLException & ex) {
         if(conn)

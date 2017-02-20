@@ -81,6 +81,7 @@ int main (int argc , char * argv[]) try {
             /* Obtaining and storing results */
             const auto & results = battery->getTestResults();;
             storage->writeResults(Utils::getRawPtrs(results));
+            storage->writeResults(Utils::getRawPtrs(results));
             /* And we are done. */
 
         } catch(std::exception & ex) {

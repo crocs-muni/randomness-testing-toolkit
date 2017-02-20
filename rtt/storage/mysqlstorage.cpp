@@ -61,9 +61,9 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
             addVariant();
 
             setUserSettings(varRes.getUserSettings());
-            setWarningMessages(varRes.getBatteryOutput().getWarnings());
-            setErrorMessages(varRes.getBatteryOutput().getErrors());
-            setStdErrMessages(Utils::split(varRes.getBatteryOutput().getStdErr(), '\n'));
+            setVariantWarnings(varRes.getBatteryOutput().getWarnings());
+            setVariantErrors(varRes.getBatteryOutput().getErrors());
+            setVariantStdErr(Utils::split(varRes.getBatteryOutput().getStdErr(), '\n'));
 
             const auto & subResults = varRes.getSubResults();
             for(const batteries::result::SubTestResult & subRes : subResults) {
@@ -299,13 +299,13 @@ void MySQLStorage::setTestParameters(
     }
 }
 
-void MySQLStorage::setWarningMessages(const std::vector<std::string> & warnings) {
+void MySQLStorage::setVariantWarnings(const std::vector<std::string> & warnings) {
     if(currDbVariantId <= 0)
         raiseBugException("variant id not set");
 
     try {
         std::unique_ptr<sql::PreparedStatement> insWarnMessStmt(conn->prepareStatement(
-            "INSERT INTO warning_messages(message, variant_id) "
+            "INSERT INTO variant_warnings(message, variant_id) "
             "VALUES(?,?)"
         ));
         insWarnMessStmt->setUInt64(2, currDbVariantId);
@@ -322,13 +322,13 @@ void MySQLStorage::setWarningMessages(const std::vector<std::string> & warnings)
     }
 }
 
-void MySQLStorage::setErrorMessages(const std::vector<std::string> & errors) {
+void MySQLStorage::setVariantErrors(const std::vector<std::string> & errors) {
     if(currDbVariantId <= 0)
         raiseBugException("variant id not set");
 
     try {
         std::unique_ptr<sql::PreparedStatement> insErrMessStmt(conn->prepareStatement(
-            "INSERT INTO error_messages(message, variant_id) "
+            "INSERT INTO variant_errors(message, variant_id) "
             "VALUES(?,?)"
         ));
         insErrMessStmt->setUInt64(2, currDbVariantId);
@@ -345,13 +345,13 @@ void MySQLStorage::setErrorMessages(const std::vector<std::string> & errors) {
     }
 }
 
-void MySQLStorage::setStdErrMessages(const std::vector<std::string> & stderr) {
+void MySQLStorage::setVariantStdErr(const std::vector<std::string> & stderr) {
     if(currDbVariantId <= 0)
         raiseBugException("variant id not set");
 
     try {
         std::unique_ptr<sql::PreparedStatement> insStderrMessStmt(conn->prepareStatement(
-            "INSERT INTO stderr_messages(message, variant_id) "
+            "INSERT INTO variant_stderr(message, variant_id) "
             "VALUES(?,?)"
         ));
         insStderrMessStmt->setUInt64(2, currDbVariantId);

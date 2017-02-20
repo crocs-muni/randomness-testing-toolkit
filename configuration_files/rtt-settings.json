@@ -29,7 +29,7 @@
             
             "mysql-db": {
                 "address": "",
-                "db-name": "",
+                "name": "",
                 "credentials-file": ""
             }
         },

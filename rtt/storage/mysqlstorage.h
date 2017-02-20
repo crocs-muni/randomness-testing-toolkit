@@ -71,11 +71,11 @@ private:
     void setTestParameters(
             const std::vector<std::pair<std::string, std::string> > & options);
 
-    void setWarningMessages(const std::vector<std::string> & warnings);
+    void setVariantWarnings(const std::vector<std::string> & warnings);
 
-    void setErrorMessages(const std::vector<std::string> & errors);
+    void setVariantErrors(const std::vector<std::string> & errors);
 
-    void setStdErrMessages(const std::vector<std::string> & stderr);
+    void setVariantStdErr(const std::vector<std::string> & stderr);
 
     void addStatisticResult(
             const std::string & statName ,

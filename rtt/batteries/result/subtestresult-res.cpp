@@ -39,11 +39,6 @@ std::vector<Statistic> SubTestResult::getStatistics() const {
 }
 
 std::vector<double> SubTestResult::getStatResults() const {
-    //std::vector<double> rval;
-    //for(const PValueSet & set : pValSets)
-    //    rval.push_back(set.getStatRes());
-
-    //return rval;
     std::vector<double> rval(statistics.size());
     std::transform(statistics.begin(), statistics.end(), rval.begin(),
                    [](const auto & el){ return el.getValue(); });

@@ -88,6 +88,26 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
     finalizeReport();
 }
 
+void MySQLStorage::close() {
+    raiseBugException("not implemented yet");
+}
+
+void MySQLStorage::addBatteryError(const std::string & error) {
+    addBatteryErrors({error});
+}
+
+void MySQLStorage::addBatteryErrors(const std::vector<std::string> & errors) {
+    raiseBugException("not implemented yet.");
+}
+
+void MySQLStorage::addBatteryWarning(const std::string & warning) {
+    addBatteryWarnings({warning});
+}
+
+void MySQLStorage::addBatteryWarnings(const std::vector<std::string> & warnings) {
+    raiseBugException("not implemented yet.");
+}
+
 /*
                      __                       __
                     |  \                     |  \
@@ -421,7 +441,8 @@ void MySQLStorage::finalizeReport() {
     if(dbBatteryId <= 0)
         raiseBugException("battery id not set");
 
-    /* Finishing call, after this, subsequent calls to this object will fail. */
+    /* Finishing call. It is possible to call writeResults again (new results will be created)
+     * or to call addWarning(s)/Error(s) */
     currDbSubtestId = 0;
     currDbVariantId = 0;
     currDbTestId = 0;
@@ -437,8 +458,6 @@ void MySQLStorage::finalizeReport() {
         updBattPassProp->setUInt64(2, totalTestCount);
         updBattPassProp->setUInt64(3, dbBatteryId);
         updBattPassProp->execute();
-
-        dbBatteryId = 0;
 
         /* Final commit, will confirm whole transaction */
         conn->commit();

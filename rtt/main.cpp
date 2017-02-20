@@ -82,9 +82,12 @@ int main (int argc , char * argv[]) try {
             const auto & results = battery->getTestResults();;
             storage->writeResults(Utils::getRawPtrs(results));
             /* Store warnings and errors into storage */
-            // TODO: store errs/warns.
+            storage->addBatteryWarnings(gc.getLogger()->getWarningMessages());
+            storage->addBatteryErrors(gc.getLogger()->getErrorMessages());
             /* And we are done. */
-
+            /* Call to close storage is important -
+             * changes are commited, files saved, etc... */
+            storage->close();
 
         } catch(std::exception & ex) {
             /* Something happened during battery initialization/execution */

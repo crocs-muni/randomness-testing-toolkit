@@ -16,7 +16,19 @@ public:
 
     virtual ~IStorage() {}
 
+    /*
+     */
     virtual void writeResults(const std::vector<batteries::ITestResult *> & testResults) = 0;
+
+    virtual void close() = 0;
+
+    virtual void addBatteryError(const std::string & error) = 0;
+
+    virtual void addBatteryErrors(const std::vector<std::string> & errors) = 0;
+
+    virtual void addBatteryWarning(const std::string & warning) = 0;
+
+    virtual void addBatteryWarnings(const std::vector<std::string> & warnings) = 0;
 };
 
 } // namespace storage

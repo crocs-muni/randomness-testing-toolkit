@@ -21,6 +21,16 @@ public:
 
     void writeResults(const std::vector<batteries::ITestResult *> & testResults);
 
+    void close();
+
+    void addBatteryError(const std::string & error);
+
+    void addBatteryErrors(const std::vector<std::string> & errors);
+
+    void addBatteryWarning(const std::string & warning);
+
+    void addBatteryWarnings(const std::vector<std::string> & warnings);
+
 private:
     /*
     =================
@@ -29,6 +39,8 @@ private:
     */
     /* Strings in report */
     static const std::string STRING_PASSED_PROP;
+    static const std::string STRING_BATTERY_WARNINGS;
+    static const std::string STRING_BATTERY_ERRORS;
 
     /* Other constants */
     static const size_t MISC_TAB_SIZE;
@@ -54,8 +66,8 @@ private:
     int totalTestsCount = 0;
     std::string passedTestProp;
     int indent = 0;
-    int currentSubtest = 0;
-    int currentVariant = 0;
+    int currSubtest = 0;
+    int currVariant = 0;
 
     /*
     ===============

@@ -3,7 +3,9 @@
 namespace rtt {
 namespace storage {
 
-const std::string FileStorage::STRING_PASSED_PROP   = "Passed/Total tests: ";
+const std::string FileStorage::STRING_PASSED_PROP       = "Passed/Total tests: ";
+const std::string FileStorage::STRING_BATTERY_WARNINGS  = "Battery warnings:\n";
+const std::string FileStorage::STRING_BATTERY_ERRORS    = "Battery errors:\n";
 
 const size_t FileStorage::MISC_TAB_SIZE     = 4;
 const size_t FileStorage::MISC_COL_WIDTH    = 30;
@@ -27,14 +29,23 @@ std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & co
     s->outFilePath = s->toolkitSettings->getRsFileBatteryDir(s->battId);
     s->outFilePath.append(datetime + "-" + binFileName + "-report.txt");
 
-    s->makeReportHeader();
-
     return s;
 }
 
 void FileStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
     if(testResults.empty())
         raiseBugException("empty results");
+
+    /* Clearing variables - writeResults resets state of the storage */
+    report.str(std::string());
+    passedTestsCount = 0;
+    totalTestsCount = 0;
+    passedTestProp = "";
+    indent = 0;
+    currSubtest = 0;
+    currVariant = 0;
+
+    makeReportHeader();
 
     for(const auto & testRes : testResults) {
         addNewTest(testRes->getTestName());
@@ -80,6 +91,59 @@ void FileStorage::writeResults(const std::vector<batteries::ITestResult *> & tes
     finalizeReport();
 }
 
+void FileStorage::close() {
+    /* Storing report */
+    Utils::createDirectory(Utils::getPathWithoutLastItem(outFilePath));
+    Utils::saveStringToFile(outFilePath , report.str());
+
+    /* Adding result into table file */
+    /* Files with same name as the file processed in
+     * this run will be assigned new results */
+    addResultToTableFile();
+}
+
+void FileStorage::addBatteryError(const std::string & error) {
+    addBatteryErrors({error});
+}
+
+void FileStorage::addBatteryErrors(const std::vector<std::string> & errors) {
+    if(errors.empty())
+        return;
+
+    std::string errorStr;
+    for(const auto & e : errors)
+        errorStr.append("    " + e + "\n");
+
+    std::string reportStr = report.str();
+    size_t pos = reportStr.find(STRING_BATTERY_ERRORS);
+    if(pos == std::string::npos)
+        raiseBugException(STRING_BATTERY_ERRORS + " not found in report");
+
+    reportStr.insert(pos + STRING_BATTERY_ERRORS.length(), errorStr);
+    report.str(reportStr);
+}
+
+void FileStorage::addBatteryWarning(const std::string & warning) {
+    addBatteryWarnings({warning});
+}
+
+void FileStorage::addBatteryWarnings(const std::vector<std::string> & warnings) {
+    if(warnings.empty())
+        return;
+
+    std::string warningStr;
+    for(const auto & w : warnings)
+        warningStr.append("    " + w + "\n");
+
+    std::string reportStr = report.str();
+    size_t pos = reportStr.find(STRING_BATTERY_WARNINGS);
+    if(pos == std::string::npos)
+        raiseBugException(STRING_BATTERY_WARNINGS + " not found in report");
+
+    reportStr.insert(pos + STRING_BATTERY_WARNINGS.length(), warningStr);
+    report.str(reportStr);
+}
+
 /*
                      __                       __
                     |  \                     |  \
@@ -104,26 +168,26 @@ void FileStorage::finalizeTest() {
     report << "-----------------------------------------------------------"
            << std::endl << std::endl;
     --indent;
-    currentVariant = 0;
-    currentSubtest = 0;
+    currVariant = 0;
+    currSubtest = 0;
 }
 
 void FileStorage::addVariant() {
-    ++currentVariant;
-    report << doIndent() << "Variant " << currentVariant << ":" << std::endl;
+    ++currVariant;
+    report << doIndent() << "Variant " << currVariant << ":" << std::endl;
     ++indent;
 }
 
 void FileStorage::finalizeVariant() {
     --indent;
     report << doIndent() << "^^^^^^^^^^^^" << std::endl;
-    currentSubtest = 0;
+    currSubtest = 0;
     report << std::endl;
 }
 
 void FileStorage::addSubTest() {
-    ++currentSubtest;
-    report << doIndent() << "Subtest " << currentSubtest << ":" << std::endl;
+    ++currSubtest;
+    report << doIndent() << "Subtest " << currSubtest << ":" << std::endl;
     ++indent;
 }
 
@@ -254,14 +318,7 @@ void FileStorage::finalizeReport() {
     std::string reportStr = report.str();
     size_t pos = reportStr.find(STRING_PASSED_PROP);
     reportStr.insert(pos + STRING_PASSED_PROP.length(), passedTestProp);
-
-    /* Storing report */
-    Utils::createDirectory(Utils::getPathWithoutLastItem(outFilePath));
-    Utils::saveStringToFile(outFilePath , reportStr);
-    /* Adding result into table file */
-    /* Files with same name as the file processed in
-     * this run will be assigned new results */
-    addResultToTableFile();
+    report.str(reportStr);
 }
 
 void FileStorage::makeReportHeader() {
@@ -274,7 +331,9 @@ void FileStorage::makeReportHeader() {
     report << "Epsilon: " << Constants::MATH_EPS << std::endl;
     report << std::endl;
     report << STRING_PASSED_PROP << std::endl;
-    report << std::endl << std::endl;
+    report << std::endl;
+    report << STRING_BATTERY_ERRORS << std::endl;
+    report << STRING_BATTERY_WARNINGS << std::endl << std::endl;
 }
 
 std::string FileStorage::doIndent() const {

@@ -19,6 +19,16 @@ public:
 
     void writeResults(const std::vector<batteries::ITestResult *> & testResults);
 
+    void close();
+
+    void addBatteryError(const std::string & error);
+
+    void addBatteryErrors(const std::vector<std::string> & errors);
+
+    void addBatteryWarning(const std::string & warning);
+
+    void addBatteryWarnings(const std::vector<std::string> & warnings);
+
 private:
     /*
     =================

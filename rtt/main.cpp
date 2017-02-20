@@ -21,9 +21,9 @@
  *  3.5. Create CMake project                   (Final step)
  *  3.6. Write documentation, refactor          (More final step)
  * 4. ???
- *  .
- *  .
- *  .
+ *     .
+ *     .
+ *     .
  * 5. Profit!
  * =============================================================
  * *************************************************************
@@ -81,21 +81,25 @@ int main (int argc , char * argv[]) try {
             /* Obtaining and storing results */
             const auto & results = battery->getTestResults();;
             storage->writeResults(Utils::getRawPtrs(results));
-            /* Store warnings and errors into storage */
-            storage->addBatteryWarnings(gc.getLogger()->getWarningMessages());
-            storage->addBatteryErrors(gc.getLogger()->getErrorMessages());
             /* And we are done. */
-            /* Call to close storage is important -
-             * changes are commited, files saved, etc... */
-            storage->close();
 
         } catch(std::exception & ex) {
             /* Something happened during battery initialization/execution */
-            /* Storage is still active, error can be stored. */
-            // TODO: store error to storage here!!!
             gc.getLogger()->error(ex.what());
+            /* Storage is still active, error can be stored. */
+            storage->addBatteryWarnings(gc.getLogger()->getWarningMessages());
+            storage->addBatteryErrors(gc.getLogger()->getErrorMessages());
+            /* Close storage, end the program. */
+            storage->close();
             return -1;
         }
+
+        /* Store warnings and errors into storage */
+        storage->addBatteryWarnings(gc.getLogger()->getWarningMessages());
+        storage->addBatteryErrors(gc.getLogger()->getErrorMessages());
+        /* Call to close storage is important -
+         * changes are commited, files saved, etc... */
+        storage->close();
 
     } catch(std::exception & ex) {
         /* Storage creation failed. */

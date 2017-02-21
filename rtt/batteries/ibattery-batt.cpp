@@ -43,7 +43,8 @@ void IBattery::runTests() {
         variants.insert(variants.end(), testVars.begin(), testVars.end());
     }
     TestRunner::executeTests(logger, variants,
-                             toolkitSettings->getExecMaximumThreads());
+                             toolkitSettings->getExecMaximumThreads(),
+                             toolkitSettings->getExecTestTimeout());
 
     logger->info(objectInfo + ": Test execution finished!");
     executed = true;

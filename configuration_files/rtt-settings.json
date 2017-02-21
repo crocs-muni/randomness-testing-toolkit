@@ -47,7 +47,8 @@
         },
         
         "execution": {
-            "max-parallel-tests": 16
+            "max-parallel-tests": 16,
+            "test-timeout-seconds": 1800
         }
     }
 }

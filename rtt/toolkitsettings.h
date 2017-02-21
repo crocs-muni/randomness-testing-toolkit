@@ -31,8 +31,6 @@ public:
 
     std::string getMiscNiststsMainResDir() const;
 
-    int getExecMaximumThreads() const;
-
     std::string getRsMysqlAddress() const;
 
     std::string getRsMysqlUserName() const;
@@ -40,6 +38,10 @@ public:
     std::string getRsMysqlPwd() const;
 
     std::string getRsMysqlDbName() const;
+
+    int getExecTestTimeout() const;
+
+    int getExecMaximumThreads() const;
 
 private:
     /* JSON tag names constants */
@@ -83,6 +85,7 @@ private:
     static const std::string JSON_MISC_NIST_MAIN_RES_DIR;
     static const std::string JSON_EXEC;
     static const std::string JSON_EXEC_MAX_PAR_TESTS;
+    static const std::string JSON_EXEC_TEST_TIMEOUT;
 
     /* Variable types for getters. Should a new variable be added,
      * add it here too. */
@@ -125,7 +128,8 @@ private:
 
     std::string miscNiststsMainResDir;
 
-    int execMaximumThreads = 1;
+    int execMaximumThreads;
+    int execTestTimeout;
 
     /* Private methods */
     ToolkitSettings() {}

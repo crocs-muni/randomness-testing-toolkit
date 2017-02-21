@@ -44,6 +44,7 @@ const std::string ToolkitSettings::JSON_MISC_NIST                    = ToolkitSe
 const std::string ToolkitSettings::JSON_MISC_NIST_MAIN_RES_DIR       = ToolkitSettings::JSON_MISC_NIST + "/main-result-dir";
 const std::string ToolkitSettings::JSON_EXEC                         = ToolkitSettings::JSON_ROOT + "/execution";
 const std::string ToolkitSettings::JSON_EXEC_MAX_PAR_TESTS           = ToolkitSettings::JSON_EXEC + "/max-parallel-tests";
+const std::string ToolkitSettings::JSON_EXEC_TEST_TIMEOUT            = ToolkitSettings::JSON_EXEC + "/test-timeout-seconds";
 
 
 
@@ -173,7 +174,8 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
                                                   cfgFileName, JSON_EXEC));
     {
         json nExec = nRoot.at(Utils::getLastItemInPath(JSON_EXEC));
-        ts.execMaximumThreads = parseIntegerValue(nExec , JSON_EXEC_MAX_PAR_TESTS , cfgFileName , false);
+        ts.execMaximumThreads = parseIntegerValue(nExec , JSON_EXEC_MAX_PAR_TESTS , cfgFileName);
+        ts.execTestTimeout = parseIntegerValue(nExec, JSON_EXEC_TEST_TIMEOUT, cfgFileName);
     }
 
     return ts;
@@ -217,6 +219,10 @@ std::string ToolkitSettings::getRsMysqlAddress() const {
 
 std::string ToolkitSettings::getRsMysqlDbName() const {
     return rsMysqlDbName;
+}
+
+int ToolkitSettings::getExecTestTimeout() const {
+    return execTestTimeout;
 }
 
 std::string ToolkitSettings::getRsMysqlUserName() const {

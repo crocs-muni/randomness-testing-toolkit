@@ -66,7 +66,8 @@ void Variant::buildStrings() {
     /* Building cli arguments */
     std::stringstream arguments;
     /* -fast is used with faster version of NIST STS */
-    arguments << "assess " << streamSize << " -fast";
+    //arguments << "assess " << streamSize << " -fast";
+    arguments << "niststs " << streamSize << " -fast";
     cliArguments = arguments.str();
 
     /* Building standard input */

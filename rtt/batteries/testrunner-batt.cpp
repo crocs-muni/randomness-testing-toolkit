@@ -7,7 +7,9 @@ namespace batteries {
 /* Defined variables and corresponding condition variables and mutexes. */
 /************************************************************************/
 /* Sets how many test threads will be run at once. */
-std::atomic_uint threadCount{1};
+std::atomic_int threadCount{0};
+/* Sets how long can be test running before killing */
+std::atomic_int timeout{0};
 /* Keeps tracks of how many running threads have not yet
  * spawned their child process. */
 uint                    withoutChild = 0;
@@ -42,8 +44,9 @@ std::mutex              threadState_mux;
 /*************/
 void TestRunner::executeTests(Logger * logger,
                               std::vector<IVariant *> & variants,
-                              int maxThreads) {
+                              int maxThreads, int testTimeout) {
     threadCount = maxThreads;
+    timeout = testTimeout;
 
     std::thread manager(threadManager , std::ref(variants));
     /* String that will be used in logs */
@@ -198,10 +201,9 @@ BatteryOutput TestRunner::executeBinary(Logger * logger,
          * will work with his associated process only
          * (because the thread owns the pipes to this process) */
         auto now = std::chrono::system_clock::now();
-        /* Don't know why, but if I use TIMEOUT constant directly in argument it won't compile... */
-        int vArgumenteToJebeChybu = PROCESS_TIMEOUT_SECONDS;
+
         if(!finishedPid_cv.wait_until(finishedPid_lock ,
-                                      now + std::chrono::seconds(vArgumenteToJebeChybu) ,
+                                      now + std::chrono::seconds(timeout) ,
                                       [&] { return finishedPid == pid; })) {
             /* If thread goes into this branch, its process timeouted.
              * Send kill signal to it, main thread will then reap it.

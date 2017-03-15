@@ -19,6 +19,8 @@ class FileStorage : public IStorage {
 public:
     static std::unique_ptr<FileStorage> getInstance(const GlobalContainer & container);
 
+    void init();
+
     void writeResults(const std::vector<batteries::ITestResult *> & testResults);
 
     void close();
@@ -61,6 +63,7 @@ private:
     std::string inFilePath;
     std::string outFilePath;
     std::string mainOutFilePath;
+    bool initialized = false;
     std::stringstream report;
     int passedTestsCount = 0;
     int totalTestsCount = 0;

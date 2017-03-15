@@ -13,9 +13,13 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     s->battId           = s->cliOptions->getBatteryId();
 
     try {
+        std::string dbAddress = s->toolkitSettings->getRsMysqlAddress();
+        dbAddress.append(":");
+        dbAddress.append(s->toolkitSettings->getRsMysqlPort());
+
         s->driver = get_driver_instance();
         s->conn   = std::unique_ptr<sql::Connection>(
-                        s->driver->connect(s->toolkitSettings->getRsMysqlAddress(),
+                        s->driver->connect(dbAddress,
                                            s->toolkitSettings->getRsMysqlUserName(),
                                            s->toolkitSettings->getRsMysqlPwd()));
         s->conn->setSchema(s->toolkitSettings->getRsMysqlDbName());
@@ -31,21 +35,9 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     return s;
 }
 
-void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
-    if(testResults.empty())
-        raiseBugException("empty results");
-
-    /* Reseting state of the storage - any previously written results are discarded. */
-    conn->rollback();
-    dbBatteryId = 0;
-    currDbTestId = 0;
-    currDbVariantId = 0;
-    currDbSubtestId = 0;
-    currTestIdx = 0;
-    currSubtestIdx = 0;
-    currVariantIdx = 0;
-    totalTestCount = 0;
-    passedTestCount = 0;
+void MySQLStorage::init() {
+    if(dbBatteryId > 0)
+        raiseBugException("storage was already initialized");
 
     std::unique_ptr<sql::PreparedStatement> insBattStmt(conn->prepareStatement(
         "INSERT INTO batteries(name, passed_tests, total_tests, alpha, experiment_id) "
@@ -59,6 +51,14 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
     insBattStmt->execute();
 
     dbBatteryId = getLastInsertedId();
+}
+
+void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
+    if(dbBatteryId <= 0)
+        raiseBugException("storage wasn't initialized");
+
+    if(testResults.empty())
+        raiseBugException("empty results");
 
     /* Storing actual results */
     for(const auto & testRes : testResults) {
@@ -98,10 +98,25 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
         }
         finalizeTest();
     }
-    finalizeReport();
 }
 
 void MySQLStorage::close() {
+    if(dbBatteryId <= 0)
+        raiseBugException("storage wasn't initialized");
+
+    finalizeReport();
+
+    /* Reseting state of the storage. */
+    dbBatteryId = 0;
+    currDbTestId = 0;
+    currDbVariantId = 0;
+    currDbSubtestId = 0;
+    currTestIdx = 0;
+    currSubtestIdx = 0;
+    currVariantIdx = 0;
+    totalTestCount = 0;
+    passedTestCount = 0;
+
     try {
         /* Final commit, will confirm whole transaction */
         conn->commit();
@@ -498,13 +513,6 @@ void MySQLStorage::addPValues(const std::vector<double> & pvals) {
 void MySQLStorage::finalizeReport() {
     if(dbBatteryId <= 0)
         raiseBugException("battery id not set");
-
-    currDbSubtestId = 0;
-    currDbVariantId = 0;
-    currDbTestId = 0;
-    currTestIdx = 0;
-    currVariantIdx = 0;
-    currSubtestIdx = 0;
 
     try {
         std::unique_ptr<sql::PreparedStatement> updBattPassProp(conn->prepareStatement(

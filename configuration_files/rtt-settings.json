@@ -30,6 +30,7 @@
             "mysql-db": {
                 "address": "",
                 "name": "",
+                "port": "",
                 "credentials-file": ""
             }
         },
@@ -47,8 +48,8 @@
         },
         
         "execution": {
-            "max-parallel-tests": 16,
-            "test-timeout-seconds": 1800
+            "max-parallel-tests": 8,
+            "test-timeout-seconds": 3600
         }
     }
 }

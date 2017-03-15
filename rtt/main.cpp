@@ -70,6 +70,7 @@ int main (int argc , char * argv[]) try {
     try {
         /* Initializing storage */
         auto storage = storage::IStorage::getInstance(gc);
+        storage->init();
 
         try {
             /* Initialization of battery configuration in container */
@@ -81,18 +82,11 @@ int main (int argc , char * argv[]) try {
             /* Obtaining and storing results */
             const auto & results = battery->getTestResults();;
             storage->writeResults(Utils::getRawPtrs(results));
-            storage->writeResults(Utils::getRawPtrs(results));
             /* And we are done. */
 
         } catch(std::exception & ex) {
             /* Something happened during battery initialization/execution */
             gc.getLogger()->error(ex.what());
-            /* Storage is still active, error can be stored. */
-            storage->addBatteryWarnings(gc.getLogger()->getWarningMessages());
-            storage->addBatteryErrors(gc.getLogger()->getErrorMessages());
-            /* Close storage, end the program. */
-            storage->close();
-            return -1;
         }
 
         /* Store warnings and errors into storage */

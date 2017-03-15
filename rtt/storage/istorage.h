@@ -18,6 +18,8 @@ public:
 
     /*
      */
+    virtual void init() = 0;
+
     virtual void writeResults(const std::vector<batteries::ITestResult *> & testResults) = 0;
 
     virtual void close() = 0;

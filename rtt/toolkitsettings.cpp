@@ -30,6 +30,7 @@ const std::string ToolkitSettings::JSON_RS_FILE_TU01AB_DIR           = ToolkitSe
 const std::string ToolkitSettings::JSON_RS_FILE_TU01BAB_DIR          = ToolkitSettings::JSON_RS_FILE + "/tu01-blockalphabit-dir";
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB                  = ToolkitSettings::JSON_RS + "/mysql-db";
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB_ADDRESS          = ToolkitSettings::JSON_RS_MYSQL_DB + "/address";
+const std::string ToolkitSettings::JSON_RS_MYSQL_DB_PORT             = ToolkitSettings::JSON_RS_MYSQL_DB + "/port";
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB_NAME             = ToolkitSettings::JSON_RS_MYSQL_DB + "/name";
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE        = ToolkitSettings::JSON_RS_MYSQL_DB + "/credentials-file";
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE_ROOT   = "credentials";
@@ -122,6 +123,7 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
         {
             json nMysql                 = nResultStorage.at(Utils::getLastItemInPath(JSON_RS_MYSQL_DB));
             ts.rsMysqlAddress           = parseStringValue(nMysql, JSON_RS_MYSQL_DB_ADDRESS , cfgFileName);
+            ts.rsMysqlPort              = parseStringValue(nMysql, JSON_RS_MYSQL_DB_PORT , cfgFileName);
             ts.rsMysqlDbName            = parseStringValue(nMysql, JSON_RS_MYSQL_DB_NAME , cfgFileName);
             ts.rsMysqlCredentialsFile   = parseStringValue(nMysql, JSON_RS_MYSQL_DB_CRED_FILE , cfgFileName);
         }
@@ -215,6 +217,10 @@ int ToolkitSettings::getExecMaximumThreads() const {
 
 std::string ToolkitSettings::getRsMysqlAddress() const {
     return rsMysqlAddress;
+}
+
+std::string ToolkitSettings::getRsMysqlPort() const {
+   return rsMysqlPort;
 }
 
 std::string ToolkitSettings::getRsMysqlDbName() const {

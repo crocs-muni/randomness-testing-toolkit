@@ -17,6 +17,8 @@ class MySQLStorage : public IStorage {
 public:
     static std::unique_ptr<MySQLStorage> getInstance(const GlobalContainer & container);
 
+    void init();
+
     void writeResults(const std::vector<batteries::ITestResult *> & testResults);
 
     void close();

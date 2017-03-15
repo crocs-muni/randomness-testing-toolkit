@@ -33,6 +33,8 @@ public:
 
     std::string getRsMysqlAddress() const;
 
+    std::string getRsMysqlPort() const;
+
     std::string getRsMysqlUserName() const;
 
     std::string getRsMysqlPwd() const;
@@ -71,6 +73,7 @@ private:
     static const std::string JSON_RS_FILE_TU01BAB_DIR;
     static const std::string JSON_RS_MYSQL_DB;
     static const std::string JSON_RS_MYSQL_DB_ADDRESS;
+    static const std::string JSON_RS_MYSQL_DB_PORT;
     static const std::string JSON_RS_MYSQL_DB_NAME;
     static const std::string JSON_RS_MYSQL_DB_CRED_FILE;
     static const std::string JSON_RS_MYSQL_DB_CRED_FILE_ROOT;
@@ -119,6 +122,7 @@ private:
     std::string rsFileBlAlphabitDir;
 
     std::string rsMysqlAddress;
+    std::string rsMysqlPort;
     std::string rsMysqlDbName;
     std::string rsMysqlCredentialsFile;
 

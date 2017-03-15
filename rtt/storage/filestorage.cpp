@@ -32,20 +32,20 @@ std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & co
     return s;
 }
 
+void FileStorage::init() {
+    if(initialized)
+        raiseBugException("storage was already initialized");
+
+    initialized = true;
+    makeReportHeader();
+}
+
 void FileStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
+    if(!initialized)
+        raiseBugException("storage wasn't initialized");
+
     if(testResults.empty())
         raiseBugException("empty results");
-
-    /* Clearing variables - writeResults resets state of the storage */
-    report.str(std::string());
-    passedTestsCount = 0;
-    totalTestsCount = 0;
-    passedTestProp = "";
-    indent = 0;
-    currSubtest = 0;
-    currVariant = 0;
-
-    makeReportHeader();
 
     for(const auto & testRes : testResults) {
         addNewTest(testRes->getTestName());
@@ -88,10 +88,14 @@ void FileStorage::writeResults(const std::vector<batteries::ITestResult *> & tes
         }
         finalizeTest();
     }
-    finalizeReport();
 }
 
 void FileStorage::close() {
+    if(!initialized)
+        raiseBugException("storage wasn't initialized");
+
+    finalizeReport();
+
     /* Storing report */
     Utils::createDirectory(Utils::getPathWithoutLastItem(outFilePath));
     Utils::saveStringToFile(outFilePath , report.str());
@@ -100,6 +104,15 @@ void FileStorage::close() {
     /* Files with same name as the file processed in
      * this run will be assigned new results */
     addResultToTableFile();
+
+    /* Reset storage state */
+    report.str(std::string());
+    passedTestsCount = 0;
+    totalTestsCount = 0;
+    passedTestProp = "";
+    indent = 0;
+    currSubtest = 0;
+    currVariant = 0;
 }
 
 void FileStorage::addBatteryError(const std::string & error) {

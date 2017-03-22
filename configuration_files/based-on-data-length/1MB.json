@@ -2,8 +2,7 @@
     "randomness-testing-toolkit": {
         "dieharder-settings": {
             "defaults": {
-                "test-ids": ["0","8-12","15","100-102","201","204"],
-                "psamples": 100
+                "test-ids": ["0","8","10-12","15","100-102","201","204"]
             },
             "test-specific-settings": [
                 {

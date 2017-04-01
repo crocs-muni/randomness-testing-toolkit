@@ -10,33 +10,77 @@
 
 namespace rtt {
 
-/* Class that unifies objects that are widely used thorough application
+/**
+ * @brief The GlobalContainer class Class that unifies objects
+ * that are widely used thorough application
  * so that only one object is passed to other classes. Should be passed
  * as constant reference, only holds pointers to other objects. Before
  * calling getter on desired object, it must be first initialized using
- * init methods. Init only calls class's constructor or getInstance
- * method and creates an unique pointer. */
+ * init methods. Init only calls class' constructor or getInstance
+ * method and creates an unique pointer.
+ */
 class GlobalContainer {
 public:
     GlobalContainer()
         : creationTime(Utils::getRawTime()) {}
 
+    /**
+     * @brief initCliOptions Initializes CliOptions object, will
+     * parse command line arguments of the program
+     * @param argc
+     * @param argv
+     */
     void initCliOptions(int argc , char * argv[]);
 
+    /**
+     * @brief initToolkitSettings Initializes ToolkitSettings object,
+     * will read configuration file with said settings.
+     * @param filename
+     */
     void initToolkitSettings(const std::string & filename);
 
+    /**
+     * @brief initBatteriesConfiguration Initializes BatteriesConfiguration object,
+     * will read configuration file.
+     * @param filename
+     */
     void initBatteriesConfiguration(const std::string & filename);
 
+    /**
+     * @brief initLogger Initializes logger object.
+     * @param logId Unique id of the logged
+     * @param toCout Sets whether the log will be also written to standard output
+     */
     void initLogger(const std::string & logId , bool toCout);
 
+    /**
+     * @brief getCreationTime
+     * @return Raw time of creation of the class instance
+     */
     time_t getCreationTime() const;
 
+    /**
+     * @brief getCliOptions
+     * @return CliOptions pointer, bug exception if not initialized
+     */
     CliOptions * getCliOptions() const;
 
+    /**
+     * @brief getToolkitSettings
+     * @return ToolkitSettings pointer, bug exception if not initialized.
+     */
     ToolkitSettings * getToolkitSettings() const;
 
+    /**
+     * @brief getBatteryConfiguration
+     * @return BatteryConfiguration pointer, bug exception if not initialized
+     */
     batteries::Configuration * getBatteryConfiguration() const;
 
+    /**
+     * @brief getLogger
+     * @return Logger pointer, bug exception if not initialized
+     */
     Logger * getLogger() const;
 
 private:

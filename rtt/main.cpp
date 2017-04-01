@@ -1,34 +1,3 @@
-/*
- * =============================================================
- * *************************** TODO! ***************************
- * =============================================================
- * (It's important to have priorities!)
- * 1. Interface for stat batteries              (Ok)
- *  1.1. Settings                               (Ok)
- *  1.2. Executable runner                      (Ok)
- *  1.3. Reading results from battery output    (Ok)
- *  1.4. Log storage - battery and run output   (Ok)
- *  1.5. Run multiple tests in parallel         (Ok)
- * 2. Storing processed results
- *  2.1. Output Interface                       (Ok)
- *  2.2. Into file structure                    (Ok)
- *  2.3. Into database                          (Ok)
- * 3. Miscelaneous
- *  3.1. Better exception handling              (Ok)
- *  3.2. Batteries runtime error handling       (Ok)
- *  3.3. File logger                            (Ok)
- *  3.4. Better config file organization        (Ok)
- *  3.5. Create CMake project                   (Final step)
- *  3.6. Write documentation, refactor          (More final step)
- * 4. ???
- *     .
- *     .
- *     .
- * 5. Profit!
- * =============================================================
- * *************************************************************
- * =============================================================
- */
 #include <iostream>
 #include <stdexcept>
 
@@ -73,7 +42,8 @@ int main (int argc , char * argv[]) try {
         storage->init();
 
         try {
-            /* Initialization of battery configuration in container */
+            /* Initialization of battery configuration in container -
+             * should something go wrong, the error is logged in storage */
             gc.initBatteriesConfiguration(gc.getCliOptions()->getInputCfgPath());
             /* Initialization of battery */
             auto battery = batteries::IBattery::getInstance(gc);

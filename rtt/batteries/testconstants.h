@@ -44,21 +44,47 @@ private:
     int top = 0;
 };
 
-/* Storage for test data (index in battery, logical name, etc...).
+/**
+ * @brief The TestConstants class Storage for test data (index in battery, logical name, etc...).
  * Each test is mapped to its index in given battery and can be
- * accessed based on battery constant and test index. */
+ * accessed based on battery constant and test index.
+ */
 class TestConstants {
 public:
 
+    /**
+     * @brief getTestLogicName Return human-readable name of given test
+     * @param battery ID of the battery
+     * @param testIndex ID if the test
+     * @return Human-readable name
+     */
     static std::string getTestLogicName(Constants::Battery battery,
                                         int testIndex);
 
+    /**
+     * @brief getNistStsTestData Return structure that represents data of NIST STS tests
+     * @param battery ID of the batery, must be NIST STS
+     * @param testIndex ID of the test
+     * @return Structure with test data
+     */
     static tNistStsData getNistStsTestData(Constants::Battery battery ,
                                            int testIndex);
 
+    /**
+     * @brief getDieharderTestData Return structure that represents data of DIEHARDER tests
+     * @param battery ID of the batery, must be DIEHARDER
+     * @param testIndex ID of the test
+     * @return Structure with test data
+     */
     static tDieharderData getDieharderTestData(Constants::Battery battery ,
                                                int testIndex);
 
+    /**
+     * @brief getTu01TestData Return structure that represents data of TestU01 tests
+     * @param battery ID of the batery, must be some battery from TestU01
+     * @param testIndex ID of the test
+     * @return Structure with test data
+     */
     static tTestU01Data getTu01TestData(Constants::Battery battery ,
                                         int testIndex);
 

@@ -21,27 +21,61 @@ enum class LogLevel {
     INFO , WARN , ERROR
 };
 
-/* This is just a simple wrapper for Easylogging++.
- * Will hold pointer to logger and make header on start. */
+/**
+ * @brief The Logger class This is just a simple wrapper
+ * for Easylogging++. Will hold pointer to logger and make header on start.
+ */
 class Logger {
 public:
-    /* Will create logger instance, write header to log. */
+    /**
+     * @brief Logger Will create Logger instance and write log header.
+     * @param logId Program wide unique id.
+     * @param logFile Path to log file
+     * @param toCout If true, log will be written also on standard output
+     */
     Logger(const std::string & logId ,
            const std::string & logFile , bool toCout);
 
-    /* Destructor, will write counts of errors and warnings */
+    /**
+     * @brief ~Logger desctructor, will finalize log and write number of warnings and errors during the run.
+     */
     ~Logger();
 
+    /**
+     * @brief log Will write logger message of desired level.
+     * @param level Log level, can be INFO, WARN or ERROR
+     * @param msg message
+     */
     void log(LogLevel level , const std::string & msg);
 
+    /**
+     * @brief info Will write informational message to log.
+     * @param msg
+     */
     void info(const std::string & msg);
 
+    /**
+     * @brief warn Will write warning message to log and store msg in warningMessages
+     * @param msg
+     */
     void warn(const std::string & msg);
 
+    /**
+     * @brief error Will write error message to log and store msg in errorMessages
+     * @param msg
+     */
     void error(const std::string & msg);
 
+    /**
+     * @brief getWarningMessages
+     * @return All warning messages that were logged using this object
+     */
     std::vector<std::string> getWarningMessages();
 
+    /**
+     * @brief getErrorMessages
+     * @return All error messages that were logged using this object
+     */
     std::vector<std::string> getErrorMessages();
 
 private:

@@ -7,16 +7,15 @@
 
 namespace rtt {
 
+/**
+ * @brief The Constants class contains global constants that are widely used
+ */
 class Constants {
 public:
-    /*********************************************/
-    /******** Toolkit global constants ***********/
-    /*********************************************/
-
     /* Statistical batteries constants enum */
     /* Values in enum MUST NOT have assigned other than default values
      * (first is one). Item LAST_ITEM HAVE to be last. Always!
-     * Additional battery item should be added before it. */
+     * Additional battery item MUST be added before it. */
     enum class Battery {
         DIEHARDER = 1,
         NIST_STS,
@@ -37,22 +36,55 @@ public:
     static const double MATH_ALPHA;
     static const double MATH_EPS;
 
-    /*********************************************/
-    /********* Toolkit global methods ************/
-    /*********************************************/
-    /* Some battery constants utility methods */
-    static std::string batteryToString(Battery batteryConstant);
+    /**
+     * @brief batteryToString
+     * @param battId
+     * @return human readable string identifying the battery
+     */
+    static std::string batteryToString(Battery battId);
 
+    /**
+     * @brief batteryToShortString
+     * @param battId id
+     * @return short string identifying the battery, used in filenames
+     */
     static std::string batteryToShortString(Battery battId);
 
+    /**
+     * @brief getBatteryExpExitCode
+     * @param battId
+     * @return Expected exit code of the battery executable binary
+     */
     static uint getBatteryExpExitCode(Battery battId);
 
+    /**
+     * @brief isInTU01Family Checks whether given battery is in TestU01 family of batteries
+     * @param battId
+     * @return
+     */
     static bool isInTU01Family(Battery battId);
 
+    /**
+     * @brief isInTU01CrushFamily Checks whether given battery is in TestU01 Crush family of batteries
+     * @param battId
+     * @return
+     */
     static bool isInTU01CrushFamily(Battery battId);
 
+    /**
+     * @brief isInTU01BitFamily Checks whether given battery is in
+     * TestU01 Bit (rabbit, alphabit, block alphabit) family of batteries
+     * @param battId
+     * @return
+     */
     static bool isInTU01BitFamily(Battery battId);
 
+    /**
+     * @brief isinTU01AlphabitFamily Checks whether given battery is in
+     * TestU01 Alphabit (alphabit, block alphabit) family of batteries
+     * @param battId
+     * @return
+     */
     static bool isinTU01AlphabitFamily(Battery battId);
 
 private:

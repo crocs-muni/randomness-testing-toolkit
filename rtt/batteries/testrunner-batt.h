@@ -21,8 +21,10 @@
 namespace rtt {
 namespace batteries {
 
-/* This is static class responsible for execution of given set of tests.
- * Multiple tests can be executed at once. */
+/**
+ * @brief The TestRunner class This is static class responsible for execution of given set of tests.
+ * Multiple tests can be executed at once.
+ */
 class TestRunner {
 public:
 
@@ -41,14 +43,29 @@ public:
     static const int THREAD_STATE_READY         = 1;
     static const int THREAD_STATE_DONE          = 2;
 
-    /* Called from battery's runTests code. This is main thread,
+    /**
+     * @brief executeTests Called from battery's runTests code. This is main thread,
      * creates one threadManager and receives and hands out IDs of
-     * finished child processes of RTT. */
+     * finished child processes of RTT.
+     * @param logger pointer to thread-safe logger object
+     * @param variants all test variants in the battery that will be executed
+     * @param maxThreads maximum of parallel running threads
+     * @param testTimeout timeout of single test, after this time, the test will be killed.
+     */
     static void executeTests(Logger * logger, std::vector<IVariant *> & variants,
                              int maxThreads, int testTimeout);
 
-    /* Called from test code in method execute. Thread is not created
-     * directly from this method, but from test's execute. */
+    /**
+     * @brief executeBinary Called from test code in method execute. Thread is not created
+     * directly from this method, but from test's execute.
+     * @param logger Logger pointer
+     * @param objectInfo Info about caller, will be used in logging
+     * @param binaryPath Path to battery executeble binary
+     * @param expExitCode Expected exit code of the executable
+     * @param arguments Arguments that will be passed to the executable
+     * @param input Standard input that will be passed to the created process
+     * @return Object that holds standard (error) output
+     */
     static BatteryOutput executeBinary(Logger * logger,
                                        const std::string & objectInfo,
                                        const std::string & binaryPath,

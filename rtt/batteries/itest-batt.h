@@ -8,24 +8,61 @@ namespace batteries {
 
 typedef std::vector<double> tTestPvals;
 
+/**
+ * @brief The ITest class Holds single test from given battery.
+ * Can have one or multiple variants and those will be executed.
+ */
 class ITest {
 public:
+    /**
+     * @brief getInstance Creates initialized object
+     * @param battObjInf Information about parent object used for logging
+     * @param testId ID of the test
+     * @param cont Global settings
+     * @return
+     */
     static std::unique_ptr<ITest> getInstance(std::string battObjInf, int testId,
                                               const GlobalContainer & cont);
 
+    /**
+     * @brief ~ITest Desctructor
+     */
     virtual ~ITest() {}
 
-    /* Getters for results and some variables */
+    /**
+     * @brief wasExecuted
+     * @return true if the test was executed, false otherwise
+     */
     bool wasExecuted() const;
 
+    /**
+     * @brief getTestId
+     * @return ID of the test
+     */
     int getTestId() const;
 
+    /**
+     * @brief getLogicName
+     * @return Human readable name of the test
+     */
     std::string getLogicName() const;
 
+    /**
+     * @brief getVariants
+     * @return All variants of the test
+     */
     std::vector<IVariant *> getVariants() const;
 
+    /**
+     * @brief getBattId
+     * @return ID of the parent battery
+     */
     Constants::Battery getBattId() const;
 
+    /**
+     * @brief getLogger
+     * @return pointer to logger
+     */
     Logger * getLogger() const;
 
 protected:

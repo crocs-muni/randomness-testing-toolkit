@@ -9,6 +9,9 @@
 
 namespace rtt {
 
+/**
+ * @brief The RTTException class Used for indicating error during runtime
+ */
 class RTTException : public std::runtime_error {
 public:
     RTTException(const std::string & objIdentifier ,

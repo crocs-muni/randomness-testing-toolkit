@@ -9,8 +9,8 @@ const std::string Constants::FILE_TOOLKIT_SETTINGS = "./rtt-settings.json";
 const double Constants::MATH_ALPHA = 0.01;
 const double Constants::MATH_EPS   = 1e-8;
 
-std::string Constants::batteryToString(Battery batteryConstant) {
-    switch(batteryConstant) {
+std::string Constants::batteryToString(Battery battId) {
+    switch(battId) {
         case Battery::DIEHARDER:
             return "Dieharder";
         case Battery::NIST_STS:

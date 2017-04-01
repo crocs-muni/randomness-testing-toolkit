@@ -13,36 +13,92 @@ using json = nlohmann::json;
 
 class ToolkitSettings {
 public:
-    /* Get object */
+    /**
+     * @brief getInstance Creates initialized object
+     * @param cfgFileName Path to file with toolkit configuration
+     * @return instance
+     */
     static ToolkitSettings getInstance(const std::string & cfgFileName);
 
-    /* Getters for variables */
+    /**
+     * @brief getLoggerRunLogDir
+     * @return Path to directory in which the log of the program run will be stored
+     */
     std::string getLoggerRunLogDir() const;
 
-    std::string getLoggerRunLogFileName() const;
-
+    /**
+     * @brief getRsFileOutFile
+     * @return Path to table with results (FileStorage)
+     */
     std::string getRsFileOutFile() const;
 
+    /**
+     * @brief getLoggerBatteryDir
+     * @param battery
+     * @return Path to directory in which the log of the battery executable run will be stored
+     */
     std::string getLoggerBatteryDir(Constants::Battery battery) const;
 
+    /**
+     * @brief getRsFileBatteryDir
+     * @param battery
+     * @return Path to directory in which the report of program run will be stored (FileStorage)
+     */
     std::string getRsFileBatteryDir(Constants::Battery battery) const;
 
+    /**
+     * @brief getBinaryBattery
+     * @param battery
+     * @return Path to executable of a given battery
+     */
     std::string getBinaryBattery(Constants::Battery battery) const;
 
+    /**
+     * @brief getMiscNiststsMainResDir
+     * @return Path to NIST STS main result directory
+     */
     std::string getMiscNiststsMainResDir() const;
 
+    /**
+     * @brief getRsMysqlAddress
+     * @return IPv4 address of MySQL database (MysqlStorage)
+     */
     std::string getRsMysqlAddress() const;
 
+    /**
+     * @brief getRsMysqlPort
+     * @return Port of MySQL database (MysqlStorage)
+     */
     std::string getRsMysqlPort() const;
 
+    /**
+     * @brief getRsMysqlUserName
+     * @return Username for accessing database (MysqlStorage)
+     */
     std::string getRsMysqlUserName() const;
 
+    /**
+     * @brief getRsMysqlPwd
+     * @return Password for accessing database (MysqlStorage)
+     */
     std::string getRsMysqlPwd() const;
 
+    /**
+     * @brief getRsMysqlDbName
+     * @return Name of the database (MysqlStorage)
+     */
     std::string getRsMysqlDbName() const;
 
+    /**
+     * @brief getExecTestTimeout
+     * @return Battery test execution timeout in seconds
+     */
     int getExecTestTimeout() const;
 
+    /**
+     * @brief getExecMaximumThreads
+     * @return Maximum battery tests running in parallel
+     */
     int getExecMaximumThreads() const;
 
 private:

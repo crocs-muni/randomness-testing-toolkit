@@ -5,8 +5,10 @@
 
 namespace rtt {
 
-/* Class with hardcoded strings that are used in application
- * to notify about errors, progress, etc. */
+/**
+ * @brief The Strings class Class with hardcoded strings that are used in application
+ * to notify about errors, progress, etc
+ */
 class Strings {
 public:
     static const std::string ERR_FILE_OPEN_FAIL;

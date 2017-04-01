@@ -128,17 +128,45 @@ public:
      */
     static void createDirectory(const std::string & path, int access = 0775);
 
+    /**
+     * @brief fileExist Checks existence of a file
+     * @param name
+     * @return
+     */
     static bool fileExist(const std::string & name);
 
+    /**
+     * @brief rmDirFiles Removes all files inside the directory n
+     * @param n Path to the directory
+     */
     static void rmDirFiles(const std::string & n);
 
+    /**
+     * @brief getLogFilePath Creates path of the main logger file
+     * @param creationTime Starting time of the program
+     * @param logDir Path to directory in which the file should be stored
+     * @param inputFilePath Path to binary input file that will be analyzed
+     * @param batteryShort Short name of the battery
+     * @return
+     */
     static std::string getLogFilePath(time_t creationTime ,
                                       const std::string & logDir ,
                                       const std::string & inputFilePath ,
                                       std::string batteryShort = "");
 
+    /**
+     * @brief intToHex Converts integer to hex notation
+     * @param num Integer
+     * @param width Padding width, if zero no padding will be used
+     * @return
+     */
     static std::string intToHex(int num, uint width = 0);
 
+    /**
+     * @brief getRawPtrs Returns raw pointers from vector of unique pointers
+     * @param source vector of unique pointers
+     * @return
+     */
     template<typename T>
     static std::vector<T *> getRawPtrs(const std::vector<std::unique_ptr<T>> & source) {
         std::vector<T *> rval(source.size());

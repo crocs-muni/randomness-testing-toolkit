@@ -19,6 +19,10 @@ typedef std::map<int , int> tIntIntMap;
 typedef std::map<int , std::string> tIntStringMap;
 typedef std::map<std::string , std::string> tStringStringMap;
 
+/**
+ * @brief The Configuration class Stores configuration of the battery,
+ * is read from the config file provided by the user.
+ */
 class Configuration {
 public:
     /* JSON tag name inside config file */
@@ -52,21 +56,63 @@ public:
     /* Constant set to integer values that weren't set */
     static const int VALUE_INT_NOT_SET = -1;
 
+    /**
+     * @brief getInstance
+     * @param configFileName Name of the configuration file
+     * @return initialized object
+     */
     static Configuration getInstance(const std::string & configFileName);
 
-    /* Getters for variables */
+    /**
+     * @brief getBatteryDefaultTests
+     * @param battery ID of the desired battery
+     * @return IDs of the tests that are set for execution in the config files for given battery
+     */
     std::vector<int> getBatteryDefaultTests(Constants::Battery battery);
 
+    /**
+     * @brief getTestVariantsCount Returns count of variants
+     * @param batt Specifies battery
+     * @param testId Specifies test
+     * @return Count of defined variants of single specific test of single specific battery.
+     */
     uint getTestVariantsCount(Constants::Battery batt , int testId);
 
+    /**
+     * @brief getTestVariantParamInt Returns integer value of variant parameter.
+     * If there is no such variant parameter defined, then test or battery default value is returned.
+     * @param batt Specifies battery
+     * @param testId Specifies test
+     * @param variantIdx Specifies variant
+     * @param paramName Name of the parameter
+     * @return Gets value of variant parameter of specific test and battery
+     */
     int getTestVariantParamInt(Constants::Battery batt ,
                                 int testId , uint variantIdx ,
                                 const std::string & paramName);
 
+    /**
+     * @brief getTestVariantParamString Returns string value of variant parameter.
+     * If there is no such variant parameter defined, then test or battery default value is returned.
+     * @param batt Specifies battery
+     * @param testId Specifies test
+     * @param variantIdx Specifies variant
+     * @param paramName Name of the parameter
+     * @return Gets value of variant parameter of specific test and battery
+     */
     std::string getTestVariantParamString(Constants::Battery batt ,
                                           int testId , uint variantIdx ,
                                           const std::string & paramName);
 
+    /**
+     * @brief getTestVariantParamMap Returns map value of variant parameter.
+     * If there is no such variant parameter defined, then test or battery default value is returned.
+     * @param batt Specifies battery
+     * @param testId Specifies test
+     * @param variantIdx Specifies variant
+     * @param paramName Name of the parameter
+     * @return Gets value of variant parameter of specific test and battery
+     */
     tStringStringMap getTestVariantParamMap(Constants::Battery batt ,
                                             int testId , uint variantIdx ,
                                             const std::string & paramName);

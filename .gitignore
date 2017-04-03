@@ -1,4 +1,4 @@
 *.pri
 *.pro
 *.user*
-
+*.o

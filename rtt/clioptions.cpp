@@ -81,6 +81,9 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     if(options.inputDataPath.empty())
         throw RTTException(options.objectInfo ,
                            "option \"-f\" must be set in arguments");
+    if(options.inputCfgPath.empty())
+        throw RTTException(options.objectInfo ,
+                           "options \"-c\" must be correctly set in arguments");
 
     if(!Utils::fileExist(options.inputDataPath))
         throw RTTException(options.objectInfo ,
@@ -89,9 +92,6 @@ CliOptions CliOptions::getInstance(int argc , char * argv[]) {
     if(test >= 0)
         options.testConsts.push_back(test);
     std::sort(options.testConsts.begin(), options.testConsts.end());
-    /* Setting config path */
-    if(options.inputCfgPath.empty())
-        options.inputCfgPath = Constants::FILE_DEFAULT_CFG_PATH;
 
     return options;
 }
@@ -125,8 +125,7 @@ std::string CliOptions::getUsage() {
     ss << "        \"tu01_crush\", \"tu01_bigcrush\", \"tu01_rabbit\",\n";
     ss << "        \"tu01_alphabit\" and \"tu01_blockalphabit\".\n";
     ss << "    -f  Followed with path to input binary data that will be analysed by battery.\n";
-    ss << "    -c  Followed with path to custom config file that will be used instead of\n";
-    ss << "        default one. Argument is optional, default path is " << Constants::FILE_DEFAULT_CFG_PATH << "\n";
+    ss << "    -c  Followed with path to config file.\n";
     ss << "    -t  Followed with constant of test in battery that will be used in testing.\n";
     ss << "    -h  Or no arguments will bring up this message.\n\n";
     return ss.str();

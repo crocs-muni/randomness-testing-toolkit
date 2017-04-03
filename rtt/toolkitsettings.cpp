@@ -50,21 +50,19 @@ const std::string ToolkitSettings::JSON_EXEC_TEST_TIMEOUT            = ToolkitSe
 
 
 ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
+    ToolkitSettings ts;
+    ts.cfgFileName = cfgFileName;
+
     json nRoot;
     try {
-        nRoot = json::parse(Utils::readFileToString(cfgFileName));
+        nRoot = json::parse(Utils::readFileToString(ts.cfgFileName));
     } catch (std::exception & ex) {
-        throw RTTException(objectInfo,
-                           getParsingErrorMessage(ex.what(), cfgFileName));
+        throw RTTException(objectInfo, ts.getParsingErrorMessage(ex.what()));
     }
 
     if(nRoot.count(JSON_ROOT) != 1)
-        throw RTTException(objectInfo,
-                           getParsingErrorMessage("missing root tag",
-                                                  cfgFileName, JSON_ROOT));
+        throw RTTException(objectInfo, ts.getParsingErrorMessage("missing root tag", JSON_ROOT));
     nRoot = nRoot.at(JSON_ROOT);
-
-    ToolkitSettings ts;
 
     /* Variables are set below. If new battery or variables are added set them here.
      * Ideally follow organization that is already here. */
@@ -72,74 +70,59 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     /*** Logger directories ***/
     if(nRoot.count(Utils::getLastItemInPath(JSON_LOG)) != 1)
         throw RTTException(objectInfo ,
-                           getParsingErrorMessage("missing tag with logger settings",
-                                                  cfgFileName, JSON_LOG));
+                           ts.getParsingErrorMessage("missing tag with logger settings", JSON_LOG));
     {
         json nLogger            = nRoot.at(Utils::getLastItemInPath(JSON_LOG));
-        auto dirPfx             = parseDirectoryPath(nLogger , JSON_LOG_DIR_PFX , cfgFileName ,  false);
-        ts.loggerRunLogDir      = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_RUN_LOG_DIR , cfgFileName);
-        ts.loggerDieharderDir   = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_DH_DIR , cfgFileName);
-        ts.loggerNiststsDir     = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_NIST_DIR , cfgFileName);
-        ts.loggerSCrushDir      = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_TU01SC_DIR , cfgFileName);
-        ts.loggerCrushDir       = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_TU01C_DIR , cfgFileName);
-        ts.loggerBCrushDir      = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_TU01BC_DIR , cfgFileName);
-        ts.loggerRabbitDir      = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_TU01RAB_DIR , cfgFileName);
-        ts.loggerAlphabitDir    = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_TU01AB_DIR , cfgFileName);
-        ts.loggerBlAlphabitDir  = dirPfx + parseDirectoryPath(nLogger , JSON_LOG_TU01BAB_DIR , cfgFileName);
+        auto dirPfx             = ts.parseDirectoryPath(nLogger , JSON_LOG_DIR_PFX ,  false);
+        ts.loggerRunLogDir      = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_RUN_LOG_DIR);
+        ts.loggerDieharderDir   = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_DH_DIR);
+        ts.loggerNiststsDir     = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_NIST_DIR);
+        ts.loggerSCrushDir      = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_TU01SC_DIR);
+        ts.loggerCrushDir       = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_TU01C_DIR);
+        ts.loggerBCrushDir      = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_TU01BC_DIR);
+        ts.loggerRabbitDir      = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_TU01RAB_DIR);
+        ts.loggerAlphabitDir    = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_TU01AB_DIR);
+        ts.loggerBlAlphabitDir  = dirPfx + ts.parseDirectoryPath(nLogger , JSON_LOG_TU01BAB_DIR);
     }
 
-    /*** Result storage settings ***/
-    if(nRoot.count(Utils::getLastItemInPath(JSON_RS)) != 1)
-        throw RTTException(objectInfo ,
-                           getParsingErrorMessage("missing tag with result storage settings",
-                                                  cfgFileName, JSON_RS));
-    {
+    /*** Result storage settings - not mandatory ***/
+    if(nRoot.count(Utils::getLastItemInPath(JSON_RS)) == 1) {
         json nResultStorage = nRoot.at(Utils::getLastItemInPath(JSON_RS));
 
-        /** File storage **/
-        if(nResultStorage.count(Utils::getLastItemInPath(JSON_RS_FILE)) != 1)
-            throw RTTException(objectInfo ,
-                               getParsingErrorMessage("missing tag with file storage settings",
-                                                      cfgFileName, JSON_RS_FILE));
-        {
+        /** File storage - not mandatory **/
+        if(nResultStorage.count(Utils::getLastItemInPath(JSON_RS_FILE)) == 1) {
             json nFile              = nResultStorage.at(Utils::getLastItemInPath(JSON_RS_FILE));
-            auto dirPfx             = parseDirectoryPath(nFile , JSON_RS_FILE_DIR_PFX , cfgFileName , false);
-            ts.rsFileOutFile        = parseStringValue(nFile , JSON_RS_FILE_MAIN_FILE , cfgFileName);
-            ts.rsFileDieharderDir   = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_DH_DIR , cfgFileName);
-            ts.rsFileNiststsDir     = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_NIST_DIR , cfgFileName);
-            ts.rsFileSCrushDir      = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_TU01SC_DIR , cfgFileName);
-            ts.rsFileCrushDir       = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_TU01C_DIR , cfgFileName);
-            ts.rsFileBCrushDir      = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_TU01BC_DIR , cfgFileName);
-            ts.rsFileRabbitDir      = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_TU01RAB_DIR , cfgFileName);
-            ts.rsFileAlphabitDir    = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_TU01AB_DIR , cfgFileName);
-            ts.rsFileBlAlphabitDir  = dirPfx + parseDirectoryPath(nFile , JSON_RS_FILE_TU01BAB_DIR , cfgFileName);
+            auto dirPfx             = ts.parseDirectoryPath(nFile , JSON_RS_FILE_DIR_PFX , false);
+            ts.rsFileOutFile        = ts.parseStringValue(nFile , JSON_RS_FILE_MAIN_FILE , false);
+            ts.rsFileDieharderDir   = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_DH_DIR , false);
+            ts.rsFileNiststsDir     = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_NIST_DIR , false);
+            ts.rsFileSCrushDir      = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_TU01SC_DIR , false);
+            ts.rsFileCrushDir       = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_TU01C_DIR , false);
+            ts.rsFileBCrushDir      = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_TU01BC_DIR , false);
+            ts.rsFileRabbitDir      = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_TU01RAB_DIR , false);
+            ts.rsFileAlphabitDir    = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_TU01AB_DIR , false);
+            ts.rsFileBlAlphabitDir  = dirPfx + ts.parseDirectoryPath(nFile , JSON_RS_FILE_TU01BAB_DIR , false);
         }
 
-        /** Database storage **/
-        if(nResultStorage.count(Utils::getLastItemInPath(JSON_RS_MYSQL_DB)) != 1)
-            throw RTTException(objectInfo ,
-                               getParsingErrorMessage("missing tag with mysql db settings",
-                                                      cfgFileName, JSON_RS_MYSQL_DB));
-        {
+        /*** MySQL Database storage - not mandatory ***/
+        if(nResultStorage.count(Utils::getLastItemInPath(JSON_RS_MYSQL_DB)) == 1) {
             json nMysql                 = nResultStorage.at(Utils::getLastItemInPath(JSON_RS_MYSQL_DB));
-            ts.rsMysqlAddress           = parseStringValue(nMysql, JSON_RS_MYSQL_DB_ADDRESS , cfgFileName);
-            ts.rsMysqlPort              = parseStringValue(nMysql, JSON_RS_MYSQL_DB_PORT , cfgFileName);
-            ts.rsMysqlDbName            = parseStringValue(nMysql, JSON_RS_MYSQL_DB_NAME , cfgFileName);
-            ts.rsMysqlCredentialsFile   = parseStringValue(nMysql, JSON_RS_MYSQL_DB_CRED_FILE , cfgFileName);
+            ts.rsMysqlAddress           = ts.parseStringValue(nMysql, JSON_RS_MYSQL_DB_ADDRESS , false);
+            ts.rsMysqlPort              = ts.parseStringValue(nMysql, JSON_RS_MYSQL_DB_PORT , false);
+            ts.rsMysqlDbName            = ts.parseStringValue(nMysql, JSON_RS_MYSQL_DB_NAME , false);
+            ts.rsMysqlCredentialsFile   = ts.parseStringValue(nMysql, JSON_RS_MYSQL_DB_CRED_FILE , false);
         }
     }
-
 
     /*** Binaries locations ***/
     if(nRoot.count(Utils::getLastItemInPath(JSON_BINARIES)) != 1)
         throw RTTException(objectInfo ,
-                           getParsingErrorMessage("missing tag with binaries locations",
-                                                  cfgFileName, JSON_BINARIES));
+                           ts.getParsingErrorMessage("missing tag with binaries locations", JSON_BINARIES));
     {
         json nBinaries      = nRoot.at(Utils::getLastItemInPath(JSON_BINARIES));
-        ts.binaryDieharder  = parseStringValue(nBinaries , JSON_BINARIES_DH , cfgFileName);
-        ts.binaryNiststs    = parseStringValue(nBinaries , JSON_BINARIES_NIST , cfgFileName);
-        ts.binaryTestU01    = parseStringValue(nBinaries , JSON_BINARIES_TU01 , cfgFileName);
+        ts.binaryDieharder  = ts.parseStringValue(nBinaries , JSON_BINARIES_DH);
+        ts.binaryNiststs    = ts.parseStringValue(nBinaries , JSON_BINARIES_NIST);
+        ts.binaryTestU01    = ts.parseStringValue(nBinaries , JSON_BINARIES_TU01);
     }
 
     /* Check existence of binaries */
@@ -153,18 +136,16 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     /*** Miscelaneous variables ***/
     if(nRoot.count(Utils::getLastItemInPath(JSON_MISC)) != 1)
         throw RTTException(objectInfo ,
-                           getParsingErrorMessage("missing tag with miscelaneous settings",
-                                                  cfgFileName, JSON_MISC));
+                           ts.getParsingErrorMessage("missing tag with miscelaneous settings", JSON_MISC));
     {
         json nMisc = nRoot.at(Utils::getLastItemInPath(JSON_MISC));
         /** NIST STS **/
         if(nMisc.count(Utils::getLastItemInPath(JSON_MISC_NIST)) != 1)
             throw RTTException(objectInfo ,
-                               getParsingErrorMessage("missing tag with nist sts misc settings",
-                                                      cfgFileName, JSON_MISC_NIST));
+                               ts.getParsingErrorMessage("missing tag with nist sts misc settings", JSON_MISC_NIST));
         {
             json nMiscNist              = nMisc.at(Utils::getLastItemInPath(JSON_MISC_NIST));
-            ts.miscNiststsMainResDir    = parseDirectoryPath(nMiscNist , JSON_MISC_NIST_MAIN_RES_DIR , cfgFileName);
+            ts.miscNiststsMainResDir    = ts.parseDirectoryPath(nMiscNist , JSON_MISC_NIST_MAIN_RES_DIR);
         }
     }
 
@@ -172,12 +153,11 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     /*** Battery execution related variables ***/
     if(nRoot.count(Utils::getLastItemInPath(JSON_EXEC)) != 1)
         throw RTTException(objectInfo ,
-                           getParsingErrorMessage("missing tag with battery execution settings",
-                                                  cfgFileName, JSON_EXEC));
+                           ts.getParsingErrorMessage("missing tag with battery execution settings", JSON_EXEC));
     {
         json nExec = nRoot.at(Utils::getLastItemInPath(JSON_EXEC));
-        ts.execMaximumThreads = parseIntegerValue(nExec , JSON_EXEC_MAX_PAR_TESTS , cfgFileName);
-        ts.execTestTimeout = parseIntegerValue(nExec, JSON_EXEC_TEST_TIMEOUT, cfgFileName);
+        ts.execMaximumThreads = ts.parseIntegerValue(nExec , JSON_EXEC_MAX_PAR_TESTS);
+        ts.execTestTimeout = ts.parseIntegerValue(nExec, JSON_EXEC_TEST_TIMEOUT);
     }
 
     return ts;
@@ -188,7 +168,7 @@ std::string ToolkitSettings::getLoggerRunLogDir() const {
 }
 
 std::string ToolkitSettings::getRsFileOutFile() const {
-    return rsFileOutFile;
+    return returnIfNonEmpty(rsFileOutFile, JSON_RS_FILE_MAIN_FILE);
 }
 
 std::string ToolkitSettings::getLoggerBatteryDir(Constants::Battery battery) const {
@@ -212,15 +192,15 @@ int ToolkitSettings::getExecMaximumThreads() const {
 }
 
 std::string ToolkitSettings::getRsMysqlAddress() const {
-    return rsMysqlAddress;
+    return returnIfNonEmpty(rsMysqlAddress, JSON_RS_MYSQL_DB_ADDRESS);
 }
 
 std::string ToolkitSettings::getRsMysqlPort() const {
-   return rsMysqlPort;
+    return returnIfNonEmpty(rsMysqlPort, JSON_RS_MYSQL_DB_PORT);
 }
 
 std::string ToolkitSettings::getRsMysqlDbName() const {
-    return rsMysqlDbName;
+    return returnIfNonEmpty(rsMysqlDbName, JSON_RS_MYSQL_DB_NAME);
 }
 
 int ToolkitSettings::getExecTestTimeout() const {
@@ -228,41 +208,12 @@ int ToolkitSettings::getExecTestTimeout() const {
 }
 
 std::string ToolkitSettings::getRsMysqlUserName() const {
-    json nCred;
-    try {
-        nCred = json::parse(Utils::readFileToString(rsMysqlCredentialsFile));
-    } catch (std::exception & ex) {
-        throw RTTException(objectInfo,
-                           getParsingErrorMessage(ex.what(), rsMysqlCredentialsFile));
-    }
-
-    if(nCred.count(JSON_RS_MYSQL_DB_CRED_FILE_ROOT) != 1)
-        throw RTTException(objectInfo,
-                           getParsingErrorMessage("missing root tag in credentials file",
-                                                  rsMysqlCredentialsFile, JSON_RS_MYSQL_DB_CRED_FILE_ROOT));
-    nCred = nCred.at(JSON_RS_MYSQL_DB_CRED_FILE_ROOT);
-
-    return parseStringValue(nCred, JSON_RS_MYSQL_DB_CRED_FILE_NAME, rsMysqlCredentialsFile);
+    return getTagFromCredentials(JSON_RS_MYSQL_DB_CRED_FILE_NAME);
 }
 
 std::string ToolkitSettings::getRsMysqlPwd() const {
-    json nCred;
-    try {
-        nCred = json::parse(Utils::readFileToString(rsMysqlCredentialsFile));
-    } catch (std::exception & ex) {
-        throw RTTException(objectInfo,
-                           getParsingErrorMessage(ex.what(), rsMysqlCredentialsFile));
-    }
-
-    if(nCred.count(JSON_RS_MYSQL_DB_CRED_FILE_ROOT) != 1)
-        throw RTTException(objectInfo,
-                           getParsingErrorMessage("missing root tag in credentials file",
-                                                  rsMysqlCredentialsFile, JSON_RS_MYSQL_DB_CRED_FILE_ROOT));
-    nCred = nCred.at(JSON_RS_MYSQL_DB_CRED_FILE_ROOT);
-
-    return parseStringValue(nCred, JSON_RS_MYSQL_DB_CRED_FILE_PWD, rsMysqlCredentialsFile);
+    return getTagFromCredentials(JSON_RS_MYSQL_DB_CRED_FILE_PWD);
 }
-
 
 /*
                      __                       __
@@ -290,7 +241,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryNiststs;
         case VariableType::loggerDir: return loggerNiststsDir;
-        case VariableType::rsFileDir: return rsFileNiststsDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileNiststsDir, JSON_RS_FILE_NIST_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -298,7 +250,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryDieharder;
         case VariableType::loggerDir: return loggerDieharderDir;
-        case VariableType::rsFileDir: return rsFileDieharderDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileDieharderDir, JSON_RS_FILE_DH_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -306,7 +259,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerSCrushDir;
-        case VariableType::rsFileDir: return rsFileSCrushDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileSCrushDir, JSON_RS_FILE_TU01SC_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -314,7 +268,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerCrushDir;
-        case VariableType::rsFileDir: return rsFileCrushDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileCrushDir, JSON_RS_FILE_TU01C_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -322,7 +277,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerBCrushDir;
-        case VariableType::rsFileDir: return rsFileBCrushDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileBCrushDir, JSON_RS_FILE_TU01BC_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -330,7 +286,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerRabbitDir;
-        case VariableType::rsFileDir: return rsFileRabbitDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileRabbitDir, JSON_RS_FILE_TU01RAB_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -338,7 +295,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerAlphabitDir;
-        case VariableType::rsFileDir: return rsFileAlphabitDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileAlphabitDir, JSON_RS_FILE_TU01AB_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -346,7 +304,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerBlAlphabitDir;
-        case VariableType::rsFileDir: return rsFileBlAlphabitDir;
+        case VariableType::rsFileDir:
+                return returnIfNonEmpty(rsFileBlAlphabitDir, JSON_RS_FILE_TU01BAB_DIR);
         default:raiseBugException("invalid variable type");
         }
     }
@@ -356,9 +315,8 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
 
 std::string ToolkitSettings::parseDirectoryPath(const json & parenttag,
                                                 const std::string & childTagPath,
-                                                const std::string & cfgFile,
-                                                bool mandatory) {
-    auto rval = parseStringValue(parenttag , childTagPath , cfgFile , mandatory);
+                                                bool mandatory) const {
+    auto rval = parseStringValue(parenttag , childTagPath , mandatory);
     if(!rval.empty() && rval.back() != '/')
         rval.append("/");
 
@@ -367,14 +325,13 @@ std::string ToolkitSettings::parseDirectoryPath(const json & parenttag,
 
 std::string ToolkitSettings::parseStringValue(const json & parenttag,
                                               const std::string & childTagPath,
-                                              const std::string & cfgFile,
-                                              bool mandatory) {
+                                              bool mandatory) const {
     try {
         auto childTagName = Utils::getLastItemInPath(childTagPath);
         if(parenttag.count(childTagName) != 1) {
             if(mandatory)
                 throw RTTException(objectInfo,
-                                   getParsingErrorMessage("missing tag", cfgFile, childTagPath));
+                                   getParsingErrorMessage("missing tag", childTagPath));
 
 
             return "";
@@ -383,20 +340,19 @@ std::string ToolkitSettings::parseStringValue(const json & parenttag,
         }
     } catch (std::domain_error ex) {
         throw RTTException(objectInfo,
-                           getParsingErrorMessage(ex.what(), cfgFile, childTagPath));
+                           getParsingErrorMessage(ex.what(), childTagPath));
     }
 }
 
 int ToolkitSettings::parseIntegerValue(const json & parenttag,
                                        const std::string & childTagPath,
-                                       const std::string & cfgFile,
-                                       bool mandatory) {
+                                       bool mandatory) const {
     try {
         auto childTagName = Utils::getLastItemInPath(childTagPath);
         if(parenttag.count(childTagName) != 1) {
             if(mandatory)
                 throw RTTException(objectInfo,
-                                   getParsingErrorMessage("missing tag", cfgFile, childTagPath));
+                                   getParsingErrorMessage("missing tag", childTagPath));
 
             return 0;
         } else {
@@ -404,15 +360,52 @@ int ToolkitSettings::parseIntegerValue(const json & parenttag,
         }
     } catch (std::domain_error ex) {
         throw RTTException(objectInfo,
-                           getParsingErrorMessage(ex.what(), cfgFile, childTagPath));
+                           getParsingErrorMessage(ex.what(), childTagPath));
     }
 }
 
+std::string ToolkitSettings::getTagFromCredentials(const std::string & tagPath) const {
+    if(rsMysqlCredentialsFile.empty())
+        throw RTTException(objectInfo, getParsingErrorMessage(
+                               "missing or empty tag", JSON_RS_MYSQL_DB_CRED_FILE));
+    json nCred;
+    try {
+        nCred = json::parse(Utils::readFileToString(rsMysqlCredentialsFile));
+    } catch (std::exception & ex) {
+        throw RTTException(objectInfo,
+                           getParsingErrorMessage(ex.what(), {}, rsMysqlCredentialsFile));
+    }
+
+    if(nCred.count(JSON_RS_MYSQL_DB_CRED_FILE_ROOT) != 1)
+        throw RTTException(objectInfo, getParsingErrorMessage(
+                               "missing root tag in credentials file",
+                               JSON_RS_MYSQL_DB_CRED_FILE_ROOT,
+                               rsMysqlCredentialsFile));
+
+    nCred = nCred.at(JSON_RS_MYSQL_DB_CRED_FILE_ROOT);
+    auto rval = parseStringValue(nCred, tagPath, false);
+    return returnIfNonEmpty(rval, tagPath, rsMysqlCredentialsFile);
+}
+
+std::string ToolkitSettings::returnIfNonEmpty(const std::string & value,
+                                              const std::string & originTag,
+                                              const std::string & originFile) const {
+    if(value.empty())
+        throw RTTException(objectInfo, getParsingErrorMessage(
+                               "missing or empty tag", originTag, originFile));
+    return value;
+}
+
 std::string ToolkitSettings::getParsingErrorMessage(const std::string & mess,
-                                                    const std::string & cfgFile,
-                                                    const std::string & tagPath) {
+                                                    const std::string & tagPath,
+                                                    const std::string & fileName) const {
     std::stringstream rval;
-    rval << mess << "; file: " << cfgFile;
+    rval << mess << "; file: ";
+    if(!fileName.empty()) {
+        rval << fileName;
+    } else {
+        rval << cfgFileName;
+    }
     if(!tagPath.empty())
         rval << "; invalid tag: " << tagPath;
 

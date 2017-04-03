@@ -157,6 +157,8 @@ private:
     /* Member variables */
     static const std::string objectInfo;
 
+    std::string cfgFileName;
+
     std::string loggerRunLogDir;
     std::string loggerDieharderDir;
     std::string loggerNiststsDir;
@@ -197,24 +199,27 @@ private:
     std::string getBatteryVariable(VariableType variableType ,
                                    Constants::Battery battery) const;
 
-    static std::string parseDirectoryPath(const json & parentNode,
-                                          const std::string & childTagName,
-                                          const std::string & cfgFile,
-                                          bool mandatory = true);
+    std::string parseDirectoryPath(const json & parentNode,
+                                   const std::string & childTagName,
+                                   bool mandatory = true) const;
 
-    static std::string parseStringValue(const json & parentNode,
-                                        const std::string & childTagName,
-                                        const std::string & cfgFile,
-                                        bool mandatory = true);
-
-    static int parseIntegerValue(const json & parentNode,
+    std::string parseStringValue(const json & parentNode,
                                  const std::string & childTagName,
-                                 const std::string & cfgFile,
-                                 bool mandatory = true);
+                                 bool mandatory = true) const;
 
-    static std::string getParsingErrorMessage(const std::string & mess,
-                                              const std::string & cfgFile,
-                                              const std::string & tagPath = "");
+    int parseIntegerValue(const json & parentNode,
+                          const std::string & childTagName,
+                          bool mandatory = true) const;
+
+    std::string getTagFromCredentials(const std::string & tagPath) const;
+
+    std::string returnIfNonEmpty(const std::string & value,
+                                 const std::string & originTag,
+                                 const std::string & originFile = "") const;
+
+    std::string getParsingErrorMessage(const std::string & mess,
+                                       const std::string & tagPath = "",
+                                       const std::string & fileName = "") const;
 };
 
 } // namespace rtt

@@ -53,13 +53,13 @@ Setting Setting::getInstance(const std::string & arg,
     } else if (arg == "-m") {
         setting.logicName = "Multiply Psamples";
     } else if (arg == "-n") {
-        setting.logicName = "Ntuple setting";
+        setting.logicName = "N-tuple setting";
     } else if (arg == "-o") {
         throw std::runtime_error("option " + arg + " can't be set by user");
         setting.logicName = "Output generator bytes to file";
     } else if (arg == "-p") {
         throw std::runtime_error("option " + arg + " must be set in config file");
-        setting.logicName = "Psamples count";
+        setting.logicName = "P-samples count";
     } else if (arg == "-P") {
         setting.logicName = "Xoff";
     } else if (arg == "-S") {
@@ -81,7 +81,7 @@ Setting Setting::getInstance(const std::string & arg,
         if(tmp < 0 || tmp > 1)
             throw std::runtime_error("invalid value in " + arg + " option: " + value);
     } else if (arg == "-Y") {
-        setting.logicName = "Xtrategy - T2F mode";
+        setting.logicName = "X-trategy - Test To Fail mode";
         if(value != "0" && value != "1" && value != "2")
             throw std::runtime_error("invalid value in " + arg + " option: " + value);
     } else if (arg == "-v") {

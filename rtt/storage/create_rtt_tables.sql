@@ -7,8 +7,10 @@ CREATE TABLE IF NOT EXISTS experiments (
     id                  BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name                VARCHAR(255) NOT NULL,
     author_email        VARCHAR(255),
-    created             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status              ENUM('pending','running','finished') NOT NULL DEFAULT 'pending',
+    created             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    run_started         DATETIME DEFAULT NULL,
+    run_finished        DATETIME DEFAULT NULL,
     config_file         VARCHAR(255) NOT NULL,
     data_file           VARCHAR(255) NOT NULL,
     data_file_sha256    VARCHAR(64) NOT NULL
@@ -18,6 +20,8 @@ CREATE TABLE IF NOT EXISTS jobs (
     id                  BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
     battery             VARCHAR(100) NOT NULL,
     status              ENUM('pending','running','finished') NOT NULL DEFAULT 'pending',
+    run_started         DATETIME DEFAULT NULL,
+    run_finished        DATETIME DEFAULT NULL,
     experiment_id       BIGINT UNSIGNED NOT NULL,
     FOREIGN KEY (experiment_id) REFERENCES experiments(id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = INNODB;

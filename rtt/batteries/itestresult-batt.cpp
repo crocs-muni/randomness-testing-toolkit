@@ -78,7 +78,12 @@ void ITestResult::evaluateSetPassed() {
 }
 
 bool ITestResult::isPValuePassing(double pvalue) {
-    if(pvalue < partialAlpha - Constants::MATH_EPS)
+    /* We are using double sided interval here.
+     * Hence everything outside of the interval
+     * <alpha/2, 1-(alpha/2)> should and will be
+     * failure!!! */
+    if(pvalue < (partialAlpha / 2.0) - Constants::MATH_EPS ||
+            pvalue > 1 - (partialAlpha / 2.0) + Constants::MATH_EPS)
         return false;
 
     return true;

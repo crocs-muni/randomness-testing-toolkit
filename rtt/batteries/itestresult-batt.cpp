@@ -78,12 +78,11 @@ void ITestResult::evaluateSetPassed() {
 }
 
 bool ITestResult::isPValuePassing(double pvalue) {
-    /* We are using double sided interval here.
-     * Hence everything outside of the interval
-     * <alpha/2, 1-(alpha/2)> should and will be
-     * failure!!! */
-    if(pvalue < (partialAlpha / 2.0) - Constants::MATH_EPS ||
-            pvalue > 1 - (partialAlpha / 2.0) + Constants::MATH_EPS)
+    /* Everything outside of the interval <alpha, 1) is failure.
+     * Note the open interval on right side - this is to fail
+     * full 1.0s which are often given as incorrect value by batteries */
+    if(pvalue < partialAlpha - Constants::MATH_EPS ||
+            pvalue > 1 - Constants::MATH_EPS)
         return false;
 
     return true;

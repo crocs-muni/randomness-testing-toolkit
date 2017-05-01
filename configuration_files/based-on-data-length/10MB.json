@@ -116,150 +116,134 @@
             },
             "test-specific-settings": []
         },
-    
-        "testu01-settings": {
+
+        "tu01-rabbit-settings": {
             "defaults": {
-                "small-crush": {
-                    "test-ids": [],
-                    "repetitions": 1
-                },
-                "crush": {
-                    "test-ids": [],
-                    "repetitions": 1
-                },
-                "big-crush": {
-                    "test-ids": [],
-                    "repetitions": 1
-                },
-                "rabbit": {
-                    "test-ids": ["1-26"],
-                    "repetitions": 1,
-                    "bit-nb": "10000000"
-                },
-                "alphabit": {
-                    "test-ids": ["1-9"],
-                    "repetitions": 1,
-                    "bit-nb": "10000000",
-                    "bit-r": "0",
-                    "bit-s": "32"
-                },
-                "block-alphabit": {
-                    "test-ids": ["1-9"],
-                    "repetitions": 1,
-                    "bit-nb": "10000000",
-                    "bit-r": "0",
-                    "bit-s": "32"                
-                }
-            }, 
-            
-            "test-specific-settings": {
-                "small-crush": [],
-                "crush": [],
-                "big-crush": [],
-                "rabbit": [],
-                "alphabit": [],
-                "block-alphabit": [
-                    {
-                        "test-id": 1,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 2,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 3,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 4,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 5,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 6,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 7,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 8,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    },
-                    {
-                        "test-id": 9,
-                        "variants": [
-                            { "bit-w": "1" },
-                            { "bit-w": "2" },
-                            { "bit-w": "4" },
-                            { "bit-w": "8" },
-                            { "bit-w": "16" },
-                            { "bit-w": "32" }
-                        ]
-                    }
-                ]
+                "test-ids": ["1-26"],
+                "repetitions": 1,
+                "bit-nb": "10000000"
             }
+        },
+
+        "tu01-alphabit-settings": {
+            "defaults": {
+                "test-ids": ["1-9"],
+                "repetitions": 1,
+                "bit-nb": "10000000",
+                "bit-r": "0",
+                "bit-s": "32"
+            }
+        },
+
+        "tu01-blockalphabit-settings": {
+            "defaults": {
+                "test-ids": ["1-9"],
+                "repetitions": 1,
+                "bit-nb": "10000000",
+                "bit-r": "0",
+                "bit-s": "32"
+            },
+            "test-specific-settings": [
+                {
+                    "test-id": 1,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 2,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 3,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 4,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 5,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 6,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 7,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 8,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                },
+                {
+                    "test-id": 9,
+                    "variants": [
+                        { "bit-w": "1" },
+                        { "bit-w": "2" },
+                        { "bit-w": "4" },
+                        { "bit-w": "8" },
+                        { "bit-w": "16" },
+                        { "bit-w": "32" }
+                    ]
+                }
+            ]
         }
     }
 }

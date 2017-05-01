@@ -6,13 +6,12 @@ namespace batteries {
 const std::string Configuration::TAGNAME_ROOT               = "randomness-testing-toolkit";
 const std::string Configuration::TAGNAME_DIEHARDER_SETT     = "dieharder-settings";
 const std::string Configuration::TAGNAME_NISTSTS_SETT       = "nist-sts-settings";
-const std::string Configuration::TAGNAME_TESTU01_SETT       = "testu01-settings";
-const std::string Configuration::TAGNAME_SCRUSH_BATT        = "small-crush";
-const std::string Configuration::TAGNAME_CRUSH_BATT         = "crush";
-const std::string Configuration::TAGNAME_BCRUSH_BATT        = "big-crush";
-const std::string Configuration::TAGNAME_RABBIT_BATT        = "rabbit";
-const std::string Configuration::TAGNAME_ALPHABIT_BATT      = "alphabit";
-const std::string Configuration::TAGNAME_BLALPHABIT_BATT    = "block-alphabit";
+const std::string Configuration::TAGNAME_SCRUSH_SETT        = "tu01-smallcrush-settings";
+const std::string Configuration::TAGNAME_CRUSH_SETT         = "tu01-crush-settings";
+const std::string Configuration::TAGNAME_BCRUSH_SETT        = "tu01-bigcrush-settings";
+const std::string Configuration::TAGNAME_RABBIT_SETT        = "tu01-rabbit-settings";
+const std::string Configuration::TAGNAME_ALPHABIT_SETT      = "tu01-alphabit-settings";
+const std::string Configuration::TAGNAME_BLALPHABIT_SETT    = "tu01-blockalphabit-settings";
 const std::string Configuration::TAGNAME_DEFAULTS           = "defaults";
 const std::string Configuration::TAGNAME_TEST_SPECIFIC_SETT = "test-specific-settings";
 const std::string Configuration::TAGNAME_DEFAULT_TESTS      = "test-ids";
@@ -193,13 +192,28 @@ json Configuration::findBatterySettingsNode(const json & rootNode,
                 return rootNode.at(TAGNAME_DIEHARDER_SETT);
             break;
         case Constants::Battery::TU01_SMALLCRUSH:
+            if(rootNode.count(TAGNAME_SCRUSH_SETT) == 1)
+                return rootNode.at(TAGNAME_SCRUSH_SETT);
+            break;
         case Constants::Battery::TU01_CRUSH:
+            if(rootNode.count(TAGNAME_CRUSH_SETT) == 1)
+                return rootNode.at(TAGNAME_CRUSH_SETT);
+            break;
         case Constants::Battery::TU01_BIGCRUSH:
+            if(rootNode.count(TAGNAME_BCRUSH_SETT) == 1)
+                return rootNode.at(TAGNAME_BCRUSH_SETT);
+            break;
         case Constants::Battery::TU01_RABBIT:
+            if(rootNode.count(TAGNAME_RABBIT_SETT) == 1)
+                return rootNode.at(TAGNAME_RABBIT_SETT);
+            break;
         case Constants::Battery::TU01_ALPHABIT:
+            if(rootNode.count(TAGNAME_ALPHABIT_SETT) == 1)
+                return rootNode.at(TAGNAME_ALPHABIT_SETT);
+            break;
         case Constants::Battery::TU01_BLOCK_ALPHABIT:
-            if(rootNode.count(TAGNAME_TESTU01_SETT) == 1)
-                return rootNode.at(TAGNAME_TESTU01_SETT);
+            if(rootNode.count(TAGNAME_BLALPHABIT_SETT) == 1)
+                return rootNode.at(TAGNAME_BLALPHABIT_SETT);
             break;
         default:
             raiseBugException("invalid battery");
@@ -216,45 +230,9 @@ json Configuration::findBatteryDefaultSettNode(const json & rootNode,
     if(rval.empty())
         return {};
 
-    switch(batt) {
-        case Constants::Battery::NIST_STS:
-        case Constants::Battery::DIEHARDER:
-            if(rval.count(TAGNAME_DEFAULTS) == 1)
-                return rval.at(TAGNAME_DEFAULTS);
-            break;
-        case Constants::Battery::TU01_SMALLCRUSH:
-            if(rval.count(TAGNAME_DEFAULTS) == 1 &&
-               rval.at(TAGNAME_DEFAULTS).count(TAGNAME_SCRUSH_BATT) == 1)
-                return rval.at(TAGNAME_DEFAULTS).at(TAGNAME_SCRUSH_BATT);
-            break;
-        case Constants::Battery::TU01_CRUSH:
-            if(rval.count(TAGNAME_DEFAULTS) == 1 &&
-               rval.at(TAGNAME_DEFAULTS).count(TAGNAME_CRUSH_BATT) == 1)
-                return rval.at(TAGNAME_DEFAULTS).at(TAGNAME_CRUSH_BATT);
-            break;
-        case Constants::Battery::TU01_BIGCRUSH:
-            if(rval.count(TAGNAME_DEFAULTS) == 1 &&
-               rval.at(TAGNAME_DEFAULTS).count(TAGNAME_BCRUSH_BATT) == 1)
-                return rval.at(TAGNAME_DEFAULTS).at(TAGNAME_BCRUSH_BATT);
-            break;
-        case Constants::Battery::TU01_RABBIT:
-            if(rval.count(TAGNAME_DEFAULTS) == 1 &&
-               rval.at(TAGNAME_DEFAULTS).count(TAGNAME_RABBIT_BATT) == 1)
-                return rval.at(TAGNAME_DEFAULTS).at(TAGNAME_RABBIT_BATT);
-            break;
-        case Constants::Battery::TU01_ALPHABIT:
-            if(rval.count(TAGNAME_DEFAULTS) == 1 &&
-               rval.at(TAGNAME_DEFAULTS).count(TAGNAME_ALPHABIT_BATT) == 1)
-                return rval.at(TAGNAME_DEFAULTS).at(TAGNAME_ALPHABIT_BATT);
-            break;
-        case Constants::Battery::TU01_BLOCK_ALPHABIT:
-            if(rval.count(TAGNAME_DEFAULTS) == 1 &&
-               rval.at(TAGNAME_DEFAULTS).count(TAGNAME_BLALPHABIT_BATT) == 1)
-                return rval.at(TAGNAME_DEFAULTS).at(TAGNAME_BLALPHABIT_BATT);
-            break;
-        default:
-            raiseBugException("invalid battery");
-    }
+    if(rval.count(TAGNAME_DEFAULTS) == 1)
+        return rval.at(TAGNAME_DEFAULTS);
+
     return {};
 }
 
@@ -267,45 +245,9 @@ json Configuration::findBatteryTestSettNode(const json & rootNode,
     if(rval.empty())
         return {};
 
-    switch(batt) {
-        case Constants::Battery::NIST_STS:
-        case Constants::Battery::DIEHARDER:
-            if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT);
-            break;
-        case Constants::Battery::TU01_SMALLCRUSH:
-            if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1 &&
-               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count(TAGNAME_SCRUSH_BATT) == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at(TAGNAME_SCRUSH_BATT);
-            break;
-        case Constants::Battery::TU01_CRUSH:
-            if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1 &&
-               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count(TAGNAME_CRUSH_BATT) == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at(TAGNAME_CRUSH_BATT);
-            break;
-        case Constants::Battery::TU01_BIGCRUSH:
-            if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1 &&
-               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count(TAGNAME_BCRUSH_BATT) == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at(TAGNAME_BCRUSH_BATT);
-            break;
-        case Constants::Battery::TU01_RABBIT:
-            if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1 &&
-               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count(TAGNAME_RABBIT_BATT) == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at(TAGNAME_RABBIT_BATT);
-            break;
-        case Constants::Battery::TU01_ALPHABIT:
-            if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1 &&
-               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count(TAGNAME_ALPHABIT_BATT) == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at(TAGNAME_ALPHABIT_BATT);
-            break;
-        case Constants::Battery::TU01_BLOCK_ALPHABIT:
-            if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1 &&
-               rval.at(TAGNAME_TEST_SPECIFIC_SETT).count(TAGNAME_BLALPHABIT_BATT) == 1)
-                return rval.at(TAGNAME_TEST_SPECIFIC_SETT).at(TAGNAME_BLALPHABIT_BATT);
-            break;
-        default:
-            raiseBugException("invalid battery");
-    }
+    if(rval.count(TAGNAME_TEST_SPECIFIC_SETT) == 1)
+        return rval.at(TAGNAME_TEST_SPECIFIC_SETT);
+
     return {};
 }
 

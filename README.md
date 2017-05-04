@@ -6,6 +6,16 @@ RTT currently implements support for following statistical tools:
 * **Dieharder: A Random Number Test Suite** [home page](http://www.phy.duke.edu/~rgb/General/dieharder.php)
 * **TestU01** [home page](http://simul.iro.umontreal.ca/testu01/tu01.html)
 
+## Related repositories
+This repository contains backend part of Randomness Testing Toolkit. For other parts see following repositories.
+
+* **Statistical batteries** [GitHub](https://github.com/crocs-muni/rtt-statistical-batteries)  
+Set of updated and modified statistical batteries compatible with RTT. 
+* **Service deployment automation** [GitHub](https://github.com/crocs-muni/rtt-deployment)  
+RTT can be deployed on single or multiple servers as a service. Scripts in this repository automates the process of deployment.
+* **Web interface** [GitHub](https://github.com/crocs-muni/RTTWebInterface)  
+The web interface is working on top of the deployed service and allow users to analyze data and view the analysis results through their browsers.
+
 ## Installation and usage
 For instructions on how to install and use Randomness Testing Toolkit, please refer to our [wiki](https://github.com/crocs-muni/randomness-testing-toolkit/wiki).
 

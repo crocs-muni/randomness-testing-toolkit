@@ -23,7 +23,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
     std::vector<result::Statistic> tmpStatistics;
     std::vector<std::pair<std::string, std::string>> tmpParamVec;
 
-    r->battId = tests.at(0)->getBattId();
+    r->battery = tests.at(0)->getBatteryArg();
 
     /* Single test processing */
     for(const ITest * test : tests) {
@@ -145,7 +145,7 @@ std::vector<std::pair<std::string, std::string>> TestResult::extractTestParamete
         rval.push_back({paramNames.at(i), paramMatch[i + 1].str()});
     }
     /* Extracting w in Block Alphabit */
-    if(battId == Constants::Battery::TU01_BLOCK_ALPHABIT) {
+    if(battery.getBatteryId() == Constants::BatteryID::TU01_BLOCK_ALPHABIT) {
         static const std::regex RE_W_PARAM {
             "\\sw = +?([1-9]+?)\\s"
         };

@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "rtt/clioptions.h"
+#include "rtt/clinterface/rttclioptions.h"
 #include "rtt/toolkitsettings.h"
 #include "rtt/batteries/configuration-batt.h"
 #include "rtt/logger.h"
@@ -30,7 +30,7 @@ public:
      * @param argc
      * @param argv
      */
-    void initCliOptions(int argc , char * argv[]);
+    void initRttCliOptions(int argc , char * argv[]);
 
     /**
      * @brief initToolkitSettings Initializes ToolkitSettings object,
@@ -63,7 +63,7 @@ public:
      * @brief getCliOptions
      * @return CliOptions pointer, bug exception if not initialized
      */
-    CliOptions * getCliOptions() const;
+    clinterface::RTTCliOptions * getRttCliOptions() const;
 
     /**
      * @brief getToolkitSettings
@@ -86,7 +86,8 @@ public:
 private:
     /* Application start time, will be used in naming files, etc. */
     time_t creationTime;
-    std::unique_ptr<CliOptions> cliOptions;
+    //std::unique_ptr<CliOptions> cliOptions;
+    std::unique_ptr<clinterface::RTTCliOptions> rttCliOptions;
     std::unique_ptr<ToolkitSettings> toolkitSettings;
     std::unique_ptr<batteries::Configuration> batteryConfiguration;
     std::unique_ptr<Logger> logger;

@@ -2,6 +2,7 @@
 #define RTT_BATTERIES_IVARIANT_H
 
 #include "rtt/globalcontainer.h"
+#include "rtt/clinterface/batteryarg.h"
 #include "rtt/batteries/testconstants.h"
 #include "rtt/batteries/batteryoutput.h"
 
@@ -77,7 +78,7 @@ protected:
     std::string objectInfo;
     int testId;
     uint variantIdx;
-    Constants::Battery battId;
+    clinterface::BatteryArg battery;
     std::string binaryDataPath;
     std::string logFilePath;
     std::string executablePath;

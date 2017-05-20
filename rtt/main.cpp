@@ -3,6 +3,7 @@
 
 #include "rtt/storage/istorage.h"
 #include "rtt/batteries/ibattery-batt.h"
+#include "rtt/clinterface/rttclioptions.h"
 #include "rtt/globalcontainer.h"
 #include "rtt/version.h"
 
@@ -12,8 +13,9 @@ INITIALIZE_EASYLOGGINGPP
 using namespace rtt;
 
 int main (int argc , char * argv[]) try {
-    if(argc == 1 || (argc == 2 && strcmp(argv[1] , "-h") == 0)) {
-        std::cout << CliOptions::getUsage() << std::endl;
+    if(argc == 1 || (argc == 2 && (strcmp(argv[1], "-h") == 0 ||
+                                   strcmp(argv[1], "--help") == 0))) {
+        std::cout << clinterface::RTTCliOptions::getUsage() << std::endl;
         return -1;
     }
 
@@ -22,7 +24,7 @@ int main (int argc , char * argv[]) try {
      * errors are written to cout and no log is created. */
     GlobalContainer gc;
     try {
-        gc.initCliOptions(argc , argv);
+        gc.initRttCliOptions(argc , argv);
         gc.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
 
     } catch (std::exception & ex) {
@@ -44,7 +46,7 @@ int main (int argc , char * argv[]) try {
         try {
             /* Initialization of battery configuration in container -
              * should something go wrong, the error is logged in storage */
-            gc.initBatteriesConfiguration(gc.getCliOptions()->getInputCfgPath());
+            gc.initBatteriesConfiguration(gc.getRttCliOptions()->getInputCfgPath());
             /* Initialization of battery */
             auto battery = batteries::IBattery::getInstance(gc);
             /* Executing analysis */

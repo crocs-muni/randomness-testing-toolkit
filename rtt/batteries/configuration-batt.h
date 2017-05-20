@@ -4,6 +4,7 @@
 #include <map>
 #include <algorithm>
 
+#include "rtt/clinterface/batteryarg.h"
 #include "rtt/constants.h"
 #include "rtt/bugexception.h"
 #include "rtt/rttexception.h"
@@ -18,6 +19,8 @@ using json = nlohmann::json;
 typedef std::map<int , int> tIntIntMap;
 typedef std::map<int , std::string> tIntStringMap;
 typedef std::map<std::string , std::string> tStringStringMap;
+
+using namespace clinterface;
 
 /**
  * @brief The Configuration class Stores configuration of the battery,
@@ -67,52 +70,52 @@ public:
      * @param battery ID of the desired battery
      * @return IDs of the tests that are set for execution in the config files for given battery
      */
-    std::vector<int> getBatteryDefaultTests(Constants::Battery battery);
+    std::vector<int> getBatteryDefaultTests(const BatteryArg & battery);
 
     /**
      * @brief getTestVariantsCount Returns count of variants
-     * @param batt Specifies battery
+     * @param battery Specifies battery
      * @param testId Specifies test
      * @return Count of defined variants of single specific test of single specific battery.
      */
-    uint getTestVariantsCount(Constants::Battery batt , int testId);
+    uint getTestVariantsCount(const BatteryArg & battery , int testId);
 
     /**
      * @brief getTestVariantParamInt Returns integer value of variant parameter.
      * If there is no such variant parameter defined, then test or battery default value is returned.
-     * @param batt Specifies battery
+     * @param battery Specifies battery
      * @param testId Specifies test
      * @param variantIdx Specifies variant
      * @param paramName Name of the parameter
      * @return Gets value of variant parameter of specific test and battery
      */
-    int getTestVariantParamInt(Constants::Battery batt ,
+    int getTestVariantParamInt(const BatteryArg & battery ,
                                 int testId , uint variantIdx ,
                                 const std::string & paramName);
 
     /**
      * @brief getTestVariantParamString Returns string value of variant parameter.
      * If there is no such variant parameter defined, then test or battery default value is returned.
-     * @param batt Specifies battery
+     * @param battery Specifies battery
      * @param testId Specifies test
      * @param variantIdx Specifies variant
      * @param paramName Name of the parameter
      * @return Gets value of variant parameter of specific test and battery
      */
-    std::string getTestVariantParamString(Constants::Battery batt ,
+    std::string getTestVariantParamString(const BatteryArg & battery ,
                                           int testId , uint variantIdx ,
                                           const std::string & paramName);
 
     /**
      * @brief getTestVariantParamMap Returns map value of variant parameter.
      * If there is no such variant parameter defined, then test or battery default value is returned.
-     * @param batt Specifies battery
+     * @param battery Specifies battery
      * @param testId Specifies test
      * @param variantIdx Specifies variant
      * @param paramName Name of the parameter
      * @return Gets value of variant parameter of specific test and battery
      */
-    tStringStringMap getTestVariantParamMap(Constants::Battery batt ,
+    tStringStringMap getTestVariantParamMap(const BatteryArg & battery ,
                                             int testId , uint variantIdx ,
                                             const std::string & paramName);
 
@@ -125,16 +128,16 @@ private:
     Configuration() {}
 
     json findBatterySettingsNode(const json & rootNode ,
-                                 Constants::Battery batt);
+                                 const BatteryArg & battery);
 
     json findBatteryDefaultSettNode(const json & rootNode ,
-                                    Constants::Battery batt);
+                                    const BatteryArg & battery);
 
     json findBatteryTestSettNode(const json & rootNode ,
-                                 Constants::Battery batt);
+                                 const BatteryArg & battery);
 
     json findTestSpecificNode(const json & batteryNode ,
-                              Constants::Battery batt,
+                              const BatteryArg & battery,
                               int testId);
 
     std::vector<int> parseTestConstants(json::array_t node);

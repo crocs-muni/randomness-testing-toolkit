@@ -55,26 +55,26 @@ Configuration Configuration::getInstance(const std::string & configFileName) {
 
 
 
-uint Configuration::getTestVariantsCount(Constants::Battery batt, int testId) {
-    json testNode = findTestSpecificNode(configRoot , batt , testId);
+uint Configuration::getTestVariantsCount(const BatteryArg & battery, int testId) {
+    json testNode = findTestSpecificNode(configRoot , battery , testId);
     if(testNode.count(TAGNAME_VARIANTS) == 1)
         return testNode.at(TAGNAME_VARIANTS).size();
 
     return 0;
 }
 
-int Configuration::getTestVariantParamInt(Constants::Battery batt,
+int Configuration::getTestVariantParamInt(const BatteryArg & battery,
                                            int testId, uint variantIdx,
                                            const std::string & paramName) {
     int rval = VALUE_INT_NOT_SET;
 
     /* Default value if any */
-    const json & nDefaults = findBatteryDefaultSettNode(configRoot , batt);
+    const json & nDefaults = findBatteryDefaultSettNode(configRoot , battery);
     if(nDefaults.count(paramName) == 1)
         rval = nDefaults.at(paramName);
 
     /* Test specific value if any */
-    const json & nTest = findTestSpecificNode(configRoot , batt , testId);
+    const json & nTest = findTestSpecificNode(configRoot , battery , testId);
     if(nTest.count(paramName) == 1)
         rval = nTest.at(paramName);
 
@@ -90,18 +90,18 @@ int Configuration::getTestVariantParamInt(Constants::Battery batt,
     return rval;
 }
 
-std::string Configuration::getTestVariantParamString(Constants::Battery batt,
+std::string Configuration::getTestVariantParamString(const BatteryArg & battery,
                                                      int testId, uint variantIdx,
                                                      const std::string & paramName) {
     std::string rval;
 
     /* Default value if any */
-    const json & nDefaults = findBatteryDefaultSettNode(configRoot , batt);
+    const json & nDefaults = findBatteryDefaultSettNode(configRoot , battery);
     if(nDefaults.count(paramName) == 1)
         rval = nDefaults.at(paramName);
 
     /* Test specific value if any */
-    const json & nTest = findTestSpecificNode(configRoot , batt , testId);
+    const json & nTest = findTestSpecificNode(configRoot , battery , testId);
     if(nTest.count(paramName) == 1)
         rval = nTest.at(paramName);
 
@@ -117,18 +117,18 @@ std::string Configuration::getTestVariantParamString(Constants::Battery batt,
     return rval;
 }
 
-tStringStringMap Configuration::getTestVariantParamMap(Constants::Battery batt,
+tStringStringMap Configuration::getTestVariantParamMap(const BatteryArg & battery,
                                                        int testId, uint variantIdx,
                                                        const std::string & paramName) {
     json nParams = json::object();
 
     /* Default value if any */
-    const json & nDefaults = findBatteryDefaultSettNode(configRoot , batt);
+    const json & nDefaults = findBatteryDefaultSettNode(configRoot , battery);
     if(nDefaults.count(paramName) == 1)
         nParams = nDefaults.at(paramName);
 
     /* Test specific value if any */
-    const json & nTest = findTestSpecificNode(configRoot , batt , testId);
+    const json & nTest = findTestSpecificNode(configRoot , battery , testId);
     if(nTest.count(paramName) == 1)
         nParams = nTest.at(paramName);
 
@@ -152,7 +152,7 @@ tStringStringMap Configuration::getTestVariantParamMap(Constants::Battery batt,
     return rval;
 }
 
-std::vector<int> Configuration::getBatteryDefaultTests(Constants::Battery battery) {
+std::vector<int> Configuration::getBatteryDefaultTests(const BatteryArg & battery) {
     json nDefaults = findBatteryDefaultSettNode(configRoot , battery);
     if(nDefaults.count(TAGNAME_DEFAULT_TESTS) == 1)
         return parseTestConstants(
@@ -178,40 +178,40 @@ std::vector<int> Configuration::getBatteryDefaultTests(Constants::Battery batter
 */
 
 json Configuration::findBatterySettingsNode(const json & rootNode,
-                                            Constants::Battery batt) {
+                                            const BatteryArg & battery) {
     if(rootNode.empty())
         raiseBugException("empty json node");
 
-    switch(batt) {
-        case Constants::Battery::NIST_STS:
+    switch(battery.getBatteryId()) {
+        case Constants::BatteryID::NIST_STS:
             if(rootNode.count(TAGNAME_NISTSTS_SETT) == 1)
                 return rootNode.at(TAGNAME_NISTSTS_SETT);
             break;
-        case Constants::Battery::DIEHARDER:
+        case Constants::BatteryID::DIEHARDER:
             if(rootNode.count(TAGNAME_DIEHARDER_SETT) == 1)
                 return rootNode.at(TAGNAME_DIEHARDER_SETT);
             break;
-        case Constants::Battery::TU01_SMALLCRUSH:
+        case Constants::BatteryID::TU01_SMALLCRUSH:
             if(rootNode.count(TAGNAME_SCRUSH_SETT) == 1)
                 return rootNode.at(TAGNAME_SCRUSH_SETT);
             break;
-        case Constants::Battery::TU01_CRUSH:
+        case Constants::BatteryID::TU01_CRUSH:
             if(rootNode.count(TAGNAME_CRUSH_SETT) == 1)
                 return rootNode.at(TAGNAME_CRUSH_SETT);
             break;
-        case Constants::Battery::TU01_BIGCRUSH:
+        case Constants::BatteryID::TU01_BIGCRUSH:
             if(rootNode.count(TAGNAME_BCRUSH_SETT) == 1)
                 return rootNode.at(TAGNAME_BCRUSH_SETT);
             break;
-        case Constants::Battery::TU01_RABBIT:
+        case Constants::BatteryID::TU01_RABBIT:
             if(rootNode.count(TAGNAME_RABBIT_SETT) == 1)
                 return rootNode.at(TAGNAME_RABBIT_SETT);
             break;
-        case Constants::Battery::TU01_ALPHABIT:
+        case Constants::BatteryID::TU01_ALPHABIT:
             if(rootNode.count(TAGNAME_ALPHABIT_SETT) == 1)
                 return rootNode.at(TAGNAME_ALPHABIT_SETT);
             break;
-        case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        case Constants::BatteryID::TU01_BLOCK_ALPHABIT:
             if(rootNode.count(TAGNAME_BLALPHABIT_SETT) == 1)
                 return rootNode.at(TAGNAME_BLALPHABIT_SETT);
             break;
@@ -222,11 +222,11 @@ json Configuration::findBatterySettingsNode(const json & rootNode,
 }
 
 json Configuration::findBatteryDefaultSettNode(const json & rootNode,
-                                               Constants::Battery batt) {
+                                               const BatteryArg & battery) {
     if(rootNode.empty())
         raiseBugException("empty json node");
 
-    json rval = findBatterySettingsNode(rootNode , batt);
+    json rval = findBatterySettingsNode(rootNode , battery);
     if(rval.empty())
         return {};
 
@@ -237,11 +237,11 @@ json Configuration::findBatteryDefaultSettNode(const json & rootNode,
 }
 
 json Configuration::findBatteryTestSettNode(const json & rootNode,
-                                            Constants::Battery batt) {
+                                            const BatteryArg & battery) {
     if(rootNode.empty())
         raiseBugException("empty json node");
 
-    json rval = findBatterySettingsNode(rootNode , batt);
+    json rval = findBatterySettingsNode(rootNode , battery);
     if(rval.empty())
         return {};
 
@@ -251,11 +251,11 @@ json Configuration::findBatteryTestSettNode(const json & rootNode,
     return {};
 }
 
-json Configuration::findTestSpecificNode(const json & rootNode, Constants::Battery batt , int testId) {
+json Configuration::findTestSpecificNode(const json & rootNode, const BatteryArg & battery , int testId) {
     if(rootNode.empty())
         raiseBugException("empty json node");
 
-    json testSpecificSettNode = findBatteryTestSettNode(rootNode , batt);
+    json testSpecificSettNode = findBatteryTestSettNode(rootNode , battery);
     if(testSpecificSettNode.empty())
         return {};
 

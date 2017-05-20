@@ -4,6 +4,7 @@
 #include <map>
 
 #include "rtt/constants.h"
+#include "rtt/clinterface/batteryarg.h"
 #include "rtt/rttexception.h"
 #include "rtt/bugexception.h"
 
@@ -44,6 +45,8 @@ private:
     int top = 0;
 };
 
+using namespace clinterface;
+
 /**
  * @brief The TestConstants class Storage for test data (index in battery, logical name, etc...).
  * Each test is mapped to its index in given battery and can be
@@ -58,7 +61,7 @@ public:
      * @param testIndex ID if the test
      * @return Human-readable name
      */
-    static std::string getTestLogicName(Constants::Battery battery,
+    static std::string getTestLogicName(const BatteryArg & battery,
                                         int testIndex);
 
     /**
@@ -67,7 +70,7 @@ public:
      * @param testIndex ID of the test
      * @return Structure with test data
      */
-    static tNistStsData getNistStsTestData(Constants::Battery battery ,
+    static tNistStsData getNistStsTestData(const BatteryArg & battery ,
                                            int testIndex);
 
     /**
@@ -76,7 +79,7 @@ public:
      * @param testIndex ID of the test
      * @return Structure with test data
      */
-    static tDieharderData getDieharderTestData(Constants::Battery battery ,
+    static tDieharderData getDieharderTestData(const BatteryArg & battery ,
                                                int testIndex);
 
     /**
@@ -85,7 +88,7 @@ public:
      * @param testIndex ID of the test
      * @return Structure with test data
      */
-    static tTestU01Data getTu01TestData(Constants::Battery battery ,
+    static tTestU01Data getTu01TestData(const BatteryArg & battery ,
                                         int testIndex);
 
 private:

@@ -13,13 +13,13 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf
     auto battConf = cont.getBatteryConfiguration();
 
     v->pSampleCount = battConf->getTestVariantParamInt(
-                          v->battId, v->testId, variantIdx,
+                          v->battery, v->testId, variantIdx,
                           Configuration::TAGNAME_PSAMPLES);
     if(v->pSampleCount == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(v->objectInfo , Strings::TEST_ERR_PSAMPLES_NOT_SET);
 
     std::string arguments = battConf->getTestVariantParamString(
-                                v->battId, v->testId, variantIdx,
+                                v->battery, v->testId, variantIdx,
                                 Configuration::TAGNAME_ARGUMENTS);
     auto vArguments = Utils::split(arguments , ' ');
     if(vArguments.size() % 2 != 0)

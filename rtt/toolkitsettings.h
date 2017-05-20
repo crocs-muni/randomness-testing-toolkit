@@ -4,12 +4,14 @@
 #include "rtt/constants.h"
 #include "rtt/bugexception.h"
 #include "rtt/rttexception.h"
+#include "rtt/clinterface/batteryarg.h"
 
 #include "libs/moderncppjson/json.hpp"
 
 namespace rtt {
 
 using json = nlohmann::json;
+using namespace clinterface;
 
 class ToolkitSettings {
 public:
@@ -37,21 +39,21 @@ public:
      * @param battery
      * @return Path to directory in which the log of the battery executable run will be stored
      */
-    std::string getLoggerBatteryDir(Constants::Battery battery) const;
+    std::string getLoggerBatteryDir(const BatteryArg & battery) const;
 
     /**
      * @brief getRsFileBatteryDir
      * @param battery
      * @return Path to directory in which the report of program run will be stored (FileStorage)
      */
-    std::string getRsFileBatteryDir(Constants::Battery battery) const;
+    std::string getRsFileBatteryDir(const BatteryArg & battery) const;
 
     /**
      * @brief getBinaryBattery
      * @param battery
      * @return Path to executable of a given battery
      */
-    std::string getBinaryBattery(Constants::Battery battery) const;
+    std::string getBinaryBattery(const BatteryArg & battery) const;
 
     /**
      * @brief getMiscNiststsMainResDir
@@ -197,7 +199,7 @@ private:
     ToolkitSettings() {}
 
     std::string getBatteryVariable(VariableType variableType ,
-                                   Constants::Battery battery) const;
+                                   const BatteryArg & battery) const;
 
     std::string parseDirectoryPath(const json & parentNode,
                                    const std::string & childTagName,

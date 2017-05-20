@@ -7,6 +7,7 @@
 #include <vector>
 #include <iomanip>
 
+#include "rtt/clinterface/rttclioptions.h"
 #include "rtt/globalcontainer.h"
 #include "rtt/storage/istorage.h"
 
@@ -14,6 +15,8 @@ namespace rtt {
 namespace storage {
 
 typedef std::vector<std::string> tStringVector;
+
+using namespace clinterface;
 
 class FileStorage : public IStorage {
 public:
@@ -55,11 +58,11 @@ private:
     =================
     */
     /* Pointers to global objects */
-    CliOptions * cliOptions;
+    RTTCliOptions * rttCliOptions;
     ToolkitSettings * toolkitSettings;
 
     time_t creationTime;
-    Constants::Battery battId;
+    BatteryArg battery;
     std::string inFilePath;
     std::string outFilePath;
     std::string mainOutFilePath;

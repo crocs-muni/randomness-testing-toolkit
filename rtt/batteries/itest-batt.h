@@ -2,6 +2,7 @@
 #define RTT_BATTERIES_ITEST_H
 
 #include "rtt/batteries/ivariant-batt.h"
+#include "rtt/clinterface/rttclioptions.h"
 
 namespace rtt {
 namespace batteries {
@@ -57,7 +58,7 @@ public:
      * @brief getBattId
      * @return ID of the parent battery
      */
-    Constants::Battery getBattId() const;
+    BatteryArg getBatteryArg() const;
 
     /**
      * @brief getLogger
@@ -70,7 +71,7 @@ protected:
 
     /* These fields will be set in the constructor */
     /* Pointers to global configurations */
-    CliOptions * cliOptions;
+    clinterface::RTTCliOptions * rttCliOptions;
     ToolkitSettings * toolkitSettings;
     Configuration * batteryConfiguration;
     Logger * logger;
@@ -79,7 +80,7 @@ protected:
     /* Test specific fields - will be set in constructor (base class) and
      * getInstance(derived classes) */
     int testId;
-    Constants::Battery battId;
+    clinterface::BatteryArg battery;
     std::string logicName;
     std::string objectInfo;
 };

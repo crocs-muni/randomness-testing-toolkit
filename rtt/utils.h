@@ -174,6 +174,19 @@ public:
                        [](const auto & el){ return el.get(); });
         return rval;
     }
+
+    template<typename T>
+    static T lexical_cast(const std::string & str) {
+        T rval;
+        std::istringstream iss;
+        iss.str(str);
+
+        iss >> rval;
+        if(!iss.eof() || iss.fail())
+            throw std::runtime_error("can't convert \"" + str + "\"");
+
+        return rval;
+    }
 };
 
 } // namespace rtt

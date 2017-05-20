@@ -14,19 +14,19 @@ std::unique_ptr<ITestResult> ITestResult::getInstance(
 
     std::unique_ptr<ITestResult> rval;
 
-    switch(tests.at(0)->getBattId()) {
-        case Constants::Battery::NIST_STS:
+    switch(tests.at(0)->getBatteryArg().getBatteryId()) {
+        case Constants::BatteryID::NIST_STS:
             rval = niststs::TestResult::getInstance(tests);
             break;
-        case Constants::Battery::DIEHARDER:
+        case Constants::BatteryID::DIEHARDER:
             rval = dieharder::TestResult::getInstance(tests);
             break;
-        case Constants::Battery::TU01_SMALLCRUSH:
-        case Constants::Battery::TU01_CRUSH:
-        case Constants::Battery::TU01_BIGCRUSH:
-        case Constants::Battery::TU01_RABBIT:
-        case Constants::Battery::TU01_ALPHABIT:
-        case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        case Constants::BatteryID::TU01_SMALLCRUSH:
+        case Constants::BatteryID::TU01_CRUSH:
+        case Constants::BatteryID::TU01_BIGCRUSH:
+        case Constants::BatteryID::TU01_RABBIT:
+        case Constants::BatteryID::TU01_ALPHABIT:
+        case Constants::BatteryID::TU01_BLOCK_ALPHABIT:
             rval = testu01::TestResult::getInstance(tests);
             break;
         default:
@@ -78,9 +78,9 @@ void ITestResult::evaluateSetPassed() {
 }
 
 bool ITestResult::isPValuePassing(double pvalue) {
-    /* Everything outside of the interval <alpha, 1) is failure.
-     * Note the open interval on right side - this is to fail
-     * full 1.0s which are often given as incorrect value by batteries */
+    /* Everything outside of the interval [alpha, 1) is failure.
+     +     * Note the open interval on right side - this is to fail
+     +     * full 1.0s which are often given as incorrect value by batteries */
     if(pvalue < partialAlpha - Constants::MATH_EPS ||
             pvalue > 1 - Constants::MATH_EPS)
         return false;

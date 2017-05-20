@@ -41,7 +41,7 @@
             "testu01": ""
         },
         
-        "miscelaneous": {
+        "miscellaneous": {
             "nist-sts": {
                 "main-result-dir": "experiments/AlgorithmTesting/"
             }

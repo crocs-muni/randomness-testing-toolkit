@@ -11,17 +11,17 @@ namespace batteries {
 
 std::unique_ptr<IBattery> IBattery::getInstance(const GlobalContainer & cont) {
     /* Pick correct derived class */
-    switch(cont.getCliOptions()->getBatteryId()) {
-        case Constants::Battery::DIEHARDER:
+    switch(cont.getRttCliOptions()->getBatteryId()) {
+        case Constants::BatteryID::DIEHARDER:
             return dieharder::Battery::getInstance(cont);
-        case Constants::Battery::NIST_STS:
+        case Constants::BatteryID::NIST_STS:
             return niststs::Battery::getInstance(cont);
-        case Constants::Battery::TU01_SMALLCRUSH:
-        case Constants::Battery::TU01_CRUSH:
-        case Constants::Battery::TU01_BIGCRUSH:
-        case Constants::Battery::TU01_RABBIT:
-        case Constants::Battery::TU01_ALPHABIT:
-        case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        case Constants::BatteryID::TU01_SMALLCRUSH:
+        case Constants::BatteryID::TU01_CRUSH:
+        case Constants::BatteryID::TU01_BIGCRUSH:
+        case Constants::BatteryID::TU01_RABBIT:
+        case Constants::BatteryID::TU01_ALPHABIT:
+        case Constants::BatteryID::TU01_BLOCK_ALPHABIT:
             return testu01::Battery::getInstance(cont);
         default:
             raiseBugException(Strings::ERR_INVALID_BATTERY);
@@ -34,7 +34,7 @@ void IBattery::runTests() {
 
     logger->info(objectInfo + ": Test execution started!");
     /* Tests will create output file in output directory */
-    Utils::createDirectory(toolkitSettings->getLoggerBatteryDir(battId));
+    Utils::createDirectory(toolkitSettings->getLoggerBatteryDir(battery));
 
     /* Get all variations from tests and execute them parallely. */
     std::vector<IVariant *> variants;
@@ -51,19 +51,19 @@ void IBattery::runTests() {
 }
 
 IBattery::IBattery(const GlobalContainer & cont) {
-    cliOptions           = cont.getCliOptions();
+    rttCliOptions        = cont.getRttCliOptions();
     batteryConfiguration = cont.getBatteryConfiguration();
     toolkitSettings      = cont.getToolkitSettings();
     logger               = cont.getLogger();
 
     creationTime = cont.getCreationTime();
-    battId       = cliOptions->getBatteryId();
-    objectInfo   = Constants::batteryToString(battId);
-    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + cliOptions->getInputDataPath());
+    battery      = rttCliOptions->getBatteryArg();
+    objectInfo   = battery.getName();
+    logger->info(objectInfo + Strings::BATT_INFO_PROCESSING_FILE + rttCliOptions->getInputDataPath());
 
-    std::vector<int> testIndices = cliOptions->getTestConsts();
+    std::vector<int> testIndices = rttCliOptions->getTestConsts();
     if(testIndices.empty())
-        testIndices = batteryConfiguration->getBatteryDefaultTests(battId);
+        testIndices = batteryConfiguration->getBatteryDefaultTests(battery);
     if(testIndices.empty())
         throw RTTException(objectInfo , Strings::BATT_ERR_NO_TESTS);
 

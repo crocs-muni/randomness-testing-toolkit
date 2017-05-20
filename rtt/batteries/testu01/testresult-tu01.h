@@ -15,7 +15,7 @@ public:
             const std::vector<ITest *> & tests);
 
 private:
-    Constants::Battery battId;
+    BatteryArg battery;
 
     TestResult(Logger * logger , std::string testName)
         : ITestResult(logger , testName)

@@ -40,7 +40,7 @@ const std::string ToolkitSettings::JSON_BINARIES                     = ToolkitSe
 const std::string ToolkitSettings::JSON_BINARIES_NIST                = ToolkitSettings::JSON_BINARIES + "/nist-sts";
 const std::string ToolkitSettings::JSON_BINARIES_DH                  = ToolkitSettings::JSON_BINARIES + "/dieharder";
 const std::string ToolkitSettings::JSON_BINARIES_TU01                = ToolkitSettings::JSON_BINARIES + "/testu01";
-const std::string ToolkitSettings::JSON_MISC                         = ToolkitSettings::JSON_ROOT + "/miscelaneous";
+const std::string ToolkitSettings::JSON_MISC                         = ToolkitSettings::JSON_ROOT + "/miscellaneous";
 const std::string ToolkitSettings::JSON_MISC_NIST                    = ToolkitSettings::JSON_MISC + "/nist-sts";
 const std::string ToolkitSettings::JSON_MISC_NIST_MAIN_RES_DIR       = ToolkitSettings::JSON_MISC_NIST + "/main-result-dir";
 const std::string ToolkitSettings::JSON_EXEC                         = ToolkitSettings::JSON_ROOT + "/execution";
@@ -136,7 +136,7 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
     /*** Miscelaneous variables ***/
     if(nRoot.count(Utils::getLastItemInPath(JSON_MISC)) != 1)
         throw RTTException(objectInfo ,
-                           ts.getParsingErrorMessage("missing tag with miscelaneous settings", JSON_MISC));
+                           ts.getParsingErrorMessage("missing tag with miscellaneous settings", JSON_MISC));
     {
         json nMisc = nRoot.at(Utils::getLastItemInPath(JSON_MISC));
         /** NIST STS **/
@@ -171,15 +171,15 @@ std::string ToolkitSettings::getRsFileOutFile() const {
     return returnIfNonEmpty(rsFileOutFile, JSON_RS_FILE_MAIN_FILE);
 }
 
-std::string ToolkitSettings::getLoggerBatteryDir(Constants::Battery battery) const {
+std::string ToolkitSettings::getLoggerBatteryDir(const BatteryArg &battery) const {
     return getBatteryVariable(VariableType::loggerDir , battery);
 }
 
-std::string ToolkitSettings::getRsFileBatteryDir(Constants::Battery battery) const {
+std::string ToolkitSettings::getRsFileBatteryDir(const BatteryArg &battery) const {
     return getBatteryVariable(VariableType::rsFileDir , battery);
 }
 
-std::string ToolkitSettings::getBinaryBattery(Constants::Battery battery) const {
+std::string ToolkitSettings::getBinaryBattery(const BatteryArg &battery) const {
     return getBatteryVariable(VariableType::binary , battery);
 }
 
@@ -231,13 +231,13 @@ std::string ToolkitSettings::getRsMysqlPwd() const {
 */
 
 std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
-                                                Constants::Battery battery) const {
+                                                const BatteryArg & battery) const {
     /* This is main getter so that all of it is in one place (for future modifications).
      * If new battery is added - create new case for that constant, add it below.
      * If new VariableType is added - add its case into each battery. Also add method
      * for accessing it (see methods getLoggerBatteryDir, getBinaryBattery, etc...)*/
-    switch(battery) {
-    case Constants::Battery::NIST_STS: {
+    switch(battery.getBatteryId()) {
+    case Constants::BatteryID::NIST_STS: {
         switch(variableType) {
         case VariableType::binary:    return binaryNiststs;
         case VariableType::loggerDir: return loggerNiststsDir;
@@ -246,7 +246,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::Battery::DIEHARDER: {
+    case Constants::BatteryID::DIEHARDER: {
         switch(variableType) {
         case VariableType::binary:    return binaryDieharder;
         case VariableType::loggerDir: return loggerDieharderDir;
@@ -255,7 +255,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::Battery::TU01_SMALLCRUSH: {
+    case Constants::BatteryID::TU01_SMALLCRUSH: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerSCrushDir;
@@ -264,7 +264,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::Battery::TU01_CRUSH: {
+    case Constants::BatteryID::TU01_CRUSH: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerCrushDir;
@@ -273,7 +273,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::Battery::TU01_BIGCRUSH: {
+    case Constants::BatteryID::TU01_BIGCRUSH: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerBCrushDir;
@@ -282,7 +282,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::Battery::TU01_RABBIT: {
+    case Constants::BatteryID::TU01_RABBIT: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerRabbitDir;
@@ -291,7 +291,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::Battery::TU01_ALPHABIT: {
+    case Constants::BatteryID::TU01_ALPHABIT: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerAlphabitDir;
@@ -300,7 +300,7 @@ std::string ToolkitSettings::getBatteryVariable(VariableType variableType,
         default:raiseBugException("invalid variable type");
         }
     }
-    case Constants::Battery::TU01_BLOCK_ALPHABIT: {
+    case Constants::BatteryID::TU01_BLOCK_ALPHABIT: {
         switch(variableType) {
         case VariableType::binary:    return binaryTestU01;
         case VariableType::loggerDir: return loggerBlAlphabitDir;

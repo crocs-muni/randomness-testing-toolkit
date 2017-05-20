@@ -7,10 +7,10 @@ const std::string MySQLStorage::objectInfo = "MySQL Storage";
 
 std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & container) {
     std::unique_ptr<MySQLStorage> s (new MySQLStorage());
-    s->cliOptions       = container.getCliOptions();
+    s->rttCliOptions    = container.getRttCliOptions();
     s->toolkitSettings  = container.getToolkitSettings();
     s->creationTime     = container.getCreationTime();
-    s->battId           = s->cliOptions->getBatteryId();
+    s->battery          = s->rttCliOptions->getBatteryArg();
 
     try {
         std::string dbAddress = s->toolkitSettings->getRsMysqlAddress();
@@ -43,11 +43,11 @@ void MySQLStorage::init() {
         "INSERT INTO batteries(name, passed_tests, total_tests, alpha, experiment_id) "
         "VALUES (?,?,?,?,?)"
     ));
-    insBattStmt->setString(1, Constants::batteryToString(battId));
+    insBattStmt->setString(1, battery.getName());
     insBattStmt->setUInt64(2, 0);
     insBattStmt->setUInt64(3, 0);
     insBattStmt->setDouble(4, Constants::MATH_ALPHA);
-    insBattStmt->setUInt64(5, cliOptions->getMysqlEid());
+    insBattStmt->setUInt64(5, rttCliOptions->getMysqlDbEid());
     insBattStmt->execute();
 
     dbBatteryId = getLastInsertedId();

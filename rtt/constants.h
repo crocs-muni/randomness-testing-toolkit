@@ -16,7 +16,9 @@ public:
     /* Values in enum MUST NOT have assigned other than default values
      * (first is one). Item LAST_ITEM HAVE to be last. Always!
      * Additional battery item MUST be added before it. */
-    enum class Battery {
+    /* LAST_ITEM must be last because them enums are occasionally iterated
+     * and the element serves as ending. */
+    enum class BatteryID {
         DIEHARDER = 1,
         NIST_STS,
         TU01_SMALLCRUSH,
@@ -25,6 +27,12 @@ public:
         TU01_RABBIT,
         TU01_ALPHABIT,
         TU01_BLOCK_ALPHABIT,
+        LAST_ITEM
+    };
+
+    enum class ResultStorageID {
+        FILE_REPORT = 1,
+        DB_MYSQL,
         LAST_ITEM
     };
 
@@ -40,35 +48,35 @@ public:
      * @param battId
      * @return human readable string identifying the battery
      */
-    static std::string batteryToString(Battery battId);
+    //static std::string batteryToString(Battery battId);
 
     /**
      * @brief batteryToShortString
      * @param battId id
      * @return short string identifying the battery, used in filenames
      */
-    static std::string batteryToShortString(Battery battId);
+    //static std::string batteryToShortString(Battery battId);
 
     /**
      * @brief getBatteryExpExitCode
      * @param battId
      * @return Expected exit code of the battery executable binary
      */
-    static uint getBatteryExpExitCode(Battery battId);
+    //static uint getBatteryExpExitCode(Battery battId);
 
     /**
      * @brief isInTU01Family Checks whether given battery is in TestU01 family of batteries
      * @param battId
      * @return
      */
-    static bool isInTU01Family(Battery battId);
+    //static bool isInTU01Family(Battery battId);
 
     /**
      * @brief isInTU01CrushFamily Checks whether given battery is in TestU01 Crush family of batteries
      * @param battId
      * @return
      */
-    static bool isInTU01CrushFamily(Battery battId);
+    //static bool isInTU01CrushFamily(Battery battId);
 
     /**
      * @brief isInTU01BitFamily Checks whether given battery is in
@@ -76,7 +84,7 @@ public:
      * @param battId
      * @return
      */
-    static bool isInTU01BitFamily(Battery battId);
+    //static bool isInTU01BitFamily(Battery battId);
 
     /**
      * @brief isinTU01AlphabitFamily Checks whether given battery is in
@@ -84,7 +92,7 @@ public:
      * @param battId
      * @return
      */
-    static bool isinTU01AlphabitFamily(Battery battId);
+    //static bool isinTU01AlphabitFamily(Battery battId);
 
 private:
     Constants () {}

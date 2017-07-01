@@ -14,14 +14,15 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                        tests.at(0)->getLogicName()));
 
     const static std::regex RE_SUBTEST {
-        "Generator providing data from binary file."
+        "\nGenerator providing data from binary file.\n"
         "([^]*?)"  /* This will capture output of one subtest */
-        "========= State of the binary file stream generator ========="
+        "(?=\nGenerator providing data from binary file.\n|$)"
     };
     auto endIt = std::sregex_iterator();
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::Statistic> tmpStatistics;
     std::vector<std::pair<std::string, std::string>> tmpParamVec;
+    std::vector<double> tmpPValuesVec;
 
     r->battId = tests.at(0)->getBattId();
 
@@ -34,7 +35,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
             r->objectInfo = tu01Var->getObjectInfo();
 
             /* Split log into subtests */
-            auto variantLog = tu01Var->getBatteryOutput().getStdOut();
+            std::string variantLog = tu01Var->getBatteryOutput().getStdOut();
 
             auto subTestIt = std::sregex_iterator(
                                  variantLog.begin(),
@@ -55,12 +56,20 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                   subTestLog,
                                   tu01Var->getExtractableParamNames());
 
+                /* P-values extraction */
+                tmpPValuesVec = r->extractPValues(subTestLog);
+
+                /* Creation of a result of the subtest */
                 auto tmpSubTestRes = result::SubTestResult::getInstance(
-                                         tmpStatistics);
-                tmpSubTestRes.setTestParameters(tmpParamVec);
+                                         std::move(tmpStatistics),
+                                         std::move(tmpPValuesVec));
+
+                /* Additional subtest specifics */
+                tmpSubTestRes.setTestParameters(
+                            std::move(tmpParamVec));
+
+                /* Add subtest result to collection of results */
                 tmpSubTestResults.push_back(std::move(tmpSubTestRes));
-                tmpStatistics.clear();
-                tmpParamVec.clear();
             }
             r->varRes.push_back(result::VariantResult::getInstance(
                                     tmpSubTestResults,
@@ -161,6 +170,27 @@ std::vector<std::pair<std::string, std::string>> TestResult::extractTestParamete
         //rval.push_back("w = " + wMatch[1].str());
         rval.push_back({"w", wMatch[1].str()});
     }
+
+    return rval;
+}
+
+std::vector<double> TestResult::extractPValues(const std::string & testLog) {
+    const static std::regex RE_PVALUES {
+        "\n=== First level p-values/statistics of the test ===\n"
+        "([^]*?)" /* This will capture printed p-values in the log */
+        "\n===================================================\n"
+    };
+    std::smatch m;
+    std::regex_search(testLog, m, RE_PVALUES);
+    if(m.empty())
+        return {};
+
+    auto pValsSplit = Utils::split(m[1], '\n');
+    std::vector<double> rval;
+    rval.reserve(pValsSplit.size());
+
+    for(auto pVal : pValsSplit)
+        rval.push_back(Utils::strtod(pVal));
 
     return rval;
 }

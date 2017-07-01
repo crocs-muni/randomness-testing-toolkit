@@ -34,6 +34,8 @@ private:
     std::vector<std::pair<std::string, std::string> > extractTestParameters(
             const std::string & testLog,
             std::vector<std::string> paramNames);
+
+    std::vector<double> extractPValues(const std::string & testLog);
 };
 
 } // namespace testu01

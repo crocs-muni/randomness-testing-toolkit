@@ -345,7 +345,7 @@ const tTestU01Data TestConstants::TESTU01_SCOMP_LINEARCOMP {
 };
 const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV {
     "scomp_LempelZiv" ,
-    {"N","n","r","s"} ,
+    {"N","k","r","s"} ,
     {"N","n","r","s","k"} ,
     {
         "Normal"
@@ -353,7 +353,7 @@ const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV {
 };
 const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV_BIGN {
     "scomp_LempelZiv" ,
-    {"N","n","r","s"} ,
+    {"N","k","r","s"} ,
     {"N","n","r","s","k"} ,
     {
         "Kolmogorov-Smirnov (D+)" ,
@@ -365,7 +365,7 @@ const tTestU01Data TestConstants::TESTU01_SCOMP_LEMPELZIV_BIGN {
 };
 const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER1 {
     "sspectral_Fourier1" ,
-    {"N","n","r","s"} ,
+    {"N","k","r","s"} ,
     {"N","n","r","s","k"} ,
     {
         "Normal"
@@ -373,7 +373,7 @@ const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER1 {
 };
 const tTestU01Data TestConstants::TESTU01_SSPECRTAL_FOURIER3 {
     "sspectral_Fourier3" ,
-    {"N","n","r","s"} ,
+    {"N","k","r","s"} ,
     {"N","n","r","s","k"} ,
     {
         "Kolmogorov-Smirnov (D+)" ,

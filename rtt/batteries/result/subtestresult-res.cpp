@@ -16,8 +16,6 @@ SubTestResult SubTestResult::getInstance(const std::vector<Statistic> & statisti
                                          const std::vector<double> & pvalues) {
     if(statistics.empty())
         raiseBugException("empty statistics");
-    if(pvalues.empty())
-        raiseBugException("empty p-values");
 
     return SubTestResult(statistics, pvalues);
 }

@@ -24,7 +24,6 @@ DEPS = \
 	rtt/batteries/itest-batt.h \
 	rtt/batteries/testrunner-batt.h \
 	rtt/rttexception.h \
-	rtt/clioptions.h \
 	rtt/toolkitsettings.h \
 	rtt/bugexception.h \
 	rtt/batteries/configuration-batt.h \
@@ -49,7 +48,15 @@ DEPS = \
 	rtt/batteries/testu01/testresult-tu01.h \
 	rtt/batteries/niststs/testresult-sts.h \
 	rtt/batteries/dieharder/testresult-dh.h \
-	rtt/batteries/result/statistic-res.h
+	rtt/batteries/result/statistic-res.h \
+	libs/variant/include/mpark/variants/config.hpp \
+	libs/variant/include/mpark/variants/lib.hpp \
+	libs/variant/include/mpark/in_place.hpp \
+	libs/variant/include/mpark/variant.hpp \
+	rtt/clinterface/clargument.h \
+	rtt/clinterface/batteryarg.h \
+	rtt/clinterface/resultstoragearg.h \
+	rtt/clinterface/rttclioptions.h
 
 # === Target object files ===
 OBJ = \
@@ -67,7 +74,6 @@ OBJ = \
 	ibattery-batt.o \
 	itest-batt.o \
 	testrunner-batt.o \
-	clioptions.o \
 	toolkitsettings.o \
 	configuration-batt.o \
 	testconstants.o \
@@ -88,7 +94,10 @@ OBJ = \
 	testresult-dh.o \
 	testresult-sts.o \
 	testresult-tu01.o \
-	statistic-res.o
+	statistic-res.o \
+	batteryarg.o \
+	resultstoragearg.o \
+	rttclioptions.o
 
 # === All paths inside project directory ===
 # === Ugly but works ===
@@ -99,11 +108,16 @@ VPATH = \
 	rtt/batteries/niststs:\
 	rtt/batteries/testu01:\
 	rtt/batteries/result:\
+	rtt/clinterface:\
 	rtt/storage:\
 	libs:\
 	libs/cephes:\
 	libs/easylogging:\
-	libs/moderncppjson
+	libs/moderncppjson:\
+	libs/variant:\
+	libs/variant/include:\
+	libs/variant/include/mpark:\
+	libs/variant/include/mpark/variants
 
 %.o: %.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)

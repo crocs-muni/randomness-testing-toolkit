@@ -7,11 +7,14 @@
 #include <cppconn/exception.h>
 #include <cppconn/prepared_statement.h>
 
+#include "rtt/clinterface/rttclioptions.h"
 #include "rtt/globalcontainer.h"
 #include "rtt/storage/istorage.h"
 
 namespace rtt {
 namespace storage {
+
+using namespace clinterface;
 
 class MySQLStorage : public IStorage {
 public:
@@ -39,11 +42,11 @@ private:
     */
     static const std::string objectInfo;
     /* Pointers to global objects */
-    CliOptions * cliOptions;
+    RTTCliOptions * rttCliOptions;
     ToolkitSettings * toolkitSettings;
 
     time_t creationTime;
-    Constants::Battery battId;
+    BatteryArg battery;
 
     sql::Driver * driver;
     std::unique_ptr<sql::Connection> conn;

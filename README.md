@@ -26,7 +26,7 @@ The framework is developed at the [Centre for Research on Cryptography and Secur
 * **Ľubomír Obrátil** 2015-now (Development)
 
 ## License
-Randomness Testing Toolkit is licenced under MIT Licence, Copyright (c) 2015 Centre for Research on Cryptography and Security. For details on MIT Licence, see file LICENSE.
+Randomness Testing Toolkit is licenced under MIT Licence, Copyright (c) 2015-2017 Centre for Research on Cryptography and Security. For details on MIT Licence, see file LICENSE.
 
 ## Third party libraries
 Some sub-parts of the project have their own licencing conditions. The brief list of such sub-parts follows.
@@ -36,4 +36,7 @@ Simple header C++ logging library. Released under MIT license.
 
 * **JSON for modern C++** [Home page](https://github.com/nlohmann/json)  
 JSON parser for C++. Released under MIT license.
+
+* **C++17 std::variant for C++11/14/17** [Home page](https://github.com/mpark/variant)  
+Implementation of variant object from C++17 standard.
 

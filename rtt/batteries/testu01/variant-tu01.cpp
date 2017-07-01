@@ -11,26 +11,26 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf
 
     v->settableParamNames =
             std::get<1>(TestConstants::getTu01TestData(
-                            v->battId , v->testId));
+                            v->battery , v->testId));
     v->extractableParamNames =
             std::get<2>(TestConstants::getTu01TestData(
-                            v->battId , v->testId));
+                            v->battery , v->testId));
     v->statisticNames =
             std::get<3>(TestConstants::getTu01TestData(
-                            v->battId , v->testId));
+                            v->battery , v->testId));
 
    /* Repetitions - mandatory */
     v->repetitions = battConf->getTestVariantParamInt(
-                         v->battId, v->testId, variantIdx,
+                         v->battery, v->testId, variantIdx,
                          Configuration::TAGNAME_REPETITIONS);
     if(v->repetitions == Configuration::VALUE_INT_NOT_SET)
         throw RTTException(v->objectInfo , Strings::TEST_ERR_REPS_NOT_SET);
 
     /* Getting params - only for Crush batteries - optional */
-    if(Constants::isInTU01CrushFamily(v->battId)) {
+    if(v->battery.isInTU01CrushFamily()) {
         tParam tmp;
         tStringStringMap actualParams =
-                battConf->getTestVariantParamMap(v->battId, v->testId, variantIdx,
+                battConf->getTestVariantParamMap(v->battery, v->testId, variantIdx,
                                                  Configuration::TAGNAME_PARAMS);
         if(!actualParams.empty()) {
             for(const auto & paramName : v->settableParamNames) {
@@ -46,30 +46,30 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf
         }
     }
     /* Getting nb - Rabbit and (Block) Alphabit - mandatory */
-    if(Constants::isInTU01BitFamily(v->battId)) {
+    if(v->battery.isInTU01BitFamily()) {
         v->bit_nb = battConf->getTestVariantParamString(
-                        v->battId, v->testId, variantIdx,
+                        v->battery, v->testId, variantIdx,
                         Configuration::TAGNAME_BIT_NB);
         if(v->bit_nb.empty())
             throw RTTException(v->objectInfo , Strings::TEST_ERR_BITNB_NOT_SET);
     }
     /* Getting r s - (Block) Alphabit - mandatory */
-    if(Constants::isinTU01AlphabitFamily(v->battId)) {
+    if(v->battery.isInTU01AlphabitFamily()) {
         v->bit_r = battConf->getTestVariantParamString(
-                       v->battId, v->testId, variantIdx,
+                       v->battery, v->testId, variantIdx,
                        Configuration::TAGNAME_BIT_R);
         if(v->bit_r.empty())
             throw RTTException(v->objectInfo , Strings::TEST_ERR_BITR_NOT_SET);
         v->bit_s = battConf->getTestVariantParamString(
-                       v->battId, v->testId, variantIdx,
+                       v->battery, v->testId, variantIdx,
                        Configuration::TAGNAME_BIT_S);
         if(v->bit_s.empty())
             throw RTTException(v->objectInfo , Strings::TEST_ERR_BITS_NOT_SET);
     }
     /* Getting w - Block Alphabit - optional */
-    if(v->battId == Constants::Battery::TU01_BLOCK_ALPHABIT) {
+    if(v->battery.getBatteryId() == Constants::BatteryID::TU01_BLOCK_ALPHABIT) {
         v->bit_w = battConf->getTestVariantParamString(
-                       v->battId, v->testId, variantIdx,
+                       v->battery, v->testId, variantIdx,
                        Configuration::TAGNAME_BIT_W);
     }
 
@@ -90,18 +90,18 @@ void Variant::buildStrings() {
     arguments << "testu01 ";
     /* Setting battery mode */
     arguments << "-m ";
-    switch(battId) {
-    case Constants::Battery::TU01_SMALLCRUSH:
+    switch(battery.getBatteryId()) {
+    case Constants::BatteryID::TU01_SMALLCRUSH:
         arguments << "small_crush "; break;
-    case Constants::Battery::TU01_CRUSH:
+    case Constants::BatteryID::TU01_CRUSH:
         arguments << "crush "; break;
-    case Constants::Battery::TU01_BIGCRUSH:
+    case Constants::BatteryID::TU01_BIGCRUSH:
         arguments << "big_crush "; break;
-    case Constants::Battery::TU01_RABBIT:
+    case Constants::BatteryID::TU01_RABBIT:
         arguments << "rabbit "; break;
-    case Constants::Battery::TU01_ALPHABIT:
+    case Constants::BatteryID::TU01_ALPHABIT:
         arguments << "alphabit "; break;
-    case Constants::Battery::TU01_BLOCK_ALPHABIT:
+    case Constants::BatteryID::TU01_BLOCK_ALPHABIT:
         arguments << "block_alphabit "; break;
     default:
         raiseBugException(Strings::ERR_INVALID_BATTERY);
@@ -137,17 +137,17 @@ void Variant::buildStrings() {
 
     /* Building variation user settings */
     userSettings.push_back({"Repetitions", Utils::itostr(repetitions)});
-    if(Constants::isInTU01BitFamily(battId)) {
+    if(battery.isInTU01BitFamily()) {
         userSettings.push_back({"Bit NB", bit_nb});
     }
-    if(Constants::isinTU01AlphabitFamily(battId)) {
+    if(battery.isInTU01AlphabitFamily()) {
         userSettings.push_back({"Bit R", bit_r});
         userSettings.push_back({"Bit S", bit_s});
     }
-    if(!bit_w.empty() && battId == Constants::Battery::TU01_BLOCK_ALPHABIT) {
+    if(!bit_w.empty() && battery.getBatteryId() == Constants::BatteryID::TU01_BLOCK_ALPHABIT) {
         userSettings.push_back({"Bit W", bit_w});
     }
-    if(!params.empty() && Constants::isInTU01CrushFamily(battId)) {
+    if(!params.empty() && battery.isInTU01CrushFamily()) {
         for(const tParam & param : params) {
             userSettings.push_back({param.first, param.second});
         }

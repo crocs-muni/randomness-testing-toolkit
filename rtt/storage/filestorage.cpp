@@ -13,11 +13,11 @@ const uint FileStorage::FLOAT_PRECISION     = 8;
 
 std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & container) {
     std::unique_ptr<FileStorage> s (new FileStorage());
-    s->cliOptions      = container.getCliOptions();
+    s->rttCliOptions   = container.getRttCliOptions();
     s->toolkitSettings = container.getToolkitSettings();
     s->creationTime    = container.getCreationTime();
-    s->battId          = s->cliOptions->getBatteryId();
-    s->inFilePath      = s->cliOptions->getInputDataPath();
+    s->battery         = s->rttCliOptions->getBatteryArg();
+    s->inFilePath      = s->rttCliOptions->getInputDataPath();
 
     /* Getting file name for main output file */
     s->mainOutFilePath = s->toolkitSettings->getRsFileOutFile();
@@ -26,7 +26,7 @@ std::unique_ptr<FileStorage> FileStorage::getInstance(const GlobalContainer & co
     auto binFileName = Utils::getLastItemInPath(s->inFilePath);
     std::replace(binFileName.begin(), binFileName.end(), '.', '_');
     auto datetime = Utils::formatRawTime(s->creationTime , "%Y%m%d%H%M%S");
-    s->outFilePath = s->toolkitSettings->getRsFileBatteryDir(s->battId);
+    s->outFilePath = s->toolkitSettings->getRsFileBatteryDir(s->battery);
     s->outFilePath.append(datetime + "-" + binFileName + "-report.txt");
 
     return s;
@@ -338,7 +338,7 @@ void FileStorage::makeReportHeader() {
     report << "***** Randomness Testing Toolkit data stream analysis report *****" << std::endl;
     report << "Date:    " << Utils::formatRawTime(creationTime , "%d-%m-%Y") << std::endl;
     report << "File:    " << inFilePath << std::endl;
-    report << "Battery: " << Constants::batteryToString(battId) << std::endl;
+    report << "Battery: " << battery.getName() << std::endl;
     report << std::endl;
     report << "Alpha:   " << std::setw(3) << Constants::MATH_ALPHA << std::endl;
     report << "Epsilon: " << Constants::MATH_EPS << std::endl;
@@ -376,7 +376,7 @@ void FileStorage::addResultToTableFile() const {
             int rowIndex = std::distance(fileNames.begin() , fileRow);
             tableData.at(rowIndex).at(0) =
                     Utils::formatRawTime(creationTime , "%Y-%m-%d %H:%M:%S");
-            tableData.at(rowIndex).at(static_cast<int>(battId)) = passedTestProp;
+            tableData.at(rowIndex).at(static_cast<int>(battery.getBatteryId())) = passedTestProp;
         } else {
             /* Adding new row */
             addNewRow(fileNames , tableData);
@@ -393,9 +393,8 @@ void FileStorage::addResultToTableFile() const {
         /* Creating header */
         header.push_back("Input file path");
         header.push_back("Time of last update");
-        for(int i = 1 ; i < static_cast<int>(Constants::Battery::LAST_ITEM) ; ++i)
-            header.push_back(
-                        Constants::batteryToString(static_cast<Constants::Battery>(i)));
+        for(int i = 1 ; i < static_cast<int>(Constants::BatteryID::LAST_ITEM) ; ++i)
+            header.push_back(BatteryArg::getName(static_cast<Constants::BatteryID>(i)));
 
         /* Adding new row */
         addNewRow(fileNames , tableData);
@@ -484,9 +483,9 @@ void FileStorage::addNewRow(tStringVector & fileNames,
     fileNames.push_back(inFilePath);
     /* Add data into corresponding row */
     /* Column count is total batteries count + first column for last update info */
-    tStringVector row(static_cast<int>(Constants::Battery::LAST_ITEM) , "");
+    tStringVector row(static_cast<int>(Constants::BatteryID::LAST_ITEM) , "");
     row.at(0) = Utils::formatRawTime(creationTime , "%Y-%m-%d %H:%M:%S");
-    row.at(static_cast<int>(battId)) = passedTestProp;
+    row.at(static_cast<int>(battery.getBatteryId())) = passedTestProp;
     tableData.push_back(std::move(row));
 }
 

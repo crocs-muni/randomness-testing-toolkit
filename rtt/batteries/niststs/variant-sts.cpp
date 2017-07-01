@@ -13,24 +13,24 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf
     auto battConf = cont.getBatteryConfiguration();
 
     v->streamSize = battConf->getTestVariantParamString(
-                        v->battId, testId, variantIdx,
+                        v->battery, testId, variantIdx,
                         Configuration::TAGNAME_STREAM_SIZE);
     if(v->streamSize.empty())
         throw RTTException(v->objectInfo , Strings::TEST_ERR_STREAM_SIZE_NOT_SET);
     v->streamCount = battConf->getTestVariantParamString(
-                         v->battId, testId, variantIdx,
+                         v->battery, testId, variantIdx,
                          Configuration::TAGNAME_STREAM_COUNT);
     if(v->streamCount.empty())
         throw RTTException(v->objectInfo , Strings::TEST_ERR_STREAM_COUNT_NOT_SET);
     v->blockLength = battConf->getTestVariantParamString(
-                         v->battId, testId, variantIdx,
+                         v->battery, testId, variantIdx,
                          Configuration::TAGNAME_BLOCK_LENGTH);
     v->resultSubDir = std::get<1>(
                           TestConstants::getNistStsTestData(
-                              v->battId , v->testId));
+                              v->battery , v->testId));
     v->adjustableBlockLength = std::get<2>(
                                    TestConstants::getNistStsTestData(
-                                       v->battId, testId));
+                                       v->battery, testId));
 
     return v;
 }
@@ -38,7 +38,7 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf
 void Variant::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
-    uint expExitCode = Constants::getBatteryExpExitCode(battId);
+    uint expExitCode = BatteryArg::getExpectedExitCode(battery.getBatteryId());
 
     {
         std::lock_guard<std::mutex> l (*testDir_mux);

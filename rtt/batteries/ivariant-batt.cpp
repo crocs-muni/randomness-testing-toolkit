@@ -15,19 +15,19 @@ std::unique_ptr<IVariant> IVariant::getInstance(int testId, std::string testObjI
                                                 uint variantIdx, const rtt::GlobalContainer &cont) {
     std::unique_ptr<IVariant> rval;
 
-    switch(cont.getCliOptions()->getBatteryId()) {
-        case Constants::Battery::NIST_STS:
+    switch(cont.getRttCliOptions()->getBatteryId()) {
+        case Constants::BatteryID::NIST_STS:
             rval = niststs::Variant::getInstance(testId , testObjInf , variantIdx, cont);
             break;
-        case Constants::Battery::DIEHARDER:
+        case Constants::BatteryID::DIEHARDER:
             rval = dieharder::Variant::getInstance(testId , testObjInf , variantIdx, cont);
             break;
-        case Constants::Battery::TU01_SMALLCRUSH:
-        case Constants::Battery::TU01_CRUSH:
-        case Constants::Battery::TU01_BIGCRUSH:
-        case Constants::Battery::TU01_RABBIT:
-        case Constants::Battery::TU01_ALPHABIT:
-        case Constants::Battery::TU01_BLOCK_ALPHABIT:
+        case Constants::BatteryID::TU01_SMALLCRUSH:
+        case Constants::BatteryID::TU01_CRUSH:
+        case Constants::BatteryID::TU01_BIGCRUSH:
+        case Constants::BatteryID::TU01_RABBIT:
+        case Constants::BatteryID::TU01_ALPHABIT:
+        case Constants::BatteryID::TU01_BLOCK_ALPHABIT:
             rval = testu01::Variant::getInstance(testId , testObjInf , variantIdx , cont);
             break;
         default:
@@ -40,7 +40,7 @@ std::unique_ptr<IVariant> IVariant::getInstance(int testId, std::string testObjI
 void IVariant::execute() {
     /* This method is turned into thread.
      * Will deadlock if run without main thread. */
-    uint expExitCode = Constants::getBatteryExpExitCode(battId);
+    uint expExitCode = BatteryArg::getExpectedExitCode(battery.getBatteryId());
 
     batteryOutput = TestRunner::executeBinary(logger, objectInfo, executablePath,
                                               expExitCode, cliArguments, stdInput);
@@ -82,13 +82,13 @@ IVariant::IVariant(int testId, std::string testObjInf, uint variantIdx,
     this->testId        = testId;
     this->variantIdx    = variantIdx;
     logger              = cont.getLogger();
-    battId              = cont.getCliOptions()->getBatteryId();
-    binaryDataPath      = cont.getCliOptions()->getInputDataPath();
-    executablePath      = cont.getToolkitSettings()->getBinaryBattery(battId);
+    battery             = cont.getRttCliOptions()->getBatteryArg();
+    binaryDataPath      = cont.getRttCliOptions()->getInputDataPath();
+    executablePath      = cont.getToolkitSettings()->getBinaryBattery(battery);
     logFilePath         =
             Utils::getLogFilePath(
                 cont.getCreationTime(),
-                cont.getToolkitSettings()->getLoggerBatteryDir(battId),
+                cont.getToolkitSettings()->getLoggerBatteryDir(battery),
                 binaryDataPath);
     objectInfo          =
             testObjInf +

@@ -43,13 +43,13 @@ protected:
      * Used by batteries in later stages. */
     /* Objects pointing to global object storage -
      * many classes use these objects */
-    CliOptions * cliOptions;
+    clinterface::RTTCliOptions * rttCliOptions;
     Configuration * batteryConfiguration;
     ToolkitSettings * toolkitSettings;
     Logger * logger;
     /* Variables initialized in getInstance() */
     time_t creationTime;
-    Constants::Battery battId;
+    clinterface::BatteryArg battery;
     std::string objectInfo;
     /* Battery is keeping track of tests set to execution.
      * Test objects keep track of their settings and execution results. */

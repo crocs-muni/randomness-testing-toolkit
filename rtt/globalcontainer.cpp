@@ -3,9 +3,10 @@
 namespace rtt {
 
 
-void GlobalContainer::initCliOptions(int argc, char * argv[]) {
-    cliOptions =
-            std::make_unique<CliOptions>(CliOptions::getInstance(argc , argv));
+void GlobalContainer::initRttCliOptions(int argc, char * argv[]) {
+    using namespace clinterface;
+    rttCliOptions =
+            std::make_unique<RTTCliOptions>(RTTCliOptions::getInstance(argc , argv));
 }
 
 void GlobalContainer::initToolkitSettings(const std::string & filename) {
@@ -20,26 +21,25 @@ void GlobalContainer::initBatteriesConfiguration(const std::string & filename) {
 }
 
 void GlobalContainer::initLogger(const std::string & logId, bool toCout) {
-    if(cliOptions == nullptr)
+    if(rttCliOptions == nullptr)
         raiseBugException("can't initialize logger before command line options are init'd");
     if(toolkitSettings == nullptr)
         raiseBugException("can't initialize logger before toolkit settings are init'd");
 
     auto logFilePath = Utils::getLogFilePath(creationTime,
                                              toolkitSettings->getLoggerRunLogDir(),
-                                             cliOptions->getInputDataPath(),
-                                             Constants::batteryToShortString(
-                                                 cliOptions->getBatteryId())
-                                             );
+                                             rttCliOptions->getInputDataPath(),
+                                             rttCliOptions->getBatteryArg().getShortName()
+                       );
 
     logger = std::unique_ptr<Logger>(new Logger(logId , logFilePath , toCout));
 }
 
-CliOptions * GlobalContainer::getCliOptions() const {
-    if(cliOptions == nullptr)
-        raiseBugException("cliOptions were not initialized");
+clinterface::RTTCliOptions * GlobalContainer::getRttCliOptions() const {
+    if(rttCliOptions == nullptr)
+        raiseBugException("rttCliOptions were not initialized");
 
-    return cliOptions.get();
+    return rttCliOptions.get();
 }
 
 ToolkitSettings * GlobalContainer::getToolkitSettings() const {

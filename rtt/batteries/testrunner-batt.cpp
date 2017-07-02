@@ -22,7 +22,7 @@ std::condition_variable waitingForChild_cv;
 std::mutex              waitingForChild_mux;
 /* Stores pid of process that was reaped last.
  * Stores its exit code as well. */
-uint                    finishedPExitCode = 0;
+int                     finishedPExitCode = 0;
 std::atomic<pid_t>      finishedPid;
 std::condition_variable finishedPid_cv;
 std::mutex              finishedPid_mux;

@@ -4,6 +4,7 @@ namespace rtt {
 namespace clinterface {
 
 const std::string RTTCliOptions::BATTERY_ARG_NAME        = "-b";
+const std::string RTTCliOptions::SETTINGS_FILE_ARG_NAME  = "-s";
 const std::string RTTCliOptions::DATA_FILE_ARG_NAME      = "-f";
 const std::string RTTCliOptions::CONF_FILE_ARG_NAME      = "-c";
 const std::string RTTCliOptions::TEST_ID_ARG_NAME        = "-t";
@@ -73,6 +74,8 @@ std::string RTTCliOptions::getUsage() {
     rval << "============================== [USAGE] ==============================" << std::endl;
     rval << "-h or --help     Print this message.                                 " << std::endl;
     rval << "                                                                     " << std::endl;
+    rval << "-s <json-path>   (Optional) Overrides RTT JSON config path.          " << std::endl;
+    rval << "                                                                     " << std::endl;
     rval << "-b <battery>     Sets the battery that will be executed. Accepted    " << std::endl;
     rval << "                 values of <battery> are: nist_sts, dieharder,       " << std::endl;
     rval << "                 tu01_smallcrush, tu01_crush, tu01_bigcrush,         " << std::endl;
@@ -138,6 +141,14 @@ ResultStorageArg RTTCliOptions::getResultStorageArg() const {
 
 std::uint64_t RTTCliOptions::getMysqlDbEid() const {
     return getArgumentValue<std::uint64_t>(MYSQL_DB_EID_ARG_NAME);
+}
+
+std::string RTTCliOptions::getSettingsFilePath() const {
+    return getArgumentValue<std::string>(SETTINGS_FILE_ARG_NAME);
+}
+
+bool RTTCliOptions::hasSettingsFilePath() const {
+    return isArgumentSet(SETTINGS_FILE_ARG_NAME);
 }
 
 std::string RTTCliOptions::getMysqlDbHost() const {

@@ -25,7 +25,9 @@ int main (int argc , char * argv[]) try {
     GlobalContainer gc;
     try {
         gc.initRttCliOptions(argc , argv);
-        gc.initToolkitSettings(Constants::FILE_TOOLKIT_SETTINGS);
+        gc.initToolkitSettings(gc.getRttCliOptions()->hasSettingsFilePath() ?
+                               gc.getRttCliOptions()->getSettingsFilePath() :
+                               Constants::FILE_TOOLKIT_SETTINGS);
 
     } catch (std::exception & ex) {
         std::cout << "[Invalid toolkit configuration] " << ex.what() << std::endl;

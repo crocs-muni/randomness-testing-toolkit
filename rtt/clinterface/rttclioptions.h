@@ -94,6 +94,13 @@ public:
     std::uint64_t getMysqlDbEid() const;
 
     /**
+     * @brief getSettingsFilePath
+     * @return RTT settings json file path
+     */
+    std::string getSettingsFilePath() const;
+    bool hasSettingsFilePath() const;
+
+    /**
      * @brief getMysqlDbHost
      * @return MySQL host name, overrides config file
      */
@@ -109,6 +116,7 @@ public:
 
 private:
     static const std::string BATTERY_ARG_NAME;
+    static const std::string SETTINGS_FILE_ARG_NAME;
     static const std::string DATA_FILE_ARG_NAME;
     static const std::string CONF_FILE_ARG_NAME;
     static const std::string TEST_ID_ARG_NAME;
@@ -122,6 +130,7 @@ private:
         ClArgument<std::string>(CONF_FILE_ARG_NAME),                 /* Input config file */
         ClArgument<int>(TEST_ID_ARG_NAME, true),                     /* (opt) Test to run in battery */
         ClArgument<ResultStorageArg>(RESULT_STORAGE_ARG_NAME, true), /* (opt) Result storage */
+        ClArgument<std::string>(SETTINGS_FILE_ARG_NAME, true),       /* (opt) JSON settings file  */
         ClArgument<std::uint64_t>(MYSQL_DB_EID_ARG_NAME, true),      /* (opt) Experiment ID  */
         ClArgument<std::string>(MYSQL_DB_HOST_ARG_NAME, true),       /* (opt) MySQL Host name  */
         ClArgument<std::uint64_t>(MYSQL_DB_PORT_ARG_NAME, true)      /* (opt) MySQL port  */

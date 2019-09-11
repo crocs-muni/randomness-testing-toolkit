@@ -9,6 +9,8 @@ const std::string RTTCliOptions::CONF_FILE_ARG_NAME      = "-c";
 const std::string RTTCliOptions::TEST_ID_ARG_NAME        = "-t";
 const std::string RTTCliOptions::RESULT_STORAGE_ARG_NAME = "-r";
 const std::string RTTCliOptions::MYSQL_DB_EID_ARG_NAME   = "--eid";
+const std::string RTTCliOptions::MYSQL_DB_HOST_ARG_NAME   = "--db-host";
+const std::string RTTCliOptions::MYSQL_DB_PORT_ARG_NAME   = "--db-port";
 
 RTTCliOptions RTTCliOptions::getInstance(int argc, char * argv[]) {
     RTTCliOptions options;
@@ -95,6 +97,10 @@ std::string RTTCliOptions::getUsage() {
     rval << "--eid <eid>      (Optional) Must be set when <storage> is db_mysql.  " << std::endl;
     rval << "                 Sets id of experiment in the database that will be  " << std::endl;
     rval << "                 assigned the results of this battery execution.     " << std::endl;
+    rval << "                                                                     " << std::endl;
+    rval << "--db-host <host> (Optional) Override MySQL host from config file.    " << std::endl;
+    rval << "                                                                     " << std::endl;
+    rval << "--db-port <port> (Optional) Override MySQL port from config file.    " << std::endl;
     rval << "=====================================================================" << std::endl;
     return rval.str();
 }
@@ -132,6 +138,22 @@ ResultStorageArg RTTCliOptions::getResultStorageArg() const {
 
 std::uint64_t RTTCliOptions::getMysqlDbEid() const {
     return getArgumentValue<std::uint64_t>(MYSQL_DB_EID_ARG_NAME);
+}
+
+std::string RTTCliOptions::getMysqlDbHost() const {
+    return getArgumentValue<std::string>(MYSQL_DB_HOST_ARG_NAME);
+}
+
+bool RTTCliOptions::hasMysqlDbHost() const {
+    return isArgumentSet(MYSQL_DB_HOST_ARG_NAME);
+}
+
+std::uint64_t RTTCliOptions::getMysqlDbPort() const {
+    return getArgumentValue<std::uint64_t>(MYSQL_DB_PORT_ARG_NAME);
+}
+
+bool RTTCliOptions::hasMysqlDbPort() const {
+    return isArgumentSet(MYSQL_DB_PORT_ARG_NAME);
 }
 
 bool RTTCliOptions::isArgumentSet(const std::string & argName) const {

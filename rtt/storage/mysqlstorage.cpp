@@ -13,9 +13,13 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     s->battery          = s->rttCliOptions->getBatteryArg();
 
     try {
-        std::string dbAddress = s->toolkitSettings->getRsMysqlAddress();
+        std::string dbAddress = s->rttCliOptions->hasMysqlDbHost() ?
+                                s->rttCliOptions->getMysqlDbHost() :
+                                s->toolkitSettings->getRsMysqlAddress();
         dbAddress.append(":");
-        dbAddress.append(s->toolkitSettings->getRsMysqlPort());
+        dbAddress.append(s->rttCliOptions->hasMysqlDbPort() ?
+                         std::to_string(s->rttCliOptions->getMysqlDbPort()) :
+                         s->toolkitSettings->getRsMysqlPort());
 
         s->driver = get_driver_instance();
         s->conn   = std::unique_ptr<sql::Connection>(

@@ -93,6 +93,20 @@ public:
      */
     std::uint64_t getMysqlDbEid() const;
 
+    /**
+     * @brief getMysqlDbHost
+     * @return MySQL host name, overrides config file
+     */
+    std::string getMysqlDbHost() const;
+    bool hasMysqlDbHost() const;
+
+    /**
+     * @brief getMysqlDbPort
+     * @return MySQL port, overrides config file
+     */
+    std::uint64_t getMysqlDbPort() const;
+    bool hasMysqlDbPort() const;
+
 private:
     static const std::string BATTERY_ARG_NAME;
     static const std::string DATA_FILE_ARG_NAME;
@@ -100,14 +114,17 @@ private:
     static const std::string TEST_ID_ARG_NAME;
     static const std::string RESULT_STORAGE_ARG_NAME;
     static const std::string MYSQL_DB_EID_ARG_NAME;
-
+    static const std::string MYSQL_DB_HOST_ARG_NAME;
+    static const std::string MYSQL_DB_PORT_ARG_NAME;
     std::vector<tArgumentTypes> arguments = {
         ClArgument<BatteryArg>(BATTERY_ARG_NAME),                    /* Battery */
         ClArgument<std::string>(DATA_FILE_ARG_NAME),                 /* Input data file */
         ClArgument<std::string>(CONF_FILE_ARG_NAME),                 /* Input config file */
         ClArgument<int>(TEST_ID_ARG_NAME, true),                     /* (opt) Test to run in battery */
         ClArgument<ResultStorageArg>(RESULT_STORAGE_ARG_NAME, true), /* (opt) Result storage */
-        ClArgument<std::uint64_t>(MYSQL_DB_EID_ARG_NAME, true)       /* (opt) Experiment ID  */
+        ClArgument<std::uint64_t>(MYSQL_DB_EID_ARG_NAME, true),      /* (opt) Experiment ID  */
+        ClArgument<std::string>(MYSQL_DB_HOST_ARG_NAME, true),       /* (opt) MySQL Host name  */
+        ClArgument<std::uint64_t>(MYSQL_DB_PORT_ARG_NAME, true)      /* (opt) MySQL port  */
     };
 
     std::string objectInfo = "CL Arguments Parser";

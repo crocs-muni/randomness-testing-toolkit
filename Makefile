@@ -3,6 +3,7 @@ CXX=g++
 CXXFLAGS = \
 	-std=c++14 -I. \
 	-L/usr/lib \
+	-L. \
 	-lmysqlcppconn \
 	-lpthread -O3
 

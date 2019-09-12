@@ -495,16 +495,33 @@ void MySQLStorage::addStatisticResult(const std::string & statName,
 void MySQLStorage::addPValues(const std::vector<double> & pvals) {
     if(currDbSubtestId <= 0)
         raiseBugException("subtest id not set");
+    if (pvals.size() == 0)
+        return;
+
+    const size_t batchSize = 100;
+    const size_t chunks = my_max(1, pvals.size() / batchSize);
+    auto chunkVct = Utils::chunks(pvals.begin(), pvals.end(), chunks);
+    size_t lastChunkSize = 0;
 
     try {
-        std::unique_ptr<sql::PreparedStatement> insPValsStmt(conn->prepareStatement(
-            "INSERT INTO p_values(value, subtest_id) "
-            "VALUES(?,?)"
-        ));
+        std::unique_ptr<sql::PreparedStatement> insPValsStmt;
+        for (const auto & cur : chunkVct){
+            const auto curSize = std::distance(cur.first, cur.second);
+            if (lastChunkSize != curSize || !insPValsStmt) {
+                std::ostringstream os;
+                os << "INSERT INTO p_values(value, subtest_id) VALUES(?,?)";
+                if (curSize > 1) {
+                    std::fill_n(std::ostream_iterator<std::string>(os), curSize - 1, ",(?,?)");
+                }
+                insPValsStmt.reset(conn->prepareStatement(os.str()));
+                lastChunkSize = curSize;
+            }
 
-        for(const double & pval : pvals) {
-            insPValsStmt->setDouble(1, pval);
-            insPValsStmt->setUInt64(2, currDbSubtestId);
+            unsigned int idx = 1;
+            for(auto iter = cur.first; iter != cur.second; iter++, idx += 2){
+                insPValsStmt->setDouble(idx, *iter);
+                insPValsStmt->setUInt64(idx + 1, currDbSubtestId);
+            }
             insPValsStmt->execute();
         }
     } catch(sql::SQLException & ex) {

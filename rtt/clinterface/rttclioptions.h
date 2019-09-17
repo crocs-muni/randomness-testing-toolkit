@@ -94,6 +94,20 @@ public:
     std::uint64_t getMysqlDbEid() const;
 
     /**
+     * @brief getJid
+     * @return Job ID
+     */
+    bool hasJid() const;
+    std::uint64_t getJid() const;
+
+    /**
+     * @brief getResultsPathPrefix
+     * @return Path prefix to the experiment results directory
+     */
+    std::string getResultsPathPrefix() const;
+    bool hasResultsPathPrefix() const;
+
+    /**
      * @brief getSettingsFilePath
      * @return RTT settings json file path
      */
@@ -120,7 +134,9 @@ private:
     static const std::string DATA_FILE_ARG_NAME;
     static const std::string CONF_FILE_ARG_NAME;
     static const std::string TEST_ID_ARG_NAME;
+    static const std::string JID_ARG_NAME;
     static const std::string RESULT_STORAGE_ARG_NAME;
+    static const std::string RESULT_PATH_PREFIX_ARG_NAME;
     static const std::string MYSQL_DB_EID_ARG_NAME;
     static const std::string MYSQL_DB_HOST_ARG_NAME;
     static const std::string MYSQL_DB_PORT_ARG_NAME;
@@ -129,7 +145,9 @@ private:
         ClArgument<std::string>(DATA_FILE_ARG_NAME),                 /* Input data file */
         ClArgument<std::string>(CONF_FILE_ARG_NAME),                 /* Input config file */
         ClArgument<int>(TEST_ID_ARG_NAME, true),                     /* (opt) Test to run in battery */
+        ClArgument<std::uint64_t>(JID_ARG_NAME, true),               /* (opt) Job ID */
         ClArgument<ResultStorageArg>(RESULT_STORAGE_ARG_NAME, true), /* (opt) Result storage */
+        ClArgument<std::string>(RESULT_PATH_PREFIX_ARG_NAME, true), /* (opt) Result path prefix */
         ClArgument<std::string>(SETTINGS_FILE_ARG_NAME, true),       /* (opt) JSON settings file  */
         ClArgument<std::uint64_t>(MYSQL_DB_EID_ARG_NAME, true),      /* (opt) Experiment ID  */
         ClArgument<std::string>(MYSQL_DB_HOST_ARG_NAME, true),       /* (opt) MySQL Host name  */

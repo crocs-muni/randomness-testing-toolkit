@@ -44,14 +44,19 @@ void MySQLStorage::init() {
         raiseBugException("storage was already initialized");
 
     std::unique_ptr<sql::PreparedStatement> insBattStmt(conn->prepareStatement(
-        "INSERT INTO batteries(name, passed_tests, total_tests, alpha, experiment_id) "
-        "VALUES (?,?,?,?,?)"
+        "INSERT INTO batteries(name, passed_tests, total_tests, alpha, experiment_id, job_id) "
+        "VALUES (?,?,?,?,?,?)"
     ));
     insBattStmt->setString(1, battery.getName());
     insBattStmt->setUInt64(2, 0);
     insBattStmt->setUInt64(3, 0);
     insBattStmt->setDouble(4, Constants::MATH_ALPHA);
     insBattStmt->setUInt64(5, rttCliOptions->getMysqlDbEid());
+    if (rttCliOptions->hasJid()){
+        insBattStmt->setUInt64(6, rttCliOptions->getJid());
+    } else {
+        insBattStmt->setNull(6, sql::DataType::BIGINT);
+    }
     insBattStmt->execute();
 
     dbBatteryId = getLastInsertedId();

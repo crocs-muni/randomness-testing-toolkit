@@ -6,6 +6,18 @@
 
 #include "rtt/batteries/testrunner-batt.h"
 
+#ifdef _WIN32
+#include <direct.h>
+// MSDN recommends against using getcwd & chdir names
+#define cwd _getcwd
+#define cd _chdir
+#else
+#include "unistd.h"
+#define cwd getcwd
+#define cd chdir
+#endif
+
+
 namespace rtt {
 namespace batteries {
 
@@ -31,6 +43,12 @@ std::unique_ptr<IBattery> IBattery::getInstance(const GlobalContainer & cont) {
 void IBattery::runTests() {
     if(executed)
         throw RTTException(objectInfo , Strings::BATT_ERR_ALREADY_EXECUTED);
+
+    if (rttCliOptions->hasResultsPathPrefix()){
+        if (cd(rttCliOptions->getResultsPathPrefix().c_str()) != 0){
+            raiseBugException(std::string("Could not change dir to ") + rttCliOptions->getResultsPathPrefix());
+        }
+    }
 
     logger->info(objectInfo + ": Test execution started!");
     /* Tests will create output file in output directory */

@@ -32,6 +32,11 @@ std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf
                                    TestConstants::getNistStsTestData(
                                        v->battery, testId));
 
+    const auto & cli = cont.getRttCliOptions();
+    if (cli->hasResultsPathPrefix()){
+        v->resultSubDir = cli->getResultsPathPrefix() + "/" + v->resultSubDir;
+    }
+
     return v;
 }
 

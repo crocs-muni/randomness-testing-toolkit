@@ -29,7 +29,8 @@ void GlobalContainer::initLogger(const std::string & logId, bool toCout) {
     auto logFilePath = Utils::getLogFilePath(creationTime,
                                              toolkitSettings->getLoggerRunLogDir(),
                                              rttCliOptions->getInputDataPath(),
-                                             rttCliOptions->getBatteryArg().getShortName()
+                                             rttCliOptions->getBatteryArg().getShortName(),
+                                             rttCliOptions->hasJid() ? rttCliOptions->getJid() : 0
                        );
 
     logger = std::unique_ptr<Logger>(new Logger(logId , logFilePath , toCout));

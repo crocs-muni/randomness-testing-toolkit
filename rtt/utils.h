@@ -152,7 +152,8 @@ public:
     static std::string getLogFilePath(time_t creationTime ,
                                       const std::string & logDir ,
                                       const std::string & inputFilePath ,
-                                      std::string batteryShort = "");
+                                      std::string batteryShort = "",
+                                      std::uint64_t jid = 0);
 
     /**
      * @brief intToHex Converts integer to hex notation

@@ -29,6 +29,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
             auto variantPVals = getVariantPValues(stsVar);
 
             /* Single subtest processing */
+            tmpSubTestResults.reserve(variantPVals.size());
             for(const std::vector<double> & subTestPVals : variantPVals) {
                 if(subTestPVals.empty()) {
                     r->logger->warn(r->objectInfo + 

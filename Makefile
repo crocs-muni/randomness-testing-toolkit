@@ -1,6 +1,6 @@
 CC=gcc
 CXX=g++
-CXXFLAGS = \
+CXXFLAGS += \
 	-std=c++14 -I. \
 	-L/usr/lib \
 	-L. \

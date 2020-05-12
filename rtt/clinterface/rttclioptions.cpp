@@ -3,12 +3,17 @@
 namespace rtt {
 namespace clinterface {
 
-const std::string RTTCliOptions::BATTERY_ARG_NAME        = "-b";
-const std::string RTTCliOptions::DATA_FILE_ARG_NAME      = "-f";
-const std::string RTTCliOptions::CONF_FILE_ARG_NAME      = "-c";
-const std::string RTTCliOptions::TEST_ID_ARG_NAME        = "-t";
-const std::string RTTCliOptions::RESULT_STORAGE_ARG_NAME = "-r";
-const std::string RTTCliOptions::MYSQL_DB_EID_ARG_NAME   = "--eid";
+const std::string RTTCliOptions::BATTERY_ARG_NAME            = "-b";
+const std::string RTTCliOptions::SETTINGS_FILE_ARG_NAME      = "-s";
+const std::string RTTCliOptions::DATA_FILE_ARG_NAME          = "-f";
+const std::string RTTCliOptions::CONF_FILE_ARG_NAME          = "-c";
+const std::string RTTCliOptions::TEST_ID_ARG_NAME            = "-t";
+const std::string RTTCliOptions::JID_ARG_NAME                = "--jid";
+const std::string RTTCliOptions::RESULT_STORAGE_ARG_NAME     = "-r";
+const std::string RTTCliOptions::RESULT_PATH_PREFIX_ARG_NAME = "--rpath";
+const std::string RTTCliOptions::MYSQL_DB_EID_ARG_NAME       = "--eid";
+const std::string RTTCliOptions::MYSQL_DB_HOST_ARG_NAME      = "--db-host";
+const std::string RTTCliOptions::MYSQL_DB_PORT_ARG_NAME      = "--db-port";
 
 RTTCliOptions RTTCliOptions::getInstance(int argc, char * argv[]) {
     RTTCliOptions options;
@@ -71,6 +76,8 @@ std::string RTTCliOptions::getUsage() {
     rval << "============================== [USAGE] ==============================" << std::endl;
     rval << "-h or --help     Print this message.                                 " << std::endl;
     rval << "                                                                     " << std::endl;
+    rval << "-s <json-path>   (Optional) Overrides RTT JSON config path.          " << std::endl;
+    rval << "                                                                     " << std::endl;
     rval << "-b <battery>     Sets the battery that will be executed. Accepted    " << std::endl;
     rval << "                 values of <battery> are: nist_sts, dieharder,       " << std::endl;
     rval << "                 tu01_smallcrush, tu01_crush, tu01_bigcrush,         " << std::endl;
@@ -81,6 +88,9 @@ std::string RTTCliOptions::getUsage() {
     rval << "                                                                     " << std::endl;
     rval << "-f <data-path>   Sets the path to the file with binary data. The data" << std::endl;
     rval << "                 will be analysed with the chosen battery.           " << std::endl;
+    rval << "                                                                     " << std::endl;
+    rval << "--rpath <path-prefix>  (Optional) Path prefix for experiment results " << std::endl;
+    rval << "                 directory.                                          " << std::endl;
     rval << "                                                                     " << std::endl;
     rval << "-t <test-id>     (Optional) Sets the id of the test that will be     " << std::endl;
     rval << "                 executed. If left empty, tests that are defined in  " << std::endl;
@@ -95,6 +105,12 @@ std::string RTTCliOptions::getUsage() {
     rval << "--eid <eid>      (Optional) Must be set when <storage> is db_mysql.  " << std::endl;
     rval << "                 Sets id of experiment in the database that will be  " << std::endl;
     rval << "                 assigned the results of this battery execution.     " << std::endl;
+    rval << "                                                                     " << std::endl;
+    rval << "--jid <jid>      (Optional) Job ID being computed                    " << std::endl;
+    rval << "                                                                     " << std::endl;
+    rval << "--db-host <host> (Optional) Override MySQL host from config file.    " << std::endl;
+    rval << "                                                                     " << std::endl;
+    rval << "--db-port <port> (Optional) Override MySQL port from config file.    " << std::endl;
     rval << "=====================================================================" << std::endl;
     return rval.str();
 }
@@ -132,6 +148,46 @@ ResultStorageArg RTTCliOptions::getResultStorageArg() const {
 
 std::uint64_t RTTCliOptions::getMysqlDbEid() const {
     return getArgumentValue<std::uint64_t>(MYSQL_DB_EID_ARG_NAME);
+}
+
+bool RTTCliOptions::hasJid() const {
+    return isArgumentSet(JID_ARG_NAME);
+}
+
+std::uint64_t RTTCliOptions::getJid() const {
+    return getArgumentValue<std::uint64_t>(JID_ARG_NAME);
+}
+
+std::string RTTCliOptions::getResultsPathPrefix() const {
+    return getArgumentValue<std::string>(RESULT_PATH_PREFIX_ARG_NAME);
+}
+
+bool RTTCliOptions::hasResultsPathPrefix() const {
+    return isArgumentSet(RESULT_PATH_PREFIX_ARG_NAME);
+}
+
+std::string RTTCliOptions::getSettingsFilePath() const {
+    return getArgumentValue<std::string>(SETTINGS_FILE_ARG_NAME);
+}
+
+bool RTTCliOptions::hasSettingsFilePath() const {
+    return isArgumentSet(SETTINGS_FILE_ARG_NAME);
+}
+
+std::string RTTCliOptions::getMysqlDbHost() const {
+    return getArgumentValue<std::string>(MYSQL_DB_HOST_ARG_NAME);
+}
+
+bool RTTCliOptions::hasMysqlDbHost() const {
+    return isArgumentSet(MYSQL_DB_HOST_ARG_NAME);
+}
+
+std::uint64_t RTTCliOptions::getMysqlDbPort() const {
+    return getArgumentValue<std::uint64_t>(MYSQL_DB_PORT_ARG_NAME);
+}
+
+bool RTTCliOptions::hasMysqlDbPort() const {
+    return isArgumentSet(MYSQL_DB_PORT_ARG_NAME);
 }
 
 bool RTTCliOptions::isArgumentSet(const std::string & argName) const {

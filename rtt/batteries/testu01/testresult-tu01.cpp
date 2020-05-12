@@ -4,6 +4,31 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
+const static std::regex RE_SUBTEST (
+      "\nGenerator providing data from binary file.\n"
+      "([^]*?)"  /* This will capture output of one subtest */
+      "(?=\nGenerator providing data from binary file.\n|$)"
+);
+
+const static std::regex RE_PVALUES (
+      "p-value of test {23}: *?("
+      "eps|"                            /* Just "eps" */
+      "1 - eps1|"                       /* Just "1 - eps1" */
+      "0\\.\\d{2,4}|"                   /* Decimal rounded from 2 to 4 digits */
+      "(1 -  ?)?\\d\\.\\de-\\d{1,3}"    /* Decimal in scientific notation that can be preceeded by "1 - " */
+      ") *?(\\*\\*\\*\\*\\*)?\\n"       /* Capture ending "*****" - pvalue is suspect */
+);
+
+static const std::regex RE_W_PARAM (
+      "\\sw = +?([1-9]+?)\\s"
+);
+
+const static std::regex RE_PVALUES_1LVL (
+      "\n=== First level p-values/statistics of the test ===\n"
+      "([^]*?)" /* This will capture printed p-values in the log */
+      "\n===================================================\n"
+);
+
 std::unique_ptr<TestResult> TestResult::getInstance(
         const std::vector<ITest *> & tests) {
     if(tests.empty())
@@ -13,11 +38,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                        tests.at(0)->getLogger(),
                                        tests.at(0)->getLogicName()));
 
-    const static std::regex RE_SUBTEST {
-        "\nGenerator providing data from binary file.\n"
-        "([^]*?)"  /* This will capture output of one subtest */
-        "(?=\nGenerator providing data from binary file.\n|$)"
-    };
+
     auto endIt = std::sregex_iterator();
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::Statistic> tmpStatistics;
@@ -84,14 +105,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
 std::vector<result::Statistic> TestResult::extractStatistics(
         const std::string & testLog, std::vector<std::string> statNames) {
     std::vector<result::Statistic> rval;
-    const static std::regex RE_PVALUES {
-        "p-value of test {23}: *?("
-        "eps|"                            /* Just "eps" */
-        "1 - eps1|"                       /* Just "1 - eps1" */
-        "0\\.\\d{2,4}|"                   /* Decimal rounded from 2 to 4 digits */
-        "(1 -  ?)?\\d\\.\\de-\\d{1,3}"    /* Decimal in scientific notation that can be preceeded by "1 - " */
-        ") *?(\\*\\*\\*\\*\\*)?\\n"       /* Capture ending "*****" - pvalue is suspect */
-    };
+
     auto pValIt = std::sregex_iterator(
                       testLog.begin(),
                       testLog.end(),
@@ -155,9 +169,7 @@ std::vector<std::pair<std::string, std::string>> TestResult::extractTestParamete
     }
     /* Extracting w in Block Alphabit */
     if(battery.getBatteryId() == Constants::BatteryID::TU01_BLOCK_ALPHABIT) {
-        static const std::regex RE_W_PARAM {
-            "\\sw = +?([1-9]+?)\\s"
-        };
+
         auto wParamIt = std::sregex_iterator(
                             testLog.begin(),
                             testLog.end(),
@@ -175,13 +187,9 @@ std::vector<std::pair<std::string, std::string>> TestResult::extractTestParamete
 }
 
 std::vector<double> TestResult::extractPValues(const std::string & testLog) {
-    const static std::regex RE_PVALUES {
-        "\n=== First level p-values/statistics of the test ===\n"
-        "([^]*?)" /* This will capture printed p-values in the log */
-        "\n===================================================\n"
-    };
+
     std::smatch m;
-    std::regex_search(testLog, m, RE_PVALUES);
+    std::regex_search(testLog, m, RE_PVALUES_1LVL);
     if(m.empty())
         return {};
 

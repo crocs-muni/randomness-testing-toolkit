@@ -89,7 +89,9 @@ IVariant::IVariant(int testId, std::string testObjInf, uint variantIdx,
             Utils::getLogFilePath(
                 cont.getCreationTime(),
                 cont.getToolkitSettings()->getLoggerBatteryDir(battery),
-                binaryDataPath);
+                binaryDataPath,
+                "",
+                cont.getRttCliOptions()->hasJid() ? cont.getRttCliOptions()->getJid() : 0);
     objectInfo          =
             testObjInf +
             " - variant " + Utils::itostr(variantIdx + 1);

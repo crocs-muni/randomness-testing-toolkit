@@ -155,9 +155,18 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
         throw RTTException(objectInfo ,
                            ts.getParsingErrorMessage("missing tag with battery execution settings", JSON_EXEC));
     {
+        bool hasThreadsFromEnv = false;
         json nExec = nRoot.at(Utils::getLastItemInPath(JSON_EXEC));
-        ts.execMaximumThreads = ts.parseIntegerValue(nExec , JSON_EXEC_MAX_PAR_TESTS);
+
         ts.execTestTimeout = ts.parseIntegerValue(nExec, JSON_EXEC_TEST_TIMEOUT);
+
+        if(const char* envThreads = std::getenv("RTT_PARALLEL")) {
+            ts.execMaximumThreads = atoi(envThreads);
+            hasThreadsFromEnv = ts.execMaximumThreads > 0 && ts.execMaximumThreads < 32000;
+        }
+        if (!hasThreadsFromEnv) {
+            ts.execMaximumThreads = ts.parseIntegerValue(nExec, JSON_EXEC_MAX_PAR_TESTS);
+        }
     }
 
     return ts;

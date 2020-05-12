@@ -152,7 +152,8 @@ public:
     static std::string getLogFilePath(time_t creationTime ,
                                       const std::string & logDir ,
                                       const std::string & inputFilePath ,
-                                      std::string batteryShort = "");
+                                      std::string batteryShort = "",
+                                      std::uint64_t jid = 0);
 
     /**
      * @brief intToHex Converts integer to hex notation
@@ -186,6 +187,30 @@ public:
             throw std::runtime_error("can't convert \"" + str + "\"");
 
         return rval;
+    }
+
+    template <typename Iterator>
+    static std::vector<std::pair<Iterator, Iterator>> chunks(Iterator begin, Iterator end, std::size_t n){
+        std::vector<std::pair<Iterator, Iterator>> ranges;
+        if (n == 0) return ranges;
+        ranges.reserve(n);
+
+        auto dist = std::distance(begin, end);
+        n = std::min<size_t>(n, dist);
+        auto chunk = dist / n;
+        auto remainder = dist % n;
+
+        for (size_t i = 0; i < n-1; ++i) {
+            auto next_end = std::next(begin, chunk + (remainder ? 1 : 0));
+            ranges.emplace_back(begin, next_end);
+
+            begin = next_end;
+            if (remainder) remainder -= 1;
+        }
+
+        // last chunk
+        ranges.emplace_back(begin, end);
+        return ranges;
     }
 };
 

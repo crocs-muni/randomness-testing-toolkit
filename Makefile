@@ -1,10 +1,20 @@
 CC=gcc
 CXX=g++
-CXXFLAGS = \
+
+ifndef LINK_PTHREAD
+override LINK_PTHREAD = -lpthread
+endif
+
+ifndef LINK_MYSQL
+override LINK_MYSQL = -lmysqlcppconn
+endif
+
+CXXFLAGS += \
 	-std=c++14 -I. \
 	-L/usr/lib \
-	-lmysqlcppconn \
-	-lpthread -O3
+	-L. \
+	$(LINK_MYSQL) \
+	$(LINK_PTHREAD) -O3
 
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===

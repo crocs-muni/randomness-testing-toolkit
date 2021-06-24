@@ -128,6 +128,13 @@ public:
     std::uint64_t getMysqlDbPort() const;
     bool hasMysqlDbPort() const;
 
+    /**
+     * @brief getSkipPvalues
+     * @return skip p-value storage procedure
+     */
+    bool getSkipPvalues() const;
+    bool hasSkipPvalues() const;
+
 private:
     static const std::string BATTERY_ARG_NAME;
     static const std::string SETTINGS_FILE_ARG_NAME;
@@ -140,6 +147,7 @@ private:
     static const std::string MYSQL_DB_EID_ARG_NAME;
     static const std::string MYSQL_DB_HOST_ARG_NAME;
     static const std::string MYSQL_DB_PORT_ARG_NAME;
+    static const std::string SKIP_PVALUES;
     std::vector<tArgumentTypes> arguments = {
         ClArgument<BatteryArg>(BATTERY_ARG_NAME),                    /* Battery */
         ClArgument<std::string>(DATA_FILE_ARG_NAME),                 /* Input data file */
@@ -151,7 +159,8 @@ private:
         ClArgument<std::string>(SETTINGS_FILE_ARG_NAME, true),       /* (opt) JSON settings file  */
         ClArgument<std::uint64_t>(MYSQL_DB_EID_ARG_NAME, true),      /* (opt) Experiment ID  */
         ClArgument<std::string>(MYSQL_DB_HOST_ARG_NAME, true),       /* (opt) MySQL Host name  */
-        ClArgument<std::uint64_t>(MYSQL_DB_PORT_ARG_NAME, true)      /* (opt) MySQL port  */
+        ClArgument<std::uint64_t>(MYSQL_DB_PORT_ARG_NAME, true),      /* (opt) MySQL port  */
+        ClArgument<int>(SKIP_PVALUES, true)                         /* skip pvalue storage  */
     };
 
     std::string objectInfo = "CL Arguments Parser";

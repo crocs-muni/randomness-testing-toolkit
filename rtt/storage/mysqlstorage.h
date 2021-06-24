@@ -44,6 +44,7 @@ private:
     /* Pointers to global objects */
     RTTCliOptions * rttCliOptions;
     ToolkitSettings * toolkitSettings;
+    const GlobalContainer * gContainer;
 
     time_t creationTime;
     BatteryArg battery;

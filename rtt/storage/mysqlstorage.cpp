@@ -10,6 +10,7 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     s->rttCliOptions    = container.getRttCliOptions();
     s->toolkitSettings  = container.getToolkitSettings();
     s->creationTime     = container.getCreationTime();
+    s->gContainer       = &container;
     s->battery          = s->rttCliOptions->getBatteryArg();
 
     try {
@@ -69,6 +70,13 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
     if(testResults.empty())
         raiseBugException("empty results");
 
+    auto batteryConfiguration = gContainer->getBatteryConfiguration();
+    const bool skipPvalueStorage = (rttCliOptions->hasSkipPvalues() && rttCliOptions->getSkipPvalues())
+        || (toolkitSettings != nullptr && toolkitSettings->shouldSkipPvalueStorage())
+        || (batteryConfiguration != nullptr && batteryConfiguration->skipPvalueStorage());
+
+    gContainer->getLogger()->info(std::string("Pvalue storage skipped: ") + (skipPvalueStorage ? "y" : "n"));
+
     /* Storing actual results */
     for(const auto & testRes : testResults) {
         addNewTest(testRes->getTestName());
@@ -98,7 +106,7 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
                                        testRes->isPValuePassing(stat.getValue()));
                 }
 
-                if(subRes.getPvalues().size() > 0)
+                if(!skipPvalueStorage && subRes.getPvalues().size() > 0)
                     addPValues(subRes.getPvalues());
 
                 finalizeSubTest();

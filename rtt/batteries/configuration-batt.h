@@ -38,6 +38,8 @@ public:
     static const std::string TAGNAME_RABBIT_SETT;
     static const std::string TAGNAME_ALPHABIT_SETT;
     static const std::string TAGNAME_BLALPHABIT_SETT;
+    static const std::string TAGNAME_RTT_SETT;
+    static const std::string TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE;
     static const std::string TAGNAME_DEFAULTS;
     static const std::string TAGNAME_TEST_SPECIFIC_SETT;
     static const std::string TAGNAME_DEFAULT_TESTS;
@@ -119,6 +121,8 @@ public:
                                             int testId , uint variantIdx ,
                                             const std::string & paramName);
 
+    bool skipPvalueStorage() const;
+
 private:
     /* Member variables */
     static const std::string objectInfo;
@@ -129,6 +133,8 @@ private:
 
     json findBatterySettingsNode(const json & rootNode ,
                                  const BatteryArg & battery);
+
+    json findRttSettingsNode() const;
 
     json findBatteryDefaultSettNode(const json & rootNode ,
                                     const BatteryArg & battery);

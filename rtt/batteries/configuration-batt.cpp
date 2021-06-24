@@ -260,7 +260,7 @@ json Configuration::findTestSpecificNode(const json & rootNode, const BatteryArg
         return {};
 
     for(const json & el : testSpecificSettNode) {
-        if(el.count(TAGNAME_TEST_ID) == 1 && el.at(TAGNAME_TEST_ID) == testId)
+        if(el.count(TAGNAME_TEST_ID) == 1 && el.at(TAGNAME_TEST_ID).is_number() && el.at(TAGNAME_TEST_ID).get<int>() == testId)
             return el;
     }
     return {};

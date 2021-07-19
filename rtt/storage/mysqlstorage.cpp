@@ -71,9 +71,14 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
         raiseBugException("empty results");
 
     auto batteryConfiguration = gContainer->getBatteryConfiguration();
-    const bool skipPvalueStorage = (rttCliOptions->hasSkipPvalues() && rttCliOptions->getSkipPvalues())
-        || (toolkitSettings != nullptr && toolkitSettings->shouldSkipPvalueStorage())
-        || (batteryConfiguration != nullptr && batteryConfiguration->skipPvalueStorage());
+    bool skipPvalueStorage = false;
+    if (batteryConfiguration != nullptr && batteryConfiguration->hasSkipPvalueStorage()) {
+        skipPvalueStorage = batteryConfiguration->skipPvalueStorage();
+    } else if (rttCliOptions->hasSkipPvalues()) {
+        skipPvalueStorage = rttCliOptions->getSkipPvalues();
+    } else if (toolkitSettings != nullptr && toolkitSettings->hasShouldSkipPvalueStorage()){
+        skipPvalueStorage = toolkitSettings->shouldSkipPvalueStorage();
+    }
 
     gContainer->getLogger()->info(std::string("Pvalue storage skipped: ") + (skipPvalueStorage ? "y" : "n"));
 

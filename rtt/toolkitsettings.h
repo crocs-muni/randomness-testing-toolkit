@@ -108,6 +108,7 @@ public:
      * @return True if pvalue storage should be skipped
      */
     bool shouldSkipPvalueStorage() const;
+    bool hasShouldSkipPvalueStorage() const;
 
 private:
     /* JSON tag names constants */
@@ -219,7 +220,8 @@ private:
 
     int parseIntegerValue(const json & parentNode,
                           const std::string & childTagName,
-                          bool mandatory = true) const;
+                          bool mandatory = true,
+                          int defaultValue = 0) const;
 
     std::string getTagFromCredentials(const std::string & tagPath) const;
 

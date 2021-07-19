@@ -115,14 +115,14 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
         }
 
         /** Skip pvalue storage **/
-        ts.skipPvalueStorage = 0;
+        ts.skipPvalueStorage = -1;
         bool hasSkipPvalsFromEnv = false;
         if(const char* envSkipPvalueStorage = std::getenv("RTT_SKIP_PVALUE_STORAGE")) {
             ts.skipPvalueStorage = atoi(envSkipPvalueStorage);
             hasSkipPvalsFromEnv = ts.skipPvalueStorage >= 0 && ts.skipPvalueStorage < 32000;
         }
         if (!hasSkipPvalsFromEnv) {
-            ts.skipPvalueStorage = ts.parseIntegerValue(nResultStorage, JSON_RS_SKIP_PVALUE_STORAGE, false);
+            ts.skipPvalueStorage = ts.parseIntegerValue(nResultStorage, JSON_RS_SKIP_PVALUE_STORAGE, false, -1);
         }
     }
 
@@ -214,6 +214,10 @@ int ToolkitSettings::getExecMaximumThreads() const {
 
 bool ToolkitSettings::shouldSkipPvalueStorage() const {
     return skipPvalueStorage > 0;
+}
+
+bool ToolkitSettings::hasShouldSkipPvalueStorage() const {
+    return skipPvalueStorage >= 0;
 }
 
 std::string ToolkitSettings::getRsMysqlAddress() const {
@@ -371,7 +375,8 @@ std::string ToolkitSettings::parseStringValue(const json & parenttag,
 
 int ToolkitSettings::parseIntegerValue(const json & parenttag,
                                        const std::string & childTagPath,
-                                       bool mandatory) const {
+                                       bool mandatory,
+                                       int defaultValue) const {
     try {
         auto childTagName = Utils::getLastItemInPath(childTagPath);
         if(parenttag.count(childTagName) != 1) {
@@ -379,7 +384,7 @@ int ToolkitSettings::parseIntegerValue(const json & parenttag,
                 throw RTTException(objectInfo,
                                    getParsingErrorMessage("missing tag", childTagPath));
 
-            return 0;
+            return defaultValue;
         } else {
             return parenttag.at(childTagName);
         }

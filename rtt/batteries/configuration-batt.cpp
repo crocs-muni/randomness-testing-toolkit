@@ -232,6 +232,12 @@ json Configuration::findRttSettingsNode() const {
     return {};
 }
 
+bool Configuration::hasSkipPvalueStorage() const {
+    auto js = findRttSettingsNode();
+    return js.count(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE) == 1
+           && js.at(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE).is_number();
+}
+
 bool Configuration::skipPvalueStorage() const {
     auto js = findRttSettingsNode();
     return js.count(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE) == 1

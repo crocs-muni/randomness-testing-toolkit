@@ -121,6 +121,7 @@ public:
                                             int testId , uint variantIdx ,
                                             const std::string & paramName);
 
+    bool hasSkipPvalueStorage() const;
     bool skipPvalueStorage() const;
 
 private:

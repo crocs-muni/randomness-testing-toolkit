@@ -13,31 +13,35 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     s->gContainer       = &container;
     s->battery          = s->rttCliOptions->getBatteryArg();
 
-    try {
-        std::string dbAddress = s->rttCliOptions->hasMysqlDbHost() ?
-                                s->rttCliOptions->getMysqlDbHost() :
-                                s->toolkitSettings->getRsMysqlAddress();
-        dbAddress.append(":");
-        dbAddress.append(s->rttCliOptions->hasMysqlDbPort() ?
-                         std::to_string(s->rttCliOptions->getMysqlDbPort()) :
-                         s->toolkitSettings->getRsMysqlPort());
+    s->dbAddress = s->rttCliOptions->hasMysqlDbHost() ?
+                   s->rttCliOptions->getMysqlDbHost() :
+                   s->toolkitSettings->getRsMysqlAddress();
+    s->dbAddress.append(":");
+    s->dbAddress.append(s->rttCliOptions->hasMysqlDbPort() ?
+                     std::to_string(s->rttCliOptions->getMysqlDbPort()) :
+                     s->toolkitSettings->getRsMysqlPort());
 
-        s->driver = get_driver_instance();
-        s->conn   = std::unique_ptr<sql::Connection>(
-                        s->driver->connect(dbAddress,
-                                           s->toolkitSettings->getRsMysqlUserName(),
-                                           s->toolkitSettings->getRsMysqlPwd()));
-        s->conn->setSchema(s->toolkitSettings->getRsMysqlDbName());
+    s->connectDb();
+    return s;
+}
+
+void MySQLStorage::connectDb() {
+    try {
+        driver = get_driver_instance();
+        conn   = std::unique_ptr<sql::Connection>(
+            driver->connect(dbAddress,
+                               toolkitSettings->getRsMysqlUserName(),
+                               toolkitSettings->getRsMysqlPwd()));
+        conn->setSchema(toolkitSettings->getRsMysqlDbName());
         /* Commit in finalizeReport, rollback on any error. */
-        s->conn->setAutoCommit(false);
+        conn->setAutoCommit(false);
 
     } catch (sql::SQLException &ex) {
-        if(s->conn)
-            s->conn->rollback();
+        gContainer->getLogger()->error(std::string("DB Connect failed: ") + std::string(ex.what()));
+        if(conn)
+            conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
-
-    return s;
 }
 
 void MySQLStorage::init() {
@@ -81,6 +85,9 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
     }
 
     gContainer->getLogger()->info(std::string("Pvalue storage skipped: ") + (skipPvalueStorage ? "y" : "n"));
+
+    // Ping database, reopen connection if needed
+    reconnectIfNeeded();
 
     /* Storing actual results */
     for(const auto & testRes : testResults) {
@@ -584,6 +591,50 @@ uint64_t MySQLStorage::getLastInsertedId() {
             conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
+}
+
+bool MySQLStorage::pingConnection() {
+    try {
+        auto stmt = std::unique_ptr<sql::Statement>(conn->createStatement());
+        auto res = std::unique_ptr<sql::ResultSet>(stmt->executeQuery(
+            "SELECT 1 FROM jobs LIMIT 1"
+        ));
+
+        if(res->next()) {
+            return true;
+        }
+
+        gContainer->getLogger()->warn(std::string("Ping DB failed path 1"));
+
+    } catch (sql::SQLException &ex) {
+        gContainer->getLogger()->warn(std::string("Ping DB failed with exception: ") + std::string(ex.what()));
+        if(conn) {
+            try {
+                conn->rollback();
+            } catch (sql::SQLException &ex2) {
+                gContainer->getLogger()->warn(std::string("Ping DB: rollback failed with exception: ") + std::string(ex2.what()));
+            }
+        }
+    }
+    return false;
+}
+
+void MySQLStorage::reconnectIfNeeded() {
+    if (pingConnection()) {
+        return;
+    }
+
+    const auto log = gContainer->getLogger();
+    log->error(std::string("Ping DB failed, trying to reconnect"));
+
+    if (conn) {
+        try {
+            conn->close();
+        } catch (sql::SQLException &ex) {}
+        conn.reset();
+    }
+
+    connectDb();
 }
 
 } // namespace storage

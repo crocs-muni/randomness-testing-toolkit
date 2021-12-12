@@ -635,6 +635,9 @@ void MySQLStorage::reconnectIfNeeded() {
     }
 
     connectDb();
+
+    dbBatteryId = 0;
+    init();
 }
 
 } // namespace storage

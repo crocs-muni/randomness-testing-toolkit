@@ -109,6 +109,8 @@ private:
 
     void connectDb();
 
+    void initBattery();
+
     std::uint64_t getLastInsertedId();
 };
 

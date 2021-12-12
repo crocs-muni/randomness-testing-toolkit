@@ -45,6 +45,10 @@ void MySQLStorage::connectDb() {
 }
 
 void MySQLStorage::init() {
+
+}
+
+void MySQLStorage::initBattery() {
     if(dbBatteryId > 0)
         raiseBugException("storage was already initialized");
 
@@ -68,9 +72,6 @@ void MySQLStorage::init() {
 }
 
 void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
-    if(dbBatteryId <= 0)
-        raiseBugException("storage wasn't initialized");
-
     if(testResults.empty())
         raiseBugException("empty results");
 
@@ -88,6 +89,8 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
 
     // Ping database, reopen connection if needed
     reconnectIfNeeded();
+
+    initBattery();
 
     /* Storing actual results */
     for(const auto & testRes : testResults) {

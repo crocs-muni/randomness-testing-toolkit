@@ -55,6 +55,7 @@ int main (int argc , char * argv[]) try {
             battery->runTests();
             /* Obtaining and storing results */
             const auto & results = battery->getTestResults();;
+            storage->checkStorage();
             storage->writeResults(Utils::getRawPtrs(results));
             /* And we are done. */
 
@@ -64,10 +65,11 @@ int main (int argc , char * argv[]) try {
         }
 
         /* Store warnings and errors into storage */
+        storage->checkStorage();
         storage->addBatteryWarnings(gc.getLogger()->getWarningMessages());
         storage->addBatteryErrors(gc.getLogger()->getErrorMessages());
         /* Call to close storage is important -
-         * changes are commited, files saved, etc... */
+         * changes are committed, files saved, etc... */
         storage->close();
 
     } catch(std::exception & ex) {

@@ -48,6 +48,12 @@ void MySQLStorage::init() {
 
 }
 
+void MySQLStorage::initBatteryIfNeeded() {
+    if (dbBatteryId == 0){
+        initBattery();
+    }
+}
+
 void MySQLStorage::initBattery() {
     if(dbBatteryId > 0)
         raiseBugException("storage was already initialized");
@@ -72,6 +78,8 @@ void MySQLStorage::initBattery() {
 }
 
 void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
+    if(dbBatteryId <= 0)
+        raiseBugException("battery id not set");
     if(testResults.empty())
         raiseBugException("empty results");
 
@@ -86,11 +94,6 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
     }
 
     gContainer->getLogger()->info(std::string("Pvalue storage skipped: ") + (skipPvalueStorage ? "y" : "n"));
-
-    // Ping database, reopen connection if needed
-    reconnectIfNeeded();
-
-    initBattery();
 
     /* Storing actual results */
     for(const auto & testRes : testResults) {
@@ -138,7 +141,7 @@ void MySQLStorage::close() {
 
     finalizeReport();
 
-    /* Reseting state of the storage. */
+    /* Resetting state of the storage. */
     dbBatteryId = 0;
     currDbTestId = 0;
     currDbVariantId = 0;
@@ -622,9 +625,9 @@ bool MySQLStorage::pingConnection() {
     return false;
 }
 
-void MySQLStorage::reconnectIfNeeded() {
+bool MySQLStorage::reconnectIfNeeded() {
     if (pingConnection()) {
-        return;
+        return false;
     }
 
     const auto log = gContainer->getLogger();
@@ -639,8 +642,22 @@ void MySQLStorage::reconnectIfNeeded() {
 
     connectDb();
 
+    // Battery not committed, reset state.
     dbBatteryId = 0;
     init();
+    return true;
+}
+
+void MySQLStorage::checkStorage() {
+    // Ping database, reopen connection if needed
+    const auto reconnected = reconnectIfNeeded();
+    if (reconnected && (currDbTestId > 0 || currTestIdx > 0)) {
+        throw RTTException(objectInfo, std::string("DB link reconnected but some results were lost, aborting"));
+    }
+
+    // If DB is reconnected, battery is lost, reinit if needed.
+    // Also lazy inits if DB works but battery was not added yet.
+    initBatteryIfNeeded();
 }
 
 } // namespace storage

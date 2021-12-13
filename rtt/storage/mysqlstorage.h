@@ -34,6 +34,8 @@ public:
 
     void addBatteryWarnings(const std::vector<std::string> & warnings);
 
+    void checkStorage();
+
 private:
     /*
     =================
@@ -105,11 +107,12 @@ private:
 
     bool pingConnection();
 
-    void reconnectIfNeeded();
+    bool reconnectIfNeeded();
 
     void connectDb();
 
     void initBattery();
+    void initBatteryIfNeeded();
 
     std::uint64_t getLastInsertedId();
 };

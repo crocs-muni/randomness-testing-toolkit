@@ -29,6 +29,10 @@ const static std::regex RE_PVALUES_1LVL (
       "\n===================================================\n"
 );
 
+const static std::regex RE_SUB_ERR_WARNING (
+     "((\\*{5,}\\s*(WARNING|ERROR).+)(\\n\\*{5,}.+)*)"
+);
+
 std::unique_ptr<TestResult> TestResult::getInstance(
         const std::vector<ITest *> & tests) {
     if(tests.empty())
@@ -64,7 +68,8 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                  RE_SUBTEST);
 
             /* Single subtest processing */
-            for(; subTestIt != endIt ; ++subTestIt) {
+            int subtestIdx = 0;
+            for(; subTestIt != endIt ; ++subTestIt, ++subtestIdx) {
                 std::smatch match = *subTestIt;
                 std::string subTestLog = match[1].str();
 
@@ -79,6 +84,14 @@ std::unique_ptr<TestResult> TestResult::getInstance(
 
                 /* P-values extraction */
                 tmpPValuesVec = r->extractPValues(subTestLog);
+                if (tmpStatistics.empty()) {
+                    auto problems = r->extractProblems(subTestLog);
+                    auto problemsNoNewLine = std::regex_replace(problems, std::regex("\n"), "\\n");
+                    auto msgLog = r->objectInfo + std::string(", Subtest idx ") + Utils::itostr(subtestIdx) + " has empty statistics: " + problemsNoNewLine;
+                    r->logger->warn(msgLog);
+                    variant->getBatteryOutput().appendStdErr(msgLog);
+                    continue;
+                }
 
                 /* Creation of a result of the subtest */
                 auto tmpSubTestRes = result::SubTestResult::getInstance(
@@ -201,6 +214,16 @@ std::vector<double> TestResult::extractPValues(const std::string & testLog) {
         rval.push_back(Utils::strtod(pVal));
 
     return rval;
+}
+
+std::string TestResult::extractProblems(const std::string & testLog) {
+
+    std::smatch m;
+    std::regex_search(testLog, m, RE_SUB_ERR_WARNING);
+    if(m.empty())
+        return {};
+
+    return m[1];
 }
 
 std::regex TestResult::buildParamRegex(

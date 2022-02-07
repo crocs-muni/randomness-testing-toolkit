@@ -36,6 +36,7 @@ private:
             std::vector<std::string> paramNames);
 
     std::vector<double> extractPValues(const std::string & testLog);
+    std::string extractProblems(const std::string & testLog);
 };
 
 } // namespace testu01

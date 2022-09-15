@@ -34,6 +34,8 @@ public:
 
     void addBatteryWarnings(const std::vector<std::string> & warnings);
 
+    void checkStorage();
+
 private:
     /*
     =================
@@ -44,12 +46,15 @@ private:
     /* Pointers to global objects */
     RTTCliOptions * rttCliOptions;
     ToolkitSettings * toolkitSettings;
+    const GlobalContainer * gContainer;
 
     time_t creationTime;
     BatteryArg battery;
 
     sql::Driver * driver;
     std::unique_ptr<sql::Connection> conn;
+    std::string dbAddress;
+
     std::uint64_t dbBatteryId = 0;
     std::uint64_t currDbTestId = 0;
     std::uint64_t currDbVariantId = 0;
@@ -99,6 +104,15 @@ private:
     void addPValues(const std::vector<double> & pvals);
 
     void finalizeReport();
+
+    bool pingConnection();
+
+    bool reconnectIfNeeded();
+
+    void connectDb();
+
+    void initBattery();
+    void initBatteryIfNeeded();
 
     std::uint64_t getLastInsertedId();
 };

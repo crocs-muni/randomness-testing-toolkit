@@ -12,6 +12,8 @@ const std::string Configuration::TAGNAME_BCRUSH_SETT        = "tu01-bigcrush-set
 const std::string Configuration::TAGNAME_RABBIT_SETT        = "tu01-rabbit-settings";
 const std::string Configuration::TAGNAME_ALPHABIT_SETT      = "tu01-alphabit-settings";
 const std::string Configuration::TAGNAME_BLALPHABIT_SETT    = "tu01-blockalphabit-settings";
+const std::string Configuration::TAGNAME_RTT_SETT           = "rtt-settings";
+const std::string Configuration::TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE = "skip-pvalue-storage";
 const std::string Configuration::TAGNAME_DEFAULTS           = "defaults";
 const std::string Configuration::TAGNAME_TEST_SPECIFIC_SETT = "test-specific-settings";
 const std::string Configuration::TAGNAME_DEFAULT_TESTS      = "test-ids";
@@ -221,6 +223,28 @@ json Configuration::findBatterySettingsNode(const json & rootNode,
     return {};
 }
 
+json Configuration::findRttSettingsNode() const {
+    if(configRoot.empty())
+        raiseBugException("empty json node");
+
+    if(configRoot.count(TAGNAME_RTT_SETT) == 1)
+        return configRoot.at(TAGNAME_RTT_SETT);
+    return {};
+}
+
+bool Configuration::hasSkipPvalueStorage() const {
+    auto js = findRttSettingsNode();
+    return js.count(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE) == 1
+           && js.at(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE).is_number();
+}
+
+bool Configuration::skipPvalueStorage() const {
+    auto js = findRttSettingsNode();
+    return js.count(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE) == 1
+        && js.at(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE).is_number()
+        && js.at(TAGNAME_RTT_SETT_SKIP_PVALUE_STORAGE).get<int>() > 0;
+}
+
 json Configuration::findBatteryDefaultSettNode(const json & rootNode,
                                                const BatteryArg & battery) {
     if(rootNode.empty())
@@ -260,7 +284,7 @@ json Configuration::findTestSpecificNode(const json & rootNode, const BatteryArg
         return {};
 
     for(const json & el : testSpecificSettNode) {
-        if(el.count(TAGNAME_TEST_ID) == 1 && el.at(TAGNAME_TEST_ID) == testId)
+        if(el.count(TAGNAME_TEST_ID) == 1 && el.at(TAGNAME_TEST_ID).is_number() && el.at(TAGNAME_TEST_ID).get<int>() == testId)
             return el;
     }
     return {};

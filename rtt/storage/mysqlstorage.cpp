@@ -10,36 +10,51 @@ std::unique_ptr<MySQLStorage> MySQLStorage::getInstance(const GlobalContainer & 
     s->rttCliOptions    = container.getRttCliOptions();
     s->toolkitSettings  = container.getToolkitSettings();
     s->creationTime     = container.getCreationTime();
+    s->gContainer       = &container;
     s->battery          = s->rttCliOptions->getBatteryArg();
 
-    try {
-        std::string dbAddress = s->rttCliOptions->hasMysqlDbHost() ?
-                                s->rttCliOptions->getMysqlDbHost() :
-                                s->toolkitSettings->getRsMysqlAddress();
-        dbAddress.append(":");
-        dbAddress.append(s->rttCliOptions->hasMysqlDbPort() ?
-                         std::to_string(s->rttCliOptions->getMysqlDbPort()) :
-                         s->toolkitSettings->getRsMysqlPort());
+    s->dbAddress = s->rttCliOptions->hasMysqlDbHost() ?
+                   s->rttCliOptions->getMysqlDbHost() :
+                   s->toolkitSettings->getRsMysqlAddress();
+    s->dbAddress.append(":");
+    s->dbAddress.append(s->rttCliOptions->hasMysqlDbPort() ?
+                     std::to_string(s->rttCliOptions->getMysqlDbPort()) :
+                     s->toolkitSettings->getRsMysqlPort());
 
-        s->driver = get_driver_instance();
-        s->conn   = std::unique_ptr<sql::Connection>(
-                        s->driver->connect(dbAddress,
-                                           s->toolkitSettings->getRsMysqlUserName(),
-                                           s->toolkitSettings->getRsMysqlPwd()));
-        s->conn->setSchema(s->toolkitSettings->getRsMysqlDbName());
-        /* Commit in finalizeReport, rollback on any error. */
-        s->conn->setAutoCommit(false);
-
-    } catch (sql::SQLException &ex) {
-        if(s->conn)
-            s->conn->rollback();
-        throw RTTException(objectInfo, ex.what());
-    }
-
+    s->connectDb();
     return s;
 }
 
+void MySQLStorage::connectDb() {
+    try {
+        driver = get_driver_instance();
+        conn   = std::unique_ptr<sql::Connection>(
+            driver->connect(dbAddress,
+                               toolkitSettings->getRsMysqlUserName(),
+                               toolkitSettings->getRsMysqlPwd()));
+        conn->setSchema(toolkitSettings->getRsMysqlDbName());
+        /* Commit in finalizeReport, rollback on any error. */
+        conn->setAutoCommit(false);
+
+    } catch (sql::SQLException &ex) {
+        gContainer->getLogger()->error(std::string("DB Connect failed: ") + std::string(ex.what()));
+        if(conn)
+            conn->rollback();
+        throw RTTException(objectInfo, ex.what());
+    }
+}
+
 void MySQLStorage::init() {
+
+}
+
+void MySQLStorage::initBatteryIfNeeded() {
+    if (dbBatteryId == 0){
+        initBattery();
+    }
+}
+
+void MySQLStorage::initBattery() {
     if(dbBatteryId > 0)
         raiseBugException("storage was already initialized");
 
@@ -64,10 +79,21 @@ void MySQLStorage::init() {
 
 void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & testResults) {
     if(dbBatteryId <= 0)
-        raiseBugException("storage wasn't initialized");
-
+        raiseBugException("battery id not set");
     if(testResults.empty())
         raiseBugException("empty results");
+
+    auto batteryConfiguration = gContainer->getBatteryConfiguration();
+    bool skipPvalueStorage = false;
+    if (batteryConfiguration != nullptr && batteryConfiguration->hasSkipPvalueStorage()) {
+        skipPvalueStorage = batteryConfiguration->skipPvalueStorage();
+    } else if (rttCliOptions->hasSkipPvalues()) {
+        skipPvalueStorage = rttCliOptions->getSkipPvalues();
+    } else if (toolkitSettings != nullptr && toolkitSettings->hasShouldSkipPvalueStorage()){
+        skipPvalueStorage = toolkitSettings->shouldSkipPvalueStorage();
+    }
+
+    gContainer->getLogger()->info(std::string("Pvalue storage skipped: ") + (skipPvalueStorage ? "y" : "n"));
 
     /* Storing actual results */
     for(const auto & testRes : testResults) {
@@ -98,7 +124,7 @@ void MySQLStorage::writeResults(const std::vector<batteries::ITestResult *> & te
                                        testRes->isPValuePassing(stat.getValue()));
                 }
 
-                if(subRes.getPvalues().size() > 0)
+                if(!skipPvalueStorage && subRes.getPvalues().size() > 0)
                     addPValues(subRes.getPvalues());
 
                 finalizeSubTest();
@@ -115,7 +141,7 @@ void MySQLStorage::close() {
 
     finalizeReport();
 
-    /* Reseting state of the storage. */
+    /* Resetting state of the storage. */
     dbBatteryId = 0;
     currDbTestId = 0;
     currDbVariantId = 0;
@@ -571,6 +597,67 @@ uint64_t MySQLStorage::getLastInsertedId() {
             conn->rollback();
         throw RTTException(objectInfo, ex.what());
     }
+}
+
+bool MySQLStorage::pingConnection() {
+    try {
+        auto stmt = std::unique_ptr<sql::Statement>(conn->createStatement());
+        auto res = std::unique_ptr<sql::ResultSet>(stmt->executeQuery(
+            "SELECT 1 FROM jobs LIMIT 1"
+        ));
+
+        if(res->next()) {
+            return true;
+        }
+
+        gContainer->getLogger()->warn(std::string("Ping DB failed path 1"));
+
+    } catch (sql::SQLException &ex) {
+        gContainer->getLogger()->warn(std::string("Ping DB failed with exception: ") + std::string(ex.what()));
+        if(conn) {
+            try {
+                conn->rollback();
+            } catch (sql::SQLException &ex2) {
+                gContainer->getLogger()->warn(std::string("Ping DB: rollback failed with exception: ") + std::string(ex2.what()));
+            }
+        }
+    }
+    return false;
+}
+
+bool MySQLStorage::reconnectIfNeeded() {
+    if (pingConnection()) {
+        return false;
+    }
+
+    const auto log = gContainer->getLogger();
+    log->error(std::string("Ping DB failed, trying to reconnect"));
+
+    if (conn) {
+        try {
+            conn->close();
+        } catch (sql::SQLException &ex) {}
+        conn.reset();
+    }
+
+    connectDb();
+
+    // Battery not committed, reset state.
+    dbBatteryId = 0;
+    init();
+    return true;
+}
+
+void MySQLStorage::checkStorage() {
+    // Ping database, reopen connection if needed
+    const auto reconnected = reconnectIfNeeded();
+    if (reconnected && (currDbTestId > 0 || currTestIdx > 0)) {
+        throw RTTException(objectInfo, std::string("DB link reconnected but some results were lost, aborting"));
+    }
+
+    // If DB is reconnected, battery is lost, reinit if needed.
+    // Also lazy inits if DB works but battery was not added yet.
+    initBatteryIfNeeded();
 }
 
 } // namespace storage

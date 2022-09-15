@@ -14,6 +14,7 @@ const std::string RTTCliOptions::RESULT_PATH_PREFIX_ARG_NAME = "--rpath";
 const std::string RTTCliOptions::MYSQL_DB_EID_ARG_NAME       = "--eid";
 const std::string RTTCliOptions::MYSQL_DB_HOST_ARG_NAME      = "--db-host";
 const std::string RTTCliOptions::MYSQL_DB_PORT_ARG_NAME      = "--db-port";
+const std::string RTTCliOptions::SKIP_PVALUES                = "--skip-pvalues";
 
 RTTCliOptions RTTCliOptions::getInstance(int argc, char * argv[]) {
     RTTCliOptions options;
@@ -111,6 +112,8 @@ std::string RTTCliOptions::getUsage() {
     rval << "--db-host <host> (Optional) Override MySQL host from config file.    " << std::endl;
     rval << "                                                                     " << std::endl;
     rval << "--db-port <port> (Optional) Override MySQL port from config file.    " << std::endl;
+    rval << "                                                                     " << std::endl;
+    rval << "--skip-pvalues <1> (Optional) Skip pvalue storage.                   " << std::endl;
     rval << "=====================================================================" << std::endl;
     return rval.str();
 }
@@ -188,6 +191,14 @@ std::uint64_t RTTCliOptions::getMysqlDbPort() const {
 
 bool RTTCliOptions::hasMysqlDbPort() const {
     return isArgumentSet(MYSQL_DB_PORT_ARG_NAME);
+}
+
+bool RTTCliOptions::getSkipPvalues() const {
+    return getArgumentValue<int>(SKIP_PVALUES) > 0;
+}
+
+bool RTTCliOptions::hasSkipPvalues() const {
+    return isArgumentSet(SKIP_PVALUES);
 }
 
 bool RTTCliOptions::isArgumentSet(const std::string & argName) const {

@@ -36,6 +36,7 @@ const std::string ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE        = ToolkitSe
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE_ROOT   = "credentials";
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE_NAME   = ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE_ROOT + "/username";
 const std::string ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE_PWD    = ToolkitSettings::JSON_RS_MYSQL_DB_CRED_FILE_ROOT + "/password";
+const std::string ToolkitSettings::JSON_RS_SKIP_PVALUE_STORAGE       = ToolkitSettings::JSON_RS + "/skip-pvalue-storage";
 const std::string ToolkitSettings::JSON_BINARIES                     = ToolkitSettings::JSON_ROOT + "/binaries";
 const std::string ToolkitSettings::JSON_BINARIES_NIST                = ToolkitSettings::JSON_BINARIES + "/nist-sts";
 const std::string ToolkitSettings::JSON_BINARIES_DH                  = ToolkitSettings::JSON_BINARIES + "/dieharder";
@@ -111,6 +112,17 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
             ts.rsMysqlPort              = ts.parseStringValue(nMysql, JSON_RS_MYSQL_DB_PORT , false);
             ts.rsMysqlDbName            = ts.parseStringValue(nMysql, JSON_RS_MYSQL_DB_NAME , false);
             ts.rsMysqlCredentialsFile   = ts.parseStringValue(nMysql, JSON_RS_MYSQL_DB_CRED_FILE , false);
+        }
+
+        /** Skip pvalue storage **/
+        ts.skipPvalueStorage = -1;
+        bool hasSkipPvalsFromEnv = false;
+        if(const char* envSkipPvalueStorage = std::getenv("RTT_SKIP_PVALUE_STORAGE")) {
+            ts.skipPvalueStorage = atoi(envSkipPvalueStorage);
+            hasSkipPvalsFromEnv = ts.skipPvalueStorage >= 0 && ts.skipPvalueStorage < 32000;
+        }
+        if (!hasSkipPvalsFromEnv) {
+            ts.skipPvalueStorage = ts.parseIntegerValue(nResultStorage, JSON_RS_SKIP_PVALUE_STORAGE, false, -1);
         }
     }
 
@@ -198,6 +210,14 @@ std::string ToolkitSettings::getMiscNiststsMainResDir() const {
 
 int ToolkitSettings::getExecMaximumThreads() const {
     return execMaximumThreads;
+}
+
+bool ToolkitSettings::shouldSkipPvalueStorage() const {
+    return skipPvalueStorage > 0;
+}
+
+bool ToolkitSettings::hasShouldSkipPvalueStorage() const {
+    return skipPvalueStorage >= 0;
 }
 
 std::string ToolkitSettings::getRsMysqlAddress() const {
@@ -355,7 +375,8 @@ std::string ToolkitSettings::parseStringValue(const json & parenttag,
 
 int ToolkitSettings::parseIntegerValue(const json & parenttag,
                                        const std::string & childTagPath,
-                                       bool mandatory) const {
+                                       bool mandatory,
+                                       int defaultValue) const {
     try {
         auto childTagName = Utils::getLastItemInPath(childTagPath);
         if(parenttag.count(childTagName) != 1) {
@@ -363,7 +384,7 @@ int ToolkitSettings::parseIntegerValue(const json & parenttag,
                 throw RTTException(objectInfo,
                                    getParsingErrorMessage("missing tag", childTagPath));
 
-            return 0;
+            return defaultValue;
         } else {
             return parenttag.at(childTagName);
         }

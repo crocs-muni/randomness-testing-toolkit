@@ -66,6 +66,11 @@ public:
      * @param warnings
      */
     virtual void addBatteryWarnings(const std::vector<std::string> & warnings) = 0;
+
+    /**
+     * Ensures that storage is working before working with it (e.g., database connection is alive)
+     */
+    virtual void checkStorage() {};
 };
 
 } // namespace storage

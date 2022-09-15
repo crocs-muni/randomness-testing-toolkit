@@ -103,6 +103,13 @@ public:
      */
     int getExecMaximumThreads() const;
 
+    /**
+     * @brief shouldSkipPvalueStorage
+     * @return True if pvalue storage should be skipped
+     */
+    bool shouldSkipPvalueStorage() const;
+    bool hasShouldSkipPvalueStorage() const;
+
 private:
     /* JSON tag names constants */
     static const std::string JSON_ROOT;
@@ -137,6 +144,7 @@ private:
     static const std::string JSON_RS_MYSQL_DB_CRED_FILE_ROOT;
     static const std::string JSON_RS_MYSQL_DB_CRED_FILE_NAME;
     static const std::string JSON_RS_MYSQL_DB_CRED_FILE_PWD;
+    static const std::string JSON_RS_SKIP_PVALUE_STORAGE;
     static const std::string JSON_BINARIES;
     static const std::string JSON_BINARIES_NIST;
     static const std::string JSON_BINARIES_DH;
@@ -194,6 +202,7 @@ private:
 
     int execMaximumThreads;
     int execTestTimeout;
+    int skipPvalueStorage;
 
     /* Private methods */
     ToolkitSettings() {}
@@ -211,7 +220,8 @@ private:
 
     int parseIntegerValue(const json & parentNode,
                           const std::string & childTagName,
-                          bool mandatory = true) const;
+                          bool mandatory = true,
+                          int defaultValue = 0) const;
 
     std::string getTagFromCredentials(const std::string & tagPath) const;
 

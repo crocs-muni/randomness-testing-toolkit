@@ -139,11 +139,11 @@ ToolkitSettings ToolkitSettings::getInstance(const std::string & cfgFileName) {
 
     /* Check existence of binaries */
     if(!Utils::fileExist(ts.binaryDieharder))
-        throw RTTException(ts.objectInfo, Strings::ERR_FILE_OPEN_FAIL + ts.binaryDieharder);
+        throw RTTException(ts.objectInfo, "config path for Dieharder: " + Strings::ERR_FILE_OPEN_FAIL + ts.binaryDieharder);
     if(!Utils::fileExist(ts.binaryNiststs))
-        throw RTTException(ts.objectInfo, Strings::ERR_FILE_OPEN_FAIL + ts.binaryNiststs);
+        throw RTTException(ts.objectInfo, "config path for NIST STS: " + Strings::ERR_FILE_OPEN_FAIL + ts.binaryNiststs);
     if(!Utils::fileExist(ts.binaryTestU01))
-        throw RTTException(ts.objectInfo, Strings::ERR_FILE_OPEN_FAIL + ts.binaryTestU01);
+        throw RTTException(ts.objectInfo, "config path for TestU01: "  + Strings::ERR_FILE_OPEN_FAIL + ts.binaryTestU01);
 
     /*** Miscelaneous variables ***/
     if(nRoot.count(Utils::getLastItemInPath(JSON_MISC)) != 1)

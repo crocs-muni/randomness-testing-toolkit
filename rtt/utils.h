@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <algorithm>
 #include <iomanip>
+#include <cstring>
 
 /* File with global methods declared */
 

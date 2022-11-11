@@ -1,0 +1,617 @@
+{
+    "randomness-testing-toolkit": {
+        "dieharder-settings": {
+                "defaults": {
+                        "test-ids": [
+                                "0-13",
+                                "15-17",
+                                "100-102",
+                                "200-204",
+                                "206",
+                                "208-209"
+                        ],
+                        "psamples": 100
+                },
+                "test-specific-settings": [
+                        {
+                                "test-id": 0,
+                                "psamples": 2602
+                        },
+                        {
+                                "test-id": 1,
+                                "psamples": 99
+                        },
+                        {
+                                "test-id": 2,
+                                "psamples": 78
+                        },
+                        {
+                                "test-id": 3,
+                                "psamples": 166
+                        },
+                        {
+                                "test-id": 4,
+                                "psamples": 381
+                        },
+                        {
+                                "test-id": 5,
+                                "psamples": 47
+                        },
+                        {
+                                "test-id": 6,
+                                "psamples": 71
+                        },
+                        {
+                                "test-id": 7,
+                                "psamples": 152
+                        },
+                        {
+                                "test-id": 8,
+                                "psamples": 1561
+                        },
+                        {
+                                "test-id": 9,
+                                "psamples": 78
+                        },
+                        {
+                                "test-id": 10,
+                                "psamples": 4162
+                        },
+                        {
+                                "test-id": 11,
+                                "psamples": 6240
+                        },
+                        {
+                                "test-id": 12,
+                                "psamples": 8316
+                        },
+                        {
+                                "test-id": 13,
+                                "psamples": 26
+                        },
+                        {
+                                "test-id": 14,
+                                "psamples": 100000
+                        },
+                        {
+                                "test-id": 15,
+                                "psamples": 999
+                        },
+                        {
+                                "test-id": 16,
+                                "psamples": 75
+                        },
+                        {
+                                "test-id": 17,
+                                "psamples": 4
+                        },
+                        {
+                                "test-id": 100,
+                                "psamples": 999
+                        },
+                        {
+                                "test-id": 101,
+                                "psamples": 999
+                        },
+                        {
+                                "test-id": 102,
+                                "psamples": 999
+                        },
+                        {
+                                "test-id": 200,
+                                "variants": [
+                                        {
+                                                "arguments": "-n 1",
+                                                "psamples": 499
+                                        },
+                                        {
+                                                "arguments": "-n 2",
+                                                "psamples": 249
+                                        },
+                                        {
+                                                "arguments": "-n 3",
+                                                "psamples": 166
+                                        },
+                                        {
+                                                "arguments": "-n 4",
+                                                "psamples": 124
+                                        },
+                                        {
+                                                "arguments": "-n 5",
+                                                "psamples": 99
+                                        },
+                                        {
+                                                "arguments": "-n 6",
+                                                "psamples": 83
+                                        },
+                                        {
+                                                "arguments": "-n 7",
+                                                "psamples": 71
+                                        },
+                                        {
+                                                "arguments": "-n 8",
+                                                "psamples": 62
+                                        },
+                                        {
+                                                "arguments": "-n 9",
+                                                "psamples": 55
+                                        },
+                                        {
+                                                "arguments": "-n 10",
+                                                "psamples": 49
+                                        },
+                                        {
+                                                "arguments": "-n 11",
+                                                "psamples": 45
+                                        },
+                                        {
+                                                "arguments": "-n 12",
+                                                "psamples": 41
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 201,
+                                "variants": [
+                                        {
+                                                "arguments": "-n 2",
+                                                "psamples": 4993
+                                        },
+                                        {
+                                                "arguments": "-n 3",
+                                                "psamples": 3330
+                                        },
+                                        {
+                                                "arguments": "-n 4",
+                                                "psamples": 2498
+                                        },
+                                        {
+                                                "arguments": "-n 5",
+                                                "psamples": 1999
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 202,
+                                "variants": [
+                                        {
+                                                "arguments": "-n 2",
+                                                "psamples": 499
+                                        },
+                                        {
+                                                "arguments": "-n 3",
+                                                "psamples": 333
+                                        },
+                                        {
+                                                "arguments": "-n 4",
+                                                "psamples": 249
+                                        },
+                                        {
+                                                "arguments": "-n 5",
+                                                "psamples": 199
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 203,
+                                "variants": [
+                                        {
+                                                "arguments": "-n 0",
+                                                "psamples": 99
+                                        },
+                                        {
+                                                "arguments": "-n 1",
+                                                "psamples": 49
+                                        },
+                                        {
+                                                "arguments": "-n 2",
+                                                "psamples": 33
+                                        },
+                                        {
+                                                "arguments": "-n 3",
+                                                "psamples": 24
+                                        },
+                                        {
+                                                "arguments": "-n 4",
+                                                "psamples": 19
+                                        },
+                                        {
+                                                "arguments": "-n 5",
+                                                "psamples": 16
+                                        },
+                                        {
+                                                "arguments": "-n 6",
+                                                "psamples": 14
+                                        },
+                                        {
+                                                "arguments": "-n 7",
+                                                "psamples": 12
+                                        },
+                                        {
+                                                "arguments": "-n 8",
+                                                "psamples": 11
+                                        },
+                                        {
+                                                "arguments": "-n 9",
+                                                "psamples": 9
+                                        },
+                                        {
+                                                "arguments": "-n 10",
+                                                "psamples": 9
+                                        },
+                                        {
+                                                "arguments": "-n 11",
+                                                "psamples": 8
+                                        },
+                                        {
+                                                "arguments": "-n 12",
+                                                "psamples": 7
+                                        },
+                                        {
+                                                "arguments": "-n 13",
+                                                "psamples": 7
+                                        },
+                                        {
+                                                "arguments": "-n 14",
+                                                "psamples": 6
+                                        },
+                                        {
+                                                "arguments": "-n 15",
+                                                "psamples": 6
+                                        },
+                                        {
+                                                "arguments": "-n 16",
+                                                "psamples": 5
+                                        },
+                                        {
+                                                "arguments": "-n 17",
+                                                "psamples": 5
+                                        },
+                                        {
+                                                "arguments": "-n 18",
+                                                "psamples": 5
+                                        },
+                                        {
+                                                "arguments": "-n 19",
+                                                "psamples": 4
+                                        },
+                                        {
+                                                "arguments": "-n 20",
+                                                "psamples": 4
+                                        },
+                                        {
+                                                "arguments": "-n 21",
+                                                "psamples": 4
+                                        },
+                                        {
+                                                "arguments": "-n 22",
+                                                "psamples": 4
+                                        },
+                                        {
+                                                "arguments": "-n 23",
+                                                "psamples": 4
+                                        },
+                                        {
+                                                "arguments": "-n 24",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 25",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 26",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 27",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 28",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 29",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 30",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 31",
+                                                "psamples": 3
+                                        },
+                                        {
+                                                "arguments": "-n 32",
+                                                "psamples": 3
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 204,
+                                "psamples": 9975
+                        },
+                        {
+                                "test-id": 206,
+                                "psamples": 7
+                        },
+                        {
+                                "test-id": 208,
+                                "psamples": 3
+                        },
+                        {
+                                "test-id": 209,
+                                "psamples": 1
+                        }
+                ]
+        },
+        "nist-sts-settings": {
+                "defaults": {
+                        "test-ids": [
+                                "1-15"
+                        ],
+                        "stream-size": "1000000",
+                        "stream-count": "1000",
+                        "bit-nb": 3200
+                }
+        },
+        "tu01-smallcrush-settings": {
+                "defaults": {
+                        "test-ids": [
+                                "1-10"
+                        ],
+                        "repetitions": 1
+                }
+        },
+        "tu01-crush-settings": {
+                "defaults": {
+                        "test-ids": [
+                                "1-96"
+                        ],
+                        "repetitions": 1
+                }
+        },
+        "tu01-rabbit-settings": {
+                "defaults": {
+                        "test-ids": [
+                                "1-26"
+                        ],
+                        "repetitions": 1,
+                        "bit-nb": "400000000"
+                }
+        },
+        "tu01-alphabit-settings": {
+                "defaults": {
+                        "test-ids": [
+                                "1-9"
+                        ],
+                        "repetitions": 1,
+                        "bit-nb": "400000000",
+                        "bit-r": "0",
+                        "bit-s": "32"
+                }
+        },
+        "tu01-blockalphabit-settings": {
+                "defaults": {
+                        "test-ids": [
+                                "1-9"
+                        ],
+                        "repetitions": 1,
+                        "bit-nb": "400000000",
+                        "bit-r": "0",
+                        "bit-s": "32"
+                },
+                "test-specific-settings": [
+                        {
+                                "test-id": 1,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 2,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 3,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 4,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 5,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 6,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 7,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 8,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        },
+                        {
+                                "test-id": 9,
+                                "variants": [
+                                        {
+                                                "bit-w": "1"
+                                        },
+                                        {
+                                                "bit-w": "2"
+                                        },
+                                        {
+                                                "bit-w": "4"
+                                        },
+                                        {
+                                                "bit-w": "8"
+                                        },
+                                        {
+                                                "bit-w": "16"
+                                        },
+                                        {
+                                                "bit-w": "32"
+                                        }
+                                ]
+                        }
+                ]
+        }
+    }
+}

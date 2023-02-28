@@ -7,18 +7,32 @@
           "8-13",
           "15-17",
           "100-102",
-          "200-209"
+          "200-204",
+          "206",
+          "208-209"
         ],
         "psamples": 100
       },
       "test-specific-settings": [
         {
+          "test-id": 2,
+          "psamples": 81
+        },
+        {
+          "test-id": 9,
+          "psamples": 81
+        },
+        {
           "test-id": 13,
-          "psamples": 99
+          "psamples": 45
+        },
+        {
+          "test-id": 16,
+          "psamples": 77
         },
         {
           "test-id": 17,
-          "psamples": 12
+          "psamples": 5
         },
         {
           "test-id": 200,
@@ -45,31 +59,31 @@
             },
             {
               "arguments": "-n 6",
-              "psamples": 100
+              "psamples": 87
             },
             {
               "arguments": "-n 7",
-              "psamples": 100
+              "psamples": 74
             },
             {
               "arguments": "-n 8",
-              "psamples": 100
+              "psamples": 65
             },
             {
               "arguments": "-n 9",
-              "psamples": 100
+              "psamples": 58
             },
             {
               "arguments": "-n 10",
-              "psamples": 100
+              "psamples": 52
             },
             {
               "arguments": "-n 11",
-              "psamples": 100
+              "psamples": 47
             },
             {
               "arguments": "-n 12",
-              "psamples": 100
+              "psamples": 43
             }
           ]
         },
@@ -125,131 +139,131 @@
             },
             {
               "arguments": "-n 1",
-              "psamples": 100
+              "psamples": 52
             },
             {
               "arguments": "-n 2",
-              "psamples": 83
+              "psamples": 34
             },
             {
               "arguments": "-n 3",
-              "psamples": 62
+              "psamples": 26
             },
             {
               "arguments": "-n 4",
-              "psamples": 49
-            },
-            {
-              "arguments": "-n 5",
-              "psamples": 41
-            },
-            {
-              "arguments": "-n 6",
-              "psamples": 35
-            },
-            {
-              "arguments": "-n 7",
-              "psamples": 31
-            },
-            {
-              "arguments": "-n 8",
-              "psamples": 27
-            },
-            {
-              "arguments": "-n 9",
-              "psamples": 24
-            },
-            {
-              "arguments": "-n 10",
-              "psamples": 22
-            },
-            {
-              "arguments": "-n 11",
               "psamples": 20
             },
             {
-              "arguments": "-n 12",
-              "psamples": 19
-            },
-            {
-              "arguments": "-n 13",
+              "arguments": "-n 5",
               "psamples": 17
             },
             {
-              "arguments": "-n 14",
-              "psamples": 16
-            },
-            {
-              "arguments": "-n 15",
-              "psamples": 15
-            },
-            {
-              "arguments": "-n 16",
+              "arguments": "-n 6",
               "psamples": 14
             },
             {
-              "arguments": "-n 17",
+              "arguments": "-n 7",
               "psamples": 13
+            },
+            {
+              "arguments": "-n 8",
+              "psamples": 11
+            },
+            {
+              "arguments": "-n 9",
+              "psamples": 10
+            },
+            {
+              "arguments": "-n 10",
+              "psamples": 9
+            },
+            {
+              "arguments": "-n 11",
+              "psamples": 8
+            },
+            {
+              "arguments": "-n 12",
+              "psamples": 8
+            },
+            {
+              "arguments": "-n 13",
+              "psamples": 7
+            },
+            {
+              "arguments": "-n 14",
+              "psamples": 6
+            },
+            {
+              "arguments": "-n 15",
+              "psamples": 6
+            },
+            {
+              "arguments": "-n 16",
+              "psamples": 6
+            },
+            {
+              "arguments": "-n 17",
+              "psamples": 5
             },
             {
               "arguments": "-n 18",
-              "psamples": 13
+              "psamples": 5
             },
             {
               "arguments": "-n 19",
-              "psamples": 12
+              "psamples": 5
             },
             {
               "arguments": "-n 20",
-              "psamples": 11
+              "psamples": 4
             },
             {
               "arguments": "-n 21",
-              "psamples": 11
+              "psamples": 4
             },
             {
               "arguments": "-n 22",
-              "psamples": 10
+              "psamples": 4
             },
             {
               "arguments": "-n 23",
-              "psamples": 10
+              "psamples": 4
             },
             {
               "arguments": "-n 24",
-              "psamples": 1
+              "psamples": 4
             },
             {
               "arguments": "-n 25",
-              "psamples": 1
+              "psamples": 4
             },
             {
               "arguments": "-n 26",
-              "psamples": 1
+              "psamples": 3
             },
             {
               "arguments": "-n 27",
-              "psamples": 1
+              "psamples": 3
             },
             {
               "arguments": "-n 28",
-              "psamples": 1
+              "psamples": 3
             },
             {
               "arguments": "-n 29",
-              "psamples": 1
+              "psamples": 3
             },
             {
               "arguments": "-n 30",
-              "psamples": 1
+              "psamples": 3
             },
             {
               "arguments": "-n 31",
-              "psamples": 1
+              "psamples": 3
             },
             {
               "arguments": "-n 32",
-              "psamples": 1
+              "psamples": 3
             }
           ]
         },
@@ -258,16 +272,8 @@
           "psamples": 1000
         },
         {
-          "test-id": 205,
-          "psamples": 1
-        },
-        {
           "test-id": 206,
-          "psamples": 19
-        },
-        {
-          "test-id": 207,
-          "psamples": 1
+          "psamples": 8
         },
         {
           "test-id": 208,

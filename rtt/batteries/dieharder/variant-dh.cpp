@@ -4,7 +4,7 @@ namespace rtt {
 namespace batteries {
 namespace dieharder {
 
-const int Variant::OPTION_HEADER_FLAG      = 66047;
+const int Variant::OPTION_HEADER_FLAG      = 197119; //66047;
 const int Variant::OPTION_FILE_GENERATOR   = 201;
 
 std::unique_ptr<Variant> Variant::getInstance(int testId, std::string testObjInf,

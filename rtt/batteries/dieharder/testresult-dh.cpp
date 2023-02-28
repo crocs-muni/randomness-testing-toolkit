@@ -14,7 +14,9 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                        tests.at(0)->getLogicName()));
 
     static const std::regex RE_PVALUE {
-        "\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"
+// old regex, replaced with upstream version
+//      "\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"
+        "\\|([01]\\.[0-9]+?)\\|\\n"
     };
     auto endIt = std::sregex_iterator();
 

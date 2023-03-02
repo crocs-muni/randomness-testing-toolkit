@@ -49,7 +49,7 @@ double Utils::strtod(const std::string & str) {
                                  "string contain invalid characters");
     }
     try {
-        float result = std::stod(str);
+        double result = std::stod(str);
         return result;
     } catch (std::out_of_range) {
         /* invalid_argument won't be thrown, regex prevents that */

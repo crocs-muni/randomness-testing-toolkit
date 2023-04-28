@@ -437,7 +437,7 @@ const tTestU01Data TestConstants::TESTU01_SSTRING_RUN {
     {"N","n","r","s"} ,
     {"N","n","r","s"} ,
     {
-        "Chi-square" ,
+        "Chi2" ,
         "Normal"
     }
 };
@@ -482,7 +482,7 @@ const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER {
     {"N","n","r","s","L","Sparse"} ,
     {"N","n","r","s","L","Sparse"} ,
     {
-        "Collision"
+        "Value"
     }
 };
 const tTestU01Data TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN {
@@ -647,13 +647,13 @@ const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsRabbit = {
     { IndexRange(12,14) , TestConstants::TESTU01_SSTRING_HAMMINGCORR},
     { IndexRange(15,17) , TestConstants::TESTU01_SSTRING_HAMMINGINDEP},
     { IndexRange(18,19) , TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN},
-    { IndexRange(20,20) , TestConstants::TESTU01_SSTRING_RUN_RABBIT},
+    { IndexRange(20,20) , TestConstants::TESTU01_SSTRING_RUN},
     { IndexRange(21,23) , TestConstants::TESTU01_SMARSA_MATRIXRANK},
     { IndexRange(24,26) , TestConstants::TESTU01_SWALK_RANDOMWALK1}
 };
 
 const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsAlphabit = {
-    { IndexRange(1,4) , TestConstants::TESTU01_SMULTIN_MULTBITSOVER_BIGN},
+    { IndexRange(1,4) , TestConstants::TESTU01_SMULTIN_MULTINOMIALBITSOVER},
     { IndexRange(5,6) , TestConstants::TESTU01_SSTRING_HAMMINGINDEP},
     { IndexRange(7,7) , TestConstants::TESTU01_SSTRING_HAMMINGCORR},
     { IndexRange(8,9) , TestConstants::TESTU01_SWALK_RANDOMWALK1}

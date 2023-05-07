@@ -353,7 +353,7 @@ void TestRunner::readOutput(BatteryOutput & output ,
 }
 
 char ** TestRunner::buildArgv(const std::string & arguments, int * argc) {
-    std::vector<std::string> vecArg = Utils::split(arguments , ' ');
+    std::vector<std::string> vecArg = Utils::splitarg(arguments , ' ');
     char ** argv = new char * [vecArg.size() + 1];
     for(size_t i = 0 ; i < vecArg.size() ; ++i) {
         argv[i] = new char [vecArg.at(i).length() + 1];

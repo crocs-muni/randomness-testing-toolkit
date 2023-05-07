@@ -110,6 +110,12 @@ public:
       */
     static std::vector<std::string> split(const std::string & toSplit , char separator);
 
+    /** Splits string into shorter strings, separated by separator, support string in quotes
+      * @param                 toSplit string to be splitted
+      * @return                vector of strings
+      */
+    static std::vector<std::string> splitarg(const std::string & toSplit, char separator);
+
     /** Replaces all Windows newlines (\r\n) with Unix newlines (\n).
       * Sometimes Unix system will read \r\n instead of \n from file.
       * Input text files that will be modified (such as script samples)
@@ -174,19 +180,6 @@ public:
         std::vector<T *> rval(source.size());
         std::transform(source.begin(), source.end(), rval.begin(),
                        [](const auto & el){ return el.get(); });
-        return rval;
-    }
-
-    template<typename T>
-    static T lexical_cast(const std::string & str) {
-        T rval;
-        std::istringstream iss;
-        iss.str(str);
-
-        iss >> rval;
-        if(!iss.eof() || iss.fail())
-            throw std::runtime_error("can't convert \"" + str + "\"");
-
         return rval;
     }
 

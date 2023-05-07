@@ -71,18 +71,14 @@ void Variant::buildStrings() {
     /* Building cli arguments */
     std::stringstream arguments;
     /* -fast is used with faster version of NIST STS */
-    //arguments << "assess " << streamSize << " -fast";
     arguments << "niststs " << streamSize << " -fast";
+    arguments << " --file \"" << binaryDataPath << "\"";
     cliArguments = arguments.str();
 
     /* Building standard input */
     /* 'Beautiful' creation of input that will be sent to */
     /* sts over pipe, so that it will have proper settings. */
     std::stringstream stdIn;
-    /* Choosing input file generator */
-    stdIn << "0 ";
-    /* Choosing file */
-    stdIn << binaryDataPath << " ";
     /* Execute only one test */
     stdIn << "0 ";
     /* Specify which test will be executed */

@@ -109,11 +109,40 @@ ArgumentType ClArgument<ArgumentType>::getArgumentValue() const {
     }
 }
 
+template<typename T>
+static T lexical_cast(const std::string & str) {
+    T rval;
+    std::istringstream iss;
+    iss.str(str);
+
+    iss >> rval;
+
+    if(!iss.eof() || iss.fail())
+        throw std::runtime_error("can't convert \"" + str + "\"");
+
+    return rval;
+}
+
+template<>
+std::string lexical_cast(const std::string & str) {
+    std::string  rval;
+    std::istringstream iss;
+    iss.str(str);
+
+    // for string, do not stop at the first whitespace
+    std::getline(iss, rval);
+
+    if(!iss.eof() || iss.fail())
+        throw std::runtime_error("can't convert \"" + str + "\"");
+
+    return rval;
+}
+
 template<typename ArgumentType>
 void ClArgument<ArgumentType>::setArgumentValue(const std::string & argValue) {
     if(!set) {
         try {
-            argumentValue = Utils::lexical_cast<ArgumentType>(argValue);
+            argumentValue = lexical_cast<ArgumentType>(argValue);
             set = true;
         } catch (std::runtime_error & e) {
             throw RTTException(objectInfo, e.what());

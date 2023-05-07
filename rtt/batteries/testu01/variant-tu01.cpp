@@ -109,7 +109,7 @@ void Variant::buildStrings() {
     /* Test number option */
     arguments << "-t " << testId << " ";
     /* Input file option */
-    arguments << "-i " << binaryDataPath << " ";
+    arguments << "-i \"" << binaryDataPath << "\" ";
     /* Repetitions option */
     if(repetitions != 1)
         arguments << "-r " << repetitions << " ";

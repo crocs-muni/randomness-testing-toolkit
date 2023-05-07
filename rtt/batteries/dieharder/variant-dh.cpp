@@ -60,7 +60,7 @@ void Variant::buildStrings() {
     /* Specify binary file generator */
     arguments << "-g " << OPTION_FILE_GENERATOR << " ";
     /* Specify binary input file */
-    arguments << "-f " << binaryDataPath << " ";
+    arguments << "-f \"" << binaryDataPath << "\" ";
     /* Specify random seed and seed strategy */
     arguments << "-S 0 -s 1 ";
     cliArguments = arguments.str();

@@ -129,6 +129,25 @@ std::vector<std::string> Utils::split(const std::string & toSplit , char separat
     return result;
 }
 
+std::vector<std::string> Utils::splitarg(const std::string & toSplit , char separator) {
+    std::vector<std::string> result;
+    std::string temp;
+    bool in_string = false;
+
+    for(size_t i = 0 ; i < toSplit.length() ; i++) {
+        if (toSplit[i] == '"') {
+            in_string = !in_string;
+        } else if(toSplit[i] != separator || in_string) {
+            temp.push_back(toSplit[i]);
+        } else {
+            if(temp.length() > 0) result.push_back(temp);
+            temp.clear();
+        }
+    }
+    if(temp.length() > 0) result.push_back(temp);
+    return result;
+}
+
 void Utils::fixNewlines(std::string & str) {
     std::string::size_type pos = 0;
     while ((pos = str.find("\r\n", pos)) != std::string::npos) {

@@ -3,8 +3,8 @@
 namespace rtt {
 namespace batteries {
 
-static const std::regex RE_ERR ("\\s*(.*?error.*?)\\n", std::regex::icase);
-static const std::regex RE_WARN ("\\s*(.*?warning.*?)\\n", std::regex::icase);
+static const std::regex RE_ERR ("\\n\\s*(.*?error.*?)\\n", std::regex::icase);
+static const std::regex RE_WARN ("\\n\\s*(.*?warning.*?)\\n", std::regex::icase);
 
 void BatteryOutput::appendStdOut(const std::string & stdOut) {
     detectionDone = false;

@@ -53,6 +53,8 @@ void Variant::buildStrings() {
     }
     /* Set psample count */
     arguments << "-p " << pSampleCount << " ";
+    /* Set also Xoff to avoid trimming p-values count */
+    arguments << "-P " << pSampleCount << " ";
     /* Specify test */
     arguments << "-d " << testId << " ";
     /* Specify header flag */

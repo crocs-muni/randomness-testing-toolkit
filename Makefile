@@ -11,15 +11,12 @@ ifndef LINK_MYSQL
 override LINK_MYSQL = -lmysqlcppconn
 endif
 
+LIBS=-L/usr/lib -L. $(LINK_MYSQL) $(LINK_PTHREAD)
+
 # Debian only fixed config for now
 STATIC_LIBS=-lmariadb -lssl -lcrypto -lz -static
 
-CXXFLAGS += \
-	-std=c++14 -I. \
-	-L/usr/lib \
-	-L. \
-	$(LINK_MYSQL) \
-	$(LINK_PTHREAD) -O3
+CXXFLAGS += -std=c++14 -I. -O3
 
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===
@@ -138,10 +135,10 @@ VPATH = \
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 $(TOOL): $(OBJ)
-	$(CXX) -o $@ $^ $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 $(TOOL).static: $(OBJ)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(STATIC_LIBS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS) $(STATIC_LIBS)
 
 static: $(TOOL).static
 

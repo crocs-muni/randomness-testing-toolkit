@@ -1,3 +1,5 @@
+TOOL=randomness-testing-toolkit
+
 CC=gcc
 CXX=g++
 
@@ -8,6 +10,9 @@ endif
 ifndef LINK_MYSQL
 override LINK_MYSQL = -lmysqlcppconn
 endif
+
+# Debian only fixed config for now
+STATIC_LIBS=-lmariadb -lssl -lcrypto -lz -static
 
 CXXFLAGS += \
 	-std=c++14 -I. \
@@ -131,11 +136,16 @@ VPATH = \
 
 %.o: %.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
-	
-randomness-testing-toolkit: $(OBJ)
+
+$(TOOL): $(OBJ)
 	$(CXX) -o $@ $^ $(CXXFLAGS)
-	
+
+$(TOOL).static: $(OBJ)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(STATIC_LIBS)
+
+static: $(TOOL).static
+
 .PHONY: clean
 
 clean:
-	rm -f *.o 
+	rm -f *.o $(TOOL) $(TOOL).static

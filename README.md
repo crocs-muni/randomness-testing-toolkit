@@ -5,6 +5,8 @@ RTT currently implements support for the following statistical tools:
 * **NIST Statistical Test Suite** [home page](http://csrc.nist.gov/groups/ST/toolkit/rng/documentation_software.html)
 * **Dieharder: A Random Number Test Suite** [home page](http://www.phy.duke.edu/~rgb/General/dieharder.php)
 * **TestU01** [home page](http://simul.iro.umontreal.ca/testu01/tu01.html)
+
+To be implemented in the future:
 * **BoolTest** [home page](https://github.com/ph4r05/polynomial-distinguishers)
 
 ## Related repositories

@@ -16,7 +16,7 @@ LIBS=-L/usr/lib -L. $(LINK_MYSQL) $(LINK_PTHREAD)
 # Debian only fixed config for now
 STATIC_LIBS=-lmariadb -lssl -lcrypto -lz -static
 
-CXXFLAGS += -std=c++14 -I. -O3
+CXXFLAGS += -std=c++14 -I. -O3 -g
 
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===

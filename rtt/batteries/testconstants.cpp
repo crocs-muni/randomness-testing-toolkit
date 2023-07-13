@@ -646,7 +646,7 @@ const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsRabbit = {
     { IndexRange(11,11) , TestConstants::TESTU01_SSTRING_HAMMINGWEIGHT},
     { IndexRange(12,14) , TestConstants::TESTU01_SSTRING_HAMMINGCORR},
     { IndexRange(15,17) , TestConstants::TESTU01_SSTRING_HAMMINGINDEP},
-    { IndexRange(18,19) , TestConstants::TESTU01_SSTRING_AUTOCOR_BIGN},
+    { IndexRange(18,19) , TestConstants::TESTU01_SSTRING_AUTOCOR},
     { IndexRange(20,20) , TestConstants::TESTU01_SSTRING_RUN},
     { IndexRange(21,23) , TestConstants::TESTU01_SMARSA_MATRIXRANK},
     { IndexRange(24,26) , TestConstants::TESTU01_SWALK_RANDOMWALK1}

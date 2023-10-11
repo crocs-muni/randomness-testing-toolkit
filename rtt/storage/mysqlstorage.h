@@ -1,6 +1,8 @@
 #ifndef RTT_STORAGE_MYSQLSTORAGE_H
 #define RTT_STORAGE_MYSQLSTORAGE_H
 
+#ifdef USE_MYSQL_BACKEND
+
 #include <memory>
 #include <cstdint>
 #include <cppconn/driver.h>
@@ -119,5 +121,7 @@ private:
 
 } // namespace storage
 } // namespace rtt
+
+#endif // USE_MYSQL_BACKEND
 
 #endif // RTT_STORAGE_MYSQLSTORAGE_H

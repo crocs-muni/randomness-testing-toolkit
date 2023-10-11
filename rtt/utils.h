@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <cstring>
+#include <cstdint>
 
 /* File with global methods declared */
 

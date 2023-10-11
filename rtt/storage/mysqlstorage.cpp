@@ -1,5 +1,6 @@
 #include "mysqlstorage.h"
 
+#ifdef USE_MYSQL_BACKEND
 namespace rtt {
 namespace storage {
 
@@ -662,3 +663,5 @@ void MySQLStorage::checkStorage() {
 
 } // namespace storage
 } // namespace rtt
+
+#endif // USE_MYSQL_BACKEND

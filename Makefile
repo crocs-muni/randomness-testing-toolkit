@@ -1,22 +1,21 @@
 TOOL=randomness-testing-toolkit
 
+# Comment this out to disable MySQL backend
+USE_MYSQL_BACKEND=1
+
 CC=gcc
 CXX=g++
+CXXFLAGS += -std=c++14 -I. -O3 -g
+LIBS=-L/usr/lib -L. -lpthread
 
-ifndef LINK_PTHREAD
-override LINK_PTHREAD = -lpthread
+ifdef USE_MYSQL_BACKEND
+CXXFLAGS += -DUSE_MYSQL_BACKEND
+LIBS += -lmysqlcppconn
+STATIC_LIBS += -lmariadb
 endif
-
-ifndef LINK_MYSQL
-override LINK_MYSQL = -lmysqlcppconn
-endif
-
-LIBS=-L/usr/lib -L. $(LINK_MYSQL) $(LINK_PTHREAD)
 
 # Debian only fixed config for now
-STATIC_LIBS=-lmariadb -lssl -lcrypto -lz -static
-
-CXXFLAGS += -std=c++14 -I. -O3 -g
+STATIC_LIBS += -lssl -lcrypto -lz -static
 
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===

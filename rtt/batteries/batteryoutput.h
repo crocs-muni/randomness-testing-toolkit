@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <regex>
+#include <boost/regex.hpp>
 
 namespace rtt {
 namespace batteries {

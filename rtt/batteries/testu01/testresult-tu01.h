@@ -21,7 +21,7 @@ private:
         : ITestResult(logger , testName)
     {}
 
-    static std::regex buildParamRegex(
+    static boost::regex buildParamRegex(
             std::vector<std::string> paramNames);
 
     static double convertStringToDouble(const std::string & num,

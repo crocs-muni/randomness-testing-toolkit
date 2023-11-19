@@ -13,12 +13,12 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                        tests.at(0)->getLogger(),
                                        tests.at(0)->getLogicName()));
 
-    static const std::regex RE_PVALUE {
+    static const boost::regex RE_PVALUE {
 // old regex, replaced with upstream version
 //      "\\+\\+\\+\\+([01]\\.[0-9]+?)\\+\\+\\+\\+\\n"
         "\\|([01]\\.[0-9]+?)\\|\\n"
     };
-    auto endIt = std::sregex_iterator();
+    auto endIt = boost::sregex_iterator();
 
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::Statistic> tmpStatistics;
@@ -40,7 +40,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
 
             /* Single subtest processing! */
             for(const std::string & subTest : subTests) {
-                auto pValIt = std::sregex_iterator(
+                auto pValIt = boost::sregex_iterator(
                                   subTest.begin(), subTest.end(),
                                   RE_PVALUE);
                 if(std::distance(pValIt, endIt) == 0) {
@@ -51,7 +51,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
 
                 /* Single pvalue processing */
                 for( ; pValIt != endIt ; ++pValIt) {
-                    std::smatch pvalMatch = *pValIt;
+                    boost::smatch pvalMatch = *pValIt;
                     tmpPVals.push_back(Utils::strtod(pvalMatch[1].str()));
                 }
                 tmpStatistics.push_back(result::Statistic::getInstance(

@@ -6,7 +6,7 @@ USE_MYSQL_BACKEND=1
 CC=gcc
 CXX=g++
 CXXFLAGS += -std=c++14 -I. -O3 -g
-LIBS=-L/usr/lib -L. -lpthread
+LIBS=-L/usr/lib -L. -lpthread -lboost_regex
 
 ifdef USE_MYSQL_BACKEND
 CXXFLAGS += -DUSE_MYSQL_BACKEND

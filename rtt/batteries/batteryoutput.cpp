@@ -3,8 +3,8 @@
 namespace rtt {
 namespace batteries {
 
-static const std::regex RE_ERR ("\\n\\s*(.*?error.*?)\\n", std::regex::icase);
-static const std::regex RE_WARN ("\\n\\s*(.*?warning.*?)\\n", std::regex::icase);
+static const boost::regex RE_ERR  ("\\n\\s*([^\\n]*error[^\\n]*)\\n", boost::regex::icase);
+static const boost::regex RE_WARN ("\\n\\s*([^\\n]*warning[^\\n]*)\\n", boost::regex::icase);
 
 void BatteryOutput::appendStdOut(const std::string & stdOut) {
     detectionDone = false;
@@ -44,10 +44,10 @@ void BatteryOutput::detectErrsWarnsInStdOut() {
      * Detection happens only in stdOut variable. */
 
 
-    std::smatch match;
-    auto end =       std::sregex_iterator();
-    auto errBegin =  std::sregex_iterator(stdOut.begin() , stdOut.end(), RE_ERR);
-    auto warnBegin = std::sregex_iterator(stdOut.begin() , stdOut.end(), RE_WARN);
+    boost::smatch match;
+    auto end =       boost::sregex_iterator();
+    auto errBegin =  boost::sregex_iterator(stdOut.begin() , stdOut.end(), RE_ERR);
+    auto warnBegin = boost::sregex_iterator(stdOut.begin() , stdOut.end(), RE_WARN);
 
     errors.clear();
     warnings.clear();

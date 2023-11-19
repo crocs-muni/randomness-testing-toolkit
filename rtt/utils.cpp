@@ -10,11 +10,11 @@ std::string Utils::itostr(int i , int width) {
     return ss.str();
 }
 
-static const std::regex RE_INTEGER("^-?[0-9]+?$");
-static const std::regex RE_FLOAT("^-?[0-9]+?(:?\\.[0-9]+?)?$");
+static const boost::regex RE_INTEGER("^-?[0-9]+?$");
+static const boost::regex RE_FLOAT("^-?[0-9]+?(:?\\.[0-9]+?)?$");
 
 int Utils::strtoi(const std::string & str) {
-    if(!std::regex_match(str.begin() , str.end() , RE_INTEGER)) {
+    if(!boost::regex_match(str.begin() , str.end() , RE_INTEGER)) {
         throw std::runtime_error("can't convert string \"" + str +"\" into integer: " +
                                  "string contains invalid characters");
     }
@@ -29,7 +29,7 @@ int Utils::strtoi(const std::string & str) {
 }
 
 float Utils::strtof(const std::string & str) {
-    if(!std::regex_match(str.begin() , str.end() , RE_FLOAT)) {
+    if(!boost::regex_match(str.begin() , str.end() , RE_FLOAT)) {
         throw std::runtime_error("can't convert string \"" + str + "\" into float: " +
                                  "string contain invalid characters");
     }
@@ -44,7 +44,7 @@ float Utils::strtof(const std::string & str) {
 }
 
 double Utils::strtod(const std::string & str) {
-    if(!std::regex_match(str.begin() , str.end() , RE_FLOAT)) {
+    if(!boost::regex_match(str.begin() , str.end() , RE_FLOAT)) {
         throw std::runtime_error("can't convert string \"" + str + "\" into double: " +
                                  "string contain invalid characters");
     }

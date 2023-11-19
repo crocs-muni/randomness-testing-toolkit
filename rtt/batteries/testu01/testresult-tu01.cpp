@@ -4,13 +4,16 @@ namespace rtt {
 namespace batteries {
 namespace testu01 {
 
-const static std::regex RE_SUBTEST (
+// note, original regex was not boost compatible; try to catch end without lookahead (?=)
+const static boost::regex RE_SUBTEST (
       "\nGenerator providing data from binary file.\n"
-      "([^]*?)"  /* This will capture output of one subtest */
-      "(?=\nGenerator providing data from binary file.\n|$)"
+      "(.*?)?"  /* This will capture output of one subtest */
+      "(\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*"
+      "\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\n"
+      "|===================================================\n)"
 );
 
-const static std::regex RE_PVALUES (
+const static boost::regex RE_PVALUES (
       "p-value of test {23}: *?("
       "eps|"                            /* Just "eps" */
       "1 - eps1|"                       /* Just "1 - eps1" */
@@ -19,17 +22,17 @@ const static std::regex RE_PVALUES (
       ") *?(\\*\\*\\*\\*\\*)?\\n"       /* Capture ending "*****" - pvalue is suspect */
 );
 
-static const std::regex RE_W_PARAM (
+static const boost::regex RE_W_PARAM (
       "\\sw = +?([1-9]+?)\\s"
 );
 
-const static std::regex RE_PVALUES_1LVL (
+const static boost::regex RE_PVALUES_1LVL (
       "\n=== First level p-values/statistics of the test ===\n"
-      "([^]*?)" /* This will capture printed p-values in the log */
-      "\n===================================================\n"
+      "(.*?\n)" /* This will capture printed p-values in the log */
+      "$"
 );
 
-const static std::regex RE_SUB_ERR_WARNING (
+const static boost::regex RE_SUB_ERR_WARNING (
      "((\\*{5,}\\s*(WARNING|ERROR).+)(\\n\\*{5,}.+)*)"
 );
 
@@ -43,7 +46,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                                        tests.at(0)->getLogicName()));
 
 
-    auto endIt = std::sregex_iterator();
+    auto endIt = boost::sregex_iterator();
     std::vector<result::SubTestResult> tmpSubTestResults;
     std::vector<result::Statistic> tmpStatistics;
     std::vector<std::pair<std::string, std::string>> tmpParamVec;
@@ -62,7 +65,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
             /* Split log into subtests */
             std::string variantLog = tu01Var->getBatteryOutput().getStdOut();
 
-            auto subTestIt = std::sregex_iterator(
+            auto subTestIt = boost::sregex_iterator(
                                  variantLog.begin(),
                                  variantLog.end(),
                                  RE_SUBTEST);
@@ -70,7 +73,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
             /* Single subtest processing */
             int subtestIdx = 0;
             for(; subTestIt != endIt ; ++subTestIt, ++subtestIdx) {
-                std::smatch match = *subTestIt;
+                boost::smatch match = *subTestIt;
                 std::string subTestLog = match[1].str();
 
                 tmpStatistics = r->extractStatistics(
@@ -86,7 +89,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                 tmpPValuesVec = r->extractPValues(subTestLog);
                 if (tmpStatistics.empty()) {
                     auto problems = r->extractProblems(subTestLog);
-                    auto problemsNoNewLine = std::regex_replace(problems, std::regex("\n"), "\\n");
+                    auto problemsNoNewLine = boost::regex_replace(problems, boost::regex("\n"), "\\n");
                     auto msgLog = r->objectInfo + std::string(", Subtest idx ") + Utils::itostr(subtestIdx) + " has empty statistics: " + problemsNoNewLine;
                     r->logger->warn(msgLog);
                     variant->getBatteryOutput().appendStdErr(msgLog);
@@ -105,6 +108,7 @@ std::unique_ptr<TestResult> TestResult::getInstance(
                 /* Add subtest result to collection of results */
                 tmpSubTestResults.push_back(std::move(tmpSubTestRes));
             }
+
             r->varRes.push_back(result::VariantResult::getInstance(
                                     tmpSubTestResults,
                                     tu01Var->getUserSettings(),
@@ -119,11 +123,11 @@ std::vector<result::Statistic> TestResult::extractStatistics(
         const std::string & testLog, std::vector<std::string> statNames) {
     std::vector<result::Statistic> rval;
 
-    auto pValIt = std::sregex_iterator(
+    auto pValIt = boost::sregex_iterator(
                       testLog.begin(),
                       testLog.end(),
                       RE_PVALUES);
-    auto endIt = std::sregex_iterator();
+    auto endIt = boost::sregex_iterator();
     if(static_cast<size_t>(std::distance(pValIt, endIt)) != statNames.size()) {
         statNames.clear();
         for(uint i = 0 ; i < std::distance(pValIt , endIt) ; ++i)
@@ -132,7 +136,7 @@ std::vector<result::Statistic> TestResult::extractStatistics(
                      Strings::TEST_ERR_UNKNOWN_STATISTICS);
     }
     for(uint i = 0 ; pValIt != endIt ; ++i , ++pValIt) {
-        std::smatch match = *pValIt;
+        boost::smatch match = *pValIt;
         double pVal = convertStringToDouble(match[1].str(),
                                             match[2].str());
         rval.push_back(result::Statistic::getInstance(statNames.at(i), pVal));
@@ -168,22 +172,22 @@ std::vector<std::pair<std::string, std::string>> TestResult::extractTestParamete
         const std::string & testLog,
         std::vector<std::string> paramNames) {
     std::vector<std::pair<std::string, std::string>> rval;
-    std::regex RE_PARAM = buildParamRegex(paramNames);
-    auto paramIt = std::sregex_iterator(testLog.begin(),
+    boost::regex RE_PARAM = buildParamRegex(paramNames);
+    auto paramIt = boost::sregex_iterator(testLog.begin(),
                                         testLog.end(),
                                         RE_PARAM);
-    auto endIt = std::sregex_iterator();
+    auto endIt = boost::sregex_iterator();
     if(std::distance(paramIt , endIt) != 1)
         throw RTTException(objectInfo,
                            "parameter extraction failed");
-    std::smatch paramMatch = *paramIt;
+    boost::smatch paramMatch = *paramIt;
     for(uint i = 0 ; i < paramNames.size() ; ++i) {
         rval.push_back({paramNames.at(i), paramMatch[i + 1].str()});
     }
     /* Extracting w in Block Alphabit */
     if(battery.getBatteryId() == Constants::BatteryID::TU01_BLOCK_ALPHABIT) {
 
-        auto wParamIt = std::sregex_iterator(
+        auto wParamIt = boost::sregex_iterator(
                             testLog.begin(),
                             testLog.end(),
                             RE_W_PARAM);
@@ -191,7 +195,7 @@ std::vector<std::pair<std::string, std::string>> TestResult::extractTestParamete
             throw RTTException(objectInfo,
                                "extraction of parameter \"w\" failed");
         }
-        std::smatch wMatch = *wParamIt;
+        boost::smatch wMatch = *wParamIt;
         //rval.push_back("w = " + wMatch[1].str());
         rval.push_back({"w", wMatch[1].str()});
     }
@@ -201,8 +205,8 @@ std::vector<std::pair<std::string, std::string>> TestResult::extractTestParamete
 
 std::vector<double> TestResult::extractPValues(const std::string & testLog) {
 
-    std::smatch m;
-    std::regex_search(testLog, m, RE_PVALUES_1LVL);
+    boost::smatch m;
+    boost::regex_search(testLog, m, RE_PVALUES_1LVL);
     if(m.empty())
         return {};
 
@@ -218,15 +222,15 @@ std::vector<double> TestResult::extractPValues(const std::string & testLog) {
 
 std::string TestResult::extractProblems(const std::string & testLog) {
 
-    std::smatch m;
-    std::regex_search(testLog, m, RE_SUB_ERR_WARNING);
+    boost::smatch m;
+    boost::regex_search(testLog, m, RE_SUB_ERR_WARNING);
     if(m.empty())
         return {};
 
     return m[1];
 }
 
-std::regex TestResult::buildParamRegex(
+boost::regex TestResult::buildParamRegex(
         std::vector<std::string> paramNames) {
     std::stringstream rval;
     for(uint i = 0 ; i < paramNames.size() ; ++i) {
@@ -237,7 +241,7 @@ std::regex TestResult::buildParamRegex(
             rval << "\\s";
         }
     }
-    return std::regex(rval.str());
+    return boost::regex(rval.str());
 }
 
 

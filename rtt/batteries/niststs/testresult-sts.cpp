@@ -2,6 +2,9 @@
 
 #include "libs/cephes/cephes.h"
 
+//FIXME: regex need to be converted to std::regex; they are not directly compatible
+#include <regex>
+
 namespace rtt {
 namespace batteries {
 namespace niststs {

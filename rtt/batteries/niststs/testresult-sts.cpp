@@ -2,9 +2,6 @@
 
 #include "libs/cephes/cephes.h"
 
-//FIXME: regex need to be converted to std::regex; they are not directly compatible
-#include <regex>
-
 namespace rtt {
 namespace batteries {
 namespace niststs {
@@ -57,36 +54,36 @@ std::unique_ptr<TestResult> TestResult::getInstance(
     return r;
 }
 
-static const std::regex RE_RND_EXC_PVALUES (
-      ".*x = -4.*p_value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*x = -3.*p_value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*x = -2.*p_value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*x = -1.*p_value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*x =  1.*p_value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*x =  2.*p_value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*x =  3.*p_value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*x =  4.*p_value = ([0|1]?\\.[0-9]+?)\\n"
+static const boost::regex RE_RND_EXC_PVALUES (
+      ".*?x = -4.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?x = -3.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?x = -2.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?x = -1.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?x =  1.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?x =  2.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?x =  3.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?x =  4.*?p_value = ([0|1]?\\.[0-9]+?)\\n"
 );
 
-static const std::regex RE_RND_EXC_VAR_PVALUES(
-      ".*\\(x = -9\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -8\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -7\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -6\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -5\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -4\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -3\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -2\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x = -1\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  1\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  2\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  3\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  4\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  5\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  6\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  7\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  8\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
-      ".*\\(x =  9\\).*p-value = ([0|1]?\\.[0-9]+?)\\n"
+static const boost::regex RE_RND_EXC_VAR_PVALUES(
+      ".*?\\(x = -9\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -8\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -7\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -6\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -5\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -4\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -3\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -2\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x = -1\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  1\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  2\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  3\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  4\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  5\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  6\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  7\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  8\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
+      ".*?\\(x =  9\\).*?p-value = ([0|1]?\\.[0-9]+?)\\n"
 );
 
 std::vector<std::vector<double>> TestResult::getVariantPValues(
@@ -98,13 +95,13 @@ std::vector<std::vector<double>> TestResult::getVariantPValues(
 
         std::vector<std::vector<double>> rval(subTestCount);
         auto testLog = variant->getBatteryOutput().getStdOut();
-        auto subTestIt = std::sregex_iterator(
+        auto subTestIt = boost::sregex_iterator(
                              testLog.begin(), testLog.end(),
                              RE_RND_EXC_PVALUES);
-        auto endIt = std::sregex_iterator();
+        auto endIt = boost::sregex_iterator();
 
         for(; subTestIt != endIt ; ++subTestIt) {
-            std::smatch match = *subTestIt;
+            boost::smatch match = *subTestIt;
             for(uint i = 1 ; i <= subTestCount ; ++i)
                 rval.at(i - 1).push_back(Utils::strtod(match[i].str()));
         }
@@ -116,13 +113,13 @@ std::vector<std::vector<double>> TestResult::getVariantPValues(
 
         std::vector<std::vector<double>> rval(subTestCount);
         auto testLog = variant->getBatteryOutput().getStdOut();
-        auto subTestIt = std::sregex_iterator(
+        auto subTestIt = boost::sregex_iterator(
                              testLog.begin(), testLog.end(),
                              RE_RND_EXC_VAR_PVALUES);
-        auto endIt = std::sregex_iterator();
+        auto endIt = boost::sregex_iterator();
 
         for(; subTestIt != endIt ; ++subTestIt) {
-            std::smatch match = *subTestIt;
+            boost::smatch match = *subTestIt;
             for(uint i = 1 ; i <= subTestCount ; ++i) {
                 rval.at(i - 1).push_back(Utils::strtod(match[i].str()));
             }

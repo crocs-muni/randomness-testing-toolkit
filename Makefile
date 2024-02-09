@@ -1,15 +1,16 @@
 TOOL=randomness-testing-toolkit
 
-# Comment this out to disable MySQL backend
-USE_MYSQL_BACKEND=1
-
 CC=gcc
 CXX=g++
 CXXFLAGS += -std=c++14 -I. -O3 -g
 LIBS=-L/usr/lib -L. -lpthread -lboost_regex
 
-ifdef USE_MYSQL_BACKEND
-CXXFLAGS += -DUSE_MYSQL_BACKEND
+# Disable MySQL backend with USE_MYSQL_BACKEND=0
+ifeq ($(USE_MYSQL_BACKEND),)
+USE_MYSQL_BACKEND=1
+endif
+ifeq ($(USE_MYSQL_BACKEND),1)
+CXXFLAGS += -DUSE_MYSQL_BACKEND=1
 LIBS += -lmysqlcppconn
 STATIC_LIBS += -lmariadb
 endif

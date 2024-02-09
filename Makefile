@@ -16,7 +16,7 @@ STATIC_LIBS += -lmariadb
 endif
 
 # Debian only fixed config for now
-STATIC_LIBS += -lssl -lcrypto -lz -static
+STATIC_LIBS += -lssl -lcrypto -lz -lzstd -static
 
 # === Header files ===
 # === Source files must be in same dir as corresponding header ===

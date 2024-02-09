@@ -1,0 +1,24 @@
+name: Build check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependecies
+      run: sudo apt-get install libmariadb-dev libmysqlcppconn-dev libboost-regex-dev
+    - name: Compile
+      run: make -j2
+    - name: Compile (static)
+      run: make -j2 static
+    - name: make clean
+      run: make clean
+    - name: Compile without MySQL
+      run: make -j2 USE_MYSQL_BACKEND=0
+    - name: Compile without MySQL (static)
+      run: make -j2 USE_MYSQL_BACKEND=0 static

@@ -1,7 +1,7 @@
 #ifndef RTT_STORAGE_MYSQLSTORAGE_H
 #define RTT_STORAGE_MYSQLSTORAGE_H
 
-#ifdef USE_MYSQL_BACKEND
+#if USE_MYSQL_BACKEND
 
 #include <memory>
 #include <cstdint>

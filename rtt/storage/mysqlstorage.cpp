@@ -1,6 +1,6 @@
 #include "mysqlstorage.h"
 
-#ifdef USE_MYSQL_BACKEND
+#if USE_MYSQL_BACKEND
 namespace rtt {
 namespace storage {
 

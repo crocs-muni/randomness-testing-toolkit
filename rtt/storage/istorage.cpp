@@ -10,7 +10,7 @@ std::unique_ptr<IStorage> IStorage::getInstance(const GlobalContainer & containe
     switch(container.getRttCliOptions()->getResultStorageId()) {
     case Constants::ResultStorageID::FILE_REPORT:
         return FileStorage::getInstance(container);
-#ifdef USE_MYSQL_BACKEND
+#if USE_MYSQL_BACKEND
     case Constants::ResultStorageID::DB_MYSQL:
         return MySQLStorage::getInstance(container);
 #endif

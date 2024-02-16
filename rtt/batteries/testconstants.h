@@ -171,6 +171,8 @@ private:
     static const tDieharderData DIEHARDER_DABFILLTREE;
     static const tDieharderData DIEHARDER_DABFILLTREE2;
     static const tDieharderData DIEHARDER_DABMONOBIT;
+    static const tDieharderData DIEHARDER_DABBIRTHDAYS;
+    static const tDieharderData DIEHARDER_DABOPSO2;
     /*
      ________                      __       ______     __
     |        \                    |  \     /      \  _/  \

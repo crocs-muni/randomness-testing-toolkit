@@ -111,6 +111,8 @@ const tDieharderData TestConstants::DIEHARDER_DABDCT               {"DAB DCT"};
 const tDieharderData TestConstants::DIEHARDER_DABFILLTREE          {"DAB Fill Tree Test"};
 const tDieharderData TestConstants::DIEHARDER_DABFILLTREE2         {"DAB Fill Tree Test 2"};
 const tDieharderData TestConstants::DIEHARDER_DABMONOBIT           {"DAB Monobit 2 Test"};
+const tDieharderData TestConstants::DIEHARDER_DABBIRTHDAYS         {"DAB Diehard Birthdays Test"};
+const tDieharderData TestConstants::DIEHARDER_DABOPSO2             {"DAB OPSO2"};
 
 const tTestU01Data TestConstants::TESTU01_SMARSA_SERIALOVER {
     "smarsa_SerialOver" ,
@@ -546,7 +548,9 @@ const std::map<int , tDieharderData> TestConstants::dieharderTests = {
     {206, TestConstants::DIEHARDER_DABDCT},
     {207, TestConstants::DIEHARDER_DABFILLTREE},
     {208, TestConstants::DIEHARDER_DABFILLTREE2},
-    {209, TestConstants::DIEHARDER_DABMONOBIT}
+    {209, TestConstants::DIEHARDER_DABMONOBIT},
+    {210, TestConstants::DIEHARDER_DABBIRTHDAYS},
+    {211, TestConstants::DIEHARDER_DABOPSO2}
 };
 
 const std::map<IndexRange , tTestU01Data> TestConstants::tu01testsSmallCrush = {
